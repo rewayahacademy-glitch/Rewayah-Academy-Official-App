@@ -8215,7 +8215,7 @@ class _Traductions$notifications$cloche$en extends Traductions$notifications$clo
 	@override String get videAFairePhrase => 'When an action is waiting for you, it appears here.';
 	@override String get erreurTitre => 'The notifications could not be read';
 	@override String get erreurPhrase => 'Reading failed on our side. Try again in a moment.';
-	@override String get horsLigne => 'You are offline: what you see is from the last reading.';
+	@override String get horsLigne => 'What you see is from the last reading.';
 	@override String annonceLu({required Object titre, required Object quand}) => '${titre}, announcement, ${quand}';
 }
 
@@ -37410,7 +37410,7 @@ extension on TraductionsEn {
 			'notifications.cloche.videAFairePhrase' => 'When an action is waiting for you, it appears here.',
 			'notifications.cloche.erreurTitre' => 'The notifications could not be read',
 			'notifications.cloche.erreurPhrase' => 'Reading failed on our side. Try again in a moment.',
-			'notifications.cloche.horsLigne' => 'You are offline: what you see is from the last reading.',
+			'notifications.cloche.horsLigne' => 'What you see is from the last reading.',
 			'notifications.cloche.annonceLu' => ({required Object titre, required Object quand}) => '${titre}, announcement, ${quand}',
 			'notifications.evenements.annonceDirection' => 'Academy announcement',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'Announcement: ${titre}',

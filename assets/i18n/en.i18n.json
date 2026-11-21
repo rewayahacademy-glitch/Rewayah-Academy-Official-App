@@ -9898,7 +9898,7 @@
       "videAFairePhrase": "When an action is waiting for you, it appears here.",
       "erreurTitre": "The notifications could not be read",
       "erreurPhrase": "Reading failed on our side. Try again in a moment.",
-      "horsLigne": "You are offline: what you see is from the last reading.",
+      "horsLigne": "What you see is from the last reading.",
       "annonceLu": "{titre}, announcement, {quand}"
     },
     "evenements": {

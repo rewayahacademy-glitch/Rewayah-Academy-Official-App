@@ -2605,11 +2605,11 @@ class _Traductions$notifications$cloche$ar extends Traductions$notifications$clo
 	@override String get ongletsLibelle => 'أقسام الإشعارات';
 	@override String get ongletTout => 'الكل';
 	@override String get ongletAnnonces => 'الإعلانات';
-	@override String avecNombre({required Object libelle, required Object n}) => '${libelle} (${n})';
-	@override String prefixe({required Object libelle}) => '${libelle}: ';
+	@override String avecNombre({required Object libelle, required Object n}) => '⁨${libelle}⁩ (⁨${n}⁩)';
+	@override String prefixe({required Object libelle}) => '⁨${libelle}⁩: ';
 	@override String get annonce => 'إعلان';
 	@override String get fermerAnnonce => 'إغلاق الإعلان';
-	@override String fermerAnnonceLu({required Object titre}) => 'إغلاق الإعلان «${titre}»';
+	@override String fermerAnnonceLu({required Object titre}) => 'إغلاق الإعلان «⁨${titre}⁩»';
 	@override String get annonceFermee => 'أُغلق الإعلان، ويبقى في «الإعلانات».';
 	@override String get annuler => 'تراجع';
 	@override String get fermetureNonConfirmee => 'لم يُؤكَّد إغلاق الإعلان بعد. أعد المحاولة بعد لحظة.';
@@ -2631,7 +2631,7 @@ class _Traductions$notifications$cloche$ar extends Traductions$notifications$clo
 	@override String get videAFairePhrase => 'حين يُنتظر منك إجراء، يظهر هنا.';
 	@override String get erreurTitre => 'تعذّرت قراءة الإشعارات';
 	@override String get erreurPhrase => 'تعذّرت القراءة من جهتنا. أعد المحاولة بعد لحظة.';
-	@override String get horsLigne => 'أنت غير متصل: ما يظهر هنا من آخر قراءة.';
+	@override String get horsLigne => 'ما يظهر هنا من آخر قراءة.';
 	@override String annonceLu({required Object titre, required Object quand}) => '⁨${titre}⁩، إعلان، ⁨${quand}⁩';
 }
 
@@ -30393,11 +30393,11 @@ extension on TraductionsAr {
 			'notifications.cloche.ongletsLibelle' => 'أقسام الإشعارات',
 			'notifications.cloche.ongletTout' => 'الكل',
 			'notifications.cloche.ongletAnnonces' => 'الإعلانات',
-			'notifications.cloche.avecNombre' => ({required Object libelle, required Object n}) => '${libelle} (${n})',
-			'notifications.cloche.prefixe' => ({required Object libelle}) => '${libelle}: ',
+			'notifications.cloche.avecNombre' => ({required Object libelle, required Object n}) => '⁨${libelle}⁩ (⁨${n}⁩)',
+			'notifications.cloche.prefixe' => ({required Object libelle}) => '⁨${libelle}⁩: ',
 			'notifications.cloche.annonce' => 'إعلان',
 			'notifications.cloche.fermerAnnonce' => 'إغلاق الإعلان',
-			'notifications.cloche.fermerAnnonceLu' => ({required Object titre}) => 'إغلاق الإعلان «${titre}»',
+			'notifications.cloche.fermerAnnonceLu' => ({required Object titre}) => 'إغلاق الإعلان «⁨${titre}⁩»',
 			'notifications.cloche.annonceFermee' => 'أُغلق الإعلان، ويبقى في «الإعلانات».',
 			'notifications.cloche.annuler' => 'تراجع',
 			'notifications.cloche.fermetureNonConfirmee' => 'لم يُؤكَّد إغلاق الإعلان بعد. أعد المحاولة بعد لحظة.',
@@ -30419,7 +30419,7 @@ extension on TraductionsAr {
 			'notifications.cloche.videAFairePhrase' => 'حين يُنتظر منك إجراء، يظهر هنا.',
 			'notifications.cloche.erreurTitre' => 'تعذّرت قراءة الإشعارات',
 			'notifications.cloche.erreurPhrase' => 'تعذّرت القراءة من جهتنا. أعد المحاولة بعد لحظة.',
-			'notifications.cloche.horsLigne' => 'أنت غير متصل: ما يظهر هنا من آخر قراءة.',
+			'notifications.cloche.horsLigne' => 'ما يظهر هنا من آخر قراءة.',
 			'notifications.cloche.annonceLu' => ({required Object titre, required Object quand}) => '⁨${titre}⁩، إعلان، ⁨${quand}⁩',
 			'notifications.evenements.annonceDirection' => 'إعلان من الأكاديمية',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'إعلان: ⁨${titre}⁩',

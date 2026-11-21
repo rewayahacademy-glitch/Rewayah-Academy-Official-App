@@ -9870,11 +9870,11 @@
       "ongletTout": "Tout",
       "ongletAnnonces": "Annonces",
       "avecNombre": "{libelle} ({n})",
-      "prefixe": "{libelle} : ",
+      "prefixe": "{libelle} : ",
       "annonce": "Annonce",
       "fermerAnnonce": "Fermer l'annonce",
-      "fermerAnnonceLu": "Fermer l'annonce « {titre} »",
-      "annonceFermee": "Annonce fermée. Elle reste dans « Annonces ».",
+      "fermerAnnonceLu": "Fermer l'annonce « {titre} »",
+      "annonceFermee": "Annonce fermée. Elle reste dans « Annonces ».",
       "annuler": "Annuler",
       "fermetureNonConfirmee": "La fermeture n'est pas encore confirmée. Réessayez dans un instant.",
       "fermee": "Fermée",
@@ -9895,7 +9895,7 @@
       "videAFairePhrase": "Quand une action vous attend, elle apparaît ici.",
       "erreurTitre": "Les notifications n'ont pas pu être lues",
       "erreurPhrase": "La lecture a échoué de notre côté. Réessayez dans un instant.",
-      "horsLigne": "Vous êtes hors ligne : ce qui s'affiche date de la dernière lecture.",
+      "horsLigne": "Ce qui s'affiche date de la dernière lecture.",
       "annonceLu": "{titre}, annonce, {quand}"
     },
     "evenements": {

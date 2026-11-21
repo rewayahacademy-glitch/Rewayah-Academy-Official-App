@@ -4,11 +4,11 @@
       "ongletsLibelle": "أقسام الإشعارات",
       "ongletTout": "الكل",
       "ongletAnnonces": "الإعلانات",
-      "avecNombre": "{libelle} ({n})",
-      "prefixe": "{libelle}: ",
+      "avecNombre": "⁨{libelle}⁩ (⁨{n}⁩)",
+      "prefixe": "⁨{libelle}⁩: ",
       "annonce": "إعلان",
       "fermerAnnonce": "إغلاق الإعلان",
-      "fermerAnnonceLu": "إغلاق الإعلان «{titre}»",
+      "fermerAnnonceLu": "إغلاق الإعلان «⁨{titre}⁩»",
       "annonceFermee": "أُغلق الإعلان، ويبقى في «الإعلانات».",
       "annuler": "تراجع",
       "fermetureNonConfirmee": "لم يُؤكَّد إغلاق الإعلان بعد. أعد المحاولة بعد لحظة.",
@@ -30,7 +30,7 @@
       "videAFairePhrase": "حين يُنتظر منك إجراء، يظهر هنا.",
       "erreurTitre": "تعذّرت قراءة الإشعارات",
       "erreurPhrase": "تعذّرت القراءة من جهتنا. أعد المحاولة بعد لحظة.",
-      "horsLigne": "أنت غير متصل: ما يظهر هنا من آخر قراءة.",
+      "horsLigne": "ما يظهر هنا من آخر قراءة.",
       "annonceLu": "⁨{titre}⁩، إعلان، ⁨{quand}⁩"
     },
     "evenements": {

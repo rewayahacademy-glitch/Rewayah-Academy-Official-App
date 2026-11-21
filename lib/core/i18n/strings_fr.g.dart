@@ -17071,7 +17071,7 @@ class Traductions$notifications$cloche$fr {
 	String avecNombre({required Object libelle, required Object n}) => '${libelle} (${n})';
 
 	/// fr: '{libelle} : '
-	String prefixe({required Object libelle}) => '${libelle} : ';
+	String prefixe({required Object libelle}) => '${libelle} : ';
 
 	/// fr: 'Annonce'
 	String get annonce => 'Annonce';
@@ -17080,10 +17080,10 @@ class Traductions$notifications$cloche$fr {
 	String get fermerAnnonce => 'Fermer l\'annonce';
 
 	/// fr: 'Fermer l'annonce « {titre} »'
-	String fermerAnnonceLu({required Object titre}) => 'Fermer l\'annonce « ${titre} »';
+	String fermerAnnonceLu({required Object titre}) => 'Fermer l\'annonce « ${titre} »';
 
 	/// fr: 'Annonce fermée. Elle reste dans « Annonces ».'
-	String get annonceFermee => 'Annonce fermée. Elle reste dans « Annonces ».';
+	String get annonceFermee => 'Annonce fermée. Elle reste dans « Annonces ».';
 
 	/// fr: 'Annuler'
 	String get annuler => 'Annuler';
@@ -17145,8 +17145,8 @@ class Traductions$notifications$cloche$fr {
 	/// fr: 'La lecture a échoué de notre côté. Réessayez dans un instant.'
 	String get erreurPhrase => 'La lecture a échoué de notre côté. Réessayez dans un instant.';
 
-	/// fr: 'Vous êtes hors ligne : ce qui s'affiche date de la dernière lecture.'
-	String get horsLigne => 'Vous êtes hors ligne : ce qui s\'affiche date de la dernière lecture.';
+	/// fr: 'Ce qui s'affiche date de la dernière lecture.'
+	String get horsLigne => 'Ce qui s\'affiche date de la dernière lecture.';
 
 	/// fr: '{titre}, annonce, {quand}'
 	String annonceLu({required Object titre, required Object quand}) => '${titre}, annonce, ${quand}';
@@ -66199,11 +66199,11 @@ extension on Traductions {
 			'notifications.cloche.ongletTout' => 'Tout',
 			'notifications.cloche.ongletAnnonces' => 'Annonces',
 			'notifications.cloche.avecNombre' => ({required Object libelle, required Object n}) => '${libelle} (${n})',
-			'notifications.cloche.prefixe' => ({required Object libelle}) => '${libelle} : ',
+			'notifications.cloche.prefixe' => ({required Object libelle}) => '${libelle} : ',
 			'notifications.cloche.annonce' => 'Annonce',
 			'notifications.cloche.fermerAnnonce' => 'Fermer l\'annonce',
-			'notifications.cloche.fermerAnnonceLu' => ({required Object titre}) => 'Fermer l\'annonce « ${titre} »',
-			'notifications.cloche.annonceFermee' => 'Annonce fermée. Elle reste dans « Annonces ».',
+			'notifications.cloche.fermerAnnonceLu' => ({required Object titre}) => 'Fermer l\'annonce « ${titre} »',
+			'notifications.cloche.annonceFermee' => 'Annonce fermée. Elle reste dans « Annonces ».',
 			'notifications.cloche.annuler' => 'Annuler',
 			'notifications.cloche.fermetureNonConfirmee' => 'La fermeture n\'est pas encore confirmée. Réessayez dans un instant.',
 			'notifications.cloche.fermee' => 'Fermée',
@@ -66224,7 +66224,7 @@ extension on Traductions {
 			'notifications.cloche.videAFairePhrase' => 'Quand une action vous attend, elle apparaît ici.',
 			'notifications.cloche.erreurTitre' => 'Les notifications n\'ont pas pu être lues',
 			'notifications.cloche.erreurPhrase' => 'La lecture a échoué de notre côté. Réessayez dans un instant.',
-			'notifications.cloche.horsLigne' => 'Vous êtes hors ligne : ce qui s\'affiche date de la dernière lecture.',
+			'notifications.cloche.horsLigne' => 'Ce qui s\'affiche date de la dernière lecture.',
 			'notifications.cloche.annonceLu' => ({required Object titre, required Object quand}) => '${titre}, annonce, ${quand}',
 			'notifications.evenements.annonceDirection' => 'Annonce de l\'académie',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'Annonce : ${titre}',
