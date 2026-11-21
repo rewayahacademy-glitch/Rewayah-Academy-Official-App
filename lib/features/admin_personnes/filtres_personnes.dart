@@ -19,7 +19,7 @@ import '../../core/admin/service_comptes.dart';
 import '../../core/candidature/modeles_autres_competences.dart'
     show CatalogueCompetences;
 import '../../core/candidature/modeles_candidatures_direction.dart'
-    show FiltreCandidatures;
+    show FiltreCandidatures, TriCandidatures;
 import '../../core/domain/enums.dart';
 import '../../core/enseignants/modeles_enseignants.dart';
 import '../../core/i18n/strings.g.dart';
@@ -274,6 +274,7 @@ List<CompteAdmin> filtrerComptes(
   required Map<String, String> filtres,
   required String recherche,
   required DateTime maintenant,
+  TriComptes? tri,
 }) {
   final String? etat = filtres['etat'];
   final String? classe = filtres['classe'];
@@ -282,7 +283,7 @@ List<CompteAdmin> filtrerComptes(
   final bool demande = filtres['demande'] == 'a_traiter';
   final bool echus = filtres['acces'] == 'echus';
   // La recherche et l'ordre sont ceux de la page Comptes (une seule regle).
-  return FiltreComptes(recherche: recherche)
+  return FiltreComptes(recherche: recherche, tri: tri)
       .appliquer(tous, maintenant)
       .where(
         (CompteAdmin c) =>
@@ -350,3 +351,38 @@ Map<String, String> fileDeLaVue(
     if (vue == VueEnseignants.partis) 'partis': 'oui',
   },
 };
+
+/// La cle du tri dans l'adresse, la meme que les anciennes listes.
+const String cleTriPersonnes = 'tri';
+
+/// Le tri des comptes ecrit dans l'adresse (`nom`, `-nom` : decroissant), ou
+/// `null` : l'ordre par defaut. La meme ecriture que la page « Comptes ».
+TriComptes? triComptesDe(String? brut) {
+  if (brut == null) return null;
+  final bool decroissant = brut.startsWith('-');
+  final String nom = decroissant ? brut.substring(1) : brut;
+  for (final ChampTriComptes c in ChampTriComptes.values) {
+    if (c.name == nom) return TriComptes(c, !decroissant);
+  }
+  return null;
+}
+
+/// L'ecriture de [tri] dans l'adresse, ou `null` sans tri.
+String? adresseDuTriComptes(TriComptes? tri) =>
+    tri == null ? null : '${tri.croissant ? '' : '-'}${tri.champ.name}';
+
+/// Le tri des candidats ecrit dans l'adresse ; sans valeur lisible, la
+/// derniere activite (le defaut du serveur).
+TriCandidatures triCandidatsDe(String? brut) =>
+    TriCandidatures.values.firstWhere(
+      (TriCandidatures x) => x.name == brut,
+      orElse: () => TriCandidatures.activite,
+    );
+
+/// Le tri des enseignants ecrit dans l'adresse ; sans valeur lisible, la
+/// derniere activite.
+TriEnseignants triEnseignantsDe(String? brut) =>
+    TriEnseignants.values.firstWhere(
+      (TriEnseignants x) => x.name == brut,
+      orElse: () => TriEnseignants.activite,
+    );

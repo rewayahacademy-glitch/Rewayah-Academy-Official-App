@@ -87,6 +87,12 @@ class FileDuDossier {
   /// Les parametres de la liste : filtre, tri (et page, sans effet ici).
   final Map<String, String> adresse;
 
+  /// Le tri de la file des enseignants (`tri` dans l'adresse).
+  TriEnseignants get triEnseignants => TriEnseignants.values.firstWhere(
+    (TriEnseignants x) => x.name == adresse['tri'],
+    orElse: () => TriEnseignants.activite,
+  );
+
   /// Le filtre et le tri de la file.
   RequeteCandidatures get requete => requeteDepuisAdresse(adresse);
 
@@ -139,7 +145,7 @@ voisinsDuDossierProvider = FutureProvider.autoDispose
         return enseignants.voisins(
           demande.reference,
           filtre: demande.file.filtreEnseignants,
-          tri: TriEnseignants.activite,
+          tri: demande.file.triEnseignants,
         );
       }
       final PortCandidaturesDirection? port = ref.watch(

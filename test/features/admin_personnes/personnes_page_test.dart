@@ -970,7 +970,8 @@ void main() {
       );
       addTearDown(conteneur.dispose);
       final PageEnseignants page = await conteneur.read(
-        enseignantsActifsProvider('').future,
+        enseignantsActifsProvider((recherche: '', tri: TriEnseignants.activite))
+            .future,
       );
       expect(
         page.lignes.map((LigneEnseignant l) => l.dossier.reference).toList(),
