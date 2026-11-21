@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderContainer;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -93,6 +94,30 @@ class _Enseignants implements PortEnseignants {
             p: _lignes.where((LigneEnseignant l) => l.phase == p).length,
         },
       ),
+    );
+  }
+}
+
+/// Un serveur qui rend, par phase, des lignes fixees (une meme personne
+/// peut y etre dans deux phases).
+class _ParPhase implements PortEnseignants {
+  const _ParPhase(this._parPhase);
+
+  final Map<PhaseEnseignant, List<LigneEnseignant>> _parPhase;
+
+  @override
+  Future<PageEnseignants> lister({
+    required FiltreEnseignants filtre,
+    required TriEnseignants tri,
+    required int page,
+  }) async {
+    final List<LigneEnseignant> lignes =
+        _parPhase[filtre.phase] ?? const <LigneEnseignant>[];
+    return PageEnseignants(
+      lignes: lignes,
+      total: lignes.length,
+      page: 1,
+      taillePage: 50,
     );
   }
 }
@@ -918,6 +943,41 @@ void main() {
       expect(lues, isNot(contains('Personne6 Essai')));
       expect(compteur(tester), '6 sur 6');
       expect(tester.takeException(), isNull);
+    });
+
+    test('« Actifs » : une personne rendue par deux phases (elle a change '
+        'de phase entre deux lectures) n\'est gardee qu\'une fois, la '
+        'derniere lue', () async {
+      LigneEnseignant ligne(String ref, PhaseEnseignant p) => LigneEnseignant(
+        dossier: ligneTest(id: ref, reference: ref, nom: 'Personne $ref'),
+        phase: p,
+      );
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: [
+          portEnseignantsProvider.overrideWithValue(
+            _ParPhase(<PhaseEnseignant, List<LigneEnseignant>>{
+              // Lue « en poste », puis « en pause » un instant plus tard.
+              PhaseEnseignant.enPoste: <LigneEnseignant>[
+                ligne('CAND-00301', PhaseEnseignant.enPoste),
+                ligne('CAND-00302', PhaseEnseignant.enPoste),
+              ],
+              PhaseEnseignant.pause: <LigneEnseignant>[
+                ligne('CAND-00301', PhaseEnseignant.pause),
+              ],
+            }),
+          ),
+        ],
+      );
+      addTearDown(conteneur.dispose);
+      final PageEnseignants page = await conteneur.read(
+        enseignantsActifsProvider('').future,
+      );
+      expect(
+        page.lignes.map((LigneEnseignant l) => l.dossier.reference).toList(),
+        <String>['CAND-00302', 'CAND-00301'],
+      );
+      expect(page.lignes.last.phase, PhaseEnseignant.pause);
+      expect(page.total, 2);
     });
 
     testWidgets('telephone : les vues passent en menu deroulant, rien ne '

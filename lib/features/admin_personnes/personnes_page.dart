@@ -151,7 +151,11 @@ typedef ListeVue = ({
 /// cherche.
 final enseignantsActifsProvider = FutureProvider.autoDispose
     .family<PageEnseignants, String>((Ref ref, String recherche) async {
-      final List<LigneEnseignant> lignes = <LigneEnseignant>[];
+      // Une seule ligne par dossier : une personne qui change de phase entre
+      // deux lectures serait rendue par deux phases. La derniere lue gagne,
+      // a sa place la plus recente.
+      final Map<String, LigneEnseignant> parReference =
+          <String, LigneEnseignant>{};
       CompteursEnseignants compteurs = const CompteursEnseignants();
       for (final PhaseEnseignant phase in phasesActives) {
         for (int page = 1; page <= _pagesMaxParPhase; page++) {
@@ -164,12 +168,19 @@ final enseignantsActifsProvider = FutureProvider.autoDispose
             ).future,
           );
           compteurs = lue.compteurs;
-          lignes.addAll(lue.lignes);
+          for (final LigneEnseignant l in lue.lignes) {
+            parReference
+              ..remove(l.dossier.reference)
+              ..[l.dossier.reference] = l;
+          }
           if (lue.lignes.isEmpty || page >= lue.pages) break;
         }
       }
+      final List<LigneEnseignant> lignes = parReference.values.toList(
+        growable: false,
+      );
       return PageEnseignants(
-        lignes: List<LigneEnseignant>.unmodifiable(lignes),
+        lignes: lignes,
         total: lignes.length,
         page: 1,
         taillePage: lignes.isEmpty ? 1 : lignes.length,
