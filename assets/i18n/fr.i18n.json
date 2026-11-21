@@ -8351,9 +8351,15 @@
       "filtres": "Quels fils afficher",
       "filtreAttente": "En attente de réponse ({n})",
       "filtreTous": "Toutes les parties ({n})",
-      "autresFils": "Voir les {n} autres fils",
+      "autresFils(plural, param=n)": {
+        "one": "Voir l'autre fil",
+        "other": "Voir les {n} autres fils"
+      },
       "replierFils": "Ne garder que 3 fils",
-      "voirFil": "Voir toute la conversation ({n} messages)",
+      "voirFil(plural, param=n)": {
+        "one": "Voir le message entier",
+        "other": "Voir toute la conversation ({n} messages)"
+      },
       "replierFil": "Replier la conversation",
       "aucunEnAttente": "Aucun lecteur n'attend votre réponse. Tous les fils sont dans « Toutes les parties »."
     },

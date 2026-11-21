@@ -7347,9 +7347,15 @@ class _Traductions$admin$guideCommentaires$en extends Traductions$admin$guideCom
 	@override String get filtres => 'Which threads to show';
 	@override String filtreAttente({required Object n}) => 'Waiting for an answer (${n})';
 	@override String filtreTous({required Object n}) => 'All parts (${n})';
-	@override String autresFils({required Object n}) => 'See the ${n} other threads';
+	@override String autresFils({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'See the other thread',
+		other: 'See the ${n} other threads',
+	);
 	@override String get replierFils => 'Keep only 3 threads';
-	@override String voirFil({required Object n}) => 'See the whole conversation (${n} messages)';
+	@override String voirFil({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'See the whole message',
+		other: 'See the whole conversation (${n} messages)',
+	);
 	@override String get replierFil => 'Fold the conversation';
 	@override String get aucunEnAttente => 'No reader is waiting for your answer. All threads are in "All parts".';
 }
@@ -36021,9 +36027,9 @@ extension on TraductionsEn {
 			'admin.guideCommentaires.filtres' => 'Which threads to show',
 			'admin.guideCommentaires.filtreAttente' => ({required Object n}) => 'Waiting for an answer (${n})',
 			'admin.guideCommentaires.filtreTous' => ({required Object n}) => 'All parts (${n})',
-			'admin.guideCommentaires.autresFils' => ({required Object n}) => 'See the ${n} other threads',
+			'admin.guideCommentaires.autresFils' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'See the other thread', other: 'See the ${n} other threads', ), 
 			'admin.guideCommentaires.replierFils' => 'Keep only 3 threads',
-			'admin.guideCommentaires.voirFil' => ({required Object n}) => 'See the whole conversation (${n} messages)',
+			'admin.guideCommentaires.voirFil' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'See the whole message', other: 'See the whole conversation (${n} messages)', ), 
 			'admin.guideCommentaires.replierFil' => 'Fold the conversation',
 			'admin.guideCommentaires.aucunEnAttente' => 'No reader is waiting for your answer. All threads are in "All parts".',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'Last recalculation at ${heure}',

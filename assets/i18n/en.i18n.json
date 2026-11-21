@@ -8258,9 +8258,15 @@
       "filtres": "Which threads to show",
       "filtreAttente": "Waiting for an answer ({n})",
       "filtreTous": "All parts ({n})",
-      "autresFils": "See the {n} other threads",
+      "autresFils(plural, param=n)": {
+        "one": "See the other thread",
+        "other": "See the {n} other threads"
+      },
       "replierFils": "Keep only 3 threads",
-      "voirFil": "See the whole conversation ({n} messages)",
+      "voirFil(plural, param=n)": {
+        "one": "See the whole message",
+        "other": "See the whole conversation ({n} messages)"
+      },
       "replierFil": "Fold the conversation",
       "aucunEnAttente": "No reader is waiting for your answer. All threads are in \"All parts\"."
     },

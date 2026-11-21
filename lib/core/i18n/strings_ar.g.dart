@@ -7671,9 +7671,23 @@ class _Traductions$admin$guideCommentaires$ar extends Traductions$admin$guideCom
 	@override String get filtres => 'أي التعليقات تُعرض';
 	@override String filtreAttente({required Object n}) => 'بانتظار الرد (⁨${n}⁩)';
 	@override String filtreTous({required Object n}) => 'كل الأجزاء (⁨${n}⁩)';
-	@override String autresFils({required Object n}) => 'عرض ⁨${n}⁩ تعليقات أخرى';
+	@override String autresFils({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا تعليقات أخرى',
+		one: 'عرض التعليق الآخر',
+		two: 'عرض التعليقين الآخرين',
+		few: 'عرض ⁨${n}⁩ تعليقات أخرى',
+		many: 'عرض ⁨${n}⁩ تعليقًا آخر',
+		other: 'عرض ⁨${n}⁩ تعليق آخر',
+	);
 	@override String get replierFils => 'الإبقاء على 3 تعليقات فقط';
-	@override String voirFil({required Object n}) => 'عرض المحادثة كاملة (⁨${n}⁩ رسائل)';
+	@override String voirFil({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'عرض المحادثة كاملة',
+		one: 'عرض الرسالة كاملة',
+		two: 'عرض المحادثة كاملة (رسالتان)',
+		few: 'عرض المحادثة كاملة (⁨${n}⁩ رسائل)',
+		many: 'عرض المحادثة كاملة (⁨${n}⁩ رسالة)',
+		other: 'عرض المحادثة كاملة (⁨${n}⁩ رسالة)',
+	);
 	@override String get replierFil => 'طيّ المحادثة';
 	@override String get aucunEnAttente => 'لا ينتظر أي قارئ ردّك. كل التعليقات في «كل الأجزاء».';
 }
@@ -37783,9 +37797,9 @@ extension on TraductionsAr {
 			'admin.guideCommentaires.filtres' => 'أي التعليقات تُعرض',
 			'admin.guideCommentaires.filtreAttente' => ({required Object n}) => 'بانتظار الرد (⁨${n}⁩)',
 			'admin.guideCommentaires.filtreTous' => ({required Object n}) => 'كل الأجزاء (⁨${n}⁩)',
-			'admin.guideCommentaires.autresFils' => ({required Object n}) => 'عرض ⁨${n}⁩ تعليقات أخرى',
+			'admin.guideCommentaires.autresFils' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا تعليقات أخرى', one: 'عرض التعليق الآخر', two: 'عرض التعليقين الآخرين', few: 'عرض ⁨${n}⁩ تعليقات أخرى', many: 'عرض ⁨${n}⁩ تعليقًا آخر', other: 'عرض ⁨${n}⁩ تعليق آخر', ), 
 			'admin.guideCommentaires.replierFils' => 'الإبقاء على 3 تعليقات فقط',
-			'admin.guideCommentaires.voirFil' => ({required Object n}) => 'عرض المحادثة كاملة (⁨${n}⁩ رسائل)',
+			'admin.guideCommentaires.voirFil' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض المحادثة كاملة', one: 'عرض الرسالة كاملة', two: 'عرض المحادثة كاملة (رسالتان)', few: 'عرض المحادثة كاملة (⁨${n}⁩ رسائل)', many: 'عرض المحادثة كاملة (⁨${n}⁩ رسالة)', other: 'عرض المحادثة كاملة (⁨${n}⁩ رسالة)', ), 
 			'admin.guideCommentaires.replierFil' => 'طيّ المحادثة',
 			'admin.guideCommentaires.aucunEnAttente' => 'لا ينتظر أي قارئ ردّك. كل التعليقات في «كل الأجزاء».',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'آخر إعادة حساب: ⁨${heure}⁩',

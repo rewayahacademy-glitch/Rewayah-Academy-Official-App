@@ -15394,14 +15394,20 @@ class Traductions$admin$guideCommentaires$fr {
 	/// fr: 'Toutes les parties ({n})'
 	String filtreTous({required Object n}) => 'Toutes les parties (${n})';
 
-	/// fr: 'Voir les {n} autres fils'
-	String autresFils({required Object n}) => 'Voir les ${n} autres fils';
+	/// fr: '(one) {Voir l'autre fil} (other) {Voir les {n} autres fils}'
+	String autresFils({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Voir l\'autre fil',
+		other: 'Voir les ${n} autres fils',
+	);
 
 	/// fr: 'Ne garder que 3 fils'
 	String get replierFils => 'Ne garder que 3 fils';
 
-	/// fr: 'Voir toute la conversation ({n} messages)'
-	String voirFil({required Object n}) => 'Voir toute la conversation (${n} messages)';
+	/// fr: '(one) {Voir le message entier} (other) {Voir toute la conversation ({n} messages)}'
+	String voirFil({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Voir le message entier',
+		other: 'Voir toute la conversation (${n} messages)',
+	);
 
 	/// fr: 'Replier la conversation'
 	String get replierFil => 'Replier la conversation';
@@ -64851,9 +64857,9 @@ extension on Traductions {
 			'admin.guideCommentaires.filtres' => 'Quels fils afficher',
 			'admin.guideCommentaires.filtreAttente' => ({required Object n}) => 'En attente de réponse (${n})',
 			'admin.guideCommentaires.filtreTous' => ({required Object n}) => 'Toutes les parties (${n})',
-			'admin.guideCommentaires.autresFils' => ({required Object n}) => 'Voir les ${n} autres fils',
+			'admin.guideCommentaires.autresFils' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir l\'autre fil', other: 'Voir les ${n} autres fils', ), 
 			'admin.guideCommentaires.replierFils' => 'Ne garder que 3 fils',
-			'admin.guideCommentaires.voirFil' => ({required Object n}) => 'Voir toute la conversation (${n} messages)',
+			'admin.guideCommentaires.voirFil' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir le message entier', other: 'Voir toute la conversation (${n} messages)', ), 
 			'admin.guideCommentaires.replierFil' => 'Replier la conversation',
 			'admin.guideCommentaires.aucunEnAttente' => 'Aucun lecteur n\'attend votre réponse. Tous les fils sont dans « Toutes les parties ».',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'Dernier recalcul à ${heure}',
