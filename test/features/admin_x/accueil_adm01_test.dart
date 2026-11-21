@@ -63,6 +63,11 @@ Future<void> _monter(
               TableauDeBordPage(horloge: () => _maintenant),
         ),
         GoRoute(
+          path: Routes.adminOperationsChiffres,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('CHIFFRES')),
+        ),
+        GoRoute(
           path: Routes.adminSecuriteAuditJournal,
           builder: (BuildContext _, GoRouterState _) =>
               const Scaffold(body: Text('ADM-04')),
@@ -203,6 +208,24 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('ADM-04'), findsOneWidget);
     });
+
+    // CHIFFRES-ACADEMIE (directeur, 21/11/2026 : il ne trouvait pas la page).
+    for (final Size taille in const <Size>[Size(1440, 900), Size(390, 844)]) {
+      testWidgets('${taille.width.toInt()} : « Les chiffres de l\'academie » '
+          's\'ouvre depuis l\'Accueil', (WidgetTester tester) async {
+        await _monter(tester, taille: taille);
+        final Finder lien = find.byKey(TableauDeBordPage.cleChiffres);
+        await tester.ensureVisible(lien);
+        await tester.pumpAndSettle();
+        expect(
+          find.descendant(of: lien, matching: find.text(t.admin.chiffres.lien)),
+          findsOneWidget,
+        );
+        await tester.tap(lien);
+        await tester.pumpAndSettle();
+        expect(find.text('CHIFFRES'), findsOneWidget);
+      });
+    }
 
     testWidgets('vide : une phrase, pas de carte', (WidgetTester tester) async {
       await _monter(tester, taille: const Size(1440, 900));
