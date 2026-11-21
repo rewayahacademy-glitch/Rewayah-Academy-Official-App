@@ -27,17 +27,32 @@ class _Faux implements PortCommentairesGuide {
         jaime: 12,
         pasClair: 3,
         fils: <FilGuide>[
-          FilGuide(
-            lecteur: 'Amina Exemple',
-            messages: <MessageGuide>[
-              MessageGuide(
-                id: 'm1',
-                corps: 'Et pour les adultes ?',
-                creeLe: DateTime(2026, 11, 21, 9),
-                auteur: AuteurMessageGuide.lecteur,
-              ),
-            ],
-          ),
+          for (int i = 0; i < 6; i++)
+            FilGuide(
+              lecteur: 'Lecteur ${i + 1}',
+              messages: <MessageGuide>[
+                MessageGuide(
+                  id: 'a$i',
+                  corps: 'Et pour les adultes, la part est-elle la meme ?',
+                  creeLe: DateTime(2026, 11, 21, 8),
+                  auteur: AuteurMessageGuide.lecteur,
+                ),
+                if (i.isEven) ...<MessageGuide>[
+                  MessageGuide(
+                    id: 'b$i',
+                    corps: 'Oui : 47 % du prix pour une classe d adultes.',
+                    creeLe: DateTime(2026, 11, 21, 9),
+                    auteur: AuteurMessageGuide.direction,
+                  ),
+                  MessageGuide(
+                    id: 'c$i',
+                    corps: 'Merci. Et si un eleve est absent ?',
+                    creeLe: DateTime(2026, 11, 21, 10),
+                    auteur: AuteurMessageGuide.lecteur,
+                  ),
+                ],
+              ],
+            ),
         ],
       ),
       const PartieGuideDirection(

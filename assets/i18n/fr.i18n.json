@@ -2756,7 +2756,7 @@
         "retard": "Retenez trois chiffres : 3, 8 et 11 minutes.",
         "attente": "L'attente peut durer. Gardez vos activités, et surveillez vos messages.",
         "piece": "C'est pour protéger les enfants. Et c'est vous aussi qu'on protège.",
-        "moi": "C'est moi ! Je suis en pause pour l'instant : on me règle avant de me relancer.",
+        "moi": "C'est moi ! Je réponds aux questions qui reviennent ; l'équipe décide.",
         "fin": "Quelle que soit votre réponse, merci d'avoir lu jusqu'au bout."
       }
     },
@@ -8347,7 +8347,21 @@
       "repondre": "Répondre",
       "echec": "La réponse n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Touchez de nouveau « Répondre ».",
       "erreur": "Les commentaires du guide n'ont pas pu être lus. Touchez « Réessayer ».",
-      "indisponible": "Les commentaires du guide ne sont pas encore disponibles."
+      "indisponible": "Les commentaires du guide ne sont pas encore disponibles.",
+      "filtres": "Quels fils afficher",
+      "filtreAttente": "En attente de réponse ({n})",
+      "filtreTous": "Toutes les parties ({n})",
+      "autresFils(plural, param=n)": {
+        "one": "Voir l'autre fil",
+        "other": "Voir les {n} autres fils"
+      },
+      "replierFils": "Ne garder que 3 fils",
+      "voirFil(plural, param=n)": {
+        "one": "Voir le message entier",
+        "other": "Voir toute la conversation ({n} messages)"
+      },
+      "replierFil": "Replier la conversation",
+      "aucunEnAttente": "Aucun lecteur n'attend votre réponse. Tous les fils sont dans « Toutes les parties »."
     },
     "chiffres": {
       "recalcul": "Dernier recalcul à {heure}",
