@@ -33,7 +33,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
-import '../../core/communications/modeles_communication.dart';
 import '../../core/domain/enums.dart';
 import '../../core/enseignants/modeles_enseignants.dart';
 import '../../core/enseignants/port_enseignants.dart';
@@ -47,6 +46,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
@@ -63,8 +63,10 @@ import '../admin_comptes/apercu_compte.dart';
 import '../admin_comptes/liste_comptes.dart';
 import '../admin_enseignants/enseignants_page.dart'
     show libellePhase, motAttend;
-import '../com_messages/apercu_profil_candidat.dart';
+import '../com_messages/apercu_profil_candidat.dart'
+    show apercuCandidatureProvider;
 import '../foyer/photo_eleve.dart';
+import 'apercu_candidat.dart';
 
 /// Les onglets de la page, un par population.
 enum OngletPersonnes {
@@ -175,6 +177,9 @@ class PersonnesPage extends ConsumerWidget {
 
   /// La cle de l'apercu de droite.
   static const Key cleApercu = ValueKey<String>('personnes-apercu');
+
+  /// La cle de la barre precedent / suivant de l'apercu.
+  static const Key cleVoisins = ValueKey<String>('personnes-voisins');
 
   /// La cle du menu des anciennes pages de la rubrique.
   static const Key cleAutresPages = ValueKey<String>('personnes-autres-pages');
@@ -349,6 +354,9 @@ class PersonnesPage extends ConsumerWidget {
                 for (final LigneEnseignant l in page.lignes) _deEnseignant(l),
               ],
               vide: t.admin.comptes.videEnseignants,
+              relire: () => ref.invalidate(pageEnseignantsProvider(requeteEns)),
+              decalage: (page.page - 1) * page.taillePage,
+              total: page.total,
               pied: page.total > page.lignes.length
                   ? PiedDeListe(
                       debut: (page.page - 1) * page.taillePage + 1,
@@ -380,6 +388,7 @@ class PersonnesPage extends ConsumerWidget {
                 for (final CompteAdmin c in tous)
                   if (VueComptes.de(c).contains(vue)) _deCompte(c, vue),
               ],
+              relire: () => ref.invalidate(comptesProvider),
               vide: switch (vue) {
                 VueComptes.eleves => t.admin.comptes.videEleves,
                 VueComptes.familles => t.admin.comptes.videFamilles,
@@ -420,7 +429,10 @@ class PersonnesPage extends ConsumerWidget {
     required bool coteACote,
     required List<LignePersonne> lignes,
     required String vide,
+    required VoidCallback relire,
     Widget? pied,
+    int decalage = 0,
+    int? total,
   }) {
     final String? element = requete['element'];
     final int rang = lignes.indexWhere((LignePersonne l) => l.cle == element);
@@ -567,7 +579,31 @@ class PersonnesPage extends ConsumerWidget {
                     Expanded(
                       child: SingleChildScrollView(
                         key: cleApercu,
-                        child: _apercu(context, choisie),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            if (choisie != null) ...<Widget>[
+                              // Precedent / suivant, sans revenir a la liste.
+                              BarrePrecedentSuivant(
+                                key: cleVoisins,
+                                position: t.recrutement.suivant.position(
+                                  rang: decalage + rang + 1,
+                                  total: total ?? lignes.length,
+                                ),
+                                libellePrecedent:
+                                    t.admin.personnesPage.precedente,
+                                libelleSuivant: t.admin.personnesPage.suivante,
+                                onPrecedent: rang > 0 ? () => voisin(-1) : null,
+                                onSuivant: rang + 1 < lignes.length
+                                    ? () => voisin(1)
+                                    : null,
+                              ),
+                              Ecart.vMd,
+                            ],
+                            _apercu(context, choisie, relire),
+                          ],
+                        ),
                       ),
                     ),
                     if (aPrecharger != null)
@@ -587,7 +623,7 @@ class PersonnesPage extends ConsumerWidget {
     );
   }
 
-  Widget _apercu(BuildContext context, LignePersonne? l) {
+  Widget _apercu(BuildContext context, LignePersonne? l, VoidCallback relire) {
     final p = t.admin.personnesPage;
     if (l == null) {
       return EmptyState(
@@ -600,10 +636,10 @@ class PersonnesPage extends ConsumerWidget {
       return AppCard(
         // Une cle par dossier : l'apercu du voisin ne garde rien du precedent.
         key: ValueKey<String>('apercu-${e.dossier.id}'),
-        child: ApercuProfilCandidat(
-          candidatureId: e.dossier.id,
-          candidat: Participant(id: e.dossier.id, nomAffiche: l.nom),
-          onOuvrir: (String _) => _ouvrirDossier(context, e),
+        child: ApercuCandidatPersonnes(
+          ligne: e.dossier,
+          onOuvrirDossier: () => _ouvrirDossier(context, e),
+          onChange: relire,
         ),
       );
     }
