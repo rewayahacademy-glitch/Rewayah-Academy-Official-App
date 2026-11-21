@@ -31,7 +31,7 @@
       "erreurTitre": "تعذّرت قراءة الإشعارات",
       "erreurPhrase": "تعذّرت القراءة من جهتنا. أعد المحاولة بعد لحظة.",
       "horsLigne": "أنت غير متصل: ما يظهر هنا من آخر قراءة.",
-      "annonceLu": "{titre}، إعلان، {quand}"
+      "annonceLu": "⁨{titre}⁩، إعلان، ⁨{quand}⁩"
     },
     "evenements": {
       "annonceDirection": "إعلان من الأكاديمية",

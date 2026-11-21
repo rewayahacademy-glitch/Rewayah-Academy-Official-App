@@ -2632,7 +2632,7 @@ class _Traductions$notifications$cloche$ar extends Traductions$notifications$clo
 	@override String get erreurTitre => 'تعذّرت قراءة الإشعارات';
 	@override String get erreurPhrase => 'تعذّرت القراءة من جهتنا. أعد المحاولة بعد لحظة.';
 	@override String get horsLigne => 'أنت غير متصل: ما يظهر هنا من آخر قراءة.';
-	@override String annonceLu({required Object titre, required Object quand}) => '${titre}، إعلان، ${quand}';
+	@override String annonceLu({required Object titre, required Object quand}) => '⁨${titre}⁩، إعلان، ⁨${quand}⁩';
 }
 
 // Path: notifications.evenements
@@ -30398,7 +30398,7 @@ extension on TraductionsAr {
 			'notifications.cloche.erreurTitre' => 'تعذّرت قراءة الإشعارات',
 			'notifications.cloche.erreurPhrase' => 'تعذّرت القراءة من جهتنا. أعد المحاولة بعد لحظة.',
 			'notifications.cloche.horsLigne' => 'أنت غير متصل: ما يظهر هنا من آخر قراءة.',
-			'notifications.cloche.annonceLu' => ({required Object titre, required Object quand}) => '${titre}، إعلان، ${quand}',
+			'notifications.cloche.annonceLu' => ({required Object titre, required Object quand}) => '⁨${titre}⁩، إعلان، ⁨${quand}⁩',
 			'notifications.evenements.annonceDirection' => 'إعلان من الأكاديمية',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'إعلان: ⁨${titre}⁩',
 			'notifications.evenements.bienvenueEquipe' => 'مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.',

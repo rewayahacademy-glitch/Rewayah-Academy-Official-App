@@ -4,17 +4,14 @@
 //
 // Le contrat serveur (`com_mes_annonces` pagine, `com_annonce_fermer`,
 // `com_annonce_rouvrir`, champs de traduction) est porte par le lot
-// ANNONCES-SERVEUR, qui etend `PortAnnoncesDirection`. Tant qu'il n'est pas
-// dans `main`, la source de production lit le fil actuel (`mesAnnonces()`),
-// pagine ici, et **ne sait pas fermer** : la croix n'est pas rendue (un bouton
-// qui ne peut pas aboutir n'est pas rendu, `lib/CLAUDE.md`). Les ecrans ne
-// lisent que cette source : le jour ou le port gagne le contrat, seule
-// [SourceAnnoncesDepuisPort] change.
+// ANNONCES-SERVEUR (PR 694), dans `PortAnnoncesDirection`. Les ecrans ne
+// lisent que cette source ; une source qui ne sait pas fermer
+// ([SourceAnnoncesCloche.fermetureServie] faux) ne montre aucune croix (un
+// bouton qui ne peut pas aboutir n'est pas rendu, `lib/CLAUDE.md`).
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/capacites/capacite_indisponible.dart';
 import '../../com_annonces/port_annonces_direction.dart';
 
 /// Une annonce de l'academie, vue par la cloche.
@@ -34,13 +31,18 @@ class AnnonceCloche {
     this.langueOriginale,
   });
 
-  /// L'annonce du fil actuel, sans traduction ni fermeture.
+  /// L'annonce telle que le port la rend (contrat du 21/11).
   factory AnnonceCloche.depuis(AnnonceRecue a) => AnnonceCloche(
     id: a.id,
     titre: a.titre,
     texte: a.texte,
     publieeLe: a.publieeLe,
     vue: a.vue,
+    fermee: a.fermee,
+    traduite: a.traduite,
+    titreOriginal: a.titreOriginal,
+    texteOriginal: a.texteOriginal,
+    langueOriginale: a.langueOriginale,
   );
 
   /// Identifiant.
@@ -138,11 +140,10 @@ abstract interface class SourceAnnoncesCloche {
   Future<void> marquerVue(String id);
 }
 
-/// La source de production : le fil actuel du port, pagine ici.
-///
-/// Le fil actuel rend toutes les annonces des 90 derniers jours d'un coup ;
-/// la page est decoupee ici, par instant de diffusion. Il ne connait ni la
-/// fermeture ni la traduction.
+/// La source de production : le port des annonces (pagination, fermeture et
+/// traduction au serveur). Sans source (mineur, migration absente), le port
+/// refuse par `CapaciteIndisponible` : la cloche montre alors ses
+/// notifications seules.
 class SourceAnnoncesDepuisPort implements SourceAnnoncesCloche {
   /// Cree la source sur [port].
   const SourceAnnoncesDepuisPort(this.port);
@@ -151,7 +152,7 @@ class SourceAnnoncesDepuisPort implements SourceAnnoncesCloche {
   final PortAnnoncesDirection port;
 
   @override
-  bool get fermetureServie => false;
+  bool get fermetureServie => port is! AnnoncesDirectionIndisponibles;
 
   @override
   Future<PageAnnoncesCloche> page({
@@ -159,23 +160,24 @@ class SourceAnnoncesDepuisPort implements SourceAnnoncesCloche {
     DateTime? avant,
     bool fermees = false,
   }) async {
-    final List<AnnonceRecue> toutes = await port.mesAnnonces();
-    return decouperPage(
-      <AnnonceCloche>[
-        for (final AnnonceRecue a in toutes) AnnonceCloche.depuis(a),
-      ],
+    final PageAnnonces lue = await port.mesAnnonces(
       limite: limite,
       avant: avant,
+      fermees: fermees,
+    );
+    return PageAnnoncesCloche(
+      annonces: List<AnnonceCloche>.unmodifiable(<AnnonceCloche>[
+        for (final AnnonceRecue a in lue.annonces) AnnonceCloche.depuis(a),
+      ]),
+      suite: lue.suite,
     );
   }
 
   @override
-  Future<void> fermer(String id) =>
-      Future<void>.error(const CapaciteIndisponible('com_annonce_fermer'));
+  Future<void> fermer(String id) => port.fermer(id);
 
   @override
-  Future<void> rouvrir(String id) =>
-      Future<void>.error(const CapaciteIndisponible('com_annonce_rouvrir'));
+  Future<void> rouvrir(String id) => port.rouvrir(id);
 
   @override
   Future<void> marquerVue(String id) => port.marquerVue(id);
