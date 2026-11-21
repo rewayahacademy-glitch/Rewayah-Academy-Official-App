@@ -59,6 +59,61 @@ const Set<TypeObjetLie> typesObjetsFilMetier = <TypeObjetLie>{
 bool estFilMetier(ResumeFil resume) =>
     typesObjetsFilMetier.contains(resume.objet.type);
 
+/// PERSONNES-PERF (20/11/2026) : les messages non lus d'un fil metier, sans
+/// le reste du fil. Ce qu'il faut a l'icone des messages de la coquille et
+/// aux pastilles des candidatures, au lieu de toute la messagerie.
+@immutable
+class NonLusFil {
+  /// Cree la ligne.
+  const NonLusFil({
+    required this.filId,
+    required this.type,
+    required this.objetId,
+    required this.nonLus,
+  });
+
+  /// Le fil.
+  final String filId;
+
+  /// La nature de l'objet du fil.
+  final TypeObjetLie type;
+
+  /// L'objet du fil (la candidature, la Classe...).
+  final String objetId;
+
+  /// Le nombre de messages non lus, toujours plus de zero.
+  final int nonLus;
+}
+
+/// Un port des messages qui sait lire les non-lus seuls (le serveur rend
+/// `com_non_lus_par_objet`). Un port qui ne le sait pas est lu par
+/// [lireNonLus] a travers [PortMessagesMetier.fils].
+abstract interface class LectureNonLus {
+  /// Les fils metier de la personne qui ont des non-lus, aux memes droits que
+  /// [PortMessagesMetier.fils].
+  Future<List<NonLusFil>> nonLus();
+}
+
+/// Les non-lus tires de la liste complete des fils : meme resultat que
+/// [LectureNonLus.nonLus], pour un port ou un serveur qui ne la rend pas.
+List<NonLusFil> nonLusDepuisFils(List<ResumeFil> fils) => <NonLusFil>[
+  for (final ResumeFil f in fils)
+    if (estFilMetier(f) && f.attention.nonLus > 0)
+      NonLusFil(
+        filId: f.id,
+        type: f.objet.type,
+        objetId: f.objet.id,
+        nonLus: f.attention.nonLus,
+      ),
+];
+
+/// Les non-lus de la personne : la lecture legere si le port la connait,
+/// sinon la liste complete des fils.
+Future<List<NonLusFil>> lireNonLus(PortMessagesMetier port) async {
+  if (port is LectureNonLus) return (port as LectureNonLus).nonLus();
+  return nonLusDepuisFils(await port.fils());
+}
+
 /// Une capacite d'action sur un fil, portee par le fil rendu (COM-BR-16,
 /// forme b : la capacite liee a un objet voyage avec l'objet). Fermee par
 /// defaut ; le serveur refuse quand meme.

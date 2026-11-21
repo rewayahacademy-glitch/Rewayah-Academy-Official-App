@@ -29,6 +29,7 @@ import '../reseau/service_reseau.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 import '../theme/app_delais.dart';
+import 'visibilite_onglet.dart';
 
 /// Ce qu'a fait la personne signalee : recevoir un message, ou lire un fil
 /// (sur cet appareil ou un autre).
@@ -210,33 +211,144 @@ class EtatVeilleMessagesControleur extends Notifier<EtatVeilleMessages> {
   void enDirect() => _changer(enDirect: true);
 
   /// Le canal est tombe.
+  ///
+  /// PERSONNES-PERF (20/11/2026) : le rang ne monte pas. La chute du canal
+  /// n'apporte aucun changement du serveur a relire : seul [EtatVeilleMessages.enDirect]
+  /// change, et les ecrans qui le lisent se redessinent (message K-59) ; les
+  /// relectures viennent du repli et du retour du canal. Un canal qui tombait
+  /// en boucle faisait relire a chaque chute.
   void horsDirect() {
-    if (state.enDirect) _changer(enDirect: false);
+    if (!state.enDirect) return;
+    state = EtatVeilleMessages(
+      rang: state.rang,
+      enDirect: false,
+      dernier: state.dernier,
+    );
   }
+
+  /// PERSONNES-PERF : le canal est rejoint, mais une relecture vient d'etre
+  /// faite pour un retour precedent (canal qui se rejoint en boucle) : l'etat
+  /// redit « en direct » sans monter le rang. La relecture qui couvre ce retour
+  /// est programmee par la veille, a la fin de sa fenetre.
+  void enDirectSansRelire() {
+    if (state.enDirect) return;
+    state = EtatVeilleMessages(
+      rang: state.rang,
+      enDirect: true,
+      dernier: state.dernier,
+    );
+  }
+}
+
+/// Monte a chaque lecture des messages reussie (non-lus, liste) : la veille
+/// s'en sert pour rouvrir tout de suite un canal qu'elle avait ferme
+/// (relecture du 21/11, M3).
+final NotifierProvider<LecturesMessagesReussies, int>
+lecturesMessagesReussiesProvider =
+    NotifierProvider<LecturesMessagesReussies, int>(
+      LecturesMessagesReussies.new,
+    );
+
+/// Compte les lectures des messages reussies.
+class LecturesMessagesReussies extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  /// Une lecture vient de reussir.
+  void signaler() => state = state + 1;
 }
 
 /// La veille des messages. **Montee par `RewayahApp` seulement**, comme la
 /// veille de fraicheur : un ecran teste seul n'ouvre aucun canal. Ouverte
 /// quand la session porte un profil, fermee quand il disparait ; elle ecrit
 /// [etatVeilleMessagesProvider], tient le repli et pose l'avis.
+///
+/// PERSONNES-PERF (20/11/2026 ; en production, un onglet du bureau laisse
+/// ouvert relisait toute la messagerie 90 fois par heure, la nuit, sans aucun
+/// geste) :
+/// - le repli (canal tombe) est UN minuteur a la fois, rearme apres chaque
+///   tic : [AppDelais.repliMessages] quand l'application est vue,
+///   [AppDelais.repliMessagesCache] quand elle est cachee ; au retour, une
+///   relecture immediate puis le rythme vu ;
+/// - un canal qui se rejoint en boucle ne fait relire qu'une fois par
+///   [AppDelais.rejointeMessagesMin] (les retours suivants sont reunis en une
+///   relecture a la fin de la fenetre : rien n'est perdu) ;
+/// - apres [AppDelais.echecsCanalAvantPause] echecs sans retour en direct, la
+///   veille ferme le canal et le rouvre apres une attente qui double, de
+///   [AppDelais.reouvertureCanalMin] a [AppDelais.reouvertureCanalMax] (et pas
+///   avant le retour de l'onglet s'il est cache).
 final Provider<void> veilleMessagesProvider = Provider<void>((Ref ref) {
   final String? profil = ref.watch(
     sessionProvider.select((SessionState s) => s.profileId),
   );
   if (profil == null) return;
   final PortVeilleMessages port = ref.watch(portVeilleMessagesProvider);
+  final PortVisibilite visibilite = ref.watch(portVisibiliteProvider);
   final EtatVeilleMessagesControleur etat = ref.read(
     etatVeilleMessagesProvider.notifier,
   );
   StreamSubscription<SignalMessages>? abonnement;
+  StreamSubscription<bool>? vue;
   Timer? repli;
+  Timer? fenetreRejointe;
+  Timer? reouverture;
+  bool rejointeEnAttente = false;
+  bool horsDirect = false;
+  bool visible = visibilite.visible;
+  bool reouvrirAuRetour = false;
+  int echecs = 0;
+  Duration attente = AppDelais.reouvertureCanalMin;
+
+  // Un seul minuteur de repli a la fois, rearme apres son tic.
+  void armerRepli() {
+    repli?.cancel();
+    repli = null;
+    if (!horsDirect) return;
+    repli = Timer(
+      visible ? AppDelais.repliMessages : AppDelais.repliMessagesCache,
+      () {
+        repli = null;
+        etat.relire();
+        armerRepli();
+      },
+    );
+  }
+
+  late final void Function() ouvrir;
+
+  void rejoint() {
+    echecs = 0;
+    attente = AppDelais.reouvertureCanalMin;
+    horsDirect = false;
+    armerRepli();
+    // Relecture du 21/11 (S1) : un fil ouvert relit TOUT DE SUITE au retour
+    // du canal (un message envoye pendant la coupure ne doit pas attendre la
+    // fin de la fenetre) ; la fenetre d'une minute ne vaut que sans fil ouvert.
+    final bool filOuvert = ref.read(filAfficheProvider) != null;
+    if (fenetreRejointe == null || filOuvert) {
+      etat.enDirect();
+      rejointeEnAttente = false;
+      // A la fin de la fenetre, les retours reunis font UNE relecture, qui
+      // rouvre une fenetre : jamais plus d'une relecture par fenetre.
+      void fermerFenetre() {
+        fenetreRejointe = null;
+        if (!rejointeEnAttente) return;
+        rejointeEnAttente = false;
+        etat.relire();
+        fenetreRejointe = Timer(AppDelais.rejointeMessagesMin, fermerFenetre);
+      }
+
+      fenetreRejointe ??= Timer(AppDelais.rejointeMessagesMin, fermerFenetre);
+    } else {
+      rejointeEnAttente = true;
+      etat.enDirectSansRelire();
+    }
+  }
 
   void auSignal(SignalMessages signal) {
     switch (signal) {
       case CanalMessagesRejoint():
-        repli?.cancel();
-        repli = null;
-        etat.enDirect();
+        rejoint();
       case final FilABouge f:
         etat.signaler(f);
         if (f.nature == NatureSignalMessages.message &&
@@ -248,21 +360,77 @@ final Provider<void> veilleMessagesProvider = Provider<void>((Ref ref) {
     }
   }
 
+  void pause() {
+    // Le client temps reel retente seul ; au-dela de quelques echecs, la
+    // veille ferme le canal et le rouvre plus tard, de plus en plus tard.
+    unawaited(abonnement?.cancel());
+    abonnement = null;
+    echecs = 0;
+    final Duration delai = attente;
+    final Duration double = attente * 2;
+    attente = double > AppDelais.reouvertureCanalMax
+        ? AppDelais.reouvertureCanalMax
+        : double;
+    reouverture?.cancel();
+    reouverture = Timer(delai, () {
+      reouverture = null;
+      if (visible) {
+        ouvrir();
+      } else {
+        reouvrirAuRetour = true;
+      }
+    });
+  }
+
   void auxErreurs(Object erreur) {
     journalDev('Veille des messages en erreur : ${erreur.runtimeType}');
     if (erreur is! ErreurCanalMessages) return;
     etat.horsDirect();
-    repli ??= Timer.periodic(AppDelais.repliMessages, (_) => etat.relire());
+    if (!horsDirect) {
+      horsDirect = true;
+      armerRepli();
+    }
+    echecs += 1;
+    if (echecs >= AppDelais.echecsCanalAvantPause) pause();
   }
 
-  void ouvrir() {
+  ouvrir = () {
     unawaited(abonnement?.cancel());
     abonnement = port.ecouter(profil).listen(auSignal, onError: auxErreurs);
-  }
+  };
 
   ouvrir();
+  vue = visibilite.changements().listen((bool v) {
+    if (v == visible) return;
+    visible = v;
+    if (!v) {
+      armerRepli();
+      return;
+    }
+    // Relecture du 21/11 (M3) : au retour de l'onglet, un canal ferme par
+    // la veille se rouvre tout de suite, sans attendre la fin de sa pause.
+    if (reouvrirAuRetour || reouverture != null) {
+      reouvrirAuRetour = false;
+      reouverture?.cancel();
+      reouverture = null;
+      ouvrir();
+    }
+    if (horsDirect) etat.relire();
+    armerRepli();
+  });
+  // Relecture du 21/11 (M3) : une lecture des messages reussie prouve que le
+  // serveur repond ; un canal ferme par la veille se rouvre alors tout de suite.
+  ref.listen<int>(lecturesMessagesReussiesProvider, (int? _, int _) {
+    if (reouverture == null || !visible) return;
+    reouverture?.cancel();
+    reouverture = null;
+    ouvrir();
+  });
   ref.onDispose(() {
     repli?.cancel();
+    fenetreRejointe?.cancel();
+    reouverture?.cancel();
+    unawaited(vue?.cancel());
     unawaited(abonnement?.cancel());
   });
   // Au retour du reseau : nouvel abonnement et relecture.
@@ -271,6 +439,10 @@ final Provider<void> veilleMessagesProvider = Provider<void>((Ref ref) {
     AsyncValue<bool> apres,
   ) {
     if ((avant?.value ?? false) && !(apres.value ?? false)) {
+      reouverture?.cancel();
+      reouverture = null;
+      echecs = 0;
+      attente = AppDelais.reouvertureCanalMin;
       ouvrir();
       etat.relire();
     }
