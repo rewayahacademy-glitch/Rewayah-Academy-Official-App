@@ -40,6 +40,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/port_fondateurs.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/port_autres_competences.dart';
@@ -56,6 +57,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
@@ -65,6 +67,7 @@ import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pied_de_liste.dart';
@@ -76,6 +79,7 @@ import '../admin_candidature/references_dossiers.dart'
 import '../admin_candidatures/libelles_candidatures.dart'
     show etatAffiche, libelleSalle, nomAffiche;
 import '../admin_comptes/apercu_compte.dart';
+import '../admin_comptes/gestes_compte.dart';
 import '../admin_comptes/liste_comptes.dart';
 import '../admin_enseignants/enseignants_page.dart'
     show libellePhase, motAttend;
@@ -244,7 +248,7 @@ class LignePersonne {
 }
 
 /// L'ecran « Personnes ».
-class PersonnesPage extends ConsumerWidget {
+class PersonnesPage extends ConsumerStatefulWidget {
   /// Cree l'ecran. [requete] : les parametres de l'adresse.
   const PersonnesPage({
     super.key,
@@ -294,6 +298,82 @@ class PersonnesPage extends ConsumerWidget {
 
   /// La cle de la liste.
   static const Key cleListe = ValueKey<String>('personnes-liste');
+
+  @override
+  ConsumerState<PersonnesPage> createState() => _PersonnesPageEtat();
+}
+
+class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
+  Map<String, String> get requete => widget.requete;
+
+  void Function(String chemin, String identifiant)? get ouvrirDossier =>
+      widget.ouvrirDossier;
+
+  /// Etape (f) : la phrase du dernier geste sur un compte (coche
+  /// « fondateur »), ou `null`.
+  String? _retour;
+
+  /// Le bilan de la derniere suppression, ou `null`.
+  BilanSuppression? _bilan;
+
+  /// Une suppression est partie : un second toucher est ignore.
+  bool _suppressionEnCours = false;
+
+  /// Coche ou decoche [c] ; la phrase apres la reponse du serveur seulement.
+  Future<void> _poserFondateur(CompteAdmin c, {required bool fondateur}) async {
+    final String? message = await poserFondateur(ref, c, fondateur: fondateur);
+    if (message == null || !mounted) return;
+    setState(() => _retour = null);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) setState(() => _retour = message);
+    });
+  }
+
+  /// Supprime [c] apres sa confirmation (le geste de la page « Comptes »).
+  Future<void> _supprimer(CompteAdmin c) async {
+    if (_suppressionEnCours) return;
+    final BilanSuppression? bilan = await supprimerComptes(
+      context,
+      ref,
+      <CompteAdmin>[c],
+      onDebut: () => setState(() {
+        _suppressionEnCours = true;
+        _bilan = null;
+      }),
+    );
+    if (bilan == null || !mounted) return;
+    setState(() {
+      _suppressionEnCours = false;
+      _bilan = bilan;
+    });
+  }
+
+  /// Les gestes d'un compte : ceux de la page « Comptes », dans le meme ordre
+  /// (`gestesDuCompte`), le destructif en dernier. Au telephone en Interface
+  /// guidee, pas de suppression (comme dans « Comptes »).
+  List<EntreeAction> _gestesCompte(
+    BuildContext context,
+    CompteAdmin c,
+    VueComptes vue,
+  ) {
+    final Set<String>? fondateurs = ref.watch(fondateursProvider).value;
+    final bool suppressionOfferte =
+        DataCollection.enTableau(context) ||
+        !AppMetriques.of(context).estEnfant;
+    return gestesDuCompte(
+      context,
+      c,
+      fondateur: porteLaCocheFondateur(c, vue, fondateurs)
+          ? fondateurs!.contains(c.profilId)
+          : null,
+      onFondateur: ({required bool fondateur}) =>
+          unawaited(_poserFondateur(c, fondateur: fondateur)),
+      onSupprimer:
+          suppressionOfferte && compteSupprimable(c) && !_suppressionEnCours
+          ? () => unawaited(_supprimer(c))
+          : null,
+    );
+  }
 
   OngletPersonnes get _onglet => OngletPersonnes.depuis(requete['onglet']);
 
@@ -473,7 +553,7 @@ class PersonnesPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final p = t.admin.personnesPage;
     final OngletPersonnes onglet = _onglet;
     final AsyncValue<List<CompteAdmin>> comptes = ref.watch(comptesProvider);
@@ -578,7 +658,7 @@ class PersonnesPage extends ConsumerWidget {
     }
 
     final Widget selecteur = SelecteurSection<OngletPersonnes>(
-      key: cleOnglets,
+      key: PersonnesPage.cleOnglets,
       libelle: p.choix,
       menuAuContenu: true,
       valeur: onglet,
@@ -590,7 +670,7 @@ class PersonnesPage extends ConsumerWidget {
             libelle: libelle(o),
             // Au telephone, le mot court sous l'icone (pilote, 21/11/2026).
             libelleCourt: court(o),
-            icone: iconeOnglet(o),
+            icone: PersonnesPage.iconeOnglet(o),
           ),
       ],
     );
@@ -615,7 +695,7 @@ class PersonnesPage extends ConsumerWidget {
     // rangee qui defile).
     final Widget? vues = ens
         ? SelecteurSection<VueEnseignants>(
-            key: cleVues,
+            key: PersonnesPage.cleVues,
             libelle: p.choixVue,
             menuAuContenu: true,
             valeur: vueEns,
@@ -639,7 +719,7 @@ class PersonnesPage extends ConsumerWidget {
                 header: true,
                 child: Text(
                   libelle(onglet),
-                  key: cleNomOnglet,
+                  key: PersonnesPage.cleNomOnglet,
                   style: AppPalette.of(context).inkStrong
                       .applyTo(textes.titleMedium ?? const TextStyle()),
                 ),
@@ -711,6 +791,17 @@ class PersonnesPage extends ConsumerWidget {
           )
         else
           barre,
+        // Etape (f) : ce qu'un geste sur un compte vient de donner (coche
+        // « fondateur », suppression), dans le fil, au-dessus de la liste.
+        if (vue != null) LocalFeedback(message: _retour),
+        if (vue != null)
+          if (_bilan case final BilanSuppression bilan) ...<Widget>[
+            VueBilanSuppression(
+              bilan: bilan,
+              onFermer: () => setState(() => _bilan = null),
+            ),
+            Ecart.vSm,
+          ],
       ],
     );
 
@@ -801,7 +892,7 @@ class PersonnesPage extends ConsumerWidget {
       // (son tiroir ne montre pas les sous-liens), jusqu'a l'etape (e).
       actionsEntete: <Widget>[
         MenuActions(
-          key: cleAutresPages,
+          key: PersonnesPage.cleAutresPages,
           libelle: p.autresPages,
           icone: AppIcons.reglages,
           actions: <EntreeAction>[
@@ -846,7 +937,16 @@ class PersonnesPage extends ConsumerWidget {
             context,
             nom: l.nom,
             informations: informationsDuCompte(c, _onglet.vue!),
-            gestes: const [],
+            // Les gestes du menu de la ligne, sauf celui qui efface (il reste
+            // dans le menu « ... », avec sa confirmation).
+            gestes: <EntreeAction>[
+              for (final EntreeAction g in _gestesCompte(
+                context,
+                c,
+                _onglet.vue!,
+              ))
+                if (!g.destructif) g,
+            ],
           ),
         );
       }
@@ -867,7 +967,7 @@ class PersonnesPage extends ConsumerWidget {
             icone: AppIcons.rienAAfficher,
           )
         : DataCollection<LignePersonne>(
-            key: cleListe,
+            key: PersonnesPage.cleListe,
             lignes: lignes,
             cle: (LignePersonne l) => ValueKey<String>(l.cle),
             // Rendu par tranches (LISTES-2) : des lignes, jamais de grandes
@@ -882,6 +982,32 @@ class PersonnesPage extends ConsumerWidget {
                 ? (LignePersonne l) => l.cle == element
                 : null,
             piedCollant: pied,
+            // Etape (f) : le menu d'actions d'un compte, en fin de ligne,
+            // hors de la cible de la ligne (la ligne entiere reste cliquable).
+            // Une seule colonne, jugee sur toute la liste.
+            actionsLigne:
+                lignes.any(
+                  (LignePersonne l) =>
+                      l.compte != null &&
+                      _gestesCompte(
+                        context,
+                        l.compte!,
+                        _onglet.vue!,
+                      ).isNotEmpty,
+                )
+                ? (BuildContext contexte, LignePersonne l) {
+                    final List<EntreeAction> gestes = l.compte == null
+                        ? const <EntreeAction>[]
+                        : _gestesCompte(contexte, l.compte!, _onglet.vue!);
+                    return gestes.isEmpty
+                        ? const SizedBox.shrink()
+                        : MenuActions(
+                            points: true,
+                            objet: l.nom,
+                            actions: gestes,
+                          );
+                  }
+                : null,
             colonnes: <ColonneDonnees<LignePersonne>>[
               ColonneDonnees<LignePersonne>(
                 titre: t.admin.comptes.colonnePersonne,
@@ -983,7 +1109,7 @@ class PersonnesPage extends ConsumerWidget {
                     Ecart.hLg,
                     Expanded(
                       child: SingleChildScrollView(
-                        key: cleApercu,
+                        key: PersonnesPage.cleApercu,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           mainAxisSize: MainAxisSize.min,
@@ -991,7 +1117,7 @@ class PersonnesPage extends ConsumerWidget {
                             if (choisie != null) ...<Widget>[
                               // Precedent / suivant, sans revenir a la liste.
                               BarrePrecedentSuivant(
-                                key: cleVoisins,
+                                key: PersonnesPage.cleVoisins,
                                 position: t.recrutement.suivant.position(
                                   rang: decalage + rang + 1,
                                   total: total ?? lignes.length,
@@ -1108,7 +1234,7 @@ class PersonnesPage extends ConsumerWidget {
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: LienFleche(
-                key: cleVerifierPiece,
+                key: PersonnesPage.cleVerifierPiece,
                 libelle: p.verifierPiece,
                 alignerEnDebut: true,
                 onPress: ouvrir ?? () {},
@@ -1165,6 +1291,26 @@ class PersonnesPage extends ConsumerWidget {
               p.demandeATraiter,
               style: AppPalette.of(context).inkMuted
                   .applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+          ],
+          // Etape (f) : les gestes du compte, ceux du menu de sa ligne, sauf
+          // celui qui efface. Jamais de bouton plein : l'apercu informe
+          // d'abord (K-56).
+          for (final (int rang, EntreeAction g) in _gestesCompte(
+            context,
+            c,
+            _onglet.vue!,
+          ).where((EntreeAction g) => !g.destructif).indexed) ...<Widget>[
+            if (rang == 0) Ecart.vLg else Ecart.vSm,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ActionPrincipale(
+                key: cleGesteApercuCompte(rang),
+                libelle: g.libelle,
+                niveau: NiveauAction.secondaire,
+                pleineLargeur: false,
+                onPress: g.onChoix,
+              ),
             ),
           ],
         ],

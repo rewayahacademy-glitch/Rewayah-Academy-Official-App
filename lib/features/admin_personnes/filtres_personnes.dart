@@ -181,9 +181,17 @@ List<TypeFiltrePersonnes> typesDeFiltre(
         (code: e.name, libelle: libelleEtatAffiche(e)),
     ],
   );
+  // DASH-ADM-ECHUS : les acces provisoires dont la date est passee (le filtre
+  // « Acces echus » de la page Comptes).
+  final TypeFiltrePersonnes acces = TypeFiltrePersonnes(
+    cle: 'acces',
+    libelle: p.typeAcces,
+    valeurs: <ValeurFiltre>[(code: 'echus', libelle: t.admin.tableau.comptes)],
+  );
   return switch (onglet) {
     OngletPersonnes.eleves => <TypeFiltrePersonnes>[
       etat,
+      acces,
       TypeFiltrePersonnes(
         cle: 'classe',
         libelle: k.colonneClasse,
@@ -203,6 +211,7 @@ List<TypeFiltrePersonnes> typesDeFiltre(
     ],
     OngletPersonnes.familles => <TypeFiltrePersonnes>[
       etat,
+      acces,
       TypeFiltrePersonnes(
         cle: 'demande',
         libelle: p.typeDemande,
@@ -271,6 +280,7 @@ List<CompteAdmin> filtrerComptes(
   final String? age = filtres['age'];
   final String? role = filtres['role'];
   final bool demande = filtres['demande'] == 'a_traiter';
+  final bool echus = filtres['acces'] == 'echus';
   // La recherche et l'ordre sont ceux de la page Comptes (une seule regle).
   return FiltreComptes(recherche: recherche)
       .appliquer(tous, maintenant)
@@ -281,7 +291,8 @@ List<CompteAdmin> filtrerComptes(
                 (nomClasseEleve(c) != null) == (classe == 'avec')) &&
             (age == null || c.tranche?.name == age) &&
             (role == null || c.role?.name == role) &&
-            (!demande || c.admissionATraiter),
+            (!demande || c.admissionATraiter) &&
+            (!echus || c.accesEchu(maintenant)),
       )
       .toList(growable: false);
 }
