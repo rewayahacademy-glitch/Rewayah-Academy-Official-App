@@ -61,7 +61,7 @@ suggestion.** Aucun agent ne déclare cette page faite sans que le directeur l'a
 | Composants vivants (§13 du plan) | File d'avatars, bulle, capsule liquide | PE-F7 |
 | Langage de mouvement | La décision datée qui amende `DECISION-MOUVEMENT` n'est pas écrite ; la compétence du mouvement n'existe pas | PE-F3, PE-F6 |
 | Icônes | Nouvelle famille d'icônes fixes ; une quinzaine d'icônes animées (paquet Lottie : `pubspec.yaml`, licence) | PE-F1, PE-F2 |
-| En-tête du bureau | Panneaux légers (messages avec réponse rapide, notifications, annonces) ; recherche qui trouve les personnes | PE-C7 |
+| En-tête du bureau | Panneau léger des messages avec réponse rapide ; recherche qui trouve les personnes (le panneau des notifications et des annonces est dans `main`, CLOCHE-C, PR 696, 21/11 : preuve du directeur en attente ; question R-06 posée au directeur) | PE-C7 |
 | Accueil du candidat | Fusionné (#662) après une première version jugée non fidèle : **fidélité à la maquette jamais confirmée par le directeur** ; question ouverte : que garde l'onglet « Académie » | PE-B4, PE-B5 |
 | Trois pages : Accueil, Personnes, Messages, le reste dans « Plus » | « Plus » n'existe pas (le menu réduit, le menu « Outils » et les retours vers Personnes sont dans `main` depuis le 21/11, PR 683) | PE-C8 |
 | Gestes | Retour par glissement, glisser une ligne pour agir, glisser pour répondre | PE-D10 |
