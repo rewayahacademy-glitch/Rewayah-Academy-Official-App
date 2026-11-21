@@ -287,19 +287,17 @@ class VerrouLettre extends StatelessWidget {
             child: Text('• ${m.nom}', style: corps),
           ),
         Ecart.vXl,
-        if (acceptable)
-          ActionPrincipale(
-            libelle: l.completer,
-            onPress: () => GoRouter.of(context).go(chemin),
-          )
-        else ...<Widget>[
+        // Un seul bouton plein : accepter ce qui manque, ou, quand le compte
+        // ne le peut pas, ecrire a la direction (K-56).
+        if (!acceptable) ...<Widget>[
           Text(l.directionOuvre, key: VerrouLettre.cleDirection, style: corps),
           Ecart.vXl,
-          ActionPrincipale(
-            libelle: l.ecrireDirection,
-            onPress: () => GoRouter.of(context).go(cheminEcrire),
-          ),
         ],
+        ActionPrincipale(
+          libelle: acceptable ? l.completer : l.ecrireDirection,
+          onPress: () =>
+              GoRouter.of(context).go(acceptable ? chemin : cheminEcrire),
+        ),
       ],
     );
   }
