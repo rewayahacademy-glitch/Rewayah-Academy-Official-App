@@ -8,6 +8,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -110,11 +111,16 @@ Future<GoRouter> _monter(WidgetTester tester, String depart) async {
       overrides: _surcharges(),
       child: TranslationProvider(
         child: Consumer(
-          builder: (BuildContext _, WidgetRef ref, Widget? _) {
+          builder: (BuildContext contexte, WidgetRef ref, Widget? _) {
             routeur = ref.read(routeurProvider);
             routeur.go(depart);
+            // La langue courante et ses delegues : l'arabe se lit de droite a
+            // gauche (capture LETTRE-SERVEUR).
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: TranslationProvider.of(contexte).flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
               routerConfig: routeur,
             );
           },
@@ -190,6 +196,31 @@ void main() {
       expect(find.byType(ProfilEnseignantPage), findsOneWidget);
     });
 
+    // LETTRE-SERVEUR : la lettre aux candidats enseignants, depuis le Compte ;
+    // le serveur decide qui la lit (ici le port n'est pas branche).
+    testWidgets('la ligne de la lettre ouvre /lire/lettre-enseignants', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester, Routes.enseignantProfil);
+      final Finder ligne = find.byKey(ProfilEnseignantPage.lettreCandidatsKey);
+      expect(
+        find.descendant(
+          of: ligne,
+          matching: find.text(t.recrutement.lettre.entree),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: ligne,
+          matching: find.text(t.recrutement.lettre.entreeLegende),
+        ),
+        findsOneWidget,
+      );
+      await _toucher(tester, ligne);
+      expect(routeur.state.matchedLocation, Routes.lettreEnseignants);
+    });
+
     testWidgets('« Methode de connexion » ouvre la page commune, le retour '
         'ramene au Compte', (WidgetTester tester) async {
       final GoRouter routeur = await _monter(tester, Routes.enseignantProfil);
@@ -250,6 +281,25 @@ void main() {
       await stabiliser(tester);
       debugPrint('PNG ${await capturerVue(tester, 'compte_390_clair')}');
     });
+    // LETTRE-SERVEUR : la ligne de la lettre dans le Compte, fr et ar.
+    for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
+      ('fr', AppLocale.fr),
+      ('ar', AppLocale.ar),
+    ]) {
+      testWidgets('compte_lettre_390_$nom', (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        await _monter(tester, Routes.enseignantProfil);
+        await tester.ensureVisible(
+          find.byKey(ProfilEnseignantPage.lettreCandidatsKey),
+        );
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'compte_lettre_390_$nom')}',
+        );
+      });
+    }
     for (final (String nom, AppLocale langue, ThemeMode theme)
         in <(String, AppLocale, ThemeMode)>[
           ('clair', AppLocale.fr, ThemeMode.light),
