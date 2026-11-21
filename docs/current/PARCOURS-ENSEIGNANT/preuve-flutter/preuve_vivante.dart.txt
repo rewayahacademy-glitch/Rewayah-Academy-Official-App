@@ -1,0 +1,875 @@
+// Preuve en vrai Flutter : les mouvements de la maquette, compilés pour le web.
+// Un compteur d'images par seconde dit la vérité sur l'appareil qui l'ouvre.
+import 'dart:convert';
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+
+import 'polices.dart';
+
+const Color violet = Color(0xFF8652E6);
+const Color lilas = Color(0xFFDCCAFD);
+const Color encre = Color(0xFF110E20);
+const Color fond = Color(0xFFF7F5FE);
+const Color surface2 = Color(0xFFF1EFF4);
+const Color doux = Color(0xFF655E70);
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Future<ByteData> octets(String b) async => ByteData.sublistView(Uint8List.fromList(base64Decode(b)));
+  await (FontLoader('DMSans')..addFont(octets(dmSans))).load();
+  await (FontLoader('Jakarta')..addFont(octets(jakarta))).load();
+  runApp(const Preuve());
+}
+
+class Preuve extends StatelessWidget {
+  const Preuve({super.key});
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'DMSans',
+          scaffoldBackgroundColor: fond,
+          colorScheme: ColorScheme.fromSeed(seedColor: violet),
+        ),
+        home: const Page(),
+      );
+}
+
+/// Un ressort simple : position, vitesse, cible. Il dit quand il est au repos.
+class R {
+  R(this.x, {this.k = 220, this.c = 16}) : cible = x;
+  double x, v = 0, cible, k, c;
+  bool get repos => (x - cible).abs() < 0.001 && v.abs() < 0.01;
+  void pas(double dt) {
+    final double a = (cible - x) * k - v * c;
+    v += a * dt;
+    x += v * dt;
+  }
+}
+
+/// Fait tourner des ressorts tant qu'ils bougent, puis s'arrête tout seul.
+mixin Vivant<T extends StatefulWidget> on State<T>, SingleTickerProviderStateMixin<T> {
+  late final Ticker _t = createTicker(_tic);
+  Duration _avant = Duration.zero;
+  double temps = 0;
+  Iterable<R> get ressorts;
+  bool get toujours => false;
+  void surPas(double dt) {}
+  void reveil() {
+    if (!_t.isActive) {
+      _avant = Duration.zero;
+      _t.start();
+    }
+  }
+
+  void _tic(Duration d) {
+    final double dt = math.min(0.032, (d - _avant).inMicroseconds / 1e6);
+    _avant = d;
+    temps += dt;
+    for (final R r in ressorts) {
+      r.pas(dt);
+    }
+    surPas(dt);
+    setState(() {});
+    if (!toujours && ressorts.every((R r) => r.repos) && finiAussi) {
+      _t.stop();
+    }
+  }
+
+  bool get finiAussi => true;
+  @override
+  void dispose() {
+    _t.dispose();
+    super.dispose();
+  }
+}
+
+class Page extends StatefulWidget {
+  const Page({super.key});
+  @override
+  State<Page> createState() => _PageState();
+}
+
+class _PageState extends State<Page> {
+  final ValueNotifier<Offset> doigt = ValueNotifier<Offset>(Offset.zero);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Listener(
+        onPointerHover: (PointerHoverEvent e) => doigt.value = e.position,
+        onPointerMove: (PointerMoveEvent e) => doigt.value = e.position,
+        onPointerDown: (PointerDownEvent e) => doigt.value = e.position,
+        child: Stack(children: <Widget>[
+          SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 60),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1100),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  const Text('Preuve en vrai Flutter',
+                      style: TextStyle(fontFamily: 'Jakarta', fontSize: 30, fontWeight: FontWeight.w800, color: encre)),
+                  const SizedBox(height: 6),
+                  const Text(
+                      'Cette page est compilée avec Flutter 3.47.9, le même moteur que votre application. '
+                      'Le compteur en haut à droite mesure les images par seconde sur votre appareil.',
+                      style: TextStyle(fontSize: 16, color: doux)),
+                  const SizedBox(height: 20),
+                  Wrap(spacing: 12, runSpacing: 12, children: <Widget>[
+                    Etabli(titre: 'Praxis', enfant: PraxisDemo(doigt: doigt)),
+                    const Etabli(titre: "La jauge d'eau", enfant: JaugeDemo()),
+                    const Etabli(titre: 'La bulle vivante', enfant: BulleDemo()),
+                    const Etabli(titre: "La file qui s'entrechoque", enfant: FileDemo()),
+                    const Etabli(titre: 'Barre liquide, ressort, avis', enfant: BarreDemo()),
+                    const Etabli(titre: 'Les coins justes', enfant: CoinsDemo()),
+                  ]),
+                ]),
+              ),
+            ),
+          ),
+          const Positioned(top: 12, right: 12, child: Compteur()),
+        ]),
+      ),
+    );
+  }
+}
+
+class Etabli extends StatelessWidget {
+  const Etabli({super.key, required this.titre, required this.enfant});
+  final String titre;
+  final Widget enfant;
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 340,
+        padding: const EdgeInsets.all(16),
+        decoration: const ShapeDecoration(
+            color: Colors.white, shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(28)))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Text(titre, style: const TextStyle(fontFamily: 'Jakarta', fontSize: 17, fontWeight: FontWeight.w700, color: encre)),
+          const SizedBox(height: 12),
+          enfant,
+        ]),
+      );
+}
+
+/// Images par seconde réellement produites, et temps moyen d'une image.
+class Compteur extends StatefulWidget {
+  const Compteur({super.key});
+  @override
+  State<Compteur> createState() => _CompteurState();
+}
+
+class _CompteurState extends State<Compteur> {
+  final List<FrameTiming> _lot = <FrameTiming>[];
+  String texte = 'au repos';
+  DateTime _dernier = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addTimingsCallback(_recu);
+  }
+
+  void _recu(List<FrameTiming> t) {
+    _lot.addAll(t);
+    final DateTime m = DateTime.now();
+    final int ms = m.difference(_dernier).inMilliseconds;
+    if (ms < 700 || !mounted) return;
+    final double ips = _lot.length * 1000 / ms;
+    final double moy = _lot.fold<int>(0, (int s, FrameTiming f) => s + f.totalSpan.inMicroseconds) / _lot.length / 1000;
+    _lot.clear();
+    _dernier = m;
+    setState(() => texte = '${ips.round()} images/s · ${moy.toStringAsFixed(1)} ms');
+  }
+
+  @override
+  void dispose() {
+    SchedulerBinding.instance.removeTimingsCallback(_recu);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: const ShapeDecoration(color: encre, shape: StadiumBorder()),
+        child: Text(texte,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13, fontFeatures: <ui.FontFeature>[ui.FontFeature.tabularFigures()])),
+      );
+}
+
+/// Bouton qui s'enfonce au doigt et revient en ressort.
+class Touche extends StatefulWidget {
+  const Touche({super.key, required this.label, required this.surTouche, this.fort = false});
+  final String label;
+  final VoidCallback surTouche;
+  final bool fort;
+  @override
+  State<Touche> createState() => _ToucheState();
+}
+
+class _ToucheState extends State<Touche> with SingleTickerProviderStateMixin<Touche>, Vivant<Touche> {
+  final R e = R(1, k: 420, c: 14);
+  @override
+  Iterable<R> get ressorts => <R>[e];
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTapDown: (_) {
+          e.cible = 0.92;
+          reveil();
+        },
+        onTapCancel: () {
+          e.cible = 1;
+          reveil();
+        },
+        onTapUp: (_) {
+          e.cible = 1;
+          reveil();
+          widget.surTouche();
+        },
+        child: Transform.scale(
+          scale: e.x,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+            decoration: ShapeDecoration(color: widget.fort ? violet : surface2, shape: const StadiumBorder()),
+            child: Text(widget.label,
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: widget.fort ? Colors.white : encre)),
+          ),
+        ),
+      );
+}
+
+// ───────────────────────── Praxis ─────────────────────────
+enum Humeur { calme, heureux, rit, curieux, excite, soucieux, colere, pleure, gene, dort }
+
+class PraxisDemo extends StatefulWidget {
+  const PraxisDemo({super.key, required this.doigt});
+  final ValueNotifier<Offset> doigt;
+  @override
+  State<PraxisDemo> createState() => _PraxisDemoState();
+}
+
+class _PraxisDemoState extends State<PraxisDemo> with SingleTickerProviderStateMixin<PraxisDemo>, Vivant<PraxisDemo> {
+  final GlobalKey cle = GlobalKey();
+  Humeur humeur = Humeur.heureux;
+  // Paupières du haut (descente, inclinaison) et du bas, par œil : gauche puis droite.
+  final List<R> haut = <R>[R(0), R(0)], pente = <R>[R(0), R(0)], bas = <R>[R(0), R(0)], taille = <R>[R(1), R(1)];
+  final R gx = R(0, k: 300, c: 26), gy = R(0, k: 300, c: 26);
+  final R teteX = R(0, k: 380, c: 13), penche = R(0, k: 160, c: 11), ecrase = R(0, k: 320, c: 11);
+  final R pompon = R(0, k: 70, c: 4.5), rouge = R(0, k: 60, c: 14), joues = R(0, k: 300, c: 9);
+  double y = 0, vy = 0;
+  bool chute = false;
+  double larme = -1; // 0..1 pendant la chute d'une larme
+  int larmes = 0;
+  @override
+  Iterable<R> get ressorts => <R>[...haut, ...pente, ...bas, ...taille, gx, gy, teteX, penche, ecrase, pompon, rouge, joues];
+  @override
+  bool get finiAussi => !chute && larme < 0 && humeur != Humeur.rit;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.doigt.addListener(_regard);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      poser(Humeur.heureux);
+      tomber();
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.doigt.removeListener(_regard);
+    super.dispose();
+  }
+
+  void _regard() {
+    final RenderBox? b = cle.currentContext?.findRenderObject() as RenderBox?;
+    if (b == null) return;
+    final Offset c = b.localToGlobal(b.size.center(Offset.zero));
+    final Offset d = widget.doigt.value - c;
+    final double l = math.max(1, d.distance), f = math.min(1, l / 220);
+    gx.cible = d.dx / l * f;
+    gy.cible = d.dy / l * f;
+    reveil();
+  }
+
+  void poser(Humeur h) {
+    humeur = h;
+    for (int i = 0; i < 2; i++) {
+      final double s = i == 0 ? -1 : 1; // l'œil gauche penche à l'inverse du droit
+      double ph = 0, pe = 0, pb = 0, ta = 1;
+      switch (h) {
+        case Humeur.calme:
+          break;
+        case Humeur.heureux:
+          pb = 0.52;
+        case Humeur.rit:
+          pb = 0.62;
+        case Humeur.curieux:
+          ta = i == 0 ? 1.22 : 0.9;
+          ph = i == 0 ? 0 : 0.22;
+        case Humeur.excite:
+          ta = 1.2;
+        case Humeur.soucieux:
+          ph = 0.36;
+          pe = 0.3 * s;
+        case Humeur.colere:
+          ph = 0.46;
+          pe = -0.36 * s;
+        case Humeur.pleure:
+          ph = 0.4;
+          pe = 0.34 * s;
+        case Humeur.gene:
+          ph = 0.3;
+        case Humeur.dort:
+          ph = 1.1;
+      }
+      haut[i].cible = ph;
+      pente[i].cible = pe;
+      bas[i].cible = pb;
+      taille[i].cible = ta;
+    }
+    penche.cible = h == Humeur.curieux ? 0.12 : 0;
+    rouge.cible = h == Humeur.gene ? 1 : 0;
+    joues.cible = h == Humeur.rit ? 1 : 0;
+    pompon.v += 5;
+    if (h == Humeur.excite) {
+      vy = -620;
+      chute = true;
+    }
+    if (h == Humeur.pleure) {
+      larmes = 3;
+      larme = 0;
+    }
+    reveil();
+  }
+
+  void tomber() {
+    y = -260;
+    vy = 0;
+    chute = true;
+    reveil();
+  }
+
+  Future<void> non() async {
+    for (final double c in <double>[-1, 1, -0.7, 0.7, 0]) {
+      teteX.cible = c;
+      reveil();
+      await Future<void>.delayed(const Duration(milliseconds: 130));
+    }
+  }
+
+  @override
+  void surPas(double dt) {
+    if (chute) {
+      vy += 2600 * dt;
+      y += vy * dt;
+      if (y >= 0) {
+        y = 0;
+        ecrase.v += vy * 0.004; // il s'écrase en touchant, selon sa vitesse
+        pompon.v += vy * 0.012;
+        vy = -vy * 0.42;
+        if (vy.abs() < 60) {
+          vy = 0;
+          chute = false;
+        }
+      }
+    }
+    pompon.cible = -teteX.v * 0.02 - gx.v * 0.6;
+    if (humeur == Humeur.rit) joues.cible = 0.6 + 0.4 * math.sin(temps * 22);
+    if (larme >= 0) {
+      larme += dt * 1.1;
+      if (larme > 1.25) {
+        larmes--;
+        larme = larmes > 0 ? 0 : -1;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+      Container(
+        height: 230,
+        decoration: const ShapeDecoration(color: surface2, shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(12)))),
+        clipBehavior: Clip.antiAlias,
+        alignment: Alignment.center,
+        child: SizedBox(
+          key: cle,
+          width: 170,
+          height: 200,
+          child: CustomPaint(painter: _PraxisPeintre(this)),
+        ),
+      ),
+      const SizedBox(height: 10),
+      Wrap(spacing: 6, runSpacing: 6, children: <Widget>[
+        for (final (Humeur h, String l) in const <(Humeur, String)>[
+          (Humeur.calme, 'Calme'), (Humeur.heureux, 'Heureux'), (Humeur.rit, 'Rit'), (Humeur.curieux, 'Curieux'), (Humeur.excite, 'Excité'),
+          (Humeur.soucieux, 'Soucieux'), (Humeur.colere, 'En colère'), (Humeur.pleure, 'Pleure'), (Humeur.gene, 'Gêné'), (Humeur.dort, 'Dort'),
+        ])
+          Touche(label: l, fort: humeur == h, surTouche: () => setState(() => poser(h))),
+        Touche(label: 'Tomber', surTouche: tomber),
+        Touche(label: 'Dire non', surTouche: non),
+      ]),
+    ]);
+  }
+}
+
+class _PraxisPeintre extends CustomPainter {
+  _PraxisPeintre(this.s);
+  final _PraxisDemoState s;
+  @override
+  void paint(Canvas c, Size t) {
+    final double u = t.width / 200; // le dessin est pensé sur 200 points
+    c.save();
+    c.translate(0, t.height - 200 * u);
+    c.scale(u);
+    // Larmes : elles tombent hors du visage et éclaboussent au sol.
+    if (s.larme >= 0) {
+      final Paint eau = Paint()..color = const Color(0xFF6FB6FF);
+      for (final double x in <double>[78, 128]) {
+        if (s.larme < 1) {
+          final double yy = 150 + 44 * s.larme * s.larme;
+          c.drawOval(Rect.fromCenter(center: Offset(x + (x < 100 ? -18 : 18) * s.larme, yy), width: 7, height: 11), eau);
+        } else {
+          final double k = (s.larme - 1) / 0.25;
+          for (int i = -1; i <= 1; i++) {
+            c.drawCircle(Offset(x + (x < 100 ? -18 : 18) + i * 9 * k, 196 - 10 * math.sin(k * math.pi)), 2.4 * (1 - k), eau);
+          }
+        }
+      }
+    }
+    // Le corps : il tombe, s'écrase, se penche, secoue la tête.
+    final double e = s.ecrase.x.clamp(-0.35, 0.35);
+    c.translate(100 + s.teteX.x * 14, 194 + s.y);
+    c.rotate(s.penche.x);
+    c.scale(1 + e + s.joues.x * 0.05, 1 - e);
+    c.translate(-100, -194);
+    c.drawCircle(const Offset(100, 108), 86, Paint()..color = lilas);
+    // La gêne : un halo dégradé rose, pas deux ronds.
+    if (s.rouge.x > 0.01) {
+      for (final double x in <double>[56, 148]) {
+        final Rect r = Rect.fromCircle(center: Offset(x, 150), radius: 30);
+        c.drawCircle(r.center, 30,
+            Paint()..shader = ui.Gradient.radial(r.center, 30, <Color>[const Color(0xFFE0375A).withValues(alpha: 0.5 * s.rouge.x), const Color(0x00E0375A)]));
+      }
+    }
+    // Le visage suit le regard : yeux et toque glissent ensemble.
+    c.translate(s.gx.x * 5, s.gy.x * 3);
+    final Paint noir = Paint()..color = encre;
+    final Paint trait = Paint()
+      ..color = encre
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round;
+    c.drawPath(Path()..moveTo(61, 79)..lineTo(96, 78)..lineTo(128, 63)..lineTo(135, 95)..quadraticBezierTo(101, 60, 67, 110)..close(), noir);
+    final Path plateau = Path()..moveTo(41, 76)..lineTo(90, 51)..lineTo(146, 53)..lineTo(96, 78)..close();
+    c.drawPath(plateau, Paint()..color = lilas);
+    c.drawPath(plateau, trait);
+    c.drawLine(const Offset(93, 65), const Offset(138, 57), trait);
+    // La corde du bonnet : elle balance selon les mouvements de la tête.
+    c.save();
+    c.translate(139, 56);
+    c.rotate(s.pompon.x.clamp(-1.2, 1.2));
+    c.drawLine(Offset.zero, const Offset(3, 13), trait);
+    c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-3, 12, 12, 19), const Radius.circular(2)), noir);
+    c.restore();
+    for (int i = 0; i < 2; i++) {
+      c.save();
+      c.translate(i == 0 ? 84 : 122, 128);
+      c.scale(s.taille[i].x);
+      final Rect oeil = Rect.fromCenter(center: Offset.zero, width: 26, height: 36);
+      if (s.haut[i].x > 1.0) {
+        c.drawPath(Path()..moveTo(-11, 3)..quadraticBezierTo(0, 11, 11, 3), trait);
+      } else {
+        c.save();
+        c.clipPath(Path()..addOval(oeil));
+        c.drawOval(oeil, noir);
+        c.drawCircle(Offset(s.gx.x * 5.5, s.gy.x * 5.5 - s.bas[i].x * 9), 6, Paint()..color = Colors.white);
+        final Paint peau = Paint()..color = lilas;
+        c.save();
+        c.rotate(s.pente[i].x);
+        c.drawRect(Rect.fromLTWH(-30, -64 + s.haut[i].x * 38, 60, 46), peau);
+        c.restore();
+        c.drawCircle(Offset(0, 46 - s.bas[i].x * 36), 26, peau);
+        c.restore();
+      }
+      c.restore();
+    }
+    c.restore();
+  }
+
+  @override
+  bool shouldRepaint(_PraxisPeintre o) => true;
+}
+
+// ───────────────────────── Jauge d'eau ─────────────────────────
+class JaugeDemo extends StatefulWidget {
+  const JaugeDemo({super.key});
+  @override
+  State<JaugeDemo> createState() => _JaugeDemoState();
+}
+
+class _JaugeDemoState extends State<JaugeDemo> with SingleTickerProviderStateMixin<JaugeDemo>, Vivant<JaugeDemo> {
+  final R niveau = R(0.47, k: 60, c: 9), houle = R(0, k: 30, c: 5.5);
+  @override
+  Iterable<R> get ressorts => <R>[niveau, houle];
+  @override
+  bool get toujours => true; // l'eau vit en boucle, doucement
+  @override
+  void initState() {
+    super.initState();
+    reveil();
+  }
+
+  void vers(double v) {
+    niveau.cible = v.clamp(0, 1);
+    houle.v += 9;
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Center(
+          child: GestureDetector(
+            onVerticalDragUpdate: (DragUpdateDetails d) => vers(niveau.cible - d.delta.dy / 170),
+            child: SizedBox(width: 170, height: 170, child: CustomPaint(painter: _EauPeintre(niveau.x, houle.x, temps))),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Wrap(spacing: 6, children: <Widget>[
+          Touche(label: '12 %', surTouche: () => vers(0.12)),
+          Touche(label: '47 %', surTouche: () => vers(0.47)),
+          Touche(label: '88 %', surTouche: () => vers(0.88)),
+          Touche(label: 'Secouer', surTouche: () => houle.v += 22),
+        ]),
+      ]);
+}
+
+class _EauPeintre extends CustomPainter {
+  _EauPeintre(this.n, this.h, this.t);
+  final double n, h, t;
+  @override
+  void paint(Canvas c, Size s) {
+    final Rect r = Offset.zero & s;
+    final Path rond = Path()..addOval(r.deflate(3));
+    c.drawPath(rond, Paint()..color = Colors.white);
+    c.save();
+    c.clipPath(rond);
+    final double y0 = s.height * (1 - n);
+    final double a = 3.5 + h.abs() * 9; // houle de fond, plus le choc
+    Path vague(double phase, double freq, double amp, double dy) {
+      final Path p = Path()..moveTo(0, s.height);
+      for (double x = 0; x <= s.width; x += 4) {
+        final double k = x / s.width;
+        p.lineTo(x, y0 + dy + math.sin(k * freq * 6.283 + phase) * amp + math.sin(k * freq * 2.1 * 6.283 - phase * 1.7) * amp * 0.35 + (k - 0.5) * h * 16);
+      }
+      return p..lineTo(s.width, s.height)..close();
+    }
+
+    c.drawPath(vague(t * 1.5, 1.1, a * 0.8, -3), Paint()..color = violet.withValues(alpha: 0.35));
+    c.drawPath(vague(-t * 2.1, 1.4, a * 0.6, 2), Paint()..color = violet.withValues(alpha: 0.5));
+    final Path devant = vague(t * 2.6, 1.0, a, 4);
+    c.drawPath(devant,
+        Paint()..shader = ui.Gradient.linear(Offset(0, y0), Offset(0, s.height), <Color>[const Color(0xFF9C6CF2), const Color(0xFF5B2FC0)]));
+    // Bulles qui montent, et reflet à la surface.
+    final Paint bulle = Paint()..color = Colors.white.withValues(alpha: 0.35);
+    for (int i = 0; i < 7; i++) {
+      final double k = ((t * (0.12 + i * 0.021) + i * 0.37) % 1);
+      final double by = s.height - k * (s.height - y0 - 6);
+      if (by > y0 + 8) c.drawCircle(Offset(s.width * (0.18 + i * 0.105) + math.sin(t * 2 + i) * 3, by), 1.6 + (i % 3), bulle);
+    }
+    c.drawPath(devant, Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..color = Colors.white.withValues(alpha: 0.45));
+    c.restore();
+    c.drawPath(rond, Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..color = const Color(0xFFE3DEE9));
+    final TextPainter tp = TextPainter(
+        text: TextSpan(
+            text: '${(n * 100).round()} %',
+            style: TextStyle(fontFamily: 'Jakarta', fontSize: 34, fontWeight: FontWeight.w800, color: n > 0.56 ? Colors.white : encre)),
+        textDirection: TextDirection.ltr)
+      ..layout();
+    tp.paint(c, Offset((s.width - tp.width) / 2, (s.height - tp.height) / 2));
+  }
+
+  @override
+  bool shouldRepaint(_EauPeintre o) => true;
+}
+
+// ───────────────────────── Bulle vivante ─────────────────────────
+class BulleDemo extends StatefulWidget {
+  const BulleDemo({super.key});
+  @override
+  State<BulleDemo> createState() => _BulleDemoState();
+}
+
+class _BulleDemoState extends State<BulleDemo> with SingleTickerProviderStateMixin<BulleDemo>, Vivant<BulleDemo> {
+  final R energie = R(0, k: 3, c: 3.2);
+  final math.Random _h = math.Random(7);
+  late final List<List<double>> phases =
+      List<List<double>>.generate(9, (_) => <double>[_h.nextDouble() * 6.3, 0.6 + _h.nextDouble() * 0.9, _h.nextDouble() * 6.3, 0.3 + _h.nextDouble() * 0.5]);
+  @override
+  Iterable<R> get ressorts => <R>[energie];
+  void toucher(double f) {
+    energie.x = math.min(1.3, energie.x + f);
+    reveil();
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Center(
+          child: Listener(
+            onPointerDown: (_) => toucher(1),
+            onPointerMove: (_) => toucher(0.05),
+            onPointerHover: (_) => toucher(0.03),
+            child: SizedBox(width: 200, height: 170, child: CustomPaint(painter: _BullePeintre(energie.x, temps, phases))),
+          ),
+        ),
+        const SizedBox(height: 6),
+        const Text('Une seule masse. Elle se réveille au toucher, puis se rendort.', style: TextStyle(fontSize: 13, color: doux)),
+      ]);
+}
+
+class _BullePeintre extends CustomPainter {
+  _BullePeintre(this.e, this.t, this.ph);
+  final double e, t;
+  final List<List<double>> ph;
+  @override
+  void paint(Canvas c, Size s) {
+    const int n = 9;
+    final double rr = math.min(s.width, s.height) * 0.32;
+    final List<Offset> p = <Offset>[
+      for (int i = 0; i < n; i++)
+        s.center(Offset.zero) +
+            Offset.fromDirection(i / n * 6.283, rr * (1 + e * (0.2 * math.sin(t * ph[i][1] * 2.2 + ph[i][0]) + 0.1 * math.sin(t * ph[i][3] * 5 + ph[i][2]))))
+    ];
+    final Path path = Path();
+    for (int i = 0; i < n; i++) {
+      final Offset a = p[i], b = p[(i + 1) % n], m = (a + b) / 2;
+      if (i == 0) {
+        path.moveTo(m.dx, m.dy);
+      } else {
+        path.quadraticBezierTo(a.dx, a.dy, m.dx, m.dy);
+      }
+    }
+    final Offset m0 = (p[0] + p[1]) / 2;
+    path.quadraticBezierTo(p[0].dx, p[0].dy, m0.dx, m0.dy);
+    c.drawPath(path, Paint()..shader = ui.Gradient.linear(Offset.zero, Offset(s.width, s.height), <Color>[violet, lilas]));
+  }
+
+  @override
+  bool shouldRepaint(_BullePeintre o) => true;
+}
+
+// ───────────────────────── File d'avatars ─────────────────────────
+class FileDemo extends StatefulWidget {
+  const FileDemo({super.key});
+  @override
+  State<FileDemo> createState() => _FileDemoState();
+}
+
+class _FileDemoState extends State<FileDemo> with SingleTickerProviderStateMixin<FileDemo>, Vivant<FileDemo> {
+  static const List<String> noms = <String>['RA', 'AB', 'YD', 'KM', 'IS', 'ST', 'MK'];
+  final List<R> dx = <R>[R(0, k: 260, c: 11), R(0, k: 260, c: 11)];
+  @override
+  Iterable<R> get ressorts => dx;
+  void arrive() {
+    if (dx.length >= noms.length) return;
+    final R n = R(190, k: 150, c: 13)..cible = 0;
+    dx.add(n);
+    reveil();
+    // Le choc se propage : chacun recule un peu moins que le précédent.
+    Future<void>.delayed(const Duration(milliseconds: 260), () {
+      for (int i = dx.length - 2; i >= 0; i--) {
+        final int rang = dx.length - 2 - i;
+        Future<void>.delayed(Duration(milliseconds: 45 * rang), () {
+          if (!mounted) return;
+          dx[i].v -= math.max(40, 300 - rang * 70);
+          reveil();
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(
+          height: 90,
+          decoration: const ShapeDecoration(color: surface2, shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(12)))),
+          alignment: Alignment.center,
+          child: SizedBox(
+            width: 30.0 * dx.length + 12,
+            height: 44,
+            child: Stack(clipBehavior: Clip.none, children: <Widget>[
+              for (int i = 0; i < dx.length; i++)
+                Positioned(
+                  left: 30.0 * i + dx[i].x,
+                  child: Transform.rotate(
+                    angle: dx[i].x * 0.02,
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(color: const Color(0xFFEEE6FA), shape: BoxShape.circle, border: Border.all(color: surface2, width: 2)),
+                      child: Text(noms[i], style: const TextStyle(fontFamily: 'Jakarta', fontWeight: FontWeight.w700, fontSize: 13, color: Color(0xFF6538E4))),
+                    ),
+                  ),
+                ),
+            ]),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Wrap(spacing: 6, children: <Widget>[
+          Touche(label: "Quelqu'un se connecte", surTouche: arrive),
+          Touche(label: 'Recommencer', surTouche: () => setState(() => dx.removeRange(2, dx.length))),
+        ]),
+      ]);
+}
+
+// ───────────────────────── Barre liquide et avis ─────────────────────────
+class BarreDemo extends StatefulWidget {
+  const BarreDemo({super.key});
+  @override
+  State<BarreDemo> createState() => _BarreDemoState();
+}
+
+class _BarreDemoState extends State<BarreDemo> with SingleTickerProviderStateMixin<BarreDemo>, Vivant<BarreDemo> {
+  static const double l = 96;
+  int choix = 0;
+  // Deux bords, deux ressorts : le bord de tête part plus vite, la capsule s'étire puis se reprend.
+  final R gauche = R(0, k: 190, c: 20), droite = R(l, k: 190, c: 20);
+  @override
+  Iterable<R> get ressorts => <R>[gauche, droite];
+  void aller(int i) {
+    final bool versDroite = i > choix;
+    choix = i;
+    gauche
+      ..cible = i * l
+      ..k = versDroite ? 120 : 330;
+    droite
+      ..cible = i * l + l
+      ..k = versDroite ? 330 : 120;
+    reveil();
+  }
+
+  void avis() {
+    final OverlayState o = Overlay.of(context);
+    late final OverlayEntry e;
+    e = OverlayEntry(builder: (_) => _Avis(surFin: () => e.remove()));
+    o.insert(e);
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: const ShapeDecoration(color: surface2, shape: StadiumBorder()),
+          child: SizedBox(
+            width: l * 3,
+            height: 44,
+            child: Stack(children: <Widget>[
+              Positioned(
+                left: gauche.x,
+                width: math.max(20, droite.x - gauche.x),
+                top: 0,
+                bottom: 0,
+                child: const DecoratedBox(decoration: ShapeDecoration(color: violet, shape: StadiumBorder())),
+              ),
+              Row(children: <Widget>[
+                for (final (int i, String t) in const <(int, String)>[(0, 'Dossier'), (1, 'Messages'), (2, 'Académie')])
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => aller(i)),
+                    child: SizedBox(
+                      width: l,
+                      height: 44,
+                      child: Center(child: Text(t, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: choix == i ? Colors.white : doux))),
+                    ),
+                  ),
+              ]),
+            ]),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(spacing: 6, children: <Widget>[Touche(label: 'Faire flotter un avis', fort: true, surTouche: avis)]),
+        const SizedBox(height: 6),
+        const Text("L'avis se pose par-dessus : rien ne bouge en dessous.", style: TextStyle(fontSize: 13, color: doux)),
+      ]);
+}
+
+class _Avis extends StatefulWidget {
+  const _Avis({required this.surFin});
+  final VoidCallback surFin;
+  @override
+  State<_Avis> createState() => _AvisState();
+}
+
+class _AvisState extends State<_Avis> with SingleTickerProviderStateMixin<_Avis>, Vivant<_Avis> {
+  final R y = R(-90, k: 210, c: 14);
+  @override
+  Iterable<R> get ressorts => <R>[y];
+  @override
+  void initState() {
+    super.initState();
+    y.cible = 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) => reveil());
+    Future<void>.delayed(const Duration(milliseconds: 2600), () {
+      if (!mounted) return;
+      y
+        ..cible = -90
+        ..c = 26;
+      reveil();
+      Future<void>.delayed(const Duration(milliseconds: 500), widget.surFin);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => Positioned(
+        top: 14 + y.x,
+        left: 0,
+        right: 0,
+        child: IgnorePointer(
+          child: Center(
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: const ShapeDecoration(color: encre, shape: StadiumBorder(), shadows: <BoxShadow>[BoxShadow(color: Color(0x33211E28), blurRadius: 24, offset: Offset(0, 10))]),
+                child: const Text('Nouveau message de la direction', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 14)),
+              ),
+            ),
+          ),
+        ),
+      );
+}
+
+// ───────────────────────── Coins ─────────────────────────
+class CoinsDemo extends StatelessWidget {
+  const CoinsDemo({super.key});
+  @override
+  Widget build(BuildContext context) {
+    Widget boite(ShapeBorder dehors, ShapeBorder dedans, String texte) => Column(children: <Widget>[
+          Container(
+            width: 130,
+            height: 90,
+            padding: const EdgeInsets.all(10),
+            decoration: ShapeDecoration(color: violet, shape: dehors),
+            child: DecoratedBox(decoration: ShapeDecoration(color: Colors.white, shape: dedans)),
+          ),
+          const SizedBox(height: 6),
+          SizedBox(width: 140, child: Text(texte, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12, color: doux))),
+        ]);
+    return Wrap(spacing: 14, runSpacing: 10, children: <Widget>[
+      boite(const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28))),
+          const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(28))), "Aujourd'hui : même rayon dedans et dehors"),
+      boite(const RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(34))),
+          const RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(24))), 'Juste : courbe continue, rayon − marge'),
+    ]);
+  }
+}

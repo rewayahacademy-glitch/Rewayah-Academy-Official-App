@@ -1,0 +1,243 @@
+# Suivi du parcours de l'enseignant : la check-liste
+
+Statuts permis : `pas commencé`, `en cours` (branche), `PR ouverte` (numéro), `dans main` (numéro),
+`prouvé par le directeur` (date). Aucun autre mot. Une case n'est cochée que « prouvée par le
+directeur en production ».
+
+**21/11/2026 : le pilote de ce parcours est arrêté par le directeur. L'état qui fait foi, et ce qui
+reste des maquettes (écrans de chargement et de mise à jour avec Praxis, écarts du tableau de bord,
+icônes, mouvement, interface de l'enseignant…), est dans `RESTE-A-FAIRE.md`, à lire avant tout. Les
+tables ci-dessous ne sont plus tenues à jour ; voir aussi la section « Arrêt du pilote » en bas.**
+
+Compte du 20/11/2026 (22:30 UTC) : sur 61 lots, **1 prouvé par le directeur** (PE-A5, connexion par lien), 22 dans `main`, 14 en partie, 23 pas commencés, 1 arrêté, 1 écarté. **Attention : la colonne « Statut » des tables ci-dessous date de 11:40 UTC ; pour les lots livrés depuis (PE-A1, A5, A6, A8, B1, B4, B5, B8, C1, C2, C4, C10, D1, D3, D12, E3, F8 en partie), la section « État de reprise du 20/11/2026, 22 h UTC » en bas de ce fichier fait foi, et la page lisible est à jour.** Réserve connue de la PR 661 : la notification « pièce déposée » porte la référence du candidat à toute la direction sans filtre de genre ; à corriger avant d'ajouter une seconde personne à la direction.
+La même check-liste, lisible par le directeur : https://claude.ai/artifact/BibtoazPWBr75CoQUyAXQv
+
+Détail de chaque lot : `PLAN.md` (le paragraphe entre parenthèses). Hors périmètre, sur ordre du
+directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
+
+## À faire aujourd'hui, sans code (le directeur ou Praxis)
+
+- [ ] Répondre aux 12 fils de courriels de candidats restés sans réponse (captcha, 2 créneaux, 2
+      versements, parcours élève, « que faire », caméra, pays absent, double compte, statut).
+- [ ] Rouvrir ou trancher les 13 candidatures retirées par leur candidat et toujours retirées.
+- [ ] Ouvrir des créneaux d'entretien, ou annoncer une date : 166 candidats attendent.
+
+## Vague P. Fluidité (à mener en parallèle, la mesure d'abord)
+
+| | Lot | Contenu | Dépend de | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-P1 | Mesurer : premier écran, cinq écrans, images par seconde, poids, sur les trois appareils du directeur (§10.3) | l'aide du directeur | pas commencé |
+| [ ] | PE-P2 | L'éclair de la ligne déformée et l'éclair de l'écran du code : chercher dans le code les sorties citées et la correction déjà faite ailleurs (§10.2, §12.1) | en partie : causes trouvées (plan §14), écran avant le code retiré (#643, dans main) ; éclair coloré non corrigé |
+| [ ] | PE-P3 | Gains sans risque : chargement à la demande par rôle, polices d'icônes réduites | PE-P1 | pas commencé |
+| [ ] | PE-P4 | Essai de la construction WebAssembly sur un aperçu, comparé à PE-P1 | Q9 | pas commencé |
+| [x] | PE-P5 | Vraie application Android puis iPhone | **écarté par le directeur le 19/11** (commission des boutiques) | fermé |
+
+## Vague A. Les blocages d'aujourd'hui
+
+| | Lot | Contenu | Déjà commencé ailleurs | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-A1 | Courriels dans la langue de la personne : sujet et corps du lien de connexion et de la confirmation ; invitation personnelle ; « retenue pour un entretien » ; nom du formulaire et lien de désinscription (§2.1) | R10 (à faire depuis le 14/11) | pas commencé |
+| [ ] | PE-A2 | Le lien qui me connaît : la marque « candidat » voyage dans le lien, l'adresse est déjà là, l'écran d'arrivée dit « votre candidature vous attend », jamais la page de connexion ordinaire ; `invitation=1` lu comme candidat (§2.2, A-standard « lien magique ») | PR #524 (marque dans l'adresse de retour) : à relire d'abord | dans main (#643), en partie : écran d'arrivée fait ; adresse préremplie et marque dans le lien attendent le serveur ; non prouvé en production |
+| [ ] | PE-A3 | La porte « Apprendre » ou « Enseigner » pour tout nouveau compte ; l'espace porte son nom ; les inscriptions des élèves fermées le disent (§2.2) | PR #523 (lien « Postulez ici ») dans main | dans main (#643) ; non prouvé en production |
+| [ ] | PE-A4 | Geste du bureau « Ce compte est un candidat enseignant », pour les comptes famille qui portent une candidature | Q1 | pas commencé |
+| [ ] | PE-A5 | « The check did not complete » : diagnostic, message qui dit quoi faire, sortie de secours (§0) | | pas commencé |
+| [ ] | PE-A6 | Le retrait se défait seul pendant 7 jours ; le lien quitte le pied de l'accueil (A8) | décidé : 7 jours, avec un écran qui explique (§13.2) | pas commencé |
+| [ ] | PE-A7 | Avis automatique au candidat quand un créneau d'entretien s'ouvre | R22, « à construire » depuis le 16/11 | pas commencé |
+| [ ] | PE-A8 | « Vouliez-vous dire gmail.com ? » à la saisie de l'adresse | R25 | pas commencé |
+| [ ] | PE-A9 | Membre invité : plus d'écran « Pour qui créez-vous ce compte ? » avant le code ; le code d'un associé mène à l'écran de l'associé, pas à celui des enseignants (§14.4) | BE-2a-2 ASSOCIE | dans main (#643), partie écran seulement ; le rôle associé côté serveur reste à faire |
+
+## Vague B. Le parcours du candidat
+
+| | Lot | Contenu | Déjà commencé ailleurs | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-B1 | Juz (tout, rien, un nombre exact) et riwayat (une, toutes, les sept, quelques-unes en grille rangée) ; anciennes réponses gardées (A10) | `claude/candidature-ux` (riwayat « toutes » en tête) ; décidé le 19/11 (§12.1) | pas commencé |
+| [ ] | PE-B2 | Un seul nom par élément, une table lue par le dossier, le complément, le portail et les accords (A11, §2.6) | nom décidé : « عقد معلم » (§12.1) | pas commencé |
+| [ ] | PE-B3 | Chaque saisie a sa sortie : nom latin, ville, téléphone dans le dossier (§2.7) | | pas commencé |
+| [ ] | PE-B4 | Accueil du candidat à trois onglets : Dossier, Messages, Académie ; annonce en une ligne fermable puis rangée (A9) | fil d'annonces de ANNONCES-SIMPLES déjà dans main | pas commencé |
+| [ ] | PE-B5 | État du dossier redessiné : ligne d'étapes, un seul « à faire maintenant », « rien à faire, on vous écrira » | maquette à valider | pas commencé |
+| [ ] | PE-B6 | Partager l'académie : nouvelles cartes | références du directeur (Q8) ; `claude/partage-et-nom-arabe` | pas commencé |
+| [ ] | PE-B7 | Modifier après l'envoi ce qui ne change pas la décision (A12) | BE-1e « panier de demandes », pas commencé | pas commencé |
+| [ ] | PE-B8 | Aides à côté des questions (ijaza), tous les pays dans l'indicatif téléphonique | | pas commencé |
+| [ ] | PE-B9 | Réponses toutes prêtes dans le portail : combien gagne un enseignant (exemple chiffré), versement par pays, compte d'un proche | `DECISION-TARIFS`, `DECISION-QUESTIONS-VERSEMENT` | pas commencé |
+| [ ] | PE-B10 | Réparer le dépôt de pièce qui échoue, puis ranger en un geste une image du chat comme pièce ; avertissement dans la saisie (A13) | `IMAGES-MESSAGERIE.md` | pas commencé |
+
+## Vague C. Le bureau de la direction
+
+| | Lot | Contenu | Déjà commencé ailleurs | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-C1 | Un seul dossier : les onze entrées du §3.1 mènent à l'écran A ; « Fichiers à valider » devient une file ; la même carte d'aperçu partout (A1, A2) | BE-0c, BE-1c dans main | dans main (#639), **partiel** : messagerie et liste des enseignants ouvrent A ; Comptes, Espace de traitement et notifications mènent encore à B (bloqué : le serveur ne donne pas la candidature depuis un profil) |
+| [ ] | PE-C2 | Synthèse en tête : ce qui manque, pièce vérifiée ou non, dernière connexion, ancienneté ; accepter exige la pièce vérifiée (A7) | vérifier `accueil_separe` en production ; Q4 | pas commencé |
+| [ ] | PE-C3 | La pièce d'identité toujours affichée de la même façon (§3.2) | PIECE-DANS-DOSSIER (#532) | pas commencé |
+| [ ] | PE-C4 | Liste : tri de l'ancien au récent ; filtres « dossier complet » et « dernière connexion » ; « sélectionner les N résultats » ; gestes groupés utiles (admettre, accueillir, demander un complément, écrire, épingler) avec aperçu avant d'exécuter | lots serveur `executer_lot_candidats` ; vague 3 du bureau | pas commencé |
+| [ ] | PE-C5 | Épingler un profil : marque qui le suit partout, vue « Épinglés », gestes groupés (inviter, écrire au groupe) (manuscrit, partie 3) | rien | pas commencé |
+| [ ] | PE-C6 | Tableau de bord refait : À faire, Ce qui a changé, Santé ; chaque chiffre ouvre sa liste filtrée (A5) | `DASH_STRATEGIE.md` à relire ; références du directeur | dans main (#642), en dessous de la maquette validée : pas de visages au-delà de 50 personnes, pile qui se feuillette sans décider, cases d'alerte en ambre, boutons sans icône ; non prouvé en production |
+| [ ] | PE-C7 | En-tête : icônes fixes, panneaux légers (messages avec réponse rapide, notifications, annonces), recherche qui trouve les personnes (A6) | dans main (#639), partiel : l'icône des messages reste à sa place ; panneaux légers et recherche non faits |
+| [ ] | PE-C8 | Trois pages : Accueil, Personnes, Messages ; le reste dans « Plus » ; types de personnes en vues d'une seule liste ; famille qui se déplie (A3, A4) | LP-1 à LP-7 (`SPEC-LISTE-PERSONNES`) | pas commencé |
+| [ ] | PE-C9 | Lenteur du bureau : pages pour les comptes et la file des pièces, conversations lues une fois, selon PE-P1 (§3.7) | `STRATEGIE-BASE-ECONOME` | pas commencé |
+| [ ] | PE-C10 | « Demander un complément » s'ouvre avec tous les éléments manquants déjà cochés ; on décoche ce qu'on veut (§12.1) | R15 (liste des éléments) | pas commencé |
+
+## Vague D. Les outils de l'échange et les pages secondaires
+
+| | Lot | Contenu | Déjà commencé ailleurs | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-D1 | Messagerie : rapprochement par clé d'envoi (plus de copie en échec qui reste), réessai automatique, chargement par pages (§4.1) | `MESSAGERIE-CHECKLIST.md` | pas commencé |
+| [ ] | PE-D2 | Supprimer un message, pour moi et pour tous (A14) | Q5 | pas commencé ; aucune suppression n'existe dans l'application (tentative de retrait du 20/11 abandonnée sur ordre du directeur, voir journal) |
+| [ ] | PE-D3 | **Le composant des feuilles** : 90 % de hauteur au plus, poignée toujours atteignable, filtres en pleine largeur, « Effacer » visible ; puis revue des feuilles les plus employées (§4.3) | R17 (`FormeModale.panneau`) | pas commencé |
+| [ ] | PE-D4 | Retour et glissement : un détail s'empile, le retour revient d'où l'on vient, y compris dans le bureau (§3.6, §4.3) | `DECISION-MOUVEMENT` | dans main (#639), bureau seulement ; précédent et suivant non faits |
+| [ ] | PE-D5 | Profil dans la conversation = la carte d'aperçu de PE-C1, avec ses gestes | PE-C1 | pas commencé |
+| [ ] | PE-D6 | Annonces : « Annoncer à ces N personnes » depuis la liste filtrée ou la sélection (A15) | PE-C4 | pas commencé |
+| [ ] | PE-D7 | Aperçu de lien, PDF lisible dans la conversation | | pas commencé |
+| [ ] | PE-D8 | **Les avis flottants** : remplacer les bandeaux qui poussent la page par un avis posé par-dessus, aux couleurs de la marque, animé, fermable ; « messages pas en direct » devient un signe discret (§12.2) | références du directeur | dans main (#641, refait par #648) ; non prouvé en production |
+| [ ] | PE-D9 | Mise à jour : « Maintenant » ou « Plus tard », puis automatique à la prochaine ouverture ; l'avis reste (§12.2) | dans main (#641, #648) ; non prouvé en production |
+| [ ] | PE-D10 | Gestes de glissement : retour par glissement, glisser une ligne pour agir, glisser pour répondre (§12.2) | PE-D4 | pas commencé |
+| [ ] | PE-D11 | Texte copiable sans menu « Tout sélectionner » au moindre toucher (§12.2) | à reproduire sur le téléphone du directeur | dans main (#641) ; sélection partielle dans un message : décision du directeur ouverte ; non prouvé en production |
+| [ ] | PE-D12 | **Tirer vers le bas pour actualiser**, partout, dans le composant de page commun ; et le bouton figé après la validation d'une pièce (régression) (§12.2) | dans main (#639), partiel : délai du bouton figé ; tirer pour actualiser non fait |
+
+## Vague E. L'espace de l'enseignant
+
+| | Lot | Contenu | Déjà commencé ailleurs | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-E1 | Accueil vivant : événements et annonces de la direction avec miniature, cartes des cours (§5) | références du directeur (Q8) ; `A-FAIRE-LUMIERE-ACCUEILS.md` | pas commencé |
+| [ ] | PE-E2 | Cartes des Classes, liste des élèves, bibliothèque | références du directeur (Q8) | pas commencé |
+| [ ] | PE-E3 | **Barre du bas, composant commun** : hauteur ramenée à celle de la capsule, zone tactile qui remplit la colonne de l'onglet, sans chevauchement | dette BARRE-UNE-SOURCE | pas commencé |
+
+## Vague F. Les icônes
+
+| | Lot | Contenu | Dépend de | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-F1 | Nouvelle famille d'icônes fixes, dans le seul fichier `app_icons.dart` | Q7 | pas commencé |
+| [ ] | PE-F2 | Une quinzaine d'icônes animées (barre du bas, cloche, envoyer, succès, épingler) | Q7 (paquet Lottie, `pubspec.yaml`) ; licence à vérifier | pas commencé |
+| [ ] | PE-F3 | Le langage de mouvement : ressort, rebond, élastique, liquide, reflet ; décision datée qui amende `DECISION-MOUVEMENT`, puis les composants communs (§12.3) | références du directeur ; PE-P1 | en partie : ressorts dans `AppMouvement` (#642, #648) ; la décision datée n'est pas écrite |
+| [ ] | PE-F4 | Les coins justes : courbe continue et rayon intérieur = rayon extérieur − marge, dans `AppRadius` et les composants communs (§13.2) | dans main (#642) ; non prouvé en production |
+| [ ] | PE-F5 | Praxis, mascotte animée : dessin vectoriel, émotions, regard, entrées ; règles de présence (§13.2) | maquette à confirmer | en partie : Praxis animé au tableau de bord avec un dessin antérieur (#642) ; avatar au nouveau visage, image fixe, et compétence `praxis-rewayah` (#649) ; lot d'alignement et d'avatar animé arrêté par le directeur le 20/11 |
+| [ ] | PE-F6 | La compétence (skill) du mouvement, pour toute l'application et hors d'elle (§13.2) | maquette confirmée | pas commencé (la compétence du personnage Praxis existe, #649 ; celle du mouvement non) |
+| [ ] | PE-F7 | Composants vivants communs dans `lib/core/` : ressort au toucher, avis flottant, file d'avatars, jauge d'eau, bulle, capsule liquide, chiffre qui tressaute (§13) | PE-P1 ; maquette confirmée | dans main (#642, #648), partiel : ressort, toucher, case qui penche, nombres qui roulent, eau, pile, texte qui s'écrit, avis flottant ; file d'avatars, bulle, capsule liquide non faits |
+| [ ] | PE-F8 | Praxis aux écrans de connexion, de chargement et de mise à jour : il sort de la porte du logo, suit la route, parle, repart dans la lumière (§18.2) | compétence `praxis-rewayah` | maquette version 3 remise au directeur (20/11) ; rien dans l'application |
+
+## Vague G. Praxis
+
+| | Lot | Contenu | Déjà commencé ailleurs | Statut |
+| :-- | :--- | :--- | :--- | :--- |
+| [ ] | PE-G1 | Praxis lit les réponses du questionnaire et ce qui manque à un dossier | outils prévus `dossier`, `ce_qui_manque` (`SECRETAIRE-IA.md`) | dans main et installé (PX-4, #644) ; non prouvé par le directeur |
+| [ ] | PE-G2 | Praxis range chaque dossier dans une pile, avec sa raison ; propose entretien ou dispense (A17) | `preparer` (PX-2) à étendre à la dispense | dans main et installé (PX-3 #640, PX-5 #646) ; visible à l'écran (#647) ; non prouvé par le directeur |
+| [ ] | PE-G3 | Le directeur valide par pile, en groupe | PE-C4 | pas commencé |
+| [ ] | PE-G4 | Mise en service sur les données réelles | attend le directeur (`PRAXIS/CHECKLIST-PRAXIS.md`) | mis en service le 20/11, **arrêté le 20/11 à 10:32 UTC** (routine désactivée par le pilote : Praxis s'invitait dans les conversations tenues par la direction) ; correctif serveur PX-6 prêt (#651), non installé |
+
+## Journal
+
+- 19/11/2026 : demande du directeur et manuscrit reçus. Recherche faite (code, production,
+  messages, courriels). Plan et check-liste écrits. Rien de codé. Neuf questions posées (§9).
+- 19/11/2026 (même jour) : le directeur ajoute la fluidité, l'éclair de la ligne déformée, la
+  liste des noms d'éléments (§10, §11), et exclut l'espace de l'élève pour l'instant.
+- 19/11/2026 (soir) : le directeur ferme Q2 (« عقد معلم ») et Q3 (riwayat), ajoute les avis flottants, la mise à jour au choix, les gestes de glissement, la sélection de texte, tirer pour actualiser, le complément précoché et le langage de mouvement (§12). Lots PE-C10, PE-D8 à PE-D12, PE-F3. Une page lisible lui est remise dans la conversation (noms des éléments à chercher).
+- 19/11/2026 (nuit) : le directeur répond sur la page des références (10 commentaires) et donne la vision « objet vivant » (§13). Maquette qui marche remise (Bureau, Candidat, Atelier). Boutiques écartées ; 7 jours confirmés ; lots PE-F4 à PE-F7 ; consigne 25. Deux recherches de causes lancées dans le code (sélection de texte et bouton figé ; éclair coloré et écran du code).
+- 19/11/2026 (nuit) : causes trouvées dans le code et écrites au plan §14 : sélection de texte (prouvée), bouton figé (hypothèse forte), éclair coloré (halo et éléments HTML, très probable), écran avant le code d'un invité (prouvée, avec un second défaut : le code d'un associé part vers l'écran des enseignants). Lot PE-A9.
+- 20/11/2026 : le directeur demande si Flutter sait faire ces mouvements. Preuve compilée en vrai Flutter 3.47.9 et remise (plan §15) ; fluidité sur ses appareils non prouvée. 28 retours sur la maquette inscrits (plan §15.2) : tableau de bord à refaire, aucun émoji, lavande sur fond sombre, Praxis précisé. Flutter devient installable dans une session.
+- 20/11/2026 : tableau de bord écrit en vrai Flutter et remis au directeur (plan §16) ; non confirmé. Règles ajoutées : pas de bulles comme structure, style familier perfectionné, aucune couleur hors palette. Réponse sur l'installation hors boutiques (Android, Windows) inscrite au §16.3.
+- 20/11/2026 : le directeur valide la maquette du tableau de bord (« on valide cette maquette pour aller vite ») et ordonne de lancer les chantiers. Écrits : `CONTRAT-NAVIGATION.md` et `PLAN-DE-LANCEMENT.md`. Quatre agents lancés : RACINE (`claude/pe-racine` : PE-D8, PE-D9, PE-D11), ENTRÉE (`claude/pe-entree` : PE-A2, PE-A3, PE-A9 écran), BUREAU-NAV (`claude/pe-bureau-nav` : PE-C1, PE-D4, PE-C7, PE-D12), VIVANT (`claude/pe-vivant` : PE-F7, PE-F4, PE-C6). Statut de ces lots : en cours.
+- 20/11/2026 : ordre du directeur de mettre Praxis au travail (plan §17). Lu en production : Praxis allumé et autonome, mais en mode essai (2 conversations, données réelles fermées, 5 messages par heure). Fait : consigne de la routine horaire complétée, point du jour créé, chantier serveur PRAXIS-TRAVAIL lancé (`claude/praxis-travail`). Reste au directeur : trois interrupteurs à l'écran. Consigne 26 écrite.
+- 20/11/2026 (02:30 UTC) : rapport de BUREAU-NAV (PR #639), testé en local seulement. Bloqué côté serveur : ajouter la référence de candidature à la lecture des comptes et à `read_kyc_documents`, et envoyer `/admin/personnes/candidatures/<référence>` comme destination des notifications (à mettre dans la série de migrations). Praxis : premier passage réel terminé à 02:16 UTC, 19 conversations sur 35, 19 messages, 0 refus, 7 questions à la direction, 3 propositions ; 16 conversations encore en attente.
+- 20/11/2026 (03:05 UTC) : rapports de RACINE (PR #641) et d'ENTRÉE (PR #643). RACINE : sélection de texte limitée au cadre et au contrat, plus rien ne pousse la page, Échap ferme l'avis ; ouverts : sélection partielle dans un message (décision du directeur), avis d'observation sans croix, Échap ferme tous les avis. ENTRÉE : écran parasite retiré, deux portes, nom de l'espace sur l'écran du code, textes arabes corrigés ; ouverts : le nom arabe de l'académie n'est pas une décision écrite ; préremplissage de l'adresse, rôle associé et marque dans le lien attendent le serveur. Praxis : PX-3 (PR #640) déclaré installable par son relecteur, fusion en attente de la décision du directeur ; PX-4 (PR #644) en relecture ; texte de confidentialité validé par le directeur, publication en cours.
+- 20/11/2026 (03:55 UTC) : fusionnées dans `main` par le pilote : #640 (PX-3, installé 03:11), #639 (BUREAU-NAV), #641 (RACINE), #644 (PX-4, installé 03:39), #643 (ENTRÉE, `f5191907`). Restent ouvertes : #642 (VIVANT, tests rouges et conflit, agent relancé), #645 (confidentialité, à fusionner avec sa migration de version), PX-5 en écriture. **Échéance : la clé de la routine de Praxis expire le 24/11/2026 à 11:53 UTC** ; le directeur doit en émettre une nouvelle (double authentification) et la ranger dans les secrets réseau de l'environnement `praxis-routine`, sinon Praxis s'arrête. Dettes transmises par l'autre session de pilotage : scénarios Praxis absents de `ci.yml` ; purge des pièces d'identité échues jamais exécutée (contient un DELETE : accord du directeur) ; copie de la politique de confidentialité sur le site public à aligner.
+- 20/11/2026 (04:25 UTC) : **texte de confidentialité de l'assistant publié.** PR #645 fusionnée (`9ca1929f`), application déployée à 04:24, migration `20261130400000_confidentialite_version_v2.sql` installée à 04:24:27 (version enregistrée `20261120042427` ; texte identique au fichier, 2 524 octets, même md5) ; `candidatures.confidentialite_version` vaut `2026-11-v2` en production, 110 réglages comme avant. PR #609 fermée (doublon). Reste au directeur : désactiver l'entraînement sur le compte Claude de Praxis ; annoncer la modification aux personnes déjà inscrites (aucun avis automatique). **Dette** : le workflow « Deploy Supabase » échoue par intermittence sur l'étape `supabase/setup-cli@v1` (2 fois sur 6 cette nuit) ; fichier `.github/` fermé aux agents ; vérifier le déploiement après chaque fusion qui touche une fonction Edge.
+- 20/11/2026 (05:35 UTC) : **PX-5 (PR #646) fusionné (`7de2a4f0`) et installé à 05:29 UTC** (version enregistrée `20261120052916`, nom `praxis_px5` ; texte identique au fichier, 65 452 octets ; 13 fonctions aux empreintes attendues ; réglages : 100 ouvertures par fenêtre de 5 heures). `praxis-mcp` redéployée, 24 outils, vérifié par appel : `boite` rend l'objet `dossier`, `questions_ouvertes` répond, `etat` rend 75 ouvertures restantes. **Rattrapage commencé** : au passage de 05:24 UTC, Praxis a écrit à 25 candidats admis (annonce dans les mots du directeur, puis entretien écrit ; 25 textes distincts, questions adaptées au dossier ; 21 conversations ouvertes pour la première fois ; 19 en arabe, 4 en anglais, 1 en français, 1 candidate saluée au féminin) et noté 10 impressions. Passage supplémentaire déclenché à 05:31 UTC pour continuer jusqu'au nouveau plafond et reprendre lui-même ses questions à réponse connue. Ouvertes : PR #647 (travail de Praxis visible, CI en cours), #648 (avis flottant refait par le pilote, CI en cours), #642 (tableau de bord : non fusionné, repris par le modèle le plus capable pour rejoindre la maquette validée).
+- 20/11/2026 (05:55 UTC) : **avis flottant refait et fusionné** : PR #648 (`22c8bc6d`), écrite par le pilote après la capture de production du directeur (grosse carte au lieu du petit message de la maquette). L'avis est une pilule centrée qui tombe du haut avec un léger rebond ; l'avis « Messages pas en direct » est supprimé (fichier, usages et textes). Statut : fusionné, déploiement en cours, **pas encore vu en production par le directeur**. **Praxis, passages de 05:31 à 05:38 UTC** : 72 messages, 89 ouvertures en tout depuis 05:24 (annonce de l'admission, puis entretien écrit), 20 dossiers rangés, 20 impressions, 9 de ses questions reprises seul et retirées, 4 questions laissées à la direction, 0 refus. Défauts relevés à la relecture : une réponse en anglais à une personne qui écrivait en arabe ; des reprises sans salut ; deux passages en même temps (déclenchement manuel du pilote par-dessus l'horaire). Consigne de la routine réécrite à 05:43 UTC : la langue est celle des messages de la personne, le salut se vérifie sur son dernier message, la première question de l'entretien écrit varie, Praxis reprend seul ses questions ouvertes à chaque passage. Effet non mesuré avant le passage de 06:24 UTC. PR #647 (le travail de Praxis visible) : 3 tests rouges au lot 4, cause en recherche.
+- 20/11/2026 (06:50 UTC) : **« Le travail de Praxis » visible à l'écran, fusionné** : PR #647 (`55e24979`). Trois tests rouges corrigés par le pilote avant la fusion (textes d'introduction ramenés à la largeur de lecture sur ordinateur, 18 textes arabes aux paramètres isolés, un texte fait du seul nom propre admis). Ce que la direction y trouve : dans la file des candidatures, le lien « Le travail de Praxis » (les quatre piles avec leur nombre, le filtre par étiquette, les objectifs que Praxis se fixe) ; dans le dossier d'un candidat, la carte « L'avis de Praxis ». Statut : fusionné, déploiement en cours, **pas encore vu en production par le directeur**. Limites écrites dans la PR : la file elle-même ne se filtre pas par pile (lecture serveur à ajouter), la carte du dossier lit toutes les pages faute de lecture par référence. **Praxis, passage de 06:24 UTC (première application de la consigne de 05:43)** : 18 messages (3 réponses, 15 entretiens écrits), 10 impressions dont 1 pépite, 3 de ses questions reprises seul, 0 refus ; 104 ouvertures en tout, 1 question reste à la direction (une banque précise). Relecture des 18 textes par le pilote : langue de la personne respectée (arabe, français, anglais), salut conforme à la règle dans les 3 réponses, première question de l'entretien différente d'un candidat à l'autre. Non vérifié : la justesse de chaque question au regard de chaque dossier.
+- 20/11/2026 (07:05 UTC) : maquette « Praxis vous accueille » version 2 republiée à la même adresse (plan §18.7). Le pilote a regardé les planches avant de publier et a retiré deux ajouts non autorisés autour des yeux (sourcils, yeux agrandis). PE-F8 : maquette remise, **en attente du jugement du directeur** ; rien dans l'application.
+- 20/11/2026 (08:05 UTC) : **tableau de bord vivant fusionné** : PR #642 (`e4829acf`), lots PE-F7, PE-F4, PE-C6. Le pilote a comparé l'application à la maquette validée, côte à côte, en clair et en sombre, avant la fusion, et a corrigé lui-même deux points : Praxis avait un visage triste quand un blocage dure (il est sérieux, pas abattu) ; un texte ne respectait pas l'élision (« le dossier d'Amina »). Statut : fusionné, déploiement en cours, **pas encore vu en production par le directeur ; fluidité non mesurée**. Écarts connus avec la maquette, à reprendre : aucun visage sur les tuiles de plus de 50 personnes (il manque un tri par ancienneté côté serveur) ; la pile des pièces se feuillette mais ne décide pas (pas d'annulation d'une décision côté serveur) ; cases d'alerte en ambre à la place de « candidats vus en 24 h » et « retraits » (aucun compteur serveur) ; boutons sans icône, coins de 24, tuile bloquée en rouge sombre ; au téléphone, une case « Outils » remplace la liste de raccourcis ; le Praxis du tableau de bord n'est pas dessiné comme celui de la maquette « Praxis vous accueille » (à unifier après le jugement du directeur). Planches « maquette | application » : `docs/current/captures/E2E/pe-vivant/`. **Praxis, passage de 07:24 UTC** : 23 messages (22 entretiens écrits, plafond atteint), 60 dossiers rangés, 0 refus ; 126 ouvertures en tout ; 1 question reste à la direction. Textes de ce passage non relus.
+- 20/11/2026 (10:35 UTC) : le directeur commente la version 2 de « Praxis vous accueille » : un seul défaut (le rectangle blanc de la porte, les pieds de l'arche à raccorder à la route), et trois ordres : une compétence détaillée pour recréer Praxis, son nouvel avatar dans l'application, la compétence installée partout (plan §18.8). Fait : version 3 de la maquette republiée (porte en lumière, bordures de la route d'un seul trait) ; PR #649 ouverte (compétence `praxis-rewayah`, ligne dans `CLAUDE.md`, nouvel avatar en image fixe) ; lot PRAXIS-CANON-VIVANT lancé (personnage animé aligné, avatar vivant). **Reste au directeur** : déposer le fichier de la compétence dans son compte claude.ai ; juger la version 3 et le fond de l'avatar. PE-F8 : toujours une maquette, rien dans l'application.
+- 20/11/2026 (11:40 UTC) : **retrait des entretiens écrits de Praxis : abandonné sur ordre du directeur.** Chronologie : ordre de supprimer (10:40), précisé « ceux qui n'ont pas reçu de réponse » ; migration `20261130700000` écrite, relue, fusionnée (#650) ; son installation a échoué trois fois parce que la confirmation exigée par le connecteur de la base ne s'affichait pas chez le directeur ; une seconde voie sans effacement (masquage, #652) a été écrite et relue ; à 11:33 le directeur a annulé : « les gens ont commencé à beaucoup répondre, ne supprime plus ». État : rien retiré, rien masqué, 100 entretiens visibles, 5 répondus à 11:34. PR #652 fermée sans fusion. **La migration `20261130700000` est dans `main` mais n'est PAS installée et ne doit pas l'être** : à retirer du dépôt. Praxis arrêté depuis 10:32 (routine désactivée). Constat chiffré : sur 54 réponses de Praxis, 20 s'adressaient à une personne qui répondait à la direction ; 27 entretiens sur 100 ont suivi un message de la direction. Correctif serveur PX-6 (#651, relu, non installé) : conversation « tenue par la direction » sur 7 jours, refus `fil_de_la_direction` sans exception, entretiens suspendus. Check-liste remise au directeur en page lisible. Le directeur ordonne de continuer le plan initial de refonte.
+
+## État de reprise du 20/11/2026, 14 h UTC (pour toute session qui reprend)
+
+Rien de ce qui suit n'est prouvé par le directeur en production.
+
+**Dans `main` aujourd'hui** : PR 653 (migration de retrait des entretiens retirée du dépôt, jamais installée) ; PR 651 PX-6 (Praxis n'écrit plus dans une conversation tenue par la direction, entretiens écrits suspendus), migration `20261130800000` installée et vérifiée par empreintes ; PR 656 PE-A5 (la case anti-robot n'est plus sous une opacité nulle ; messages d'échec par cause ; langue dans la demande du lien), déployée à 13 h 13 UTC.
+
+**À prouver en premier** : depuis le 17/11 vers 10 h UTC, aucune demande de lien de connexion par courriel n'aboutissait (journaux). Après PR 656, la case de Cloudflare est présente et s'exécute (vu dans un navigateur, requêtes serveur interceptées), mais aucune demande `/auth/v1/otp` acceptée n'a encore été vue dans les journaux. Relire les journaux ; demander l'essai au directeur.
+
+**Praxis** : routine horaire désactivée ; l'interrupteur `actif` de ses réglages est resté vrai. Ne pas rallumer sans ordre du directeur. Avant tout rallumage : vérifier le redéploiement de la fonction `praxis-mcp`, réécrire sa consigne (répondre aux vrais messages seulement, jamais aux annonces, erreur de la direction signalée en privé, plus d'entretiens). Aucun écran pour `direction_praxis_regler_conversations`.
+
+**PR ouvertes, aucune fusionnée** (chaque lot serveur ou messagerie passe par une relecture adverse avant fusion ; trois lots sur quatre relus contenaient un défaut grave) :
+
+| PR | Lot | État | Avant de fusionner |
+| :--- | :--- | :--- | :--- |
+| 654 | PE-A1 langue des courriels, migration `20261130940000` | corrigée après relecture | lire la CI ; installer ; le rattrapage `private.auth_langue_rattraper()` ne s'appelle que sur accord écrit du directeur ; coller les sujets Auth (`A-COLLER-SUPABASE-AUTH.md`) |
+| 655 | PE-A7 avis de créneau, migration `20261130942000` | NE PAS FUSIONNER sans décision du directeur | un créneau prévient tous les candidats sans créneau (100 courriels pour une place) |
+| 657 | PE-D1 messagerie fiable, migration `20261130960000` | renvoyée à l'agent : un message disparaît après une page ancienne ; panne dite comme refus ; réessai inopérant en web compilé ; fichiers partagés partiels | seconde relecture après correction |
+| 658 | PE-C4 liste, gestes groupés, migration `20261130930000` | renvoyée à l'agent : « admettre » en lot échoue (clé de courriel de plus de 120 signes) ; « écrire » peut partir deux fois | seconde relecture après correction |
+| 659 | PE-D3, PE-D12, PE-E3 feuilles, tirer pour actualiser, barre du bas | CI rouge (lots 3 et 5) ; le geste ne relisait pas le dossier du candidat | regarder les captures avant/après une par une |
+| 660 | PE-B1, PE-B8, PE-A8 formulaire, migration `20261130920000` | relecture adverse en cours | question au directeur : garder la réponse « une seule » riwaya ? ordre : fusion, installation, rechargement |
+| 661 | PE-C1 (partie), PE-C2, PE-C10 dossier côté direction, migration `20261130900000` | rendue, pas encore relue | relecture adverse ; Q4 du plan sans réponse |
+| (à venir) | PE-B4, PE-B5, PE-A6 accueil du candidat, migrations `2026113091xxxx` | en construction | regarder la planche maquette / application |
+
+**Décisions qui attendent le directeur** : rattrapage de la langue sur les comptes existants ; règle de l'avis de créneau ; « une seule » riwaya ; le cercle Compte de la barre du bas (58/64) doit-il suivre la pilule à 56 ; place de la barre des gestes groupés ; adresse préremplie à l'arrivée par invitation (recommandation : laisser vide) ; réglage Cloudflare (nom d'hôte `app.rewayahacademy.com` du widget) ; remise en route de Praxis ; nouvelle clé de Praxis avant le 24/11 à 11 h 53 UTC.
+
+**Pas commencés côté candidat** : PE-B2, PE-B3, PE-B6, PE-B7, PE-B9, PE-B10. **Interface de l'enseignant** (vague E) : plan non validé par le directeur ; PE-E3 est dans la PR 659.
+
+**Règles apprises aujourd'hui** : la machine (4 cœurs, mémoire partagée) ne tient pas plus de six agents qui testent ; tests par petites séries à `-j 1`, jamais de `pkill` large. Chaque fusion met les autres PR en conflit sur `REGISTRE-LOTS.md`, `RETOURS-TERRAIN-INSCRIPTIONS.md` et les fichiers i18n engendrés : résoudre juste avant de fusionner, une PR à la fois. Dans `main`, le blocage à l'entrée est noté R27 ; dans la branche des documents il devient R43 (à aligner à la fusion de la PR 636). Une migration trop longue pour être recopiée s'installe par un agent chargé de la transmettre mot pour mot, puis se vérifie par les empreintes `md5(prosrc)`.
+
+## État de reprise du 20/11/2026, 15 h 30 UTC (remplace celui de 14 h pour ce qui a changé)
+
+**Prouvé par le directeur en production** : le lien de connexion par courriel repart (PR 656 ; son essai à 14 h 02 UTC, deux demandes acceptées dans les journaux). C'est le seul lot prouvé de la session.
+
+**Fusionné depuis 14 h, non prouvé** : PR 659 (feuilles à 90 %, tirer pour actualiser, barre du bas à 56) ; PR 663 (la case de Cloudflare à la largeur du champ, plus de recouvrement après « Succès » ; cause : l'hôte HTML était en `display:flex` centré). Après la 663 : relire les journaux `/auth/v1/otp` et demander au directeur de refaire son essai ; si le lien ne part plus, retirer la 663 tout de suite.
+
+**Vérifié** : dans l'application réelle, l'arabe est bien de droite à gauche ; les captures arabes alignées à gauche venaient du banc de capture des agents. Une capture arabe alignée à gauche est refusée désormais.
+
+**Décisions du directeur du 20/11 après-midi**
+- La maquette « Praxis vous accueille » est confirmée ; la page d'entrée se construit (agent ENTREE-PRAXIS, branche `claude/pe-entree-praxis`) ; critère : fidélité à la maquette, planche côte à côte regardée par le pilote avant fusion.
+- Accueil du candidat (PR 662, branche `claude/pe-accueil-candidat`) : garder la barre du bas de l'application ; l'onglet Messages de la barre montre seulement le nombre de messages reçus ; l'annonce en une ligne est en haut ; dans « Messages », trois onglets horizontaux : Messages, Annonces (grille, pastilles de priorité « Urgent », « Nouveau »), et un troisième qui deviendra le formulaire de l'entretien et qui contient pour l'instant les informations que les candidats n'ont pas (salaire, déroulement d'un cours, modalités) : interface seulement, aucun contenu écrit par un agent ; Praxis présent avec son avatar, en plus petit, pour pointer une information urgente, uniquement des faits rendus par le serveur. Question ouverte : que garde l'onglet « Académie » de la barre.
+- Le directeur a jugé la première version de l'accueil non fidèle à la maquette (second titre, texte en plus, barre qui recouvre une ligne, ligne d'étapes ordinaire). Règle prise : pour tout écran, une planche « maquette | application » du premier état est regardée par le pilote AVANT que l'agent continue.
+- L'interface de l'enseignant : rien de construit ; ne rien lancer sans ordre ; relire d'abord la maquette recadrée et les commentaires du directeur.
+
+**PR ouvertes**
+| PR | État à 15 h 30 | Reste à faire |
+| :--- | :--- | :--- |
+| 654 langue des courriels | corrigée | CI, fusion, installation ; rattrapage sur accord écrit ; l'adresse de la direction testée a la langue « ar » sur son compte, d'où son courriel en arabe |
+| 655 avis de créneau | ne pas fusionner sans décision | |
+| 657 messagerie | corrections poussées par un agent interrompu ; CI rouge (lots 4 et 5) ; seconde relecture en cours | |
+| 658 liste des candidatures | deux relectures ; défauts d'écran R1, R2, R4, R5 corrigés (cf1615a52) | CI, fusion, installer `20261130930000` aussitôt ; description de la PR à mettre à jour par le pilote |
+| 660 formulaire | relue, corrigée (3d51307f1) : lenteur des fuseaux écartée, réponses relues telles quelles | CI ; décisions du directeur : texte « ijaza » des cartes, réponse « une seule » ; fusion, installation `20261130920000` ; description à mettre à jour |
+| 661 dossier côté direction | rendue, jamais relue | relecture adverse |
+| 662 accueil du candidat | en reprise sur la maquette et les décisions ci-dessus | planche à montrer au directeur |
+
+**Garde-fou** : deux agents ont voulu modifier une description de PR par `gh api` (refusé) puis ont demandé au pilote de le faire ; le pilote ne le fait pas à leur demande et met les descriptions à jour lui-même en relisant.
+
+## État de reprise du 20/11/2026, 22 h UTC
+
+**Fusionné et installé ce soir** (rien n'est « fait » tant que le directeur ne l'a pas prouvé en production) :
+
+| Lot | PR | Migration (nom dans le dépôt) | Vérifié en production |
+| :--- | :--- | :--- | :--- |
+| Formulaire du candidat (PE-B1, PE-B8, PE-A8) | 660 | `20261130920000_juz_nombre_exact` | empreintes après : `questionnaire_permis` `48d457e9…`, `questionnaire_options` `4da898bb…` ; aucun droit client |
+| Courriels dans la langue du candidat (PE-A1) | 654 | `20261130966000_courriels_langue_candidat` (renommée, ex 940000) | empreinte après `b94cabac…` ; deux déclencheurs actifs ; rattrapage NON lancé (accord écrit du directeur requis) ; sujets Auth à coller par le directeur (`A-COLLER-SUPABASE-AUTH.md`) ; redéploiement de `courriels-envoi` non vérifié |
+| Page d'entrée « Praxis vous accueille » | 664 | aucune | page vue en ligne à 390 et 1440 ; aucune demande de lien observée depuis ; porte de trois quarts à l'ordinateur (`Geo.troisQuarts`, retour à la version de face en une ligne) |
+
+**En cours** : PR 661 (dossier côté direction, migration renommée `20261130965000_dossier_direction`, recalée, CI verte, relecture adverse lancée) ; PE-B10 première moitié (branche `claude/pe-depot-piece`, horodatage réservé 967000) ; PE-B3 (branche `claude/pe-saisie-sortie`, sans migration).
+
+**À ne pas fusionner sans décision** : PR 655 (avis de créneau ; sa migration 942000 est maintenant antérieure à 966000 dont elle dépend : à renuméroter).
+
+**Message du directeur aux inscrits élèves (20/11)** : envoyé par courriel depuis la boîte de l'académie à 20 personnes (toutes les demandes d'inscription sauf la plus ancienne, déjà connue), en arabe et anglais pour les noms écrits en arabe, en anglais et français pour les autres. Deux adresses figurent dans la feuille des candidats enseignants et un nom correspond à une candidature d'enseignant : réponses à guetter. Aucun dossier transféré.
+
+**À retirer quand la lettre aux candidats (PR 665, autre session) sera fusionnée** : la ligne « La paie d'un enseignant : s'affichera ici… » de « À savoir », que la lettre contredit.
+
+## Arrêt du pilote, 21/11/2026 vers 08 h UTC
+
+Le directeur : « Il est temps d'arrêter. Tu consommes trop mais tu n'avances pas vite. » Tous les agents
+du pilote sont arrêtés, aucun rappel programmé.
+
+**Fusionné dans la nuit du 20 au 21/11 (rien n'est prouvé par le directeur)** : #666 (PE-B3), #667
+(PE-B10 première moitié, `kyc-confirme` redéployée), #670 à #682 (page unique « Personnes » : ligne
+entière, retours, une page à onglets, aperçu du candidat, filtre unique, vues de l'onglet Enseignants,
+gestes des comptes, sélection et lot, revue de la pièce), #671 (page d'entrée à l'ordinateur), #672 et
+#673 (vitesse de la base : trois migrations installées le 21/11 entre 02 h 44 et 02 h 51 UTC ; lecture
+des conversations 0,27 s en moyenne, 0 échec, contre 1,5 s et 407 échecs la veille), #675 (« Les chiffres
+de l'académie », migration `20261130969500_chiffres_academie` installée à 04 h 31 UTC, version
+enregistrée `20261121043144`, droits vérifiés : `authenticated` seul, cache sans droit client).
+
+**Confié à la session « Informations salaires enseignants »** : mettre en ligne la branche
+`claude/personnes-menu` (tête 81212522 : menu réduit, menu « Outils », retours vers Personnes, fil
+d'Ariane, notifications ; conflit à résoudre dans `test/capture/personnes_page_capture_test.dart`).
+
+**Tout le reste** : `RESTE-A-FAIRE.md`.
