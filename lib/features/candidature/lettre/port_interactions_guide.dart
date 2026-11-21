@@ -20,6 +20,8 @@ import '../../../core/capacites/capacite_indisponible.dart';
 //                      "auteur": "moi" | "direction" | "praxis",
 //                      "parent_id": "..." | null}]}
 // `commentaires` : seulement les fils de l'appelant, reponses comprises.
+// `commentaires_ouverts` (21/11/2026) : faux tant que la direction ne lit pas
+// les commentaires ; absent, vrai.
 // `donner_avis_guide(p_partie, p_avis)` rend la ligne de la partie a jour ;
 // `commenter_guide(p_partie, p_corps)` rend le commentaire cree.
 
@@ -147,7 +149,11 @@ class CommentaireGuide {
 /// Ce que rend `lire_interactions_guide()`.
 class InteractionsGuide {
   /// Cree l'ensemble.
-  const InteractionsGuide({required this.avis, required this.commentaires});
+  const InteractionsGuide({
+    required this.avis,
+    required this.commentaires,
+    this.commentairesOuverts = true,
+  });
 
   /// Lit la reponse du serveur.
   factory InteractionsGuide.depuisJson(Map<String, dynamic> brut) =>
@@ -161,6 +167,7 @@ class InteractionsGuide {
           for (final Object? c in brut['commentaires'] as List<dynamic>)
             CommentaireGuide.depuisJson(c! as Map<String, dynamic>),
         ],
+        commentairesOuverts: brut['commentaires_ouverts'] as bool? ?? true,
       );
 
   /// Les totaux par code de partie.
@@ -168,6 +175,11 @@ class InteractionsGuide {
 
   /// Les fils du lecteur, dans l'ordre de creation.
   final List<CommentaireGuide> commentaires;
+
+  /// Faux tant que la direction n'a aucun ecran pour lire les commentaires et
+  /// y repondre (21/11/2026) : le serveur le dit, l'ecran ne propose alors ni
+  /// « Commenter » ni le fil, jamais une promesse de reponse qu'on ne tient pas.
+  final bool commentairesOuverts;
 }
 
 /// Le port des interactions du guide.

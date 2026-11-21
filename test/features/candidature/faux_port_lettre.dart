@@ -63,6 +63,7 @@ class FauxPortInteractions implements PortInteractionsGuide {
   FauxPortInteractions({
     this.jaime = 3,
     this.enPanne = false,
+    this.commentairesOuverts = true,
     List<CommentaireGuide> fil = const <CommentaireGuide>[],
   }) {
     _fil.addAll(fil);
@@ -73,6 +74,10 @@ class FauxPortInteractions implements PortInteractionsGuide {
 
   /// Vrai : tout appel d'ecriture echoue.
   bool enPanne;
+
+  /// Faux : le serveur dit que la direction ne lit pas encore les
+  /// commentaires (GUIDE-AVIS, 21/11/2026).
+  final bool commentairesOuverts;
 
   final Map<String, AvisPartie> _avis = <String, AvisPartie>{};
   final List<CommentaireGuide> _fil = <CommentaireGuide>[];
@@ -89,6 +94,7 @@ class FauxPortInteractions implements PortInteractionsGuide {
       for (int k = 1; k <= 14; k++) 'p$k': _ligne('p$k'),
     },
     commentaires: List<CommentaireGuide>.of(_fil),
+    commentairesOuverts: commentairesOuverts,
   );
 
   @override

@@ -99,6 +99,12 @@ declare
     -- Garde positive : app_account_valid() ET app_role() = 'admin', sinon 42501 ; aucun parametre ; ne rend que des
     -- agregats ; n'ecrit nulle part ailleurs. Relue par l'agent du lot le 21/11/2026.
     'chiffres_academie()',
+    -- GUIDE-AVIS (21/11) : le lecteur du guide de l'enseignant pose ou retire son avis (« jaime », « pas_clair ») sur une
+    -- partie. Garde : celle de la lecture du guide (public.lire_lettre_candidats : role enseignant du jeton en garde positive,
+    -- profil enseignant ouvert, compte actif ou candidature en cours avec ses accords), via private.guide_avis_acces(), sinon
+    -- 42501 ; pas app_account_valid(), qui refuserait les candidats en attente (pending_kyc) qui lisent le guide. N'ecrit
+    -- qu'une ligne de private.guide_avis, celle de l'appelant. Relue par l'agent du lot le 21/11/2026.
+    'donner_avis_guide(text,text)',
     'creer_mission(text,text[],uuid)',
     'retirer_mission(uuid,text,uuid)',
     'agent_pre_request()',

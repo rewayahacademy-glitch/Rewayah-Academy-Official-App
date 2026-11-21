@@ -14,6 +14,42 @@ connexion par courriel, PR 656) ; tout le reste de ce qui est dans `main` attend
 Le détail de chaque lot est dans `PLAN.md` ; la check-liste et le journal dans `SUIVI.md` ; les maquettes
 validées dans `maquettes/` (et les adresses des pages remises au directeur dans `SUIVI.md`).
 
+## 0. À TRAITER DANS LES JOURS QUI VIENNENT : le guide contredit l'application (directeur, 21/11/2026)
+
+Le guide de l'enseignant est en ligne (PR 665) et lu par les candidats. Il promet des choses que l'application ne fait pas, ou qui
+contredisent une règle écrite. Détail ligne par ligne : `docs/current/CANDIDATURES/LETTRE-CANDIDATS/REGLES-NOUVELLES.md`.
+
+- **Contraires** : P1 (45 % enfants contre 47 % pour tous), P2 (absent payé à moitié contre jamais payé), P3 (montants en dollars
+  contre pourcentages seulement), L1 (arabe langue de cours contre refusé le 22/10), C2 (format du matricule).
+- **Absents** : A2 (avertissements avant perte de la classe), A5 (enseigner ailleurs permis), A6 (sortie de plus de 30 s signalée),
+  P5 (montant minimum versé au remplaçant), et les lignes « non vérifié » (P4, P6, P7, A3, A4, A7, C1).
+- Marche à suivre : le directeur tranche chaque ligne (le guide change, ou la règle et le code changent) ; la décision datée va dans la
+  source nommée ; puis le code ; la ligne se ferme avec le numéro de PR, et sort de cette section.
+
+## 0 bis. PAGE « PERSONNES » À REFAIRE : le directeur la déteste (21/11/2026, captures en production, 1280 px, arabe)
+
+Directeur, 21/11/2026 : « regarde-moi cette page immonde […] c'est elle qui devait être la meilleure de tout ce que tu as fait
+jusqu'ici. je t'avais dit que c'est mon bureau » ; « j'ai tout détesté ». **Chaque point ci-dessous est un défaut constaté, pas une
+suggestion.** Aucun agent ne déclare cette page faite sans que le directeur l'ait vue et acceptée.
+
+1. **L'aperçu ne sert à rien** : il répète ce que la ligne montre déjà (nom, matricule, âge, classe, tuteur, ancienneté) et ajoute des
+   clics au lieu d'en retirer. Il doit montrer **la photo** (la ligne ne la montre pas, l'aperçu oui), **ce qui manque** au dossier,
+   un **badge vert « Dossier complet »** quand rien ne manque, et **toute la synthèse** nécessaire pour décider et agir **sans ouvrir
+   la page entière** du dossier.
+2. **Le layout est détesté** : liste et aperçu côte à côte avec une liste coupée au milieu de l'écran.
+3. **Liste cassée** : sur un écran d'ordinateur de 14 pouces, la liste ne commence qu'à la moitié de l'écran, sous le titre, deux
+   rangées d'onglets, la recherche, « Filtrer par », le tri, le compteur et l'en-tête de colonnes ; on ne voit que 4 à 5 lignes à la
+   fois. Avec 2 000 personnes, c'est inutilisable. La liste doit occuper l'écran (`DECISION-DEFILEMENT-2026-11-01.md` : la liste est
+   la page, rien de gros collé au-dessus).
+4. **Filtres en menus déroulants, sur la même ligne que les onglets** (ordre déjà donné, « j'avais bien dit drop down menu ») : pas
+   une seconde rangée de vues (Candidats, Accueil, Actifs, Partis, Pièces à vérifier) plus une rangée de recherche et de filtres. Les
+   vues et les filtres deviennent des menus déroulants à côté des onglets.
+5. **« Personnes » inatteignable d'un clic dans la barre réduite** (conséquence de la PR 683) : dans le rail replié, toucher
+   « Personnes » ouvre un menu (Importer, Suppressions) au lieu d'ouvrir la page ; il faut déplier le panneau. « Qui fait ça en
+   2026 ? » Toucher le domaine doit ouvrir la page Personnes ; Importer et Suppressions vont ailleurs (menu « Outils » de la page).
+6. Directeur : « tu n'as pas de connaissances en UX/UI ? » : avant de coder, l'agent cherche des références réelles de bureaux de
+   gestion (liste dense plein écran, panneau latéral riche à la demande), les montre au directeur, puis code.
+
 ## 1. Ce qui reste des MAQUETTES validées, pas encore dans l'application
 
 | Maquette | Ce qui manque | Lot |
@@ -33,7 +69,7 @@ validées dans `maquettes/` (et les adresses des pages remises au directeur dans
 
 - Vague P (fluidité) : PE-P1 mesure sur les trois appareils du directeur, PE-P3, PE-P4 ; PE-P2 éclair coloré non corrigé.
 - Vague A : PE-A2 (adresse préremplie et marque dans le lien : serveur), PE-A4 (geste « ce compte est un candidat enseignant »), PE-A7 (PR 655 : **ne pas fusionner** sans décision ; sa migration 942000 est à renuméroter après 966000), PE-A9 (rôle associé côté serveur).
-- Vague B : PE-B2 (un seul nom par élément), PE-B6 (partage), PE-B7 (modifier après envoi), PE-B9 (réponses toutes prêtes : le guide de l'enseignant est dans `main` depuis le 21/11, PR 665 ; **reste** la partie serveur des avis « J'aime » / « Pas clair » et des commentaires (`commenter_guide`, `commentaires_guide_direction` avec les « Pas clair » par partie, `repondre_commentaire_guide`), sans laquelle la barre d'avis ne s'affiche pas ; la liste de la direction, triée par « Pas clair » ; Praxis qui clarifie seulement depuis le texte validé ; les trois promesses du guide que l'application ne tient pas (45 % enfants, absent payé à moitié, arabe langue de cours), `docs/current/CANDIDATURES/LETTRE-CANDIDATS/REGLES-NOUVELLES.md`), PE-B10 seconde moitié (ranger une image du chat comme pièce). Côté direction : la ville et la langue du candidat ne sont pas encore lues par le serveur ; le téléphone n'est pas relu par le candidat.
+- Vague B : PE-B2 (un seul nom par élément), PE-B6 (partage), PE-B7 (modifier après envoi), PE-B9 (réponses toutes prêtes : le guide de l'enseignant est dans `main` depuis le 21/11, PR 665 ; les « J'aime » et « Pas clair » ont leur serveur (GUIDE-AVIS, migration `20261130971000`) ; **reste** la partie serveur des commentaires (`commenter_guide`, `commentaires_guide_direction`, `repondre_commentaire_guide`) et l'écran de la direction qui les lit : d'ici là, « Commenter » est masqué ; la liste de la direction, triée par « Pas clair » ; Praxis qui clarifie seulement depuis le texte validé ; les trois promesses du guide que l'application ne tient pas (45 % enfants, absent payé à moitié, arabe langue de cours), `docs/current/CANDIDATURES/LETTRE-CANDIDATS/REGLES-NOUVELLES.md`), PE-B10 seconde moitié (ranger une image du chat comme pièce). Côté direction : la ville et la langue du candidat ne sont pas encore lues par le serveur ; le téléphone n'est pas relu par le candidat.
 - Vague C : PE-C3 (pièce toujours affichée de la même façon), PE-C5 (épingler), PE-C9 en partie.
 - Vague D : PE-D2 (supprimer un message), PE-D5 (profil dans la conversation), PE-D6 (annoncer à ces N personnes), PE-D7 (aperçu de lien, PDF), PE-D12 en partie.
 - Vague G (Praxis) : PE-G3 (valider par pile) ; PE-G4 **arrêté** depuis le 20/11 à 10 h 32 UTC, ne pas rallumer sans ordre.
