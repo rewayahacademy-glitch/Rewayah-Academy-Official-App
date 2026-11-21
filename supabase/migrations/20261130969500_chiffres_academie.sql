@@ -12,7 +12,8 @@
 --     (juz, riwayat, langues, ijaza) et les seances. Le resultat vit dans app_private.chiffres_cache (une ligne, RLS
 --     activee, aucune politique, aucun droit pour un client). La fonction le recalcule elle-meme quand il a plus de
 --     10 minutes ; sinon elle le rend tel quel. Deux onglets ou deux personnes ne doublent donc pas le cout. Un verrou
---     consultatif evite deux recalculs en meme temps : le second appelant rend l'ancien resultat sans attendre.
+--     consultatif, demande sans attendre, evite deux recalculs en meme temps : le second appelant rend l'ancien
+--     resultat sans attendre (ou, au tout premier appel, calcule pour lui-meme sans rien ecrire).
 --   La reponse dit l'heure du calcul memorise (memorise_le).
 --
 -- LES JOURS se comptent a l'heure de La Mecque (l'horloge de l'academie) : « aujourd'hui » commence a
@@ -88,6 +89,7 @@ DECLARE
   v_direct jsonb;
   v_cache jsonb;
   v_cache_le timestamptz;
+  v_verrou boolean := false;
   v_candidats jsonb;
   v_declarations jsonb;
   v_academie jsonb;
@@ -123,9 +125,14 @@ BEGIN
   -- MEMORISE : rendu tel quel s'il a moins de 10 minutes.
   SELECT k.valeurs, k.calcule_le INTO v_cache, v_cache_le FROM app_private.chiffres_cache k WHERE k.id;
 
-  IF (v_cache IS NULL OR v_cache_le < pg_catalog.now() - interval '10 minutes')
-     -- Un seul recalcul a la fois : qui n'a pas le verrou rend l'ancien resultat (ou calcule, s'il n'y en a aucun).
-     AND (pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('chiffres_academie')) OR v_cache IS NULL) THEN
+  -- Un seul recalcul memorise a la fois. Le verrou se DEMANDE sans attendre : qui ne l'obtient pas rend l'ancien
+  -- resultat tel quel. S'il n'y a encore aucun resultat (tout premier appel), il calcule pour lui-meme et n'ecrit
+  -- rien : un appel concurrent n'attend donc jamais, ni le verrou ni la ligne.
+  IF v_cache IS NULL OR v_cache_le < pg_catalog.now() - interval '10 minutes' THEN
+    v_verrou := pg_catalog.pg_try_advisory_xact_lock(pg_catalog.hashtext('chiffres_academie'));
+  END IF;
+
+  IF v_verrou OR v_cache IS NULL THEN
 
     SELECT pg_catalog.jsonb_build_object(
              'pays', pg_catalog.count(DISTINCT c.pays_residence),
@@ -198,9 +205,11 @@ BEGIN
       'candidats', v_candidats, 'declarations', v_declarations, 'academie', v_academie, 'seances', v_seances);
     v_cache_le := pg_catalog.now();
 
-    INSERT INTO app_private.chiffres_cache AS k (id, calcule_le, valeurs)
-    VALUES (true, v_cache_le, v_cache)
-    ON CONFLICT (id) DO UPDATE SET calcule_le = EXCLUDED.calcule_le, valeurs = EXCLUDED.valeurs;
+    IF v_verrou THEN
+      INSERT INTO app_private.chiffres_cache AS k (id, calcule_le, valeurs)
+      VALUES (true, v_cache_le, v_cache)
+      ON CONFLICT (id) DO UPDATE SET calcule_le = EXCLUDED.calcule_le, valeurs = EXCLUDED.valeurs;
+    END IF;
   END IF;
 
   RETURN pg_catalog.jsonb_build_object(
