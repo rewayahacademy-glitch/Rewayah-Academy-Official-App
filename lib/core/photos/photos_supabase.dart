@@ -4,6 +4,21 @@
 // que le serveur rend pour la personne ; la politique du seau n'autorise que
 // son propre dossier (`avatar_ecriture_soi`, `photos_enseignants_ecriture`)
 // ou celui d'un enfant de son foyer.
+//
+// PERSONNES-PERF (20/11/2026) : une liste de 50 personnes posait 50 appels
+// `photos_personnes` (un par avatar ; 7 555 appels en 24 h en production). Les
+// demandes faites dans la meme tache (la construction d'une image de l'ecran)
+// sont regroupees en UN appel, et une demande deja partie pour une personne
+// est rejointe au lieu d'etre refaite. Ce que rend [PhotosSupabase.sources]
+// ne change pas : le serveur filtre toujours chaque personne (droit de voir sa
+// photo), une personne sans photo visible reste absente de la reponse.
+// Relecture adverse du 21/11 (S1) : un identifiant qui n'est pas un UUID (en
+// salle, l'identite LiveKit « Administration Rewayah ») ne part jamais au
+// serveur et rend « absent » ; un lot qui echoue est refait identifiant par
+// identifiant (seuls les fautifs echouent) ; le regroupement est range par
+// client ET par compte connecte (un changement de compte n'en rejoint aucun).
+
+import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,9 +33,17 @@ const int dureeUrlPhotoSecondes = 600;
 /// La photo des personnes, lue et posee au serveur.
 class PhotosSupabase implements PortPhotos {
   /// Cree l'adaptateur.
-  const PhotosSupabase(this._client, {this.attendre = attenteReelle});
+  const PhotosSupabase(
+    this._client, {
+    this.attendre = attenteReelle,
+    this.compteCourant,
+  });
 
   final SupabaseClient _client;
+
+  /// Le compte connecte (`null` : celui de la session du client). Remplace
+  /// dans les tests.
+  final String? Function()? compteCourant;
 
   /// L'attente avant un nouvel essai (remplacee dans les tests).
   final Attente attendre;
@@ -38,15 +61,34 @@ class PhotosSupabase implements PortPhotos {
     };
   }
 
+  /// Le regroupement des demandes, un par client (l'adaptateur reste `const`)
+  /// et par compte connecte.
+  static final Expando<RegroupementPhotos> _regroupements =
+      Expando<RegroupementPhotos>('photos_personnes');
+
   @override
-  Future<Map<String, SourcePhoto>> sources(List<String> profileIds) async {
-    if (profileIds.isEmpty) return const <String, SourcePhoto>{};
-    return lignes(
-      await _client.rpc<Object?>(
-        'photos_personnes',
-        params: <String, dynamic>{'p_ids': profileIds},
-      ),
-    );
+  Future<Map<String, SourcePhoto>> sources(List<String> profileIds) {
+    if (profileIds.isEmpty) {
+      return Future<Map<String, SourcePhoto>>.value(
+        const <String, SourcePhoto>{},
+      );
+    }
+    final String compte =
+        (compteCourant ?? () => _client.auth.currentUser?.id)() ?? '';
+    final RegroupementPhotos? actuel = _regroupements[_client];
+    final RegroupementPhotos regroupement =
+        actuel != null && actuel.compte == compte
+        ? actuel
+        : _regroupements[_client] = RegroupementPhotos(
+            (List<String> ids) async => lignes(
+              await _client.rpc<Object?>(
+                'photos_personnes',
+                params: <String, dynamic>{'p_ids': ids},
+              ),
+            ),
+            compte: compte,
+          );
+    return regroupement.demander(profileIds);
   }
 
   @override
@@ -122,4 +164,106 @@ class PhotosSupabase implements PortPhotos {
   @override
   Future<bool> peutPoserMaPhoto() async =>
       await _client.rpc<Object?>('photo_adulte_moi') == true;
+}
+
+/// Un identifiant que `photos_personnes(p_ids uuid[])` accepte. Pure.
+bool estIdentifiantPhoto(String id) => _uuid.hasMatch(id);
+
+final RegExp _uuid = RegExp(
+  r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+);
+
+/// Regroupe les demandes de photos faites dans la meme tache en un seul appel
+/// au serveur, et rejoint une demande deja en vol pour la meme personne.
+///
+/// Public pour les tests. [lire] recoit des identifiants distincts (des UUID)
+/// et rend les sources trouvees (une personne sans photo visible n'y est pas).
+/// Un identifiant qui n'est pas un UUID rend « absent » sans appel. Un lot qui
+/// echoue est refait identifiant par identifiant : seuls les fautifs echouent.
+class RegroupementPhotos {
+  /// Cree le regroupement sur la lecture [lire], pour le compte [compte].
+  RegroupementPhotos(this.lire, {this.compte = ''});
+
+  /// La lecture d'un lot d'identifiants.
+  final Future<Map<String, SourcePhoto>> Function(List<String> ids) lire;
+
+  /// Le compte pour lequel ce regroupement lit.
+  final String compte;
+
+  /// Les personnes demandees, pas encore parties au serveur.
+  final Map<String, Completer<SourcePhoto?>> _enAttente =
+      <String, Completer<SourcePhoto?>>{};
+
+  /// Les personnes parties au serveur, reponse pas encore arrivee.
+  final Map<String, Future<SourcePhoto?>> _enVol =
+      <String, Future<SourcePhoto?>>{};
+
+  bool _planifie = false;
+
+  /// Les sources de [ids] : rendues par un appel commun aux demandes de la
+  /// meme tache.
+  Future<Map<String, SourcePhoto>> demander(List<String> ids) async {
+    final List<String> distincts = <String>[
+      for (final String id in ids.toSet())
+        if (estIdentifiantPhoto(id)) id,
+    ];
+    final List<SourcePhoto?> trouvees = await Future.wait(
+      <Future<SourcePhoto?>>[for (final String id in distincts) _une(id)],
+    );
+    return <String, SourcePhoto>{
+      for (int i = 0; i < distincts.length; i++)
+        if (trouvees[i] case final SourcePhoto s) distincts[i]: s,
+    };
+  }
+
+  Future<SourcePhoto?> _une(String id) {
+    final Future<SourcePhoto?>? deja = _enVol[id] ?? _enAttente[id]?.future;
+    if (deja != null) return deja;
+    final Completer<SourcePhoto?> attente = Completer<SourcePhoto?>();
+    _enAttente[id] = attente;
+    if (!_planifie) {
+      _planifie = true;
+      scheduleMicrotask(() => unawaited(_partir()));
+    }
+    return attente.future;
+  }
+
+  Future<void> _partir() async {
+    _planifie = false;
+    final Map<String, Completer<SourcePhoto?>> lot =
+        Map<String, Completer<SourcePhoto?>>.of(_enAttente);
+    _enAttente.clear();
+    for (final MapEntry<String, Completer<SourcePhoto?>> e in lot.entries) {
+      _enVol[e.key] = e.value.future;
+    }
+    try {
+      final Map<String, SourcePhoto> lues = await lire(lot.keys.toList());
+      for (final MapEntry<String, Completer<SourcePhoto?>> e in lot.entries) {
+        e.value.complete(lues[e.key]);
+      }
+    } on Object catch (erreur, pile) {
+      if (lot.length == 1) {
+        lot.values.single.completeError(erreur, pile);
+      } else {
+        // Le lot a echoue : un appel par identifiant, pour que seul le fautif
+        // echoue.
+        await Future.wait(<Future<void>>[
+          for (final MapEntry<String, Completer<SourcePhoto?>> e in lot.entries)
+            _seul(e.key, e.value),
+        ]);
+      }
+    } finally {
+      _enVol.removeWhere(
+        (String id, Future<SourcePhoto?> _) => lot.containsKey(id),
+      );
+    }
+  }
+
+  Future<void> _seul(String id, Completer<SourcePhoto?> attente) async {
+    try {
+      attente.complete((await lire(<String>[id]))[id]);
+    } on Object catch (erreur, pile) {
+      attente.completeError(erreur, pile);
+    }
+  }
 }

@@ -1826,6 +1826,8 @@ class _CollectionParTranchesEtat<T> extends State<_CollectionParTranches<T>> {
                       actionsLigne: c.actionsLigne,
                       mise: mise,
                       autofocus: c.auFocus?.call(c.lignes[i]) ?? false,
+                      selectionnee:
+                          c.estSelectionnee?.call(c.lignes[i]) ?? false,
                     ),
                   ),
                 ),
@@ -1902,11 +1904,18 @@ class _LigneDense<T> extends StatelessWidget {
     this.selection,
     this.actionsLigne,
     this.autofocus = false,
+    this.selectionnee = false,
   });
 
   final List<ColonneDonnees<T>> colonnes;
   final T ligne;
   final bool premiere;
+
+  /// [DataCollection.estSelectionnee] : la ligne ouverte a cote (liste et
+  /// apercu). Faux par defaut : les listes sans selection ne changent pas.
+  /// Dite par un contour d'accent et par le lecteur d'ecran, jamais par la
+  /// couleur seule.
+  final bool selectionnee;
 
   /// [DataCollection.auFocus].
   final bool autofocus;
@@ -2076,8 +2085,12 @@ class _LigneDense<T> extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: cochee ? palette.washAccent.background : null,
-        border: premiere
+        color: cochee || selectionnee ? palette.washAccent.background : null,
+        border: selectionnee
+            ? Border.fromBorderSide(
+                palette.inkAccent.asBorderSide(width: Pressable.epaisseurFocus),
+              )
+            : premiere
             ? null
             : Border(top: palette.borderHairline.asBorderSide()),
       ),
