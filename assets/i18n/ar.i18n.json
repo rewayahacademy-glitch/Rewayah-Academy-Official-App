@@ -5279,6 +5279,7 @@
     "personnesPage": {
       "autresPages": "صفحات الأشخاص الأخرى",
       "ongletEquipe": "الإدارة والفريق",
+      "ongletEquipeCourt": "الفريق",
       "ongletAvecNombre": "⁨{nom}⁩ (⁨{n}⁩)",
       "choix": "الأشخاص المعروضون",
       "apercuVide": "اختر شخصًا من القائمة لعرض ملخّصه.",

@@ -226,6 +226,20 @@ void main() {
             AppLocale.ar,
           ),
           (
+            'familles_390_ar_clair',
+            '$base?onglet=familles',
+            telephone,
+            ThemeMode.light,
+            AppLocale.ar,
+          ),
+          (
+            'equipe_390_en_clair',
+            '$base?onglet=equipe',
+            telephone,
+            ThemeMode.light,
+            AppLocale.en,
+          ),
+          (
             'familles_1024_fr_clair',
             '$base?onglet=familles&element=RA-26-4131',
             const Size(1024, 768),

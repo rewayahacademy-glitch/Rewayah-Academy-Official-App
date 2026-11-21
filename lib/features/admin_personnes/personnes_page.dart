@@ -41,6 +41,7 @@ import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -178,6 +179,20 @@ class PersonnesPage extends ConsumerWidget {
   /// La cle du menu des anciennes pages de la rubrique.
   static const Key cleAutresPages = ValueKey<String>('personnes-autres-pages');
 
+  /// La cle du nom de l'onglet ouvert, ecrit en toutes lettres au telephone.
+  static const Key cleNomOnglet = ValueKey<String>('personnes-nom-onglet');
+
+  /// L'icone d'un onglet. Quatre dessins sans parente : un livre (l'eleve
+  /// apprend), une maison (la famille), la toque (l'enseignant), la mallette
+  /// (l'equipe). Jamais deux groupes de personnes cote a cote (directeur,
+  /// 20/11/2026 : le risque d'agir sur la mauvaise liste).
+  static AppIcon iconeOnglet(OngletPersonnes o) => switch (o) {
+    OngletPersonnes.eleves => AppIcons.livreOuvert,
+    OngletPersonnes.familles => AppIcons.maison,
+    OngletPersonnes.enseignants => AppIcons.pedagogie,
+    OngletPersonnes.equipe => AppIcons.studio,
+  };
+
   /// La cle de la liste.
   static const Key cleListe = ValueKey<String>('personnes-liste');
 
@@ -247,18 +262,21 @@ class PersonnesPage extends ConsumerWidget {
             ?.where((CompteAdmin c) => VueComptes.de(c).contains(vue))
             .length,
     };
+    String court(OngletPersonnes o) => switch (o) {
+      OngletPersonnes.eleves => t.admin.comptes.vueEleves,
+      OngletPersonnes.familles => t.admin.comptes.vueFamilles,
+      OngletPersonnes.enseignants => t.admin.comptes.vueEnseignants,
+      OngletPersonnes.equipe => p.ongletEquipeCourt,
+    };
     String libelle(OngletPersonnes o) {
-      final String nom = switch (o) {
-        OngletPersonnes.eleves => t.admin.comptes.vueEleves,
-        OngletPersonnes.familles => t.admin.comptes.vueFamilles,
-        OngletPersonnes.enseignants => t.admin.comptes.vueEnseignants,
-        OngletPersonnes.equipe => p.ongletEquipe,
-      };
+      final String nom = o == OngletPersonnes.equipe
+          ? p.ongletEquipe
+          : court(o);
       final int? n = nombre(o);
       return n == null ? nom : p.ongletAvecNombre(nom: nom, n: n);
     }
 
-    final Widget onglets = SelecteurSection<OngletPersonnes>(
+    final Widget selecteur = SelecteurSection<OngletPersonnes>(
       key: cleOnglets,
       libelle: p.choix,
       menuAuContenu: true,
@@ -269,15 +287,37 @@ class PersonnesPage extends ConsumerWidget {
           Segment<OngletPersonnes>(
             valeur: o,
             libelle: libelle(o),
-            icone: switch (o) {
-              OngletPersonnes.eleves => AppIcons.eleves,
-              OngletPersonnes.familles => AppIcons.foyer,
-              OngletPersonnes.enseignants => AppIcons.pedagogie,
-              OngletPersonnes.equipe => AppIcons.direction,
-            },
+            // Au telephone, le mot court sous l'icone (pilote, 21/11/2026).
+            libelleCourt: court(o),
+            icone: iconeOnglet(o),
           ),
       ],
     );
+    // Au telephone, le nom de l'onglet ouvert et son nombre en toutes
+    // lettres, sous les onglets : on sait toujours quelle liste on regarde,
+    // meme quand les onglets se reduisent a leurs icones.
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget onglets =
+        MediaQuery.sizeOf(context).width >= AppGabarit.seuilTablette
+        ? selecteur
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              selecteur,
+              Ecart.vSm,
+              Semantics(
+                header: true,
+                child: Text(
+                  libelle(onglet),
+                  key: cleNomOnglet,
+                  style: AppPalette.of(context).inkStrong
+                      .applyTo(textes.titleMedium ?? const TextStyle()),
+                ),
+              ),
+              Ecart.vSm,
+            ],
+          );
 
     // Autant de lignes que la hauteur en tient (comme Comptes) : a 320 x 256
     // (reflow a 400 %), huit lignes deborderaient.

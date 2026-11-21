@@ -168,12 +168,15 @@ void main() {
     expect(find.text('Familles (1)'), findsOneWidget);
     expect(find.text('Enseignants (2)'), findsOneWidget);
     expect(find.text('Direction et équipe (1)'), findsOneWidget);
-    for (final AppIcon i in <AppIcon>[
-      AppIcons.eleves,
-      AppIcons.foyer,
-      AppIcons.pedagogie,
-      AppIcons.direction,
-    ]) {
+    // Quatre dessins differents : jamais deux groupes de personnes voisins.
+    final List<AppIcon> icones = <AppIcon>[
+      for (final OngletPersonnes o in OngletPersonnes.values)
+        PersonnesPage.iconeOnglet(o),
+    ];
+    expect(icones.map((AppIcon i) => i.repos.codePoint).toSet(), hasLength(4));
+    expect(icones, isNot(contains(AppIcons.eleves)));
+    expect(icones, isNot(contains(AppIcons.foyer)));
+    for (final AppIcon i in icones) {
       expect(
         find.descendant(
           of: find.byKey(PersonnesPage.cleOnglets),
@@ -263,6 +266,25 @@ void main() {
     await tester.pumpAndSettle();
     expect(_dossiers, <String>['/admin/personnes/candidatures/CAND-00002']);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('telephone : le nom de l\'onglet ouvert et son nombre sont '
+      'ecrits en toutes lettres sous les onglets', (WidgetTester tester) async {
+    await _monter(
+      tester,
+      adresse: '/admin/personnes?onglet=familles',
+      taille: const Size(390, 844),
+    );
+    final Text nom = tester.widget(find.byKey(PersonnesPage.cleNomOnglet));
+    expect(nom.data, 'Familles (1)');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('ordinateur : pas de nom d\'onglet en double sous les onglets', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, adresse: '/admin/personnes?onglet=familles');
+    expect(find.byKey(PersonnesPage.cleNomOnglet), findsNothing);
   });
 
   testWidgets('changer d\'onglet change l\'adresse et oublie la personne '

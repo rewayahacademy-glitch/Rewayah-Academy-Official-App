@@ -4358,6 +4358,7 @@
     "personnesPage": {
       "autresPages": "Other People pages",
       "ongletEquipe": "Management and team",
+      "ongletEquipeCourt": "Team",
       "ongletAvecNombre": "{nom} ({n})",
       "choix": "People shown",
       "apercuVide": "Choose a person in the list to see their preview.",

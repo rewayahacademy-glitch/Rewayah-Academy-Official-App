@@ -4358,6 +4358,7 @@
     "personnesPage": {
       "autresPages": "Autres pages de Personnes",
       "ongletEquipe": "Direction et équipe",
+      "ongletEquipeCourt": "Équipe",
       "ongletAvecNombre": "{nom} ({n})",
       "choix": "Personnes affichées",
       "apercuVide": "Choisissez une personne dans la liste pour voir son aperçu.",
