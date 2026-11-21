@@ -67,13 +67,14 @@ CREATE FUNCTION public.comptes_admin_page(
  SET search_path TO ''
 AS $function$
 DECLARE
-  v_filtre jsonb := coalesce(p_filtre, '{}'::jsonb);
+  -- Les parametres ne sont lus qu'apres la garde et les controles (relecture du 21/11).
+  v_filtre jsonb;
   v_fautives text;
-  v_recherche text := nullif(private.cand_normaliser(p_recherche), '');
-  v_etat_compte text := v_filtre ->> 'etatCompte';
-  v_etat_piece text := v_filtre ->> 'etatPiece';
-  v_admission boolean := (v_filtre ->> 'admissionATraiter')::boolean;
-  v_echus boolean := (v_filtre ->> 'echus')::boolean;
+  v_recherche text;
+  v_etat_compte text;
+  v_etat_piece text;
+  v_admission boolean;
+  v_echus boolean;
   v_resultat jsonb;
 BEGIN
   IF NOT coalesce(public.app_role() = 'admin' AND public.app_account_valid(), false) THEN
@@ -85,12 +86,13 @@ BEGIN
   IF p_tri IS NULL OR p_tri NOT IN ('defaut', 'nom', 'nom_desc', 'recent', 'ancien') THEN
     RAISE EXCEPTION 'tri de comptes invalide : defaut, nom, nom_desc, recent ou ancien' USING ERRCODE = '22023';
   END IF;
-  IF p_apres IS NULL OR p_apres < 0 OR p_limite IS NULL OR p_limite < 1 OR p_limite > 200 THEN
-    RAISE EXCEPTION 'page de comptes invalide : apres >= 0, limite de 1 a 200' USING ERRCODE = '22023';
+  IF p_apres IS NULL OR p_apres < 0 OR p_apres > 100000 OR p_limite IS NULL OR p_limite < 1 OR p_limite > 200 THEN
+    RAISE EXCEPTION 'page de comptes invalide : apres de 0 a 100000, limite de 1 a 200' USING ERRCODE = '22023';
   END IF;
   IF pg_catalog.length(p_recherche) > 200 THEN
     RAISE EXCEPTION 'recherche de comptes trop longue' USING ERRCODE = '22023';
   END IF;
+  v_filtre := coalesce(p_filtre, '{}'::jsonb);
   IF pg_catalog.jsonb_typeof(v_filtre) IS DISTINCT FROM 'object' THEN
     RAISE EXCEPTION 'filtre de comptes invalide : objet attendu' USING ERRCODE = '22023';
   END IF;
@@ -103,17 +105,19 @@ BEGIN
   IF v_fautives IS NOT NULL THEN
     RAISE EXCEPTION 'filtre de comptes inconnu ou mal type : %', v_fautives USING ERRCODE = '22023';
   END IF;
+  v_etat_compte := v_filtre ->> 'etatCompte';
+  v_etat_piece := v_filtre ->> 'etatPiece';
+  v_admission := (v_filtre ->> 'admissionATraiter')::boolean;
+  v_echus := (v_filtre ->> 'echus')::boolean;
+  v_recherche := nullif(private.cand_normaliser(p_recherche), '');
   IF (v_etat_compte IS NOT NULL AND v_etat_compte NOT IN ('pending_kyc', 'provisional_active', 'active', 'disabled'))
      OR (v_etat_piece IS NOT NULL AND v_etat_piece NOT IN ('a_verifier', 'validee', 'refusee', 'aucune')) THEN
     RAISE EXCEPTION 'valeur de filtre de comptes invalide' USING ERRCODE = '22023';
   END IF;
 
   WITH base AS MATERIALIZED (
-    SELECT x AS ligne, x.role::text AS role, x.est_apprenant, o.ordre
-      FROM public.comptes_admin_par_role() WITH ORDINALITY AS o(profile_id, immutable_id, prenom, nom, role,
-             etat_compte, inscrit_le, acces_jusqu_au, foyer_id, etat_piece, contrats, a_enseignant, enfants_du_foyer,
-             teacher_country, tranche_age, classe_id, classe_libelle, classe_numero, classes_actives, tuteur_id,
-             tuteur_prenom, tuteur_nom, admission_a_traiter, est_apprenant, ordre)
+    SELECT x AS ligne, x.role::text AS role, x.est_apprenant
+      FROM public.comptes_admin_par_role() AS o
       CROSS JOIN LATERAL (SELECT o.profile_id, o.immutable_id, o.prenom, o.nom, o.role, o.etat_compte, o.inscrit_le,
              o.acces_jusqu_au, o.foyer_id, o.etat_piece, o.contrats, o.a_enseignant, o.enfants_du_foyer,
              o.teacher_country, o.tranche_age, o.classe_id, o.classe_libelle, o.classe_numero, o.classes_actives,
@@ -129,12 +133,17 @@ BEGIN
   ), choisies AS MATERIALIZED (
     SELECT v.ligne,
            pg_catalog.row_number() OVER (ORDER BY
-             CASE WHEN p_tri = 'defaut' THEN v.ordre END ASC,
+             -- 'defaut' : l'ordre de comptes_admin_par_role, cles explicites (en attente, provisoire, autres ;
+             -- inscription la plus ancienne d'abord). Toujours departage par profile_id en dernier : deux
+             -- inscriptions a la meme seconde gardent leur ordre d'une page a l'autre.
+             CASE WHEN p_tri = 'defaut' THEN CASE (v.ligne).etat_compte::text WHEN 'pending_kyc' THEN 0
+                                                  WHEN 'provisional_active' THEN 1 ELSE 2 END END ASC,
+             CASE WHEN p_tri = 'defaut' THEN (v.ligne).inscrit_le END ASC,
              CASE WHEN p_tri = 'nom' THEN pg_catalog.lower(coalesce((v.ligne).prenom, '') || ' ' || coalesce((v.ligne).nom, '')) END ASC,
              CASE WHEN p_tri = 'nom_desc' THEN pg_catalog.lower(coalesce((v.ligne).prenom, '') || ' ' || coalesce((v.ligne).nom, '')) END DESC,
              CASE WHEN p_tri = 'recent' THEN (v.ligne).inscrit_le END DESC,
              CASE WHEN p_tri = 'ancien' THEN (v.ligne).inscrit_le END ASC,
-             v.ordre ASC) AS rang
+             (v.ligne).profile_id ASC) AS rang
       FROM vues v
      WHERE CASE p_vue WHEN 'eleves' THEN v.eleves WHEN 'familles' THEN v.familles
                       WHEN 'enseignants' THEN v.enseignants ELSE v.direction END

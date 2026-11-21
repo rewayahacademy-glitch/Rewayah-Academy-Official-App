@@ -62,18 +62,15 @@ BEGIN
     -- 1. Les comptes, vue par vue.
     v_somme := 0;
     FOREACH v_vue IN ARRAY ARRAY['eleves', 'familles', 'enseignants', 'direction'] LOOP
-      SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY o), '[]'::jsonb) INTO v_attendu
-        FROM public.comptes_admin_par_role() WITH ORDINALITY AS x(profile_id, immutable_id, prenom, nom, role,
-               etat_compte, inscrit_le, acces_jusqu_au, foyer_id, etat_piece, contrats, a_enseignant, enfants_du_foyer,
-               teacher_country, tranche_age, classe_id, classe_libelle, classe_numero, classes_actives, tuteur_id,
-               tuteur_prenom, tuteur_nom, admission_a_traiter, est_apprenant, o)
+      -- L'ordre de comptes_admin_par_role, departage par profile_id (relecture du 21/11, S3).
+      SELECT coalesce(jsonb_agg(to_jsonb(x) ORDER BY
+               CASE x.etat_compte::text WHEN 'pending_kyc' THEN 0 WHEN 'provisional_active' THEN 1 ELSE 2 END,
+               x.inscrit_le, x.profile_id), '[]'::jsonb) INTO v_attendu
+        FROM public.comptes_admin_par_role() AS x
        WHERE CASE v_vue WHEN 'eleves' THEN x.role::text = 'student' OR x.est_apprenant
                         WHEN 'familles' THEN x.role::text = 'guardian'
                         WHEN 'enseignants' THEN x.role::text = 'teacher'
                         ELSE x.role::text IN ('admin', 'accountant', 'associe', 'controller') END;
-      -- to_jsonb(x) porte la colonne d'ordre : on la retire pour comparer.
-      SELECT coalesce(jsonb_agg(e - 'o' ORDER BY n), '[]'::jsonb) INTO v_attendu
-        FROM jsonb_array_elements(v_attendu) WITH ORDINALITY AS t(e, n);
       v_obtenu := '[]'::jsonb;
       v_apres := 0;
       LOOP
@@ -161,6 +158,22 @@ BEGIN
   EXCEPTION WHEN insufficient_privilege THEN RAISE NOTICE 'OK voisins_enseignant refuse a un enseignant';
   END;
   PERFORM pg_temp.qui('9e900000-0000-4000-8000-0000000000d1', 'admin');
+  -- Mineurs de la relecture du 21/11 : mauvais type, recherche trop longue, curseur hors borne : 22023.
+  BEGIN
+    PERFORM public.comptes_admin_page('eleves', NULL, '{"admissionATraiter": "oui"}');
+    RAISE EXCEPTION 'PERSONNES-LECTURES ROUGE : admissionATraiter texte accepte';
+  EXCEPTION WHEN invalid_parameter_value THEN RAISE NOTICE 'OK admissionATraiter mal type refuse (22023)';
+  END;
+  BEGIN
+    PERFORM public.comptes_admin_page('eleves', repeat('a', 201));
+    RAISE EXCEPTION 'PERSONNES-LECTURES ROUGE : recherche trop longue acceptee';
+  EXCEPTION WHEN invalid_parameter_value THEN RAISE NOTICE 'OK recherche trop longue refusee (22023)';
+  END;
+  BEGIN
+    PERFORM public.comptes_admin_page('eleves', NULL, '{}', 'defaut', 2147483600, 200);
+    RAISE EXCEPTION 'PERSONNES-LECTURES ROUGE : curseur hors borne accepte';
+  EXCEPTION WHEN invalid_parameter_value THEN RAISE NOTICE 'OK curseur hors borne refuse (22023)';
+  END;
   BEGIN
     PERFORM public.comptes_admin_page('tous');
     RAISE EXCEPTION 'PERSONNES-LECTURES ROUGE : vue inconnue acceptee';
@@ -168,6 +181,38 @@ BEGIN
   END;
 END $$;
 RESET ROLE;
+
+-- S3 (relecture du 21/11) : pagination stable a dates d'inscription egales, meme si une ligne est
+-- modifiee entre deux pages. Tous les enseignants fictifs recoivent la meme date d'inscription (dans la
+-- transaction annulee), puis on lit page apres page en modifiant des lignes entre deux pages.
+UPDATE public.profiles SET created_at = TIMESTAMPTZ '2026-11-01 00:00:00+00' WHERE role = 'teacher';
+SELECT pg_temp.qui('9e900000-0000-4000-8000-0000000000d1', 'admin');
+DO $$
+DECLARE
+  v_page jsonb;
+  v_apres integer := 0;
+  v_ids text[] := ARRAY[]::text[];
+  v_total integer;
+  v_tri text;
+BEGIN
+  FOREACH v_tri IN ARRAY ARRAY['defaut', 'recent', 'ancien'] LOOP
+    v_apres := 0;
+    v_ids := ARRAY[]::text[];
+    LOOP
+      v_page := public.comptes_admin_page('enseignants', NULL, '{}', v_tri, v_apres, 25, true);
+      v_ids := v_ids || ARRAY(SELECT l ->> 'profile_id' FROM jsonb_array_elements(v_page -> 'lignes') l);
+      v_total := (v_page ->> 'total')::int;
+      -- Une modification entre deux pages deplace les lignes dans la table.
+      UPDATE public.profiles SET updated_at = clock_timestamp() WHERE role = 'teacher' AND id::text > v_ids[array_length(v_ids, 1)];
+      EXIT WHEN v_page -> 'suivant' = 'null'::jsonb;
+      v_apres := (v_page ->> 'suivant')::int;
+    END LOOP;
+    PERFORM pg_temp.vrai(array_length(v_ids, 1) = v_total
+                         AND (SELECT count(DISTINCT i) FROM unnest(v_ids) i) = v_total,
+      'S3 ' || v_tri || ' : ' || v_total || ' comptes, chacun une fois, malgre les dates egales');
+  END LOOP;
+END $$;
+
 SELECT pg_temp.vrai(NOT has_function_privilege('anon', 'public.comptes_admin_page(text,text,jsonb,text,integer,integer,boolean)', 'EXECUTE')
                     AND NOT has_function_privilege('anon', 'public.voisins_enseignant(text,jsonb,text)', 'EXECUTE')
                     AND NOT has_function_privilege('anon', 'public.dossiers_en_attente_references()', 'EXECUTE'),

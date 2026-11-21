@@ -2,6 +2,7 @@
 // en UN appel `photos_personnes` (au lieu d'un par avatar), une demande en vol
 // est rejointe, et la reponse rendue a chaque demandeur ne change pas.
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -107,21 +108,110 @@ void main() {
     });
   });
 
-  group('RegroupementPhotos', () {
-    test('un echec du lot remonte a chaque demandeur', () async {
+  group('RegroupementPhotos (relecture du 21/11, S1)', () {
+    SourcePhoto source(String id) =>
+        SourcePhoto(seau: 'avatars', cle: '$id/photo.png');
+
+    test('un identifiant qui n\'est pas un UUID ne part pas : les autres '
+        'photos sont rendues', () async {
+      final List<List<String>> appels = <List<String>>[];
+      final RegroupementPhotos r = RegroupementPhotos((List<String> ids) async {
+        appels.add(ids);
+        return <String, SourcePhoto>{
+          for (final String id in ids) id: source(id),
+        };
+      });
+      final List<Map<String, SourcePhoto>> rep = await Future.wait(
+        <Future<Map<String, SourcePhoto>>>[
+          r.demander(<String>[_id(2)]),
+          r.demander(<String>['Administration Rewayah']),
+          r.demander(<String>[_id(4), 'pas-un-uuid']),
+        ],
+      );
+      expect(appels, hasLength(1));
+      expect(appels.single.toSet(), <String>{_id(2), _id(4)});
+      expect(rep[0].keys, <String>[_id(2)]);
+      expect(rep[1], isEmpty);
+      expect(rep[2].keys, <String>[_id(4)]);
+    });
+
+    test(
+      'le lot echoue : un appel par identifiant, 50 avatars rendus',
+      () async {
+        int appels = 0;
+        final RegroupementPhotos r = RegroupementPhotos((
+          List<String> ids,
+        ) async {
+          appels += 1;
+          if (ids.length > 1) throw StateError('erreur du serveur sur le lot');
+          return <String, SourcePhoto>{ids.single: source(ids.single)};
+        });
+        final List<Map<String, SourcePhoto>> rep = await Future.wait(
+          <Future<Map<String, SourcePhoto>>>[
+            for (int n = 1; n <= 50; n++) r.demander(<String>[_id(n)]),
+          ],
+        );
+        expect(appels, 51);
+        for (int n = 1; n <= 50; n++) {
+          expect(rep[n - 1].keys, <String>[_id(n)]);
+        }
+      },
+    );
+
+    test('seul le fautif echoue ; rien n\'est garde apres l\'echec', () async {
       int appels = 0;
       final RegroupementPhotos r = RegroupementPhotos((List<String> ids) async {
         appels += 1;
-        throw StateError('serveur muet');
+        if (ids.contains(_id(13))) throw StateError('refus');
+        return <String, SourcePhoto>{
+          for (final String id in ids) id: source(id),
+        };
       });
-      final Future<Map<String, SourcePhoto>> a = r.demander(<String>['a']);
-      final Future<Map<String, SourcePhoto>> b = r.demander(<String>['b']);
-      await expectLater(a, throwsStateError);
-      await expectLater(b, throwsStateError);
-      expect(appels, 1);
-      // Apres l'echec, une nouvelle demande repart (rien n'est garde).
-      await expectLater(r.demander(<String>['a']), throwsStateError);
-      expect(appels, 2);
+      final Future<Map<String, SourcePhoto>> bon = r.demander(<String>[_id(2)]);
+      final Future<Map<String, SourcePhoto>> fautif = r.demander(<String>[
+        _id(13),
+      ]);
+      expect((await bon).keys, <String>[_id(2)]);
+      await expectLater(fautif, throwsStateError);
+      expect(appels, 3);
+      await expectLater(r.demander(<String>[_id(13)]), throwsStateError);
+      expect(appels, 4);
+    });
+  });
+
+  group('PhotosSupabase : changement de compte (S1)', () {
+    test('une demande en vol pour un compte n\'est jamais rejointe par un '
+        'autre compte', () async {
+      String compte = 'compte-a';
+      final List<String> parCompte = <String>[];
+      final Completer<void> lacher = Completer<void>();
+      final PhotosSupabase port = PhotosSupabase(
+        SupabaseClient(
+          'https://exemple.supabase.co',
+          'cle-anonyme',
+          authOptions: const AuthClientOptions(autoRefreshToken: false),
+          httpClient: MockClient((http.Request r) async {
+            parCompte.add(compte);
+            await lacher.future;
+            return http.Response(
+              '[]',
+              200,
+              headers: <String, String>{'content-type': 'application/json'},
+              request: r,
+            );
+          }),
+        ),
+        compteCourant: () => compte,
+      );
+      final Future<Map<String, SourcePhoto>> a = port.sources(<String>[_id(2)]);
+      await pumpEventQueue();
+      compte = 'compte-b';
+      final Future<Map<String, SourcePhoto>> b = port.sources(<String>[_id(2)]);
+      await pumpEventQueue();
+      lacher.complete();
+      await Future.wait(<Future<Map<String, SourcePhoto>>>[a, b]);
+      // Deux appels : le second compte n'a pas rejoint la lecture du premier.
+      expect(parCompte, <String>['compte-a', 'compte-b']);
     });
   });
 }

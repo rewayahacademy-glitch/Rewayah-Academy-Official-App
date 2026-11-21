@@ -18,26 +18,38 @@
 -- CE QUI CHANGE :
 --   1. Deux index, crees par CREATE INDEX ordinaire (sans CONCURRENTLY) : kyc_documents fait 176 kB et profiles 240 kB en
 --      production le 20/11 ; la creation prend quelques millisecondes et la migration reste une transaction ordinaire.
---   2. Dix aides privees de la messagerie passent de LANGUAGE sql a LANGUAGE plpgsql, CORPS IDENTIQUE (la meme requete,
---      rendue par RETURN (...) ou RETURN QUERY), pour que leur plan soit garde d'un appel a l'autre. Meme signature, meme
---      volatilite (STABLE), meme SECURITY (DEFINER pour entretien_cote_permis seulement), meme search_path vide, meme
---      proprietaire, memes droits (aucun EXECUTE client : CREATE OR REPLACE les conserve). Chaque corps remplace est celui
---      installe en production le 20/11, controle par son empreinte md5(prosrc) ci-dessous. Mesure locale :
+--   2. DOUZE aides passent de LANGUAGE sql a LANGUAGE plpgsql, CORPS IDENTIQUE (la meme requete, rendue par RETURN (...)
+--      ou RETURN QUERY), pour que leur plan soit garde d'un appel a l'autre : dix aides privees de la messagerie
+--      (com_participant, com_objet, com_paires, com_candidature_lisible, com_est_partie, entretien_cote_permis,
+--      praxis_est_officiel, com_profil_valide, com_est_mineur, com_foyer_valide) et deux portes de la direction lues par
+--      compte (app_private.compte_candidat_hors_portee, 733 appels par lecture de comptes_admin_par_role ou de
+--      dossiers_en_attente ; public.kyc_super_admin_exception_active). Meme signature, meme volatilite (STABLE), meme
+--      SECURITY (DEFINER pour entretien_cote_permis, compte_candidat_hors_portee et kyc_super_admin_exception_active), meme
+--      search_path vide, meme proprietaire, memes droits (CREATE OR REPLACE les conserve ; le controle final compare
+--      chaque liste de droits a celle de la production du 20/11, agent_ro et service_role compris). Chaque corps remplace
+--      est celui installe en production le 20/11, controle par son empreinte md5(prosrc) ci-dessous. Mesure locale :
 --      com_lister_fils 1 050 ms -> 235 ms, reponse identique octet pour octet.
---      APPELANTS de ces aides (releve du 20/11 sur une base rejouee jusqu'a 20261130966000 ; aucune politique RLS ni vue ne
---      les emploie) : com_lister_fils, com_lire_fil, com_lire_fil_page, com_conversations_pour_objet, com_fil_pour_objet,
+--      POLITIQUES RLS qui en emploient une : profiles_compte_candidat_portee et
+--      contract_acceptances_compte_candidat_portee (app_private.compte_candidat_hors_portee) ; meme reponse, donc meme
+--      filtrage. Aucune vue.
+--      APPELANTS de ces aides (releve du 20/11 sur une base rejouee jusqu'a 20261130966000) : com_lister_fils, com_lire_fil, com_lire_fil_page, com_conversations_pour_objet, com_fil_pour_objet,
 --      com_mes_capacites, com_ouvrir_conversation, praxis_ecrire, private.com_fil_json, com_annonce_json,
 --      com_annonce_generale_json, com_destinataires_signal, push1_depuis_message_candidat, praxis_est_partie_a,
 --      praxis_est_equipe, praxis_auteur_direction, praxis_auteur_json, et pour entretien_cote_permis :
 --      ouvrir_creneau_entretien, ecrire_compte_rendu_entretien, personnel_entretiens, personnel_pour_entretien,
---      ajouter_participant_entretien, entretien_creneau_tenable, entretien_conclusion, entretien_controles_planification.
+--      ajouter_participant_entretien, entretien_creneau_tenable, entretien_conclusion, entretien_controles_planification ;
+--      pour compte_candidat_hors_portee : comptes_admin, comptes_admin_par_role, dossiers_en_attente, indicateurs_admin ;
+--      pour kyc_super_admin_exception_active : compte_candidat_hors_portee, read_kyc_documents,
+--      autoriser_lecture_piece_identite, indicateurs_admin, references_dossiers_admin, journal_audit,
+--      journal_audit_filtres, private.cand_lecteur, candidature_geste_ouvrir, candidature_lot_examiner,
+--      candidature_lot_tracer, pelc_lot_examiner, entretien_peut_agir, com_annonce_cotes.
 --      Leurs reponses ne changent pas : meme requete, meme instantane (STABLE), seul le moment de la planification change.
 --   3. Une lecture legere, public.com_non_lus_par_objet() : pour chaque fil que l'appelant voit et qui a des messages non
 --      lus, {fil, type, objet, non_lus}. MEMES DROITS que com_lister_fils : meme appelant (private.com_appelant_msg),
 --      memes fils (com_est_partie sur les deux parties), meme visibilite et meme compte, recopies de private.com_fil_json
 --      dans private.com_fil_non_lus (un fil que com_fil_json ne rend pas n'a ici aucune ligne). Quelques centaines
---      d'octets au lieu de toute la messagerie (540 Ko pour la direction sur la base fictive). Les ecrans qui ne
---      comptent que des non-lus la lisent, avec repli sur com_lister_fils tant qu'elle n'est pas installee.
+--      d'octets au lieu de toute la messagerie (540 Ko pour la direction sur la base fictive). AUCUN ecran ne la lit
+--      encore : la PR #673 (veille des messages) la fera lire, avec repli sur com_lister_fils tant qu'elle manque.
 -- MOTS D'EFFACEMENT : zero. Aucune donnee n'est ecrite. Rien n'est allume.
 
 DO $preflight$
@@ -55,6 +67,8 @@ BEGIN
       ('private.com_profil_valide(uuid,text)', '50b93d06d9034e69cd3f3fa422c02072'),
       ('private.com_est_mineur(uuid)', '23e730d3569e906da03f9847a4792d9e'),
       ('private.com_foyer_valide(uuid)', 'abe8be22d3573e9ae2398affc40c756d'),
+      ('app_private.compte_candidat_hors_portee(uuid)', '843dc3d6bef47238d68805d246a90cdf'),
+      ('public.kyc_super_admin_exception_active()', '133bc9bb5c3fe4d280868baba28e6f53'),
       ('private.com_fil_json(uuid,uuid,text,uuid)', '3002018f5fa3b207660bf515d959e92f'),
       ('private.com_appelant_msg()', '09f560034780d28459ce49896a924622')) AS t(f, md5) LOOP
     IF pg_catalog.to_regprocedure(v.f) IS NULL THEN
@@ -523,24 +537,26 @@ DECLARE
   v_role text;
 BEGIN
   FOR v IN SELECT * FROM (VALUES
-      ('private.com_participant(text,uuid,text,uuid)', false),
-      ('private.com_objet(text,uuid)', false),
-      ('private.com_paires(text,uuid)', false),
-      ('private.com_candidature_lisible(uuid,uuid)', false),
-      ('private.com_est_partie(uuid,text,uuid,text,text,uuid)', false),
-      ('private.entretien_cote_permis(uuid,public.gender)', true),
-      ('private.praxis_est_officiel(uuid)', false),
-      ('private.com_profil_valide(uuid,text)', false),
-      ('private.com_est_mineur(uuid)', false),
-      ('private.com_foyer_valide(uuid)', false),
-      ('private.com_fil_non_lus(uuid,uuid,text,uuid)', false)) AS t(f, definer) LOOP
+      ('private.com_participant(text,uuid,text,uuid)', false, '{postgres=X/postgres}'),
+      ('private.com_objet(text,uuid)', false, '{postgres=X/postgres}'),
+      ('private.com_paires(text,uuid)', false, '{postgres=X/postgres}'),
+      ('private.com_candidature_lisible(uuid,uuid)', false, '{postgres=X/postgres}'),
+      ('private.com_est_partie(uuid,text,uuid,text,text,uuid)', false, '{postgres=X/postgres}'),
+      ('private.entretien_cote_permis(uuid,public.gender)', true, '{postgres=X/postgres}'),
+      ('private.praxis_est_officiel(uuid)', false, '{postgres=X/postgres}'),
+      ('private.com_profil_valide(uuid,text)', false, '{postgres=X/postgres}'),
+      ('private.com_est_mineur(uuid)', false, '{postgres=X/postgres}'),
+      ('private.com_foyer_valide(uuid)', false, '{postgres=X/postgres}'),
+      ('app_private.compte_candidat_hors_portee(uuid)', true, '{postgres=X/postgres,authenticated=X/postgres,agent_ro=X/postgres}'),
+      ('public.kyc_super_admin_exception_active()', true, '{postgres=X/postgres,service_role=X/postgres}'),
+      ('private.com_fil_non_lus(uuid,uuid,text,uuid)', false, '{postgres=X/postgres}')) AS t(f, definer, acl) LOOP
     IF NOT EXISTS (
          SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_language l ON l.oid = p.prolang
           WHERE p.oid = pg_catalog.to_regprocedure(v.f)
             AND l.lanname = 'plpgsql' AND p.provolatile = 's' AND p.prosecdef = v.definer
             AND p.proowner = 'postgres'::regrole
             AND p.proconfig = ARRAY['search_path=""']
-            AND p.proacl::text = '{postgres=X/postgres}') THEN
+            AND p.proacl::text = v.acl) THEN
       RAISE EXCEPTION 'PERSONNES-PERF : % : plpgsql, STABLE, securite, proprietaire, search_path vide ou droits inattendus', v.f;
     END IF;
   END LOOP;
