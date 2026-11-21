@@ -58,3 +58,25 @@ restent en lettres latines. Les trois langues sont publiées le même jour.
 3. La purge du journal à 12 mois (petit lot serveur).
 4. L'ouverture des conversations de candidature à Praxis (lot serveur), sinon on retire « et aux candidats ».
 5. L'intégration dans `assets/i18n` (fr, en, ar), la montée de version, l'avis de modification.
+
+## 5. Extension validée par le directeur le 20/11/2026 (« le texte de confidentialité est validé »)
+
+Motif : depuis le 20/11/2026, Praxis lit les conversations de candidature en production, et le lot
+PX-4 lui fait lire la candidature, écrire le premier, poser un entretien par écrit et noter un avis
+pour la direction. Le bloc du point 4 ne disait que « il lit les messages […] pour y répondre ».
+
+**Texte validé, qui remplace dans le bloc du point 4 la phrase « Il lit les messages des
+conversations avec l'académie pour y répondre ou préparer une réponse. »** :
+
+> L'académie est aidée par un assistant IA. Il lit votre candidature et vos messages, à l'exception
+> de vos coordonnées, de votre pièce d'identité, de votre photo et de vos informations de versement.
+> Il peut vous écrire, vous poser des questions sur votre parcours et votre façon d'enseigner, et
+> préparer un avis pour la direction. Toute décision sur votre candidature est prise par la
+> direction.
+
+**Constat du 20/11/2026, à corriger sans délai** : la politique publiée dans `main`
+(`juridique.confidentialite`, fr, en, ar) ne contient encore aucune mention de l'assistant, alors
+que Praxis lit des messages de personnes réelles depuis ce jour. Les points 1 à 5 du §4 restent à
+faire ; le point 4 (conversations de candidature ouvertes) est réalisé. Tant que PX-4 n'est pas
+installé, seule la partie « il lit vos messages et y répond » est vraie ; le texte complet se
+publie avec PX-4, et le texte du §2 se publie tout de suite.

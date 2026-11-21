@@ -722,6 +722,21 @@ Règle : toute session, tout pilote, tout agent écrit au directeur en français
 chaque message, chaque document qui lui est destiné, quelle que soit la langue des outils, des journaux ou des
 notifications reçues. Les noms de code (fonctions, fichiers, tables) restent tels quels, entre accents graves.
 
+### Consigne 25 (19/11/2026) : la cause se cherche dans le code ; ce que le directeur doit lire est une page, pas un fichier
+
+Citations : « arrête de toujours me dire "cause inexpliquée" alors que tu as le code source, tu sais où trouver, quoi chercher » ; « arrête de me dire à chaque fois (il faut le tester/mesurer en vrai sur votre téléphone) : c'est sur mon téléphone et mes autres types d'appareils que je l'ai testé des dizaines de fois pour te donner ces retours » ; « si tu veux me montrer quelque chose tu prépares une page humaine normale, et non des .md car je ne suis pas l'IA […] git c'est pour vous les machines ».
+
+- Un constat du directeur est un fait déjà testé. L'agent ne lui demande ni de le reproduire, ni de le filmer, ni de le mesurer.
+- L'agent cherche la cause dans le code avant de répondre. S'il ne peut pas conclure, il donne l'hypothèse la plus probable, la preuve de code qui la soutient, et ce qu'il fait ensuite. Il ne s'arrête pas à « cause inconnue ».
+- Ce que le directeur doit lire ou valider lui est remis comme une page lisible dans la conversation (maquette qui marche, page illustrée). Les fichiers `.md` du dépôt sont la mémoire des agents.
+
+### Consigne 26 (20/11/2026) : le pilote débloque, et lance en parallèle ce qui est complémentaire
+
+Citation : « Pour les garde-fous il n'y en a pas, c'est toi le pilote, alors fais tout pour débloquer et avancer vite ; si c'est possible de lancer des choses complémentaires en parallèle tu peux le faire. »
+
+- La session que le directeur désigne comme pilote ouvre les PR, relit, installe les migrations et peut dépasser quatre agents quand les zones sont séparées.
+- Interprétation du pilote du 20/11 (à corriger par le directeur s'il le veut) : cela ne couvre pas les interrupteurs de Praxis (fin de l'essai, données réelles, plafonds), que le directeur garde à son doigt, ni une fusion dans `main`, qui met en production et reste sa décision, PR par PR.
+
 ## 9. Autres
 
 **X1. Lire son dernier message en entier avant de répondre.**
@@ -870,6 +885,7 @@ Les règles déjà présentes dans la partie A s'y retrouvent sous un autre num�
 | 20 | Chaque problème rencontré par une vraie personne pendant une inscription (candidat, élève, parent) s'ajoute à `docs/current/RETOURS-TERRAIN-INSCRIPTIONS.md` : les faits, la cause prouvée et le nombre de personnes touchées, sans donnée personnelle, et ce qu'il faut prévoir pour les élèves. On cherche dans ce document avant de diagnostiquer. | 14/11 : « consigner tous les problèmes qu'on rencontre maintenant sur le recrutement dans un document accessible et visible pour tout le monde […] comme ça on ne sera pas obligé de refaire des diagnostics similaires » | RETOURS-TERRAIN-INSCRIPTIONS, CLAUDE.md |
 | 21 | **Les migrations s'installent par les agents, plus par le directeur.** Le pilote, ou un agent qui en a la charge, installe lui-même une migration en production (`apply_migration`) quand elle est nécessaire, avec une rigueur absolue (checklist de `supabase/CLAUDE.md`, « Installer une migration en production ») : fichier relu en entier, aucun `DROP`, `DELETE` ni `TRUNCATE` hors réécriture d'un CHECK, aucun `BEGIN`/`COMMIT`, RLS sur toute table nouvelle, migration rejouée sur un Postgres nu, vérification en production après installation, bilan au directeur. Ne jamais toucher aux données des personnes. La page à coller (règle du 23/10) ne sert plus que si le directeur la demande ou si le serveur exige une confirmation qu'un agent ne peut pas donner. | 16/11 : « oui, installe les migrations toi-même. Moi, j'ai jamais demandé à coller les migrations moi-même. Jamais. […] tu peux écrire dans les dépôts où tous les agents lisent qu'ils peuvent faire les migrations quand c'est nécessaire, mais avec beaucoup de rigueur. Make no mistakes in the data base » | CLAUDE.md, supabase/CLAUDE.md, ici |
 | 22 | **Le pilote gère et arbitre ; il ne pose plus de question au directeur.** Une décision de méthode, de produit ou d'ordre des lots se tranche par le pilote, s'écrit avec la date et la raison dans le document du lot (« Arbitrage du pilote »), et s'exécute. Le directeur peut la reprendre ; sans nouvel ordre de sa part, elle vaut. Restent au directeur seulement les gestes que personne d'autre ne peut faire (son compte, ses accès, ses paiements), signalés une fois comme blocage, pas comme une question. La vérité d'abord (§2) demeure : ce qui est faux, bloqué ou non prouvé se dit toujours. | 16/11, au soir : « c'est quoi ça? tu es là pour gérer, et arbitrer. ne me demande plus rien . » | BUREAU-EQUIPE/CARTE-GESTES-DIRECTION.md §4.3, ici |
+| 27 | **Le pilote fusionne et installe sans demander.** Quand une PR a ses contrôles verts et, pour une migration, une relecture qui la dit installable, le pilote fusionne dans `main`, installe, vérifie en production et rend compte après. Demander l'accord du directeur pour une fusion est une faute de méthode (redite de la consigne 22). Les anciennes restrictions de fusion ne visent pas le pilote. | 20/11 : « je t'ai dit que tu es le pilote, c'est à toi de décider, les restrictions sont anciennes et ne te touchent pas toi » | ici ; `CLAUDE.md` (les agents ouvrent les PR, le pilote fusionne) |
 
 Règles de produit que le directeur a dû redire le 31/10. Le garde-cap a vérifié le 05/11 : toutes trois sont écrites.
 - **Remplacement d'un enseignant** à T+3, T+8 et T+11 au plus : `08` §5 bis (31/10) et `DECISION-CLASSES-SIMULTANEES-2026-10-10.md` l. 51-67, réglages `remplacement.*`.

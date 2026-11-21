@@ -1,0 +1,357 @@
+<title>Références à chercher</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<style>
+/* Mise en page : un carnet de recherche. Une colonne de lecture, des familles d'éléments
+   en grilles de fiches, et un banc d'essai où chaque mouvement se voit avant d'être nommé. */
+:root{
+  --fond:#F7F5FE; --surface:#FFFFFF; --encre:#110E20; --encre-douce:#655E70;
+  --filet:#E3DEE9; --violet:#8652E6; --violet-pale:#EEE6FA; --violet-fonce:#4E2983;
+  --vert:#175D3A; --vert-pale:#E4F4EB; --ambre:#755200; --ambre-pale:#FEF5E4;
+  --titre:"Plus Jakarta Sans",system-ui,sans-serif; --texte:"DM Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --fond:#14111C; --surface:#211E28; --encre:#F5F2FA; --encre-douce:#B3ABC2;
+  --filet:#3A3447; --violet:#A983F2; --violet-pale:#2E2542; --violet-fonce:#DCCAFD;
+  --vert:#8BE0B0; --vert-pale:#18301F; --ambre:#F2C66A; --ambre-pale:#33290F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --fond:#14111C; --surface:#211E28; --encre:#F5F2FA; --encre-douce:#B3ABC2;
+  --filet:#3A3447; --violet:#A983F2; --violet-pale:#2E2542; --violet-fonce:#DCCAFD;
+  --vert:#8BE0B0; --vert-pale:#18301F; --ambre:#F2C66A; --ambre-pale:#33290F; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--fond);color:var(--encre);font:16px/1.55 var(--texte)}
+.page{max-width:1080px;margin:0 auto;padding-block:28px 64px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--titre);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:700}
+h3{font-size:16px;font-weight:700}
+p{margin:0;max-width:68ch}
+.chapo{color:var(--encre-douce);font-size:18px}
+.entete{display:flex;flex-direction:column;gap:12px}
+.bloc{display:flex;flex-direction:column;gap:16px}
+.sommaire{display:flex;flex-wrap:wrap;gap:8px}
+.sommaire a{font-weight:600;font-size:14px;color:var(--violet-fonce);background:var(--violet-pale);
+  padding:8px 14px;border-radius:999px;text-decoration:none}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+
+/* Réponses courtes */
+.reponses{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.reponse{background:var(--surface);border:1px solid var(--filet);border-radius:16px;padding:18px;
+  display:flex;flex-direction:column;gap:8px;min-width:0}
+.reponse p{font-size:15px;color:var(--encre-douce)}
+.reponse strong{color:var(--encre)}
+.etat{align-self:flex-start;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px}
+.etat.prouve{background:var(--vert-pale);color:var(--vert)}
+.etat.inconnu{background:var(--ambre-pale);color:var(--ambre)}
+
+/* Banc d'essai */
+.banc{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.essai{background:var(--surface);border:1px solid var(--filet);border-radius:16px;padding:16px;
+  display:flex;flex-direction:column;gap:10px;min-width:0;text-align:start;color:inherit;font:inherit;cursor:pointer}
+.scene{height:110px;border-radius:12px;background:var(--violet-pale);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center}
+.essai .nom-en{font-family:var(--titre);font-weight:700;color:var(--violet-fonce);font-size:15px}
+.essai .dit{font-size:14px;color:var(--encre-douce)}
+.rejouer{font-size:12px;font-weight:600;color:var(--violet)}
+.bille{width:44px;height:44px;border-radius:50%;background:var(--violet)}
+.essai.joue .ressort .bille{animation:ressort 1s cubic-bezier(.3,1.9,.5,1) both}
+@keyframes ressort{0%{transform:translateX(-80px) scale(.6)}100%{transform:none}}
+.essai.joue .rebond .bille{animation:rebond 1.1s both}
+@keyframes rebond{0%{transform:translateY(-70px);animation-timing-function:ease-in}
+  35%{transform:translateY(22px) scale(1.25,.7);animation-timing-function:ease-out}
+  55%{transform:translateY(-22px) scale(.92,1.08);animation-timing-function:ease-in}
+  75%{transform:translateY(22px) scale(1.12,.86);animation-timing-function:ease-out}
+  100%{transform:translateY(22px)}}
+.barre{width:150px;height:18px;border-radius:9px;background:var(--violet);transform-origin:left center}
+.essai.joue .elastique .barre{animation:elastique 1.1s both}
+@keyframes elastique{0%{transform:scaleX(.25)}30%{transform:scaleX(1.25)}50%{transform:scaleX(.9)}
+  70%{transform:scaleX(1.06)}100%{transform:none}}
+.liquide{filter:url(#colle)}
+.liquide i{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px;border-radius:50%;background:var(--violet)}
+.essai.joue .liquide i:nth-child(1){animation:goutte-g 1.6s ease-in-out both}
+.essai.joue .liquide i:nth-child(2){animation:goutte-d 1.6s ease-in-out both}
+@keyframes goutte-g{0%,100%{transform:none}50%{transform:translateX(-52px)}}
+@keyframes goutte-d{0%,100%{transform:none}50%{transform:translateX(52px)}}
+.onglets{display:flex;gap:6px;position:relative;background:var(--surface);padding:6px;border-radius:999px}
+.onglets span{width:38px;height:30px;border-radius:999px;position:relative;z-index:1}
+.onglets b{position:absolute;top:6px;left:6px;width:38px;height:30px;border-radius:999px;background:var(--violet)}
+.essai.joue .onglets b{animation:glisse 1.4s cubic-bezier(.6,-.2,.3,1.3) both}
+@keyframes glisse{0%{transform:none;width:38px}45%{width:74px}100%{transform:translateX(88px);width:38px}}
+.forme{width:54px;height:54px;background:var(--violet);border-radius:50%}
+.essai.joue .morph .forme{animation:morph 1.4s ease-in-out both}
+@keyframes morph{0%{border-radius:50%;width:54px}100%{border-radius:14px;width:150px}}
+.reflet{width:160px;height:54px;border-radius:14px;background:linear-gradient(100deg,var(--violet) 35%,#C9B2FA 50%,var(--violet) 65%);background-size:300% 100%;background-position:100% 0}
+.essai.joue .reflet{animation:reflet 1.3s ease-in-out both}
+@keyframes reflet{to{background-position:0 0}}
+.halo{width:54px;height:54px;border-radius:50%;background:var(--violet)}
+.essai.joue .halo{animation:halo 1.4s ease-out both}
+@keyframes halo{0%{box-shadow:0 0 0 0 rgba(134,82,230,.55)}100%{box-shadow:0 0 0 34px rgba(134,82,230,0)}}
+.avis{position:absolute;top:10px;left:50%;background:var(--encre);color:var(--fond);font-size:12px;font-weight:600;
+  padding:7px 12px;border-radius:999px;white-space:nowrap;transform:translate(-50%,-60px)}
+.lignes{display:flex;flex-direction:column;gap:7px;width:70%;margin-top:26px}
+.lignes u{height:8px;border-radius:4px;background:var(--surface);display:block}
+.essai.joue .avis{animation:avis 2s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes avis{0%{transform:translate(-50%,-60px)}25%,75%{transform:translate(-50%,0)}100%{transform:translate(-50%,-60px)}}
+@media (prefers-reduced-motion:reduce){.essai.joue *{animation-duration:.01s!important}}
+
+/* Recherche et fiches */
+.outil{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.outil input{flex:1 1 260px;min-width:0;font:inherit;padding:12px 16px;border-radius:12px;border:1px solid var(--filet);
+  background:var(--surface);color:var(--encre)}
+.compte{font-size:14px;color:var(--encre-douce);font-variant-numeric:tabular-nums}
+.famille{display:flex;flex-direction:column;gap:12px}
+.famille > p{color:var(--encre-douce);font-size:15px}
+.fiches{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.fiche{background:var(--surface);border:1px solid var(--filet);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.fiche .fr{font-weight:600}
+.fiche .en{font-family:var(--titre);font-weight:700;color:var(--violet-fonce);font-size:15px;overflow-wrap:anywhere}
+.fiche .ou{font-size:13px;color:var(--encre-douce)}
+.fiche .gestes{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:6px}
+.fiche button,.fiche a{font:600 12px var(--texte);padding:6px 10px;border-radius:999px;border:1px solid var(--filet);
+  background:transparent;color:var(--encre);text-decoration:none;cursor:pointer}
+.fiche button.fait{background:var(--vert-pale);color:var(--vert);border-color:transparent}
+.fiche.prio{border-color:var(--violet)}
+.fiche .marque{align-self:flex-start;font-size:11px;font-weight:600;color:var(--violet-fonce);background:var(--violet-pale);padding:2px 8px;border-radius:999px}
+.sites{display:flex;flex-wrap:wrap;gap:8px}
+.sites a{font-weight:600;font-size:14px;color:var(--encre);border:1px solid var(--filet);background:var(--surface);padding:8px 14px;border-radius:999px;text-decoration:none}
+.note{font-size:14px;color:var(--encre-douce)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="colle">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="b"/>
+  <feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -9"/>
+</filter></defs></svg>
+
+<div class="page">
+  <header class="entete">
+    <h1>Références à chercher</h1>
+    <p class="chapo">Les noms exacts de chaque élément à refaire dans Rewayah Academy, pour trouver des exemples qui vous plaisent. Vous choisissez, j'arbitre ensuite.</p>
+    <nav class="sommaire" aria-label="Sommaire">
+      <a href="#reponses">Vos questions</a><a href="#mouvements">Les mouvements</a><a href="#liste">La liste</a><a href="#sites">Où chercher</a>
+    </nav>
+  </header>
+
+  <section class="bloc" id="reponses">
+    <h2>Vos questions du 19 novembre</h2>
+    <div class="reponses">
+      <div class="reponse"><span class="etat prouve">Lu dans le code</span><h3>Application Android et iPhone : faut-il migrer ?</h3>
+        <p><strong>Non.</strong> Même compte, mêmes données, même code. L'adresse web continue de marcher. La personne installe l'application une fois depuis la boutique ; ensuite les mises à jour arrivent seules. Durée : quelques semaines pour Android, plus pour iPhone (validation d'Apple, compte développeur payant).</p></div>
+      <div class="reponse"><span class="etat prouve">Lu dans le code</span><h3>La mise à jour sur le web</h3>
+        <p>Aujourd'hui : un bandeau « nouvelle version prête » avec « Recharger », <strong>sans « plus tard » ni croix</strong>, et il pousse l'écran vers le bas. À faire : « Maintenant » ou « Plus tard », puis mise à jour toute seule à la prochaine ouverture.</p></div>
+      <div class="reponse"><span class="etat prouve">Lu dans le code</span><h3>Le bandeau jaune qui décale l'écran</h3>
+        <p>Vous avez raison : tous les bandeaux sont <strong>posés au-dessus de la page</strong>, donc ils la poussent. « Messages pas en direct » ne peut pas se fermer. À faire : un avis qui <strong>flotte par-dessus</strong>, aux couleurs de la marque, sans rien déplacer.</p></div>
+      <div class="reponse"><span class="etat prouve">Lu dans le code</span><h3>Glisser à gauche ou à droite</h3>
+        <p>Ce n'est pas le langage. Ces gestes <strong>n'ont jamais été construits</strong> : aucun glissement sur une ligne, aucun glissement pour répondre, et le retour par glissement est désactivé dans la version web. C'est faisable.</p></div>
+      <div class="reponse"><span class="etat inconnu">Cause non trouvée</span><h3>« Tout sélectionner » au moindre toucher</h3>
+        <p>Toute l'application est sélectionnable d'un seul bloc. Je n'ai pas trouvé le réglage qui déclenche le menu sur un simple toucher : à reproduire sur votre téléphone, puis à limiter aux vrais textes.</p></div>
+      <div class="reponse"><span class="etat prouve">Lu dans le code</span><h3>L'écran du code d'un membre invité</h3>
+        <p>L'accueil de l'équipe <strong>n'est pas caché derrière</strong> l'écran du code : la porte est tenue par la navigation et par le serveur, qui ne donne rien avant la validation. L'éclair que vous voyez reste à expliquer ; il ne livre pas de données.</p></div>
+      <div class="reponse"><span class="etat inconnu">Cause inconnue</span><h3>La ligne qui se déforme</h3>
+        <p>Pas de vidéo possible : entendu. Je chercherai dans le code les deux sorties que vous citez (quitter la messagerie, quitter un dossier) et la correction déjà faite ailleurs, pour appliquer la même.</p></div>
+      <div class="reponse"><span class="etat prouve">Votre décision</span><h3>Riwayat et contrat</h3>
+        <p>Le nom est <strong>عقد معلم</strong>. Riwayat : « J'ai une ijaza dans les dix lectures », « dans les sept lectures », ou « quelques lectures » avec le choix de celles maîtrisées. Demander un complément cochera d'office <strong>tout ce qui manque</strong> au dossier ; vous décochez ce que vous voulez.</p></div>
+      <div class="reponse"><span class="etat prouve">Précision</span><h3>« 7 jours », de quoi ?</h3>
+        <p>Le candidat qui touche « Retirer ma candidature » par erreur pourrait <strong>l'annuler lui-même pendant 7 jours</strong>, sans vous écrire. Aujourd'hui, vous seul pouvez la rouvrir : 20 retraits, dont 13 encore fermés.</p></div>
+    </div>
+  </section>
+
+  <section class="bloc" id="mouvements">
+    <h2>Les mouvements que vous décrivez, et leur nom</h2>
+    <p>Touchez une carte pour rejouer. Le mot en violet est celui à taper dans la recherche.</p>
+    <div class="banc" id="banc"></div>
+  </section>
+
+  <section class="bloc" id="liste">
+    <h2>La liste, par famille</h2>
+    <p>Les fiches à bord violet sont celles à chercher en premier. « Copier » prend le nom anglais, c'est lui qui donne les meilleurs résultats.</p>
+    <div class="outil">
+      <input id="filtre" type="search" placeholder="Filtrer : notification, menu, dossier…" aria-label="Filtrer la liste">
+      <span class="compte" id="compte"></span>
+    </div>
+    <div id="familles" class="bloc"></div>
+  </section>
+
+  <section class="bloc" id="sites">
+    <h2>Où chercher</h2>
+    <div class="sites">
+      <a href="https://mobbin.com" target="_blank" rel="noopener">Mobbin · vraies applications</a>
+      <a href="https://pageflows.com" target="_blank" rel="noopener">Page Flows · parcours filmés</a>
+      <a href="https://refero.design" target="_blank" rel="noopener">Refero · écrans web</a>
+      <a href="https://dribbble.com" target="_blank" rel="noopener">Dribbble · maquettes</a>
+      <a href="https://www.behance.net" target="_blank" rel="noopener">Behance · projets complets</a>
+      <a href="https://m3.material.io" target="_blank" rel="noopener">Material Design 3 · les règles</a>
+      <a href="https://useanimations.com" target="_blank" rel="noopener">useAnimations · icônes animées</a>
+      <a href="https://lordicon.com" target="_blank" rel="noopener">Lordicon · icônes animées</a>
+      <a href="https://rive.app/marketplace" target="_blank" rel="noopener">Rive · animations interactives</a>
+    </div>
+    <p class="note">Envoyez-moi des captures ou des liens de ce qui vous plaît, avec un mot sur ce que vous aimez dedans. Trois exemples par élément suffisent.</p>
+  </section>
+</div>
+
+<script>
+const essais=[
+ ["ressort","Spring animation","Le ressort : l'élément arrive, dépasse un peu, puis se pose.",'<div class="bille"></div>'],
+ ["rebond","Bounce · squash and stretch","Le rebond : il s'écrase en touchant, puis s'étire en repartant.",'<div class="bille"></div>'],
+ ["elastique","Elastic · rubber band effect","L'élastique : ça s'étire trop loin et revient.",'<div class="barre"></div>'],
+ ["liquide","Gooey effect · liquid · metaball","Le liquide : deux gouttes qui se séparent et se recollent.",'<i></i><i></i>'],
+ ["","Liquid tab bar · fluid indicator","La capsule qui coule d'un onglet à l'autre.",'<div class="onglets"><b></b><span></span><span></span><span></span></div>'],
+ ["morph","Morphing · shape morph","La forme qui se transforme : un rond devient un bouton.",'<div class="forme"></div>'],
+ ["","Shimmer · glossy shine","Le reflet huilé qui passe sur une surface.",'<div class="reflet"></div>'],
+ ["","Glow · pulse · ripple","La lumière qui pulse autour d'un point.",'<div class="halo"></div>'],
+ ["","Toast · floating notification","L'avis qui flotte par-dessus, sans pousser la page.",'<div class="avis">Nouveau message</div><div class="lignes"><u></u><u></u><u></u></div>']
+];
+const banc=document.getElementById("banc");
+essais.forEach(([cls,en,dit,html])=>{
+  const b=document.createElement("button");b.type="button";b.className="essai joue";
+  b.innerHTML=`<div class="scene ${cls}">${html}</div><span class="nom-en">${en}</span><span class="dit">${dit}</span><span class="rejouer">Toucher pour rejouer</span>`;
+  b.addEventListener("click",()=>{b.classList.remove("joue");void b.offsetWidth;b.classList.add("joue")});
+  banc.appendChild(b);
+});
+
+const F=[
+ {t:"Avis, notifications et mise à jour",d:"Pour remplacer le bandeau jaune qui décale l'écran.",e:[
+  ["Avis flottant","toast notification","Remplace le bandeau « nouveau message »",1],
+  ["Avis en bas avec « Annuler »","snackbar with undo","« Envoyé », « Retiré · Annuler »",0],
+  ["Avis façon îlot","dynamic island notification","Un avis qui sort du haut et se replie",1],
+  ["Notification dans l'application","in-app notification banner","Message reçu pendant qu'on travaille",1],
+  ["Pile d'avis","stacked toasts","Plusieurs avis sans envahir l'écran",0],
+  ["Panneau de la cloche","notification panel dropdown","La cloche de l'en-tête",1],
+  ["Pastille de compteur","notification badge","Le nombre sur une icône",0],
+  ["État de la connexion","connection status indicator","« Messages pas en direct », discret",1],
+  ["Invitation à mettre à jour","app update prompt","« Nouvelle version · Maintenant / Plus tard »",1],
+  ["Bandeau d'annonce fermable","dismissible announcement bar","L'annonce en une ligne chez le candidat",0]]},
+ {t:"Entrée et parcours du candidat",d:"Du courriel jusqu'à la page d'accueil du candidat.",e:[
+  ["Courriel de service","transactional email design","L'invitation, le lien de connexion",0],
+  ["Arrivée par un lien personnel","magic link sign in","L'écran après le toucher du lien",1],
+  ["Choix du type de compte","role selection screen","« Apprendre » ou « Enseigner »",1],
+  ["Écran de bienvenue","welcome onboarding screen","Première visite",0],
+  ["Formulaire en étapes","multi-step form","La candidature",1],
+  ["Une question par écran","one question per screen form","Langage simple, sans surcharge",0],
+  ["Barre d'avancement","progress stepper","« Étape 2 sur 3 »",0],
+  ["Cartes de choix","selectable cards","Juz, riwayat (réponse simple)",0],
+  ["Puces à cocher","multi-select chips","La grille des lectures maîtrisées",1],
+  ["Compteur","number stepper","Le nombre de juz",0],
+  ["Dépôt de pièce d'identité","ID verification upload","La pièce d'identité",0],
+  ["Accepter un contrat","terms acceptance screen","عقد معلم",0],
+  ["Suivi de dossier","application status tracker","L'état du dossier du candidat",1],
+  ["Carte « à faire maintenant »","next step card","La prochaine action",0],
+  ["État vide","empty state illustration","« Rien à faire pour l'instant »",0],
+  ["Carte à partager","share card","Partager l'académie",1],
+  ["Confirmation d'un geste grave","destructive confirmation dialog","Retirer sa candidature",0]]},
+ {t:"Navigation",d:"Se déplacer sans se perdre et sans revenir à l'accueil.",e:[
+  ["Barre du bas flottante","floating tab bar","Candidat, enseignant",1],
+  ["Capsule de l'onglet actif","tab bar active indicator","La marque colorée de l'onglet choisi",0],
+  ["Menu latéral","sidebar navigation","Le bureau sur ordinateur",1],
+  ["Rail de navigation","navigation rail","Le bureau sur tablette",0],
+  ["Menu hamburger et tiroir","navigation drawer","Le bureau au téléphone",0],
+  ["En-tête","top app bar","Les boutons du haut",1],
+  ["Fil d'Ariane","breadcrumbs","Ordinateur et tablette",0],
+  ["Onglets","segmented control","Les vues d'une liste",0],
+  ["Palette de commandes","command palette","La recherche du bureau (Ctrl+K)",1],
+  ["Retour par glissement","swipe back gesture","Tout le téléphone",1],
+  ["Glisser entre les onglets","swipeable tabs","Passer d'une vue à l'autre du doigt",0],
+  ["Liste et détail côte à côte","master detail layout","Messages, dossiers",0]]},
+ {t:"Fenêtres et pages secondaires",d:"Tout ce qui s'ouvre par-dessus une page.",e:[
+  ["Feuille du bas","bottom sheet","Filtres, gestes, profil",1],
+  ["Feuille à paliers","bottom sheet detents","Mi-hauteur, puis grande, jamais bloquée",1],
+  ["Poignée de la feuille","sheet drag handle","Fermer en glissant vers le bas",0],
+  ["Fenêtre modale","modal dialog","Confirmations",0],
+  ["Panneau latéral","side panel","Un geste sur ordinateur",0],
+  ["Aperçu latéral","side peek preview","La carte d'aperçu d'un candidat",1],
+  ["Fenêtre ancrée","popover","Messages et notifications de l'en-tête",1],
+  ["Menu « … »","overflow menu","Les gestes d'une ligne",0],
+  ["Liste d'actions","action sheet","Les gestes au téléphone",0],
+  ["Feuille de filtres","filter bottom sheet","Les filtres de la liste",1],
+  ["Visionneuse","image lightbox","La pièce d'identité en grand",0]]},
+ {t:"Le bureau de la direction",d:"Traiter 1 000 dossiers seul, en trois pages.",e:[
+  ["Tableau de bord","admin dashboard","L'accueil du bureau",1],
+  ["Tableau de bord en mosaïque","bento grid dashboard","Une autre forme d'accueil",0],
+  ["Boîte de travail","triage inbox","« À faire »",1],
+  ["Tuile de chiffre","KPI card","Les compteurs",0],
+  ["Fil d'activité","activity feed","« Ce qui a changé »",0],
+  ["Liste de données","data table","Les personnes",1],
+  ["Barre de filtres","filter bar","Les filtres",0],
+  ["Vues enregistrées","saved views","« Dossiers complets »",0],
+  ["Barre d'actions groupées","bulk action bar","Agir sur plusieurs dossiers",1],
+  ["Fiche d'un candidat","candidate profile page","Le dossier",1],
+  ["Bandeau de synthèse","profile summary header","La synthèse en haut du dossier",1],
+  ["Liste de ce qui manque","completeness checklist","Pièce, contrat, versement",0],
+  ["Pastille d'état","status badge","« Complet », « À vérifier »",0],
+  ["Ligne du temps","activity timeline","L'historique du dossier",0],
+  ["Suivi de candidats","applicant tracking system","Le recrutement entier",1],
+  ["File de revue","review queue","Un dossier après l'autre",0],
+  ["Épingler","shortlist favorites","Les profils épinglés",1],
+  ["Glisser une ligne pour agir","swipe actions list","Épingler ou répondre d'un geste",0],
+  ["Ligne qui se déplie","expandable table row","Une famille et ses enfants",0],
+  ["Avatars groupés","avatar stack","Une famille",0]]},
+ {t:"Messagerie et annonces",d:"L'échange entre la direction, les candidats et les enseignants.",e:[
+  ["Liste des conversations","chat list","Messages",0],
+  ["Conversation","chat screen","Le fil",1],
+  ["Zone de saisie","chat input bar","Écrire",0],
+  ["Réponse rapide","quick reply popover","Répondre sans ouvrir la page",1],
+  ["Glisser pour répondre","swipe to reply","Répondre à un message précis",0],
+  ["Réponses toutes prêtes","saved replies","Réponses types",0],
+  ["Message en échec","failed message retry","Envoyé, lu, en échec",0],
+  ["Gestes sur un message","message long press menu","Supprimer, copier",1],
+  ["Aperçu de lien","link preview card","Les liens",0],
+  ["Pièces jointes","attachment picker","Images, documents",0],
+  ["Lecteur vocal","voice message player","Messages vocaux",0],
+  ["Profil dans la conversation","contact info sheet","Le « i »",1],
+  ["Fil d'annonces","in-app announcements feed","Les annonces",1],
+  ["Écrire une annonce","broadcast message composer","Publier",0],
+  ["Choix des destinataires","audience segment builder","Cibler précisément",1],
+  ["Carte d'événement","event card","L'accueil de l'enseignant",1]]},
+ {t:"Espace de l'enseignant",d:"Un accueil vivant, pas un document figé.",e:[
+  ["Accueil vivant","home feed","« Aujourd'hui »",1],
+  ["Carte de cours","class session card","La prochaine séance",1],
+  ["Carrousel","card carousel","Les événements de la direction",0],
+  ["Liste des élèves","student roster","Les élèves d'une Classe",1],
+  ["Page d'une Classe","course detail page","La fiche de la Classe",0],
+  ["Bibliothèque","resource library","Les documents",0],
+  ["Agenda","calendar agenda view","L'emploi du temps",0]]},
+ {t:"Attente, icônes, toucher",d:"Ce qui donne la sensation de vitesse.",e:[
+  ["Squelette de chargement","skeleton loading","L'attente d'un écran",1],
+  ["Affichage immédiat","optimistic UI","Une action visible tout de suite",0],
+  ["Transition de page","page transition animation","Changer de page",1],
+  ["Élément qui voyage","shared element transition","La carte qui devient la page",0],
+  ["Petites animations","micro-interactions","Un bouton, un succès",1],
+  ["Icônes animées","animated icons","Barre du bas, cloche",1],
+  ["Icônes d'onglets animées","animated tab bar icons","La barre du bas",1],
+  ["Familles d'icônes","icon set","Phosphor, Lucide, Hugeicons, Solar, Iconsax",0],
+  ["Tirer pour actualiser","pull to refresh animation","Les listes",0],
+  ["Zone tactile","touch target size","La barre du bas",0]]}
+];
+const fam=document.getElementById("familles"),compte=document.getElementById("compte");
+const tout=[];
+F.forEach(f=>{
+  const s=document.createElement("div");s.className="famille";
+  s.innerHTML=`<h3>${f.t}</h3><p>${f.d}</p><div class="fiches"></div>`;
+  const g=s.querySelector(".fiches");
+  f.e.forEach(([fr,en,ou,prio])=>{
+    const c=document.createElement("div");c.className="fiche"+(prio?" prio":"");
+    const q=encodeURIComponent(en+" UI");
+    c.innerHTML=`${prio?'<span class="marque">À chercher d\'abord</span>':''}<span class="fr">${fr}</span><span class="en">${en}</span><span class="ou">${ou}</span>
+      <div class="gestes"><button type="button">Copier</button>
+      <a href="https://dribbble.com/search/${encodeURIComponent(en)}" target="_blank" rel="noopener">Dribbble</a>
+      <a href="https://www.google.com/search?tbm=isch&q=${q}" target="_blank" rel="noopener">Images</a>
+      <a href="https://www.pinterest.com/search/pins/?q=${q}" target="_blank" rel="noopener">Pinterest</a></div>`;
+    const b=c.querySelector("button");
+    b.addEventListener("click",()=>{
+      const ok=()=>{b.textContent="Copié";b.classList.add("fait");setTimeout(()=>{b.textContent="Copier";b.classList.remove("fait")},1500)};
+      const repli=()=>{const r=document.createRange();r.selectNodeContents(c.querySelector(".en"));const s=getSelection();s.removeAllRanges();s.addRange(r)};
+      try{navigator.clipboard.writeText(en).then(ok,repli)}catch(e){repli()}
+    });
+    g.appendChild(c);tout.push({c,s,txt:(fr+" "+en+" "+ou).toLowerCase()});
+  });
+  fam.appendChild(s);
+});
+function filtrer(){
+  const v=document.getElementById("filtre").value.trim().toLowerCase();let n=0;
+  tout.forEach(o=>{const vu=!v||o.txt.includes(v);o.c.hidden=!vu;if(vu)n++});
+  fam.querySelectorAll(".famille").forEach(s=>{s.hidden=!s.querySelector(".fiche:not([hidden])")});
+  compte.textContent=n+" éléments";
+}
+document.getElementById("filtre").addEventListener("input",filtrer);filtrer();
+</script>
