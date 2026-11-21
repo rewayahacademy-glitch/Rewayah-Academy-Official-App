@@ -84,7 +84,13 @@ class MenuFiltre<T> extends StatelessWidget {
     required this.onChoix,
     super.key,
     this.selecteurDeSection = false,
+    this.controleur,
   });
+
+  /// PERSONNES-UNE-PAGE (c) : ouvre la liste sans toucher (le filtre unique
+  /// « Filtrer par » rouvre le menu sur les valeurs du type choisi). `null`
+  /// par defaut : rien ne change ailleurs.
+  final MenuAncreControleur? controleur;
 
   /// Vrai : le menu ne filtre pas, il **dit ou l'on est** parmi des sections
   /// (`SelecteurSection`, au-dela de quatre sections sur telephone). Le bouton
@@ -155,6 +161,7 @@ class MenuFiltre<T> extends StatelessWidget {
         ? contraintes.maxWidth
         : null;
     return MenuAncre<_Choix<T>>(
+      controleur: controleur,
       // Pas d'infobulle : le bouton dit deja son axe, et celle de Material
       // repetait « Etat » sous « Etat » (LISTES-1). Le libelle reste dans la
       // voix du lecteur d'ecran.
