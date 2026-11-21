@@ -8254,7 +8254,21 @@
       "repondre": "Answer",
       "echec": "The answer is not confirmed: it may not have reached Rewayah. Tap \"Answer\" again.",
       "erreur": "The guide comments could not be read. Tap \"Try again\".",
-      "indisponible": "The guide comments are not available yet."
+      "indisponible": "The guide comments are not available yet.",
+      "filtres": "Which threads to show",
+      "filtreAttente": "Waiting for an answer ({n})",
+      "filtreTous": "All parts ({n})",
+      "autresFils(plural, param=n)": {
+        "one": "See the other thread",
+        "other": "See the {n} other threads"
+      },
+      "replierFils": "Keep only 3 threads",
+      "voirFil(plural, param=n)": {
+        "one": "See the whole message",
+        "other": "See the whole conversation ({n} messages)"
+      },
+      "replierFil": "Fold the conversation",
+      "aucunEnAttente": "No reader is waiting for your answer. All threads are in \"All parts\"."
     },
     "chiffres": {
       "recalcul": "Last recalculation at {heure}",

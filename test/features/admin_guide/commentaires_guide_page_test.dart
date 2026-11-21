@@ -98,6 +98,53 @@ Future<void> _monter(WidgetTester tester, _Faux port, {Size? taille}) async {
   await tester.pumpAndSettle();
 }
 
+/// Passe sur « Toutes les parties ».
+Future<void> _toutes(WidgetTester tester) async {
+  final Finder choix = find.text(t.admin.guideCommentaires.filtreTous(n: 2));
+  await tester.ensureVisible(choix.first);
+  await tester.tap(choix.first);
+  await tester.pumpAndSettle();
+}
+
+/// Un faux port avec beaucoup de fils et une longue conversation.
+class _Nombreux extends _Faux {
+  @override
+  Future<List<PartieGuideDirection>> lire() async => <PartieGuideDirection>[
+    PartieGuideDirection(
+      code: 'p4',
+      titre: 'La paie',
+      jaime: 1,
+      pasClair: 9,
+      fils: <FilGuide>[
+        for (int i = 0; i < 7; i++)
+          FilGuide(
+            lecteur: 'Lecteur $i',
+            messages: <MessageGuide>[
+              MessageGuide(
+                id: 'a$i',
+                corps: 'Premiere question $i',
+                creeLe: DateTime(2026, 11, 21, 8),
+                auteur: AuteurMessageGuide.lecteur,
+              ),
+              MessageGuide(
+                id: 'b$i',
+                corps: 'Reponse de la direction $i',
+                creeLe: DateTime(2026, 11, 21, 9),
+                auteur: AuteurMessageGuide.direction,
+              ),
+              MessageGuide(
+                id: 'c$i',
+                corps: 'Derniere question $i',
+                creeLe: DateTime(2026, 11, 21, 10),
+                auteur: AuteurMessageGuide.lecteur,
+              ),
+            ],
+          ),
+      ],
+    ),
+  ];
+}
+
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
   final l = t.admin.guideCommentaires;
@@ -106,6 +153,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, _Faux());
+    await _toutes(tester);
     final Offset p4 = tester.getTopLeft(
       find.byKey(CommentairesGuidePage.clePartie('p4')),
     );
@@ -184,6 +232,7 @@ void main() {
   ) async {
     await _monter(tester, _Faux(), taille: const Size(390, 844));
     expect(tester.takeException(), isNull);
+    await _toutes(tester);
     expect(find.text('4. La paie'), findsOneWidget);
     // Au telephone, une colonne : p1 sous p4.
     expect(
@@ -192,5 +241,47 @@ void main() {
         tester.getTopLeft(find.byKey(CommentairesGuidePage.clePartie('p1'))).dy,
       ),
     );
+  });
+
+  // GUIDE-COMMENTAIRES-PILE (directeur, 21/11/2026 : « tu as omis de penser a
+  // ce qui se passe quand les commentaires s'accumulent »).
+  testWidgets('en attente d abord : la partie sans fil qui attend est cachee', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, _Faux());
+    expect(find.text(l.filtreAttente(n: 1)), findsWidgets);
+    expect(find.byKey(CommentairesGuidePage.clePartie('p4')), findsOneWidget);
+    expect(find.byKey(CommentairesGuidePage.clePartie('p1')), findsNothing);
+  });
+
+  testWidgets('les fils s accumulent : 3 visibles, le reste a la demande', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, _Nombreux());
+    expect(find.text('Lecteur 2'), findsWidgets);
+    expect(find.text('Lecteur 3'), findsNothing);
+    final Finder autres = find.byKey(CommentairesGuidePage.cleAutresFils('p4'));
+    expect(find.text(l.autresFils(n: 4)), findsOneWidget);
+    await tester.ensureVisible(autres);
+    await tester.tap(autres);
+    await tester.pumpAndSettle();
+    expect(find.text('Lecteur 6'), findsWidgets);
+    expect(find.text(l.replierFils), findsOneWidget);
+  });
+
+  testWidgets('un fil replie ne montre que son dernier message', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, _Nombreux());
+    expect(find.text('Derniere question 0'), findsOneWidget);
+    expect(find.text('Premiere question 0'), findsNothing);
+    final Finder voir = find.byKey(
+      CommentairesGuidePage.cleVoirFil('p4', 'Lecteur 0'),
+    );
+    await tester.ensureVisible(voir);
+    await tester.tap(voir);
+    await tester.pumpAndSettle();
+    expect(find.text('Premiere question 0'), findsOneWidget);
+    expect(find.text('Reponse de la direction 0'), findsOneWidget);
   });
 }
