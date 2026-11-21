@@ -28,6 +28,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -449,9 +450,12 @@ class _Contenu extends StatelessWidget {
           cle: 'seances',
           valeur: c.seancesTenues,
           phrase: l.seances,
-          precision: l.dureeCours(
-            heures: c.seancesMinutes ~/ 60,
-            minutes: (c.seancesMinutes % 60).toString().padLeft(2, '0'),
+          // « 26 h 30 » ne se coupe jamais entre le nombre et son unite.
+          precision: LibellesGroupe.insecable(
+            l.dureeCours(
+              heures: c.seancesMinutes ~/ 60,
+              minutes: (c.seancesMinutes % 60).toString().padLeft(2, '0'),
+            ),
           ),
           pastilles: <Widget>[
             if (plusUtile(c.seancesSeptJours, c.seancesTenues))
