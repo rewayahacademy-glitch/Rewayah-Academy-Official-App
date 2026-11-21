@@ -275,7 +275,7 @@ void main() {
     await stabiliser(tester);
     expect(lieu(routeur), Routes.tuteurNotifications);
     final Finder ligne = find.byKey(
-      const ValueKey<String>('notification-n-f1'),
+      const ValueKey<String>('cloche-ligne-n-n-f1'),
     );
     expect(ligne, findsOneWidget);
     expect(find.textContaining("L'académie est fermée du"), findsOneWidget);

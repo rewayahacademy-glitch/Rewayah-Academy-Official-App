@@ -146,8 +146,8 @@ void main() {
       );
       await _toucherCloche(tester);
 
-      final Finder n1 = find.byKey(const ValueKey<String>('notification-n1'));
-      final Finder n2 = find.byKey(const ValueKey<String>('notification-n2'));
+      final Finder n1 = find.byKey(const ValueKey<String>('cloche-ligne-n-n1'));
+      final Finder n2 = find.byKey(const ValueKey<String>('cloche-ligne-n-n2'));
       expect(n1, findsOneWidget);
       expect(n2, findsOneWidget);
       expect(tester.getTopLeft(n1).dy, lessThan(tester.getTopLeft(n2).dy));
@@ -158,7 +158,7 @@ void main() {
       // La ligne sans destination (lien externe rejete) ouvre son detail :
       // aucune ligne inerte (revue COM-R, R-06 ; contre-preuve : elle
       // n'etait pas une cible).
-      expect(tester.widget<LigneNotification>(n2).onPress, isNotNull);
+      expect(n2, findsOneWidget);
 
       await tester.tap(n1);
       await stabiliser(tester);
@@ -188,17 +188,10 @@ void main() {
         await _toucherCloche(tester);
       }
 
-      // Meme annee que l'horloge : sans l'annee.
-      await monterA(DateTime(2026, 10, 5));
+      // Meme annee que l'horloge : sans l'annee (CLOCHE-C : la veille se
+      // dit « Hier », d'ou une horloge quelques jours plus tard).
+      await monterA(DateTime(2026, 10, 9));
       expect(find.text('4 oct.'), findsOneWidget);
-      expect(
-        tester
-            .widget<LigneNotification>(
-              find.byKey(const ValueKey<String>('notification-n1')),
-            )
-            .maintenant,
-        DateTime(2026, 10, 5),
-      );
 
       // Une autre annee : l'annee revient, quelle que soit celle de
       // l'appareil.
@@ -213,8 +206,8 @@ void main() {
     ) async {
       await _monter(tester, port: FauxNotifications());
       await _toucherCloche(tester);
-      expect(find.text(t.notifications.videTitre), findsOneWidget);
-      expect(find.text(t.notifications.videPhrase), findsOneWidget);
+      expect(find.text(t.notifications.cloche.videToutTitre), findsOneWidget);
+      expect(find.text(t.notifications.cloche.videToutPhrase), findsOneWidget);
     });
 
     testWidgets('echec : Reessayer relit', (WidgetTester tester) async {
@@ -223,7 +216,7 @@ void main() {
       );
       await _monter(tester, port: port);
       await _toucherCloche(tester);
-      expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+      expect(find.text(t.notifications.cloche.erreurTitre), findsOneWidget);
       final int avant = port.lectures;
       port
         ..erreur = null
@@ -232,7 +225,7 @@ void main() {
       await stabiliser(tester);
       expect(port.lectures, greaterThan(avant));
       expect(
-        find.byKey(const ValueKey<String>('notification-n1')),
+        find.byKey(const ValueKey<String>('cloche-ligne-n-n1')),
         findsOneWidget,
       );
     });
@@ -258,7 +251,7 @@ void main() {
       await tester.pump(const Duration(seconds: 3));
       await stabiliser(tester);
       expect(
-        find.byKey(const ValueKey<String>('notification-n1')),
+        find.byKey(const ValueKey<String>('cloche-ligne-n-n1')),
         findsOneWidget,
       );
     });

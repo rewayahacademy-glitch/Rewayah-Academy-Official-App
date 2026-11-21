@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
+import 'package:rewayah_academy/features/notifications/cloche/contenu_cloche.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
@@ -183,7 +184,6 @@ void main() {
             expect(find.byType(NotificationsPage), findsOneWidget);
             // Rien n'est marque a l'ouverture : les deux restent nouvelles.
             expect(port.marquagesGroupes, 0);
-            expect(find.byKey(NotificationsPage.cleNouvelles), findsOneWidget);
             expect(
               tester
                   .widget<ClocheNotifications>(find.byType(ClocheNotifications))
@@ -191,7 +191,7 @@ void main() {
               2,
             );
 
-            await tester.tap(find.byKey(NotificationsPage.cleToutLire));
+            await tester.tap(find.byKey(ContenuCloche.cleToutLire));
             await stabiliser(tester);
             expect(port.marquagesGroupes, 1);
             final ClocheNotifications cloche = tester

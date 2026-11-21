@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show lieu, stabiliser;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/cloche.dart';
 import '../../support/demo/adulte_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
@@ -126,6 +127,7 @@ void main() {
       expect(lieu(routeur), Routes.eleveAdulte);
       await tester.tap(find.byType(ClocheNotifications));
       await stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(lieu(routeur), Routes.eleveNotifications);
       expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, isNull);
       expect(tester.takeException(), isNull);

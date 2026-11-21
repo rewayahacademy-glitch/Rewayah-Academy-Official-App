@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/notifications/cloche/annonces_cloche.dart';
 import 'package:rewayah_academy/features/notifications/cloche/contenu_cloche.dart';
 import 'package:rewayah_academy/features/notifications/cloche/ligne_cloche.dart';
@@ -215,6 +216,54 @@ void main() {
         await capturer(tester, '18-tout-lu-${c.nom}');
       });
     }
+
+    for (final _Cas c in <_Cas>[
+      _cas('21-page-complete-1440-fr', 1440, 900),
+      _cas('22-page-complete-1280-fr', 1280, 800),
+      _cas('23-page-complete-390-fr', 390, 844),
+      _cas('24-page-complete-1440-ar', 1440, 900, langue: AppLocale.ar),
+      _cas(
+        '25-page-complete-390-ar-sombre',
+        390,
+        844,
+        langue: AppLocale.ar,
+        sombre: true,
+      ),
+      _cas('26-page-complete-1440-sombre', 1440, 900, sombre: true),
+      _cas('27-page-complete-320-texte-x2', 320, 700, echelle: 2),
+    ]) {
+      testWidgets(c.nom, (WidgetTester tester) async {
+        await _langue(tester, c.langue);
+        final bool ar = c.langue == AppLocale.ar;
+        await monterCloche(
+          tester,
+          taille: c.taille,
+          densite: c.densite,
+          theme: c.sombre ? ThemeMode.dark : ThemeMode.light,
+          echelle: c.echelle,
+          depart: Routes.tuteurNotifications,
+          port: FauxNotifsCloche(notifsDemo(arabe: ar)),
+          source: FausseSourceAnnonces(annoncesDemo(arabe: ar)),
+        );
+        await capturer(tester, c.nom);
+      });
+    }
+
+    testWidgets('28 page complete : detail sur place, 1440', (
+      WidgetTester tester,
+    ) async {
+      await _langue(tester, AppLocale.fr);
+      await monterCloche(
+        tester,
+        taille: const Size(1440, 900),
+        depart: Routes.tuteurNotifications,
+        port: FauxNotifsCloche(notifsDemo()),
+        source: FausseSourceAnnonces(annoncesDemo()),
+      );
+      await tester.tap(_titreA1());
+      await pas(tester);
+      await capturer(tester, '28-page-complete-detail-1440');
+    });
 
     testWidgets('19 page suivante en cours', (WidgetTester tester) async {
       final List<AnnonceCloche> beaucoup = <AnnonceCloche>[

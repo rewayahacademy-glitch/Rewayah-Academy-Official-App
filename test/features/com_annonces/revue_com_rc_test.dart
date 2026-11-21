@@ -135,9 +135,9 @@ void main() {
       );
       await _ouvrirNotifications(tester);
       final Finder ligne = find.byKey(
-        const ValueKey<String>('notification-seule'),
+        const ValueKey<String>('cloche-ligne-n-seule'),
       );
-      expect(tester.widget<LigneNotification>(ligne).onPress, isNotNull);
+      expect(ligne, findsOneWidget);
       await tester.tap(ligne);
       await stabiliser(tester);
       expect(find.byType(DetailNotification), findsOneWidget);

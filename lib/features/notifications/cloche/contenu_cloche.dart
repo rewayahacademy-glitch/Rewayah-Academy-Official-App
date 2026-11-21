@@ -23,6 +23,7 @@ import '../../../core/tc_bibliotheque/ouvreur_onglet.dart';
 import '../../../core/tc_horloge/mon_horloge.dart';
 import '../../../core/theme/app_mouvement.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/controle_segmente.dart' show Segment;
@@ -32,6 +33,7 @@ import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
+import '../../com_annonces/port_annonces.dart';
 import '../../com_messages/liens_message_staff.dart';
 import '../../suivi_foyer/filtres_historique.dart';
 import '../detail_notification.dart';
@@ -175,7 +177,23 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
       }
       return;
     }
-    if (mounted) ref.invalidate(notificationsTuteurProvider);
+    if (!mounted) return;
+    ref.invalidate(notificationsTuteurProvider);
+    // R-COM-12 : la notification d'une annonce de Classe lit aussi l'annonce ;
+    // un echec seul est dit non confirme, la notification reste lue.
+    final String? annonceId = n.annonceId;
+    if (annonceId == null) return;
+    try {
+      await ref.read(portAnnoncesProvider).marquerLue(annonceId);
+    } on CapaciteIndisponible {
+      return;
+    } on Object {
+      if (mounted) {
+        setState(() => _retour = t.notifications.lectureNonConfirmee);
+      }
+      return;
+    }
+    if (mounted) ref.invalidate(annonceProvider(annonceId));
   }
 
   Future<void> _voirAnnonce(AnnonceCloche a) async {
@@ -508,6 +526,10 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
           nature: NatureEtat.indisponible,
           titre: t.notifications.indisponibleTitre,
           phrase: t.notifications.indisponiblePhrase,
+          dependance: switch (valeur.error) {
+            final CapaciteIndisponible c => c.dependance,
+            _ => null,
+          },
         ),
       );
     } else if (echec) {
@@ -555,6 +577,23 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
             ],
           ],
         ),
+      );
+    }
+
+    // La page complete : la liste dans UNE carte a filets, sur le fond de la
+    // page (K-55), bornee a la largeur de lecture par la page.
+    if (widget.forme == FormeCloche.page &&
+        !attente &&
+        !indispo &&
+        !echec &&
+        !rien) {
+      corpsListe = DecoratedBox(
+        decoration: BoxDecoration(
+          color: palette.surfaceRaised.background,
+          borderRadius: AppRadius.arrondiMd,
+          border: Border.fromBorderSide(palette.contourCarte.asBorderSide()),
+        ),
+        child: ClipRRect(borderRadius: AppRadius.arrondiMd, child: corpsListe),
       );
     }
 
@@ -664,10 +703,10 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
           ),
           Ecart.vSm,
         ],
-        _filet(palette),
+        if (widget.forme != FormeCloche.page) _filet(palette),
         corpsListe,
         if (!rien && suite && !attente) ...<Widget>[
-          _filet(palette),
+          if (widget.forme != FormeCloche.page) _filet(palette),
           Ecart.vMd,
           Center(
             child: ActionPrincipale(
@@ -773,9 +812,18 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
                   widget.naviguer(destination);
                 }
               : null,
+          // Toucher la ligne la marque lue. Une notification qui mene a un
+          // objet (un fil, une classe, un paiement) l'ouvre directement, comme
+          // avant (R-06, BUREAU-NAV : aucune etape de plus) ; sans destination,
+          // ou pour une annonce de Classe (R-COM-12), son detail s'ouvre sur
+          // place.
           onOuvrir: () {
             unawaited(_lireNotification(n));
-            setState(() => _detail = e.cle);
+            if (destination != null && n.annonceId == null) {
+              widget.naviguer(destination);
+            } else {
+              setState(() => _detail = e.cle);
+            }
           },
         );
       case ElementAnnonce(:final AnnonceCloche annonce):

@@ -264,7 +264,7 @@ void main() {
       expect(find.byType(NotificationsPage), findsOneWidget);
       await taper(
         tester,
-        find.byKey(const ValueKey<String>('notification-demo-reprise-foyer')),
+        find.byKey(const ValueKey<String>('cloche-ligne-n-demo-reprise-foyer')),
       );
       expect(find.byType(RepriseFoyerPage), findsOneWidget);
       expect(find.text(libelle), findsOneWidget);
@@ -293,7 +293,7 @@ void main() {
     expect(find.text(r.titulaire.notification), findsOneWidget);
     await taper(
       tester,
-      find.byKey(const ValueKey<String>('notification-demo-reprise-foyer')),
+      find.byKey(const ValueKey<String>('cloche-ligne-n-demo-reprise-foyer')),
     );
     expect(find.byType(RepriseTitulairePage), findsOneWidget);
     expect(find.text(r.titulaire.notification), findsOneWidget);

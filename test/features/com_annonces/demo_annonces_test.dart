@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/carte_annonce_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
+import 'package:rewayah_academy/features/notifications/cloche/contenu_cloche.dart';
 import 'package:rewayah_academy/features/notifications/detail_notification.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
@@ -57,7 +58,7 @@ Future<GoRouter> _monter(
 String _adresse(RoleDemoCommunications role) =>
     adresseDemoCommunications(VoieDemoCommunications.annonces, role: role);
 
-Finder _ligne(String id) => find.byKey(ValueKey<String>('notification-$id'));
+Finder _ligne(String id) => find.byKey(ContenuCloche.cleLigne('n-$id'));
 
 Future<void> _toucher(WidgetTester tester, Finder cible) async {
   await tester.ensureVisible(cible);
@@ -187,17 +188,6 @@ void main() {
           await _monter(tester, _adresse(role), taille: taille);
           expect(find.byType(ComAnnoncesDemo), findsOneWidget);
           expect(find.byType(NotificationsPage), findsOneWidget);
-          // NOTIFS-L6 : les plus anciennes, repliees sous les priorites,
-          // s'ouvrent d'un geste.
-          final Finder anciennes = find.byKey(NotificationsPage.cleAnciennes);
-          if (anciennes.evaluate().isNotEmpty &&
-              (find.byKey(NotificationsPage.cleAFaire).evaluate().isNotEmpty ||
-                  find
-                      .byKey(NotificationsPage.cleNouvelles)
-                      .evaluate()
-                      .isNotEmpty)) {
-            await _toucher(tester, anciennes);
-          }
           for (final NotificationTuteur n in notificationsDemo(
             role,
             _maintenant,
