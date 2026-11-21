@@ -86,8 +86,14 @@ class MenuActions extends StatelessWidget {
     this.icone,
     this.declencheur,
     this.controleur,
+    this.etiquette = false,
     super.key,
   });
+
+  /// Vrai : le declencheur montre [libelle] en toutes lettres, suivi du
+  /// chevron des menus (« Autres actions » d'une barre de selection), a la
+  /// place du disque d'icone. Faux par defaut : rien ne change ailleurs.
+  final bool etiquette;
 
   /// IMAGES-MESSAGERIE : ouvre le menu depuis un appui long, sans passer par
   /// le declencheur.
@@ -170,6 +176,49 @@ class MenuActions extends StatelessWidget {
       ],
       declencheur:
           declencheur ??
+          (etiquette
+              ? (BuildContext _, EtatPression etat) => Container(
+                  constraints: const BoxConstraints(
+                    minHeight: AppSpacing.section,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: etat.survole || etat.presse
+                        ? palette.washAccent.background
+                        : palette.surfaceRaised.background,
+                    borderRadius: AppRadius.arrondiFull,
+                    border: Border.fromBorderSide(
+                      palette.borderStrong.asBorderSide(),
+                    ),
+                  ),
+                  // K-54 : libelle et chevron centres dans le bouton.
+                  child: Center(
+                    widthFactor: 1,
+                    heightFactor: 1,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Flexible(
+                          child: TexteSansCoupure(
+                            _libelleSemantique,
+                            textAlign: TextAlign.center,
+                            style: palette.inkStrong.applyTo(corps),
+                          ),
+                        ),
+                        Ecart.hXs,
+                        Icon(
+                          AppIcons.menuDeroulant.repos,
+                          size: AppSpacing.lg,
+                          color: palette.inkMuted.asIconTheme().color,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : null) ??
           (BuildContext _, EtatPression etat) => SizedBox(
             width: cible,
             height: cible,

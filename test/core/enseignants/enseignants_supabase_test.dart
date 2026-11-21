@@ -2,6 +2,8 @@
 // serveur connait, lit la page telle qu'il la rend, et traduit ses refus.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart'
+    show VoisinsCandidature;
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
@@ -151,5 +153,76 @@ void main() {
       avec(const PostgrestException(message: 'reserve', code: '42501')),
       throwsA(isA<PermissionInsuffisante>()),
     );
+  });
+
+  group('voisins_enseignant (PERSONNES-UNE-PAGE, etape d)', () {
+    test('la reference, le filtre et le tri partent tels quels ; les voisins '
+        'se lisent', () async {
+      String? fonction;
+      Map<String, dynamic>? params;
+      final EnseignantsSupabase port = EnseignantsSupabase.avecAppel((
+        String f,
+        Map<String, dynamic> p,
+      ) async {
+        fonction = f;
+        params = p;
+        return <String, Object?>{
+          'precedent': 'CAND-00001',
+          'suivant': null,
+          'rang': 2,
+          'total': 2,
+        };
+      });
+      final VoisinsCandidature v = await port.voisins(
+        'CAND-00002',
+        filtre: const FiltreEnseignants(phase: PhaseEnseignant.accueil),
+        tri: TriEnseignants.activite,
+      );
+      expect(fonction, 'voisins_enseignant');
+      expect(params, <String, dynamic>{
+        'p_reference': 'CAND-00002',
+        'p_filtre': <String, Object>{'phase': 'accueil'},
+        'p_tri': 'activite',
+      });
+      expect(v.precedent, 'CAND-00001');
+      expect(v.suivant, isNull);
+      expect(v.rang, 2);
+      expect(v.total, 2);
+    });
+
+    test('« absente » et « hors_liste » : des voisins vides, jamais un rang '
+        'invente', () async {
+      for (final String erreur in <String>['absente', 'hors_liste']) {
+        final VoisinsCandidature v =
+            await EnseignantsSupabase.avecAppel(
+              (String _, Map<String, dynamic> _) async => <String, Object?>{
+                'erreur': erreur,
+              },
+            ).voisins(
+              'CAND-00002',
+              filtre: const FiltreEnseignants(),
+              tri: TriEnseignants.activite,
+            );
+        expect(v.rang, isNull, reason: erreur);
+        expect(v.suivant, isNull, reason: erreur);
+      }
+    });
+
+    test('fonction absente du serveur : capacite indisponible (l\'ecran '
+        'n\'affiche alors ni rang ni suivant)', () async {
+      for (final String code in <String>['PGRST202', '42883']) {
+        await expectLater(
+          EnseignantsSupabase.avecAppel(
+            (String _, Map<String, dynamic> _) async =>
+                throw PostgrestException(message: 'x', code: code),
+          ).voisins(
+            'CAND-00002',
+            filtre: const FiltreEnseignants(),
+            tri: TriEnseignants.activite,
+          ),
+          throwsA(isA<CapaciteIndisponible>()),
+        );
+      }
+    });
   });
 }

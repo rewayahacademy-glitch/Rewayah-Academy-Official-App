@@ -160,8 +160,8 @@ void main() {
     );
     await _stabiliser(tester);
     expect(find.byKey(AdminShell.tiroirKey), findsNothing);
-    // BE-LISTE : « Personnes » ouvre Candidatures.
-    expect(_chemin(routeur), Routes.adminPersonnesCandidatures);
+    // PERSONNES-UNE-PAGE (b) : « Personnes » ouvre la page unique.
+    expect(_chemin(routeur), Routes.adminPersonnes);
     expect(tester.takeException(), isNull);
   });
 
@@ -252,9 +252,9 @@ void main() {
       ),
     );
     await _stabiliser(tester);
-    // BE-LISTE : « Personnes » ouvre Candidatures ; les dossiers se choisissent
-    // dans le selecteur de section.
-    expect(_chemin(routeur), Routes.adminPersonnesCandidatures);
+    // PERSONNES-UNE-PAGE (b) : « Personnes » ouvre la page unique ; les
+    // dossiers se choisissent dans les sous-liens ou dans « Autres pages ».
+    expect(_chemin(routeur), Routes.adminPersonnes);
     await choisirSection(tester, t.dossiers.titre);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
     // L5 (LISTES-3) : la liste des dossiers est une liste de la coquille,

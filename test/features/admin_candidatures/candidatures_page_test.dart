@@ -36,6 +36,7 @@ import 'package:rewayah_academy/features/admin_candidatures/libelles_candidature
 import 'package:rewayah_academy/features/admin_candidatures/ligne_candidature.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
+import '../../support/barre_lot.dart';
 import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
 import 'hote_candidatures.dart';
@@ -739,7 +740,11 @@ void main() {
         await tester.tap(_cle('candidature-a1'));
         await laisser(tester);
         await tester.tap(
-          find.byKey(CandidaturesPage.cleOperationLot(GesteLot.mettreEnPause)),
+          await operationDeLot(
+            tester,
+            CandidaturesPage.cleOperationLot(GesteLot.mettreEnPause),
+            GesteLot.mettreEnPause,
+          ),
         );
         await laisser(tester);
         expect(port.appelsApercuLot, hasLength(1));
@@ -761,14 +766,12 @@ void main() {
       await tester.tap(_cle('candidature-a1'));
       await laisser(tester);
       expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
-      for (final GesteLot g in GesteLot.values) {
-        // PE-LISTE-CANDIDATURES : « Ecrire » n'est pas un geste de la fiche ;
-        // il suit le seul droit d'agir en lot, que ces capacites ouvrent.
-        expect(
-          find.byKey(CandidaturesPage.cleOperationLot(g)),
-          g == GesteLot.ecrire ? findsOneWidget : findsNothing,
-        );
-      }
+      // PE-LISTE-CANDIDATURES : « Ecrire » n'est pas un geste de la fiche ;
+      // il suit le seul droit d'agir en lot, que ces capacites ouvrent.
+      expect(
+        await gestesOffertsDuLot(tester, CandidaturesPage.cleOperationLot),
+        <GesteLot>{GesteLot.ecrire},
+      );
     });
 
     testWidgets(

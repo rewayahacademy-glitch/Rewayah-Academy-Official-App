@@ -39,9 +39,12 @@ import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/enseignants/port_enseignants.dart'
+    show pageEnseignantsProvider;
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/retour_bureau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -183,11 +186,18 @@ class _EtatCandidatureDirectionPage
     final GoRouter? routeur = GoRouter.maybeOf(context);
     if (file == null || routeur == null || !mounted) return;
     _minuteurPassage?.cancel();
-    unawaited(
-      routeur.replace<void>(
-        Routes.adminPersonnesCandidaturePour(
-          reference,
-          fileDeLaListe: file.adresse,
+    // Etape (f) : le dossier voisin remplace aussi l'entree de l'historique du
+    // navigateur (`Router.neglect`), au lieu d'en ajouter une a chaque
+    // dossier : la fleche et le retour du navigateur ramenent a la liste en
+    // un coup.
+    Router.neglect(
+      context,
+      () => unawaited(
+        routeur.replace<void>(
+          Routes.adminPersonnesCandidaturePour(
+            reference,
+            fileDeLaListe: file.adresse,
+          ),
         ),
       ),
     );
@@ -294,6 +304,7 @@ class _EtatCandidatureDirectionPage
     // La file affichait l'etat d'avant le geste : elle se relit au retour.
     ref
       ..invalidate(pageCandidaturesProvider)
+      ..invalidate(pageEnseignantsProvider)
       ..invalidate(capacitesCandidaturesProvider);
   }
 
@@ -302,13 +313,31 @@ class _EtatCandidatureDirectionPage
     if (retour != null) {
       retour();
     } else if (context.canPop()) {
-      context.pop();
+      // Etape (f) : comme la fleche de la coquille, pour que le retour du
+      // navigateur ne rouvre pas le dossier qu'on vient de fermer.
+      retourBureau(context);
     } else {
       // Sans pile (page rechargee) : la liste, avec la file du dossier.
       final FileDuDossier? file = _file;
       context.go(
         file == null
             ? Routes.adminPersonnesCandidatures
+            : file.vuePersonnes != null
+            // Ouvert depuis la page « Personnes » : sa vue et ses filtres.
+            ? Uri(
+                path: Routes.adminPersonnes,
+                queryParameters: <String, String>{
+                  'onglet': 'enseignants',
+                  for (final MapEntry<String, String> e in file.adresse.entries)
+                    if (!const <String>{
+                      'file',
+                      'partis',
+                      'phase_file',
+                    }.contains(e.key))
+                      e.key: e.value,
+                  'element': widget.reference,
+                },
+              ).toString()
             : Uri(
                 path: Routes.adminPersonnesCandidatures,
                 queryParameters: file.adresse.isEmpty ? null : file.adresse,

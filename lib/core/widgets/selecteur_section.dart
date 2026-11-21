@@ -195,6 +195,22 @@ class SelecteurSection<T> extends StatelessWidget {
           container: true,
           label: libelle,
           child: switch (mode) {
+            // PERSONNES-UNE-PAGE (b) : quatre sections au plus, qui portent
+            // TOUTES une icone, et dont les mots ne tiennent pas : les icones
+            // seules, jamais un menu sans icone (le nom reste lu et en
+            // infobulle). Sans icone, rien ne change : le menu.
+            ModeSelecteurSection.menu
+                when sections.length <= maxSegmentsTelephone &&
+                    sections.every((Segment<T> s) => s.icone != null) =>
+              ControleSegmente<T>(
+                segments: sections,
+                valeur: valeur,
+                onChange: onChange,
+                iconesSeules: true,
+                // Le mot court sous l'icone des qu'il tient pour toutes les
+                // sections ; sinon l'icone seule.
+                motsCourts: _motsCourtsTiennent(context, disponible),
+              ),
             ModeSelecteurSection.menu => _largeurMenu(
               disponible,
               libelleMax,
@@ -223,6 +239,26 @@ class SelecteurSection<T> extends StatelessWidget {
         );
       },
     );
+  }
+
+  bool _motsCourtsTiennent(BuildContext context, double disponible) {
+    if (sections.any((Segment<T> s) => s.libelleCourt == null)) return false;
+    final TextStyle style = ControleSegmente.styleMotCourt(context);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final double part =
+        disponible / sections.length - ControleSegmente.margeMotCourt;
+    for (final Segment<T> s in sections) {
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: s.libelleCourt, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: echelle,
+        maxLines: 1,
+      )..layout();
+      final double largeur = peintre.width;
+      peintre.dispose();
+      if (largeur * ControleSegmente.reductionMotCourt > part) return false;
+    }
+    return true;
   }
 
   Widget _segmente() => ControleSegmente<T>(

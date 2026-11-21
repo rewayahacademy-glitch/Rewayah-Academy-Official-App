@@ -22,7 +22,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/candidature/gestes_candidature.dart';
-import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/modeles_lot_candidatures.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
@@ -39,11 +38,9 @@ import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/badge_nouveau.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
-import '../../core/widgets/barre_selection.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_recherche.dart';
@@ -59,12 +56,11 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
-import '../admin_candidature/feuille_geste.dart';
-import '../admin_candidature/gestes_proposes.dart';
 import '../admin_candidature/libelles_candidature.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import '../admin_candidatures/lot_candidatures.dart';
 import '../admin_candidatures/menu_ligne_candidature.dart' show iconeDuGeste;
+import '../admin_candidatures/selection_lot.dart';
 
 /// Le geste du moteur (nom du serveur) que l'ecran sait faire, ou `null`.
 /// « Choisir le responsable » n'y est pas : comme dans la liste des
@@ -293,19 +289,22 @@ class EnseignantsPage extends ConsumerStatefulWidget {
   ConsumerState<EnseignantsPage> createState() => _EtatEnseignantsPage();
 }
 
-class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
+class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage>
+    with GesteDeLigneEtat<EnseignantsPage> {
   late final TextEditingController _recherche;
   Timer? _attenteSaisie;
   FiltreEnseignants _filtre = const FiltreEnseignants();
   TriEnseignants _tri = TriEnseignants.activite;
   int _page = 1;
   bool _rechercheOuverte = false;
-  bool _enSelection = false;
-  final Map<String, LigneEnseignant> _retenues = <String, LigneEnseignant>{};
+
+  /// Ce qui est retenu pour un lot (`selection_lot.dart`, partage avec la
+  /// file des candidatures et la page « Personnes »).
+  final SelectionLot<LigneEnseignant> _selection =
+      SelectionLot<LigneEnseignant>();
+
+  bool get _enSelection => _selection.enSelection;
   CompteursEnseignants _compteurs = const CompteursEnseignants();
-  String? _retour;
-  String? _echecLigne;
-  String? _ouverture;
 
   /// Le delai de la recherche saisie, comme la liste des candidatures.
   /// Une duree metier de saisie (300 ms), pas un jeton d'`AppMouvement`.
@@ -335,9 +334,9 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
 
   void _filtrer(FiltreEnseignants filtre) {
     setState(() {
-      if (_retenues.isNotEmpty) {
-        _retenues.clear();
-        _retour = t.admin.candidatures.lot.selectionRetiree;
+      if (!_selection.estVide) {
+        _selection.vider();
+        retourLigne = t.admin.candidatures.lot.selectionRetiree;
       }
       _filtre = filtre;
       _page = 1;
@@ -365,158 +364,53 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
 
   void _allerAPage(int page) => setState(() => _page = page);
 
-  void _basculerSelection() => setState(() {
-    _enSelection = !_enSelection;
-    if (!_enSelection) _retenues.clear();
-  });
+  void _basculerSelection() => setState(_selection.basculerMode);
 
-  void _basculerLigne(LigneEnseignant ligne) => setState(() {
-    if (_retenues.remove(ligne.id) == null) _retenues[ligne.id] = ligne;
-  });
+  void _basculerLigne(LigneEnseignant ligne) =>
+      setState(() => _selection.basculer(ligne.id, ligne));
 
   // --- Un geste depuis le menu d'une ligne --------------------------------
 
-  /// Le geste d'une ligne : lire le dossier (la ligne n'en porte ni la version
-  /// ni les reponses), rappeler la table des gestes sur ce qu'on vient de lire,
-  /// puis ouvrir **la meme feuille** que la fiche. Rien n'est fait si le geste
-  /// n'est plus permis.
+  /// Le geste d'une ligne (`GesteDeLigneEtat`).
   Future<void> _gesteDeLigne(
     LigneEnseignant ligne,
     GesteCandidature geste,
     CapacitesCandidatures capacites,
-  ) async {
-    if (_ouverture != null) return;
-    final LigneCandidature dossier = ligne.dossier;
-    final DemandeDossier demande = DemandeDossier(
-      dossier.reference,
-      id: dossier.id,
-    );
-    setState(() {
-      _ouverture = nomAffiche(dossier);
-      _echecLigne = null;
-      _retour = null;
-    });
-    ref.invalidate(detailCandidatureProvider(demande));
-    final ProviderSubscription<AsyncValue<DetailCandidature>> garde = ref
-        .listenManual(
-          detailCandidatureProvider(demande),
-          (
-            AsyncValue<DetailCandidature>? _,
-            AsyncValue<DetailCandidature> _,
-          ) {},
-        );
-    DetailCandidature? detail;
-    try {
-      detail = await ref.read(detailCandidatureProvider(demande).future);
-    } on Object {
-      detail = null;
-    } finally {
-      garde.close();
-    }
-    if (!mounted) return;
-    final r = t.admin.candidatures.liste;
-    if (detail == null) {
-      setState(() {
-        _ouverture = null;
-        _echecLigne = r.dossierIllisible;
-      });
-      return;
-    }
-    setState(() => _ouverture = null);
-    if (!gestePermis(geste, detail)) {
-      final LigneCandidature lu = detail.ligne;
-      setState(
-        () => _echecLigne = r.gestePlusPossible(
-          etat: libelleEtatCourant(
-            issue: lu.issue,
-            enPause: lu.enPause,
-            etape: lu.etape,
-            etat: lu.etat,
-          ),
-        ),
-      );
-      _relire();
-      return;
-    }
-    final SortieFeuille? sortie = await ouvrirFeuilleGeste(
-      context,
-      geste: geste,
-      detail: detail,
-      capacites: capacites,
-    );
-    if (!mounted || sortie == null) return;
-    _relire();
-    setState(
-      () => _retour = sortie.issue == IssueFeuille.fait
-          ? r.retourLigne(
-              nom: nomAffiche(dossier),
-              retour: sortie.rejoue
-                  ? t.admin.candidatures.retours.rejoue
-                  : libelleRetour(geste),
-            )
-          : null,
-    );
-  }
+  ) => jouerGesteDeLigne(ligne.dossier, geste, capacites, relire: _relire);
 
   // --- Le traitement groupe -----------------------------------------------
 
-  Future<void> _lancerLot(GesteLot geste, CapacitesCandidatures caps) async {
-    await ouvrirFeuilleLot(
-      context,
-      geste: geste,
-      ids: _retenues.keys.toList(),
-      capacites: caps,
-      onRapport: _apresLot,
-    );
-  }
+  Future<void> _lancerLot(GesteLot geste, CapacitesCandidatures caps) =>
+      ouvrirFeuilleLot(
+        context,
+        geste: geste,
+        ids: _selection.ids.toList(),
+        capacites: caps,
+        onRapport: _apresLot,
+      );
 
   void _apresLot(RapportLot rapport) {
     if (!mounted) return;
     _relire();
-    setState(() {
-      _retenues.clear();
-      _enSelection = false;
-      _retour = rapport.rejoue
-          ? t.admin.candidatures.lot.feuille.rapport.rejoue
-          : t.admin.candidatures.lot.feuille.rapport.reussies(
-              n: rapport.reussies,
-            );
-    });
-  }
-
-  Widget _barreLot(CapacitesCandidatures caps, bool horsLigne) {
-    final l = t.admin.candidatures.lot;
-    final int n = _retenues.length;
-    final bool tropNombreuses = n > plafondLotCandidatures;
-    final List<GesteLot> gestes = gestesDeLot(_retenues.values);
-    return BarreSelection.compacte(
-      key: EnseignantsPage.cleBarreLot,
-      titre: l.selectionnees(n: n),
-      phrase: horsLigne
-          ? t.admin.candidatures.selection.horsLigne
-          : tropNombreuses
-          ? l.plafond(n: plafondLotCandidatures)
-          : gestes.isEmpty
-          ? l.autresGestes
-          : l.autresGestes,
-      onRelacher: () => setState(_retenues.clear),
-      operations: <Widget>[
-        if (!horsLigne && !tropNombreuses)
-          for (final GesteLot g in gestes)
-            if (g.geste != null && caps.geste(g.geste!.capacite))
-              ActionPrincipale(
-                key: EnseignantsPage.cleOperationLot(g),
-                libelle: libelleGesteLot(g),
-                niveau: g == GesteLot.refuser
-                    ? NiveauAction.destructive
-                    : NiveauAction.secondaire,
-                compacte: true,
-                pleineLargeur: false,
-                onPress: () => unawaited(_lancerLot(g, caps)),
-              ),
-      ],
+    setState(
+      () => retourLigne = _selection.apresRapport(rapport, toutRelacher: true),
     );
   }
+
+  /// La barre du lot (`BarreLot`) : seulement les gestes que toutes les
+  /// lignes retenues permettent.
+  Widget _barreLot(CapacitesCandidatures caps, bool horsLigne) => BarreLot(
+    cleBarre: EnseignantsPage.cleBarreLot,
+    nombre: _selection.nombre,
+    capacites: caps,
+    horsLigne: horsLigne,
+    gestes: gestesDeLot(_selection.lignes.values),
+    parTranches: false,
+    ecrire: false,
+    onRelacher: () => setState(_selection.vider),
+    onLancer: (GesteLot g) => unawaited(_lancerLot(g, caps)),
+    cleOperation: EnseignantsPage.cleOperationLot,
+  );
 
   // --- Commandes ------------------------------------------------------------
 
@@ -672,7 +566,7 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
         cle: (LigneEnseignant l) => cleEnseignant(l.id),
         onSelectionner: toucher,
         estSelectionnee: _enSelection
-            ? (LigneEnseignant l) => _retenues.containsKey(l.id)
+            ? (LigneEnseignant l) => _selection.contient(l.id)
             : null,
         actionsLigne: _enSelection
             ? null
@@ -685,7 +579,7 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
         for (final LigneEnseignant l in page.lignes)
           _CarteEnseignant(
             ligne: l,
-            retenue: _retenues.containsKey(l.id),
+            retenue: _selection.contient(l.id),
             enSelection: _enSelection,
             onToucher: toucher == null ? null : () => toucher(l),
             menu: _enSelection ? null : menu(l),
@@ -735,7 +629,7 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
           texte: (LigneEnseignant l) => '',
           flex: 1,
           rendu: (BuildContext _, LigneEnseignant l) =>
-              _CaseEnseignant(retenue: _retenues.containsKey(l.id)),
+              _CaseEnseignant(retenue: _selection.contient(l.id)),
         ),
       ColonneDonnees<LigneEnseignant>(
         titre: c.nom,
@@ -913,7 +807,7 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
 
     return PageShell(
       key: EnseignantsPage.clePage,
-      actions: _enSelection && _retenues.isNotEmpty
+      actions: _enSelection && !_selection.estVide
           ? _barreLot(caps, horsLigne)
           : null,
       child: Column(
@@ -953,11 +847,11 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
             ),
             Ecart.vSm,
           ],
-          if (_ouverture != null) ...<Widget>[
+          if (ouvertureLigne != null) ...<Widget>[
             Semantics(
               liveRegion: true,
               child: TexteSansCoupure(
-                t.admin.candidatures.liste.ouverture(nom: _ouverture!),
+                t.admin.candidatures.liste.ouverture(nom: ouvertureLigne!),
                 style: AppPalette.of(context).inkMuted.applyTo(
                   Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
                 ),
@@ -965,12 +859,12 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
             ),
             Ecart.vSm,
           ],
-          if (_echecLigne != null) ...<Widget>[
-            LocalFeedback(message: _echecLigne!),
+          if (echecLigne != null) ...<Widget>[
+            LocalFeedback(message: echecLigne!),
             Ecart.vSm,
           ],
-          if (_retour != null) ...<Widget>[
-            LocalFeedback(message: _retour),
+          if (retourLigne != null) ...<Widget>[
+            LocalFeedback(message: retourLigne),
             Ecart.vSm,
           ],
           if (commandes) ...<Widget>[

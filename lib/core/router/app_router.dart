@@ -29,6 +29,8 @@ import '../../features/admin_candidatures/candidatures_page.dart'
     deferred as d_candidatures_page;
 import '../../features/admin_candidatures/travail_praxis_page.dart'
     deferred as d_travail_praxis_page;
+import '../../features/admin_chiffres/chiffres_academie_page.dart'
+    deferred as d_chiffres_page;
 import '../../features/admin_comptes/comptes_page.dart'
     deferred as d_comptes_page;
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart'
@@ -91,6 +93,8 @@ import '../../features/admin_pedagogie_progression/progression_page.dart'
     deferred as d_progression_page;
 import '../../features/admin_pedagogie_qualite/qualite_page.dart'
     deferred as d_qualite_page;
+import '../../features/admin_personnes/personnes_page.dart'
+    deferred as d_personnes_page;
 import '../../features/admin_pilotage/pilotage_page.dart'
     deferred as d_pilotage_page;
 import '../../features/admin_planning/planning_page.dart'
@@ -352,7 +356,9 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_candidatures_page', d_candidatures_page.loadLibrary),
   ('d_travail_praxis_page', d_travail_praxis_page.loadLibrary),
   ('d_enseignants_page', d_enseignants_page.loadLibrary),
+  ('d_personnes_page', d_personnes_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
+  ('d_chiffres_page', d_chiffres_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
   ('d_comptes_page', d_comptes_page.loadLibrary),
   ('d_conservation_donnees_page', d_conservation_donnees_page.loadLibrary),
@@ -2008,6 +2014,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
+      // CHIFFRES-ACADEMIE : la vitrine en chiffres, atteinte par le dernier
+      // sous-lien d'Operations et par la recherche de la barre superieure.
+      GoRouteSure(
+        path: Routes.adminOperationsChiffres,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: PageDifferee(
+            cle: 'd_chiffres_page',
+            charger: d_chiffres_page.loadLibrary,
+            construire: () => d_chiffres_page.ChiffresAcademiePage(),
+          ),
+        ),
+      ),
       // DASH-ADM-PLANNING : le planning de la semaine, atteint depuis l'Accueil.
       GoRouteSure(
         path: Routes.adminOperationsPlanning,
@@ -2403,10 +2422,21 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // BE-LISTE : « Personnes » ouvre Candidatures (la file de la direction) ;
       // « Dossiers a valider » reste atteignable par le selecteur de section.
+      // PERSONNES-UNE-PAGE (b) : la racine de la rubrique est la page unique
+      // (onglets a icones, liste et apercu). Les anciennes pages gardent leur
+      // adresse jusqu'a l'etape (e).
       GoRouteSure(
         path: Routes.adminPersonnes,
-        redirect: (BuildContext _, GoRouterState _) =>
-            Routes.adminPersonnesCandidatures,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_personnes_page',
+            charger: d_personnes_page.loadLibrary,
+            construire: () => d_personnes_page.PersonnesPage(
+              requete: etat.uri.queryParameters,
+            ),
+          ),
+        ),
       ),
       GoRouteSure(
         path: Routes.adminPersonnesDossiers,
@@ -2421,6 +2451,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             construire: () => d_dossiers_page.DossiersPage(
               profilId: switch (etat.extra) {
                 final String id => id,
+                (profilId: final String id, retour: String _) => id,
+                _ => null,
+              },
+              // PERSONNES-UNE-PAGE (f3) : la piece ouverte depuis la page
+              // « Personnes » ; fermer y ramene, pas a la file des dossiers.
+              retour: switch (etat.extra) {
+                (profilId: String _, retour: final String retour) => retour,
                 _ => null,
               },
             ),

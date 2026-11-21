@@ -16,6 +16,7 @@ import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/bibliotheque_admin_supabase.dart';
+import 'core/admin/chiffres_academie_supabase.dart';
 import 'core/admin/classes_admin_supabase.dart';
 import 'core/admin/fondateurs_supabase.dart';
 import 'core/admin/fusion_classes_supabase.dart';
@@ -23,6 +24,7 @@ import 'core/admin/incidents_seances_supabase.dart';
 import 'core/admin/pilotage_supabase.dart';
 import 'core/admin/planning_direction_supabase.dart';
 import 'core/admin/port_bibliotheque_admin.dart';
+import 'core/admin/port_chiffres_academie.dart';
 import 'core/admin/port_classes_admin.dart';
 import 'core/admin/port_fondateurs.dart';
 import 'core/admin/port_fusion_classes.dart';
@@ -143,6 +145,7 @@ import 'core/communications/libelles_communication_slang.dart';
 import 'core/communications/ma_candidature_fil.dart';
 import 'core/communications/veille_messages.dart';
 import 'core/communications/veille_messages_supabase.dart';
+import 'core/communications/visibilite_onglet.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
@@ -362,6 +365,9 @@ List<Override> _surchargesAppReelle() => <Override>[
   portVeilleMessagesProvider.overrideWithValue(
     VeilleMessagesSupabase(Supabase.instance.client),
   ),
+  // PERSONNES-PERF (20/11/2026) : onglet cache, la veille des messages espace
+  // ses relectures de repli ; au retour, elle relit tout de suite.
+  portVisibiliteProvider.overrideWithValue(const VisibiliteFlutter()),
   surchargeRevueDossiersProduction,
   // Direction : chaque port d'administration lit et ecrit par les RPC de
   // STAGING, avec le jeton de la session (le serveur reste la barriere).
@@ -538,6 +544,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portPilotageProvider.overrideWithValue(
     PilotageSupabase(Supabase.instance.client),
+  ),
+  // CHIFFRES-ACADEMIE : la vitrine en chiffres, une lecture par minute.
+  portChiffresAcademieProvider.overrideWithValue(
+    ChiffresAcademieSupabase(Supabase.instance.client),
   ),
   portEnseignantsClasseProvider.overrideWithValue(
     EnseignantsClasseSupabase(Supabase.instance.client),
