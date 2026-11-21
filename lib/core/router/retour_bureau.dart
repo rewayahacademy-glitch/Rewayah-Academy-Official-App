@@ -3,7 +3,13 @@ import 'package:go_router/go_router.dart';
 
 import 'etat_routeur_sur.dart';
 import 'fil_ariane.dart';
+import 'historique_navigateur.dart';
 import 'routes.dart';
+
+/// Recule dans l'historique du navigateur ; `false` hors du web. Remplacable
+/// dans un test, qui n'a pas de navigateur.
+@visibleForTesting
+bool Function() reculerHistorique = reculerDansLeNavigateur;
 
 /// Le retour du bureau (fleche de la coquille, touche retour du systeme) :
 /// la page empilee se retire ; sinon le parent logique ([retourLogiqueBureau]).
@@ -11,7 +17,10 @@ void retourBureau(BuildContext context) {
   final GoRouter? routeur = GoRouter.maybeOf(context);
   if (routeur == null) return;
   if (routeur.canPop()) {
-    routeur.pop();
+    // Etape (f) : dans un navigateur, la fleche fait ce que fait son bouton
+    // de retour (elle recule dans l'historique), sinon l'entree de la page
+    // fermee reste et le retour du navigateur la rouvre.
+    if (!reculerHistorique()) routeur.pop();
     return;
   }
   final Uri adresse =
