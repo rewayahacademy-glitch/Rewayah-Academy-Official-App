@@ -208,3 +208,17 @@ haut après le défilement.
    (pilote, lot 2). Aucun fil de la messagerie n'est ouvert et la matrice `MESSAGERIE-MATRICE.md`
    ne change pas. Il reste une seule question ouverte, à poser au directeur au moment du lot 2 : où
    la direction voit qu'un commentaire attend une réponse (pastille dans son menu, ou rien).
+3. **« Pas clair » doit servir.** Question du directeur, 21/11/2026 : « qu'est ce qui se passe quand
+   on clique sur pas claire ? Est praxis pourra clarifier ? ». Avant ce jour, le bouton ne faisait
+   que compter. Le directeur a dit « Oui » à la proposition en trois points :
+   - **Lecteur (fait sur `claude/guide-interactions`, PR #669)** : donner « Pas clair » ouvre aussi
+     le fil privé de la partie, avec la question « Qu'est-ce qui n'est pas clair dans cette
+     partie ? ». Écrire reste facultatif : on peut fermer, et l'avis reste compté. Retirer
+     l'avis n'ouvre rien.
+   - **Direction (pilote, lot 2)** : sur sa liste, les parties les plus marquées « Pas clair »
+     viennent en tête, avec les questions écrites sur ces parties, pour savoir quoi réécrire.
+     `commentaires_guide_direction()` rend donc aussi, par partie, le nombre de « Pas clair ».
+   - **Praxis (à la relance seulement, sur ordre du directeur)** : il répond en s'appuyant sur le
+     seul texte validé du guide. Si la réponse n'y est pas (cas personnel, promesse, argent), il
+     n'invente rien : il passe la main à la direction et le dit au lecteur
+     (compétence `agir-rewayah`). Rien n'est codé tant que Praxis est en pause.

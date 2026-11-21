@@ -2736,6 +2736,7 @@
       "commentaires": "Vos commentaires sur cette partie : {n}",
       "filTitre": "Vos commentaires",
       "filPrive": "Seules la direction et Praxis lisent vos commentaires. Les autres lecteurs ne les voient pas.",
+      "questionPasClair": "Qu'est-ce qui n'est pas clair dans cette partie ? Écrivez-le, la direction vous répond ici. Vous pouvez aussi fermer sans rien écrire.",
       "filVide": "Vous n'avez rien écrit sur cette partie.",
       "champ": "Votre commentaire",
       "envoyer": "Envoyer mon commentaire",

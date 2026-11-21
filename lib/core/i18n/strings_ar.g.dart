@@ -11182,6 +11182,7 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	@override String commentaires({required Object n}) => 'تعليقاتك على هذا الجزء: ⁨${n}⁩';
 	@override String get filTitre => 'تعليقاتك';
 	@override String get filPrive => 'لا يقرأ تعليقاتك إلا الإدارة وPraxis. القرّاء الآخرون لا يرونها.';
+	@override String get questionPasClair => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ويمكنك أيضًا الإغلاق دون أن تكتب شيئًا.';
 	@override String get filVide => 'لم تكتب شيئًا عن هذا الجزء.';
 	@override String get champ => 'تعليقك';
 	@override String get envoyer => 'أرسل تعليقي';
@@ -41585,6 +41586,7 @@ extension on TraductionsAr {
 			'recrutement.lettre.commentaires' => ({required Object n}) => 'تعليقاتك على هذا الجزء: ⁨${n}⁩',
 			'recrutement.lettre.filTitre' => 'تعليقاتك',
 			'recrutement.lettre.filPrive' => 'لا يقرأ تعليقاتك إلا الإدارة وPraxis. القرّاء الآخرون لا يرونها.',
+			'recrutement.lettre.questionPasClair' => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ويمكنك أيضًا الإغلاق دون أن تكتب شيئًا.',
 			'recrutement.lettre.filVide' => 'لم تكتب شيئًا عن هذا الجزء.',
 			'recrutement.lettre.champ' => 'تعليقك',
 			'recrutement.lettre.envoyer' => 'أرسل تعليقي',
@@ -42016,9 +42018,9 @@ extension on TraductionsAr {
 			'recrutement.accueil.lignes.reponsesDetail' => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.',
 			'recrutement.accueil.praxis.pieceRefusee' => 'لم تُقبل وثيقة هويتك. أرسل وثيقة جديدة.',
 			'recrutement.accueil.praxis.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ شيء في ملفك.', one: 'بقي عنصر واحد لإتمام ملفك.', two: 'بقي عنصران لإتمام ملفك.', few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.', many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.', other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.', ), 
-			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'جديد: ⁨${titre}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'جديد: ⁨${titre}⁩',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩',
 			'recrutement.accueil.annonce.rangee' => 'نُقل الإعلان إلى الرسائل، قسم الإعلانات.',
 			'recrutement.accueil.etat.perime' => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة. أعد المحاولة بعد قليل.',
@@ -42530,9 +42532,9 @@ extension on TraductionsAr {
 			'recrutement.talents.competences.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تختر أي مهارة', one: 'مهارة واحدة مختارة', two: 'مهارتان مختارتان', few: '⁨${n}⁩ مهارات مختارة', many: '⁨${n}⁩ مهارة مختارة', other: '⁨${n}⁩ مهارة مختارة', ), 
 			'recrutement.talents.competences.nonProposee' => 'لم تعد هذه المهارة مقترحة. يمكنك الإبقاء عليها أو إلغاء اختيارها.',
 			'recrutement.talents.competences.autreChamp' => 'مجالك، في بضع كلمات',
-			'recrutement.talents.competences.autreAide' => 'يكفي سطر واحد.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.competences.autreAide' => 'يكفي سطر واحد.',
 			'recrutement.talents.competences.manque' => 'اختر مهارة واحدة على الأقل للمتابعة.',
 			'recrutement.talents.competences.autreVide' => 'اكتب في بضع كلمات ما هو المجال، أو ألغِ اختيار «مجال آخر».',
 			'recrutement.talents.competences.autreTropLong' => ({required Object max}) => 'نصّك طويل جدًا: ⁨${max}⁩ حرفًا على الأكثر. اختصره.',
@@ -43044,9 +43046,9 @@ extension on TraductionsAr {
 			'avis.admin.champs.depose' => 'تاريخ الإرسال',
 			'avis.admin.champs.accord' => 'الموافقة على النشر',
 			'avis.admin.champs.motif' => 'السبب',
-			'avis.admin.champs.modere' => 'تاريخ القرار',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.champs.modere' => 'تاريخ القرار',
 			'avis.admin.champs.publie' => 'تاريخ النشر',
 			'avis.admin.actions.publier' => 'نشر',
 			'avis.admin.actions.refuser' => 'رفض',
@@ -43558,9 +43560,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'تصحيح الاسمين',
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'إبقاء الاسمين',
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'اسم المصنّف',
-			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'اسم الورقة',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'اسم الورقة',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'اسم الملف لا يذكر الورقة. اذكروها للمتابعة.',
 			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'لا يجوز أن يكون الاسم فارغًا أو أطول من 200 حرف أو أن يحتوي الخط العمودي. صحّحوه للمتابعة.',
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'اختاروا ملفًا أولًا لتتمكنوا من تحليله.',
@@ -44072,9 +44074,9 @@ extension on TraductionsAr {
 			'suiviAttente.delai.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
 			'suiviAttente.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصلك إشعار بذلك.',
 			'suiviAttente.cloture.titreRefusee' => 'لم يُقبل طلبك',
-			'suiviAttente.cloture.titreRetiree' => 'تم سحب هذا الطلب',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.cloture.titreRetiree' => 'تم سحب هذا الطلب',
 			'suiviAttente.cloture.titreClose' => 'أُغلق هذا الطلب',
 			'suiviAttente.cloture.motif.retraitFamille' => 'تم سحب هذا الطلب من طرفك.',
 			'suiviAttente.cloture.motif.offreRetiree' => 'سحبت الأكاديمية هذا الموعد من عروضها.',

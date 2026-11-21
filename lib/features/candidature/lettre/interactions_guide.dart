@@ -124,6 +124,24 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
     if (mounted) setState(() => _echec = !ok);
   }
 
+  // Directeur, 21/11/2026 : un « Pas clair » doit servir. Le donner ouvre
+  // aussi le fil de la partie, avec la question ; ecrire reste facultatif.
+  void _toucherAvis(AvisPartie ligne, AvisGuide choisi) {
+    final bool ouvrir =
+        choisi == AvisGuide.pasClair && ligne.monAvis != AvisGuide.pasClair;
+    unawaited(_avis(ligne, choisi));
+    if (ouvrir) _ouvrirFil(pasClair: true);
+  }
+
+  void _ouvrirFil({bool pasClair = false}) => unawaited(
+    AppBottomSheet.ouvrir<void>(
+      context,
+      titre: t.recrutement.lettre.filTitre,
+      constructeur: (BuildContext _) =>
+          FilCommentaires(code: widget.code, pasClair: pasClair),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final InteractionsGuide? lu = ref.watch(interactionsGuideProvider).value;
@@ -150,15 +168,8 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
           cleJaime: InteractionsPartie.cleJaime(widget.code),
           clePasClair: InteractionsPartie.clePasClair(widget.code),
           cleCommenter: InteractionsPartie.cleCommenter(widget.code),
-          onAvis: (AvisGuide a) => unawaited(_avis(ligne, a)),
-          onCommenter: () => unawaited(
-            AppBottomSheet.ouvrir<void>(
-              context,
-              titre: l.filTitre,
-              constructeur: (BuildContext _) =>
-                  FilCommentaires(code: widget.code),
-            ),
-          ),
+          onAvis: (AvisGuide a) => _toucherAvis(ligne, a),
+          onCommenter: _ouvrirFil,
         ),
         if (_echec)
           Padding(
@@ -178,10 +189,16 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
 /// Le fil du lecteur sur une partie, et le champ pour ecrire.
 class FilCommentaires extends ConsumerStatefulWidget {
   /// Cree le fil de la partie [code].
-  const FilCommentaires({required this.code, super.key});
+  const FilCommentaires({required this.code, this.pasClair = false, super.key});
 
   /// Le code de la partie.
   final String code;
+
+  /// Vrai quand le fil s'ouvre apres un « Pas clair » : il pose la question.
+  final bool pasClair;
+
+  /// La cle de la question posee apres un « Pas clair ».
+  static const Key cleQuestion = ValueKey<String>('guide-question-pas-clair');
 
   /// La cle du champ.
   static const Key cleChamp = ValueKey<String>('guide-champ');
@@ -327,7 +344,15 @@ class _EtatFil extends ConsumerState<FilCommentaires> {
           ],
         ),
         Ecart.vLg,
-        if (fil.isEmpty)
+        if (widget.pasClair) ...<Widget>[
+          Text(
+            l.questionPasClair,
+            key: FilCommentaires.cleQuestion,
+            style: corps,
+          ),
+          Ecart.vLg,
+        ],
+        if (fil.isEmpty && !widget.pasClair)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
             child: Text(l.filVide, style: muet, textAlign: TextAlign.center),

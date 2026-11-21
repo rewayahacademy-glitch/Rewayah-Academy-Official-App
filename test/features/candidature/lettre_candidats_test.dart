@@ -240,11 +240,40 @@ void main() {
         await versPartie(tester, 'guide-pas-clair-p1');
         await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
         await tester.pumpAndSettle();
+        // Le fil s'est ouvert avec la question ; on le ferme.
+        await tester.tapAt(const Offset(8, 8));
+        await tester.pumpAndSettle();
         expect(
           find.bySemanticsLabel(t.recrutement.lettre.pasClairLecteur(n: 0)),
           findsWidgets,
         );
         expect(find.text(t.recrutement.lettre.echecAvis), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'pas clair : le fil s\'ouvre avec la question, ecrire reste libre',
+      (WidgetTester tester) async {
+        final FauxPortInteractions port = FauxPortInteractions();
+        await _monter(tester, interactions: port);
+        await versPartie(tester, 'guide-pas-clair-p1');
+        await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(FilCommentaires.cleQuestion), findsOneWidget);
+        expect(find.text(t.recrutement.lettre.filVide), findsNothing);
+        // Fermer sans rien ecrire : l'avis reste compte.
+        await tester.tapAt(const Offset(8, 8));
+        await tester.pumpAndSettle();
+        expect(find.byKey(FilCommentaires.cleQuestion), findsNothing);
+        expect(
+          find.bySemanticsLabel(t.recrutement.lettre.pasClairLecteur(n: 1)),
+          findsWidgets,
+        );
+        expect(port.fil, isEmpty);
+        // Le retirer n'ouvre rien.
+        await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(FilCommentaires.cleQuestion), findsNothing);
       },
     );
 
