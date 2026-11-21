@@ -67,8 +67,9 @@ Future<void> _taperTexte(WidgetTester tester, String libelle) async {
   await tester.tap(find.text(libelle));
 }
 
-String _chemin(GoRouter routeur) =>
-    routeur.routerDelegate.currentConfiguration.uri.path;
+// PERSONNES-UNE-PAGE (e) : « Dossiers a valider » s'empile sur Personnes
+// (menu « Outils ») ; l'adresse lue est celle de la page du dessus.
+String _chemin(GoRouter routeur) => routeur.state.uri.path;
 
 void main() {
   testWidgets('1440 : Personnes, la liste pleine largeur, la ligne ouvre le '

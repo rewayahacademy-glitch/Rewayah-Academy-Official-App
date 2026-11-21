@@ -37,24 +37,16 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/candidature/attentes_recrutement.dart';
-import '../../core/candidature/creneaux_direction.dart';
 import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
-import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/modeles_lot_candidatures.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
-import '../../core/candidature/port_import_candidatures.dart';
-import '../../core/candidature/port_invitations_personnelles.dart';
-import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/recrutement/port_invitations_comptable.dart';
-import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
-import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -77,16 +69,14 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_candidature/entretiens_du_jour.dart';
-import '../admin_import_formulaires/routes_candidats_flux.dart';
 import 'adresse_candidatures.dart';
 import 'feuille_filtres.dart';
 import 'files_candidatures.dart';
-import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
 import 'marque_travail_praxis.dart';
 import 'menu_ligne_candidature.dart';
-import 'prevenir_candidats.dart';
+import 'outils_candidatures.dart';
 import 'selection_lot.dart';
 
 /// L'ecran « Candidatures ».
@@ -829,66 +819,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage>
       ),
     );
 
-    final bool invitations =
-        ref.watch(portInvitationsEnseignantProvider) != null ||
-        ref.watch(portInvitationsComptableProvider) != null;
-
-    // CANDIDATS-FLUX (06/11/2026, porte de la PR 50) : « Prevenir par e-mail »
-    // les personnes des formulaires importes, et l'import des formulaires.
-    // Chaque lien n'est rendu que si le serveur ouvre le geste a ce lecteur et
-    // que le port est servi, jamais grise.
-    final bool prevenir =
-        caps.geste('consignerPrevenu') &&
-        ref.watch(portPrevenirCandidatsProvider) != null;
-    // L'import : pour le super administrateur, que sa session soit deja en
-    // double verification (`peutImporter`) ou qu'elle doive y monter au geste
-    // (`doubleVerificationRequise`, la page d'import demande alors le code).
-    final CapacitesImportCandidatures? capsImport = ref
-        .watch(capacitesImportCandidaturesProvider)
-        .value;
-    final bool importer =
-        ref.watch(portImportCandidaturesProvider) != null &&
-        capsImport != null &&
-        (capsImport.peutImporter || capsImport.doubleVerificationRequise);
-    // SALLE-2-ENTRETIEN (07/11/2026) : les creneaux d'entretien, pour qui
-    // decide d'une candidature, quand le port est servi.
-    final bool creneaux =
-        caps.peutDecider && ref.watch(portCreneauxDirectionProvider) != null;
-
-    final List<EntreeAction> outils = <EntreeAction>[
-      if (invitations)
-        EntreeAction(
-          libelle: t.recrutement.invitations.onglet,
-          onChoix: () =>
-              unawaited(context.push<void>(Routes.adminPersonnesInvitations)),
-        ),
-      if (prevenir)
-        EntreeAction(
-          libelle: t.candidatsFlux.prevenir.lien,
-          onChoix: () => ouvrirFeuillePrevenir(context),
-        ),
-      if (creneaux)
-        EntreeAction(
-          libelle: t.admin.candidatures.creneaux.lien,
-          onChoix: () => unawaited(
-            context.push<void>(Routes.adminPersonnesCreneauxEntretien),
-          ),
-        ),
-      // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : les codes personnels
-      // des candidats importes, pour le meme lecteur que l'import.
-      if (importer && ref.watch(portInvitationsPersonnellesProvider) != null)
-        EntreeAction(
-          libelle: t.candidatsFlux.invitationsPersonnelles.lien,
-          onChoix: () => ouvrirFeuilleInvitationsPersonnelles(context),
-        ),
-      if (importer)
-        EntreeAction(
-          libelle: t.candidatsFlux.importFormulaires.lienEntree,
-          onChoix: () => unawaited(
-            context.push<void>(RoutesCandidatsFlux.importFormulaires),
-          ),
-        ),
-    ];
+    // Les outils du recrutement (`outils_candidatures.dart`, partages avec le
+    // menu « Outils » de la page « Personnes »).
+    final List<EntreeAction> outils = outilsDuRecrutement(context, ref, caps);
 
     // BE-LISTE-2 : trois rangees au plus avant le premier nom. Le titre EST le
     // selecteur de section (le mot n'apparait qu'une fois), plus « Outils » ;

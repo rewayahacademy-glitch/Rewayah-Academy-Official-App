@@ -118,9 +118,9 @@ void main() {
     await _monter(
       tester,
       taille: const Size(800, 1000),
-      domaineActif: AdminDomaine.personnes,
+      domaineActif: AdminDomaine.pedagogie,
       sousLiens: sousLiensAdmin(),
-      cheminCourant: Routes.adminPersonnesComptes,
+      cheminCourant: Routes.adminPedagogieDiagnostics,
     );
     expect(find.byKey(AdminShell.railKey), findsOneWidget);
     expect(_pied(), findsOneWidget);
@@ -130,7 +130,7 @@ void main() {
     // Le panneau entier, ses sections et les pages du domaine ouvert.
     expect(find.byKey(AdminShell.tiroirKey), findsOneWidget);
     expect(find.text(t.nav.admin.sections.quotidien), findsOneWidget);
-    expect(find.text(t.admin.comptes.titre), findsOneWidget);
+    expect(find.text(t.admin.diagnostics.titre), findsOneWidget);
     // Par-dessus : la page garde sa place et sa largeur, un voile la couvre.
     expect(tester.getRect(find.byType(PageShell)), pageAvant);
     expect(find.byType(ModalBarrier), findsWidgets);
@@ -146,15 +146,15 @@ void main() {
         await _monter(
           tester,
           taille: const Size(800, 1000),
-          domaineActif: AdminDomaine.personnes,
+          domaineActif: AdminDomaine.pedagogie,
           sousLiens: sousLiensAdmin(),
-          cheminCourant: Routes.adminPersonnesDossiers,
+          cheminCourant: Routes.adminPedagogieProgression,
         );
     await tester.tap(_bouton());
     await tester.pumpAndSettle();
-    await tester.tap(find.text(t.admin.candidatures.titre));
+    await tester.tap(find.text(t.admin.evaluations.titre));
     await tester.pumpAndSettle();
-    expect(m.journal, contains(Routes.adminPersonnesCandidatures));
+    expect(m.journal, contains(Routes.adminPedagogieEvaluations));
     expect(find.byKey(AdminShell.tiroirKey), findsNothing);
   });
 
@@ -231,7 +231,8 @@ void main() {
 
 /// NAV-SOUS-LIENS : les pages des domaines dans le panneau.
 void _sousLiensTests() {
-  // BE-2b : Personnes compte un onglet de plus (Equipe) ; le panneau defile de
+  // PERSONNES-UNE-PAGE (e) : Personnes ne garde qu'Importer et Suppressions ;
+  // les pages d'un domaine se prouvent sur Pedagogie. Le panneau defile de
   // lui-meme, la hauteur du test garde les trois sections a l'ecran.
   testWidgets('1440 : trois sections, et les pages du domaine ouvert sous '
       'lui ; la page ouverte est annoncee selectionnee', (
@@ -242,9 +243,9 @@ void _sousLiensTests() {
         await _monter(
           tester,
           taille: const Size(1440, 1000),
-          domaineActif: AdminDomaine.personnes,
+          domaineActif: AdminDomaine.pedagogie,
           sousLiens: sousLiensAdmin(),
-          cheminCourant: Routes.adminPersonnesComptes,
+          cheminCourant: Routes.adminPedagogieDiagnostics,
         );
     final Finder barre = find.byKey(AdminShell.barreLateraleKey);
     for (final SectionAdmin section in SectionAdmin.values) {
@@ -254,16 +255,16 @@ void _sousLiensTests() {
         reason: section.name,
       );
     }
-    // Les pages de Personnes, pas celles d'un autre domaine.
-    expect(
-      find.descendant(of: barre, matching: find.text(t.admin.comptes.titre)),
-      findsOneWidget,
-    );
+    // Les pages de Pedagogie, pas celles d'un autre domaine.
     expect(
       find.descendant(
         of: barre,
-        matching: find.text(t.nav.admin.sousLiens.admissions),
+        matching: find.text(t.admin.diagnostics.titre),
       ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: barre, matching: find.text(t.admin.qualite.titre)),
       findsOneWidget,
     );
     expect(
@@ -272,10 +273,13 @@ void _sousLiensTests() {
     );
     expect(
       tester.getSemantics(
-        find.descendant(of: barre, matching: find.text(t.admin.comptes.titre)),
+        find.descendant(
+          of: barre,
+          matching: find.text(t.admin.diagnostics.titre),
+        ),
       ),
       isSemantics(
-        label: t.admin.comptes.titre,
+        label: t.admin.diagnostics.titre,
         isSelected: true,
         isLink: true,
         hasTapAction: true,
@@ -284,11 +288,11 @@ void _sousLiensTests() {
     await tester.tap(
       find.descendant(
         of: barre,
-        matching: find.text(t.admin.candidatures.titre),
+        matching: find.text(t.admin.evaluations.titre),
       ),
     );
     await tester.pump();
-    expect(m.journal, <String>[Routes.adminPersonnesCandidatures]);
+    expect(m.journal, <String>[Routes.adminPedagogieEvaluations]);
     semantique.dispose();
   });
 
@@ -308,14 +312,14 @@ void _sousLiensTests() {
     await tester.tap(
       find.descendant(
         of: rail,
-        matching: find.byTooltip(AdminDomaine.personnes.libelle),
+        matching: find.byTooltip(AdminDomaine.pedagogie.libelle),
       ),
     );
     await tester.pumpAndSettle();
     expect(m.journal, isEmpty, reason: 'le menu s ouvre, rien ne navigue');
-    await tester.tap(find.text(t.admin.candidatures.titre).last);
+    await tester.tap(find.text(t.admin.evaluations.titre).last);
     await tester.pumpAndSettle();
-    expect(m.journal, <String>[Routes.adminPersonnesCandidatures]);
+    expect(m.journal, <String>[Routes.adminPedagogieEvaluations]);
     // Un domaine sans pages (l'Accueil) y mene directement.
     await tester.tap(
       find.descendant(
@@ -340,14 +344,14 @@ void _sousLiensTests() {
       await _monter(
         tester,
         taille: cas.taille,
-        domaineActif: AdminDomaine.personnes,
+        domaineActif: AdminDomaine.pedagogie,
         sousLiens: sousLiensAdmin(),
-        cheminCourant: Routes.adminPersonnesComptes,
+        cheminCourant: Routes.adminPedagogieDiagnostics,
         page: PageShell(
-          titre: t.admin.comptes.titre,
+          titre: t.admin.diagnostics.titre,
           entete: SousNavigationDomaine(
-            onglets: ongletsPersonnes(),
-            indexActif: 1,
+            onglets: ongletsPedagogie(),
+            indexActif: 0,
           ),
           child: const SizedBox(),
         ),
@@ -365,12 +369,12 @@ void _sousLiensTests() {
     await _monter(
       tester,
       taille: const Size(1440, 900),
-      domaineActif: AdminDomaine.personnes,
+      domaineActif: AdminDomaine.pedagogie,
       page: PageShell(
-        titre: t.admin.comptes.titre,
+        titre: t.admin.diagnostics.titre,
         entete: SousNavigationDomaine(
-          onglets: ongletsPersonnes(),
-          indexActif: 1,
+          onglets: ongletsPedagogie(),
+          indexActif: 0,
         ),
         child: const SizedBox(),
       ),

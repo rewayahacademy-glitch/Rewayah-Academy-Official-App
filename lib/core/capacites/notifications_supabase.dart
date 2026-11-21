@@ -182,7 +182,9 @@ String? destinationDuDossier(String? destination, Object? reference) {
   if (reference is! String || !_referenceDossier.hasMatch(reference)) {
     return destination;
   }
-  return '/admin/personnes/candidatures/$reference';
+  // PERSONNES-UNE-PAGE (e) : le dossier porte la file de la page
+  // « Personnes » (vue Candidats) : son retour et son fil d'Ariane y menent.
+  return '/admin/personnes/candidatures/$reference?vue=candidats&depuis=liste';
 }
 
 /// La forme d'une référence de dossier (`CAND-` puis des chiffres), la même

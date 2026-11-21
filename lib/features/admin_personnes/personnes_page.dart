@@ -88,6 +88,7 @@ import '../admin_candidatures/libelles_candidatures.dart'
     show etatAffiche, libelleSalle, nomAffiche;
 import '../admin_candidatures/menu_ligne_candidature.dart'
     show gestesDuMenuLigne, iconeDuGeste;
+import '../admin_candidatures/outils_candidatures.dart';
 import '../admin_candidatures/selection_lot.dart';
 import '../admin_comptes/apercu_compte.dart';
 import '../admin_comptes/gestes_compte.dart';
@@ -320,6 +321,11 @@ class PersonnesPage extends ConsumerStatefulWidget {
 
   /// La cle de la liste.
   static const Key cleListe = ValueKey<String>('personnes-liste');
+
+  /// La cle de la phrase « compte de famille » de l'apercu d'un dossier.
+  static const Key cleCompteFamille = ValueKey<String>(
+    'personnes-compte-famille',
+  );
 
   /// La cle du bouton « Trier par ».
   static const Key cleTri = ValueKey<String>('personnes-tri');
@@ -611,6 +617,10 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
     );
     _ouvrir(context, chemin, dossier.id);
   }
+
+  /// Empile une page secondaire sur celle-ci : son retour ramene ici.
+  void _empiler(BuildContext context, String chemin) =>
+      unawaited(GoRouter.of(context).push<void>(chemin));
 
   void _ouvrir(BuildContext context, String chemin, String identifiant) {
     final void Function(String, String)? ouvrir = ouvrirDossier;
@@ -1336,18 +1346,70 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
     return PageShell(
       titre: t.nav.admin.personnes,
       listeBureau: true,
-      // Les anciennes pages restent atteignables d'ici, au telephone aussi
-      // (son tiroir ne montre pas les sous-liens), jusqu'a l'etape (e).
+      // Etape (e) : le menu « Outils », chaque entree nommee par ce qu'elle
+      // fait. Les pages s'empilent sur celle-ci : leur retour y ramene, avec
+      // l'onglet, la vue, les filtres et la personne.
       actionsEntete: <Widget>[
         MenuActions(
           key: PersonnesPage.cleAutresPages,
           libelle: p.autresPages,
           icone: AppIcons.reglages,
           actions: <EntreeAction>[
-            for (final SousLien lien in ongletsPersonnes())
+            for (final SousLien lien in outilsPersonnes())
               EntreeAction(
                 libelle: lien.libelle,
-                onChoix: () => GoRouter.of(context).go(lien.chemin),
+                onChoix: () => _empiler(context, lien.chemin),
+              ),
+            // Inviter, prevenir par e-mail, creneaux, codes personnels, import
+            // des formulaires : ceux que le serveur ouvre a ce lecteur.
+            ...outilsDuRecrutement(context, ref, caps),
+            for (final SousLien lien in <SousLien>[
+              (
+                libelle: t.nav.admin.sousLiens.admissions,
+                chemin: Routes.adminPersonnesAdmissions,
+              ),
+              (
+                libelle: t.reprisesAdmin.onglet,
+                chemin: Routes.adminPersonnesReprises,
+              ),
+              (
+                libelle: t.admin.equipe.titre,
+                chemin: Routes.adminPersonnesEquipe,
+              ),
+              (
+                libelle: t.admin.praxis.travail.lien,
+                chemin: Routes.adminPersonnesTravailPraxis,
+              ),
+            ])
+              EntreeAction(
+                libelle: lien.libelle,
+                onChoix: () => _empiler(context, lien.chemin),
+              ),
+            // Les listes d'avant, tant que la page unique ne porte pas tout
+            // ce qu'elles font : nommees, a part, jamais dans la barre
+            // laterale.
+            for (final (int i, SousLien lien) in <SousLien>[
+              (
+                libelle: t.admin.candidatures.titre,
+                chemin: Routes.adminPersonnesCandidatures,
+              ),
+              (
+                libelle: t.admin.listeEnseignants.titre,
+                chemin: Routes.adminPersonnesEnseignants,
+              ),
+              (
+                libelle: t.admin.comptes.titre,
+                chemin: Routes.adminPersonnesComptes,
+              ),
+              (
+                libelle: t.dossiers.titre,
+                chemin: Routes.adminPersonnesDossiers,
+              ),
+            ].indexed)
+              EntreeAction(
+                libelle: p.listeDAvant(nom: lien.libelle),
+                separateurAvant: i == 0,
+                onChoix: () => _empiler(context, lien.chemin),
               ),
           ],
         ),
@@ -1406,9 +1468,10 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
         : l.enseignant != null
         ? gestesDuMenuEnseignant(l.enseignant!)
         : gestesDuMenuLigne(d, capacites);
-    // Du compte de la personne, seulement « Verifier la ville » : la
-    // suppression d'un compte reste dans Eleves, Familles et Equipe (pilote,
-    // 21/11/2026 ; un parent qui a postule a aussi un compte de tuteur).
+    // Du compte de la personne : « Verifier la ville », et sa suppression
+    // quand c'est un compte d'enseignant (plus bas). Un parent qui a postule a
+    // un compte de famille : il se supprime depuis Familles (pilote,
+    // 21/11/2026).
     final CompteAdmin? c = _compteParReference[d.reference];
     final List<EntreeAction> duCompte = c == null || horsLigne
         ? const <EntreeAction>[]
@@ -1420,6 +1483,17 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
             onVerifierVille: () => unawaited(_verifierVille(c)),
             dossier: false,
           );
+    // Etape (e) : le compte d'un enseignant (ou d'un candidat) se supprime
+    // d'ici, avec le geste de « Comptes » (confirmation nominative, double
+    // verification, bilan). Jamais un compte de famille : il a son onglet.
+    final bool supprimable =
+        c != null &&
+        !horsLigne &&
+        c.role == AppRole.teacher &&
+        compteSupprimable(c) &&
+        !_suppressionEnCours &&
+        (DataCollection.enTableau(contexte) ||
+            !AppMetriques.of(contexte).estEnfant);
     EntreeAction entree(GesteCandidature g) => EntreeAction(
       libelle: libelleGeste(g),
       icone: iconeDuGeste(g),
@@ -1442,6 +1516,12 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
         ...duCompte,
         for (final GesteCandidature g in gestes)
           if (g.destructif) entree(g),
+        if (supprimable)
+          EntreeAction(
+            libelle: t.admin.comptes.retrait.actionLigne,
+            destructif: true,
+            onChoix: () => unawaited(_supprimer(<CompteAdmin>[c])),
+          ),
       ],
     );
   }
@@ -1884,7 +1964,8 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
       );
     }
     if (l.dossier case final LigneCandidature d) {
-      return AppCard(
+      final CompteAdmin? compte = _compteParReference[d.reference];
+      final Widget carte = AppCard(
         // Une cle par dossier : l'apercu du voisin ne garde rien du precedent.
         key: ValueKey<String>('apercu-${d.id}'),
         child: ApercuCandidatPersonnes(
@@ -1893,6 +1974,24 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
           onChange: relire,
           onSuivant: suivant,
         ),
+      );
+      // Un parent qui a postule : son compte est un compte de famille, il ne
+      // se supprime pas d'ici ; l'apercu dit ou.
+      if (compte == null || compte.role == AppRole.teacher) return carte;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          carte,
+          Ecart.vSm,
+          Text(
+            p.compteFamille,
+            key: PersonnesPage.cleCompteFamille,
+            style: AppPalette.of(context).inkMuted.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ],
       );
     }
     final CompteAdmin c = l.compte!;

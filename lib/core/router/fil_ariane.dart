@@ -194,6 +194,25 @@ List<SegmentFil> ancetresFil({
   // de cette liste dans son adresse (`depuis=liste`, BE-SUIVANT) ; le maillon
   // de la liste la rouvre dans l'etat ou on l'a laissee (filtre, tri, page).
   final Map<String, String> file = _fileDeLAdresse(chemin);
+  // PERSONNES-UNE-PAGE (e) : un dossier ouvert depuis la page « Personnes »
+  // (sa file porte `vue`) s'affiche sous « Personnes », plus sous
+  // « Candidatures » ; le maillon rouvre la page avec son onglet, sa vue, ses
+  // filtres et la personne.
+  final String? versPersonnes = adressePersonnesDeLaFile(
+    file,
+    page.substring(page.lastIndexOf('/') + 1),
+  );
+  if (versPersonnes != null &&
+      ancetres.length >= 2 &&
+      ancetres.last.chemin == Routes.adminPersonnesCandidatures &&
+      page.startsWith('${Routes.adminPersonnesCandidatures}/')) {
+    ancetres.removeLast();
+    ancetres[ancetres.length - 1] = SegmentFil(
+      libelle: ancetres.last.libelle,
+      chemin: versPersonnes,
+    );
+    return ancetres;
+  }
   if (file.isNotEmpty && ancetres.isNotEmpty) {
     final SegmentFil liste = ancetres.last;
     if (liste.chemin case final String cheminListe
@@ -205,6 +224,27 @@ List<SegmentFil> ancetresFil({
     }
   }
   return ancetres;
+}
+
+/// L'adresse de la page « Personnes » d'ou le dossier [reference] a ete
+/// ouvert, quand sa [file] vient d'elle (elle porte `vue`) : l'onglet des
+/// enseignants, la vue, ses filtres, son tri, sa page, et la personne. `null`
+/// pour une file de l'ancienne liste des candidatures (sans `vue`) : celle
+/// que l'associe emploie, qui ne peut pas lire « Personnes ».
+String? adressePersonnesDeLaFile(Map<String, String> file, String reference) {
+  if (!file.containsKey('vue')) return null;
+  return Uri(
+    path: Routes.adminPersonnes,
+    queryParameters: <String, String>{
+      'onglet': 'enseignants',
+      for (final MapEntry<String, String> e in file.entries)
+        // Ce qui ne sert qu'a la file du dossier (`file`, la phase imposee
+        // par la vue, les partis) n'est pas un parametre de la page.
+        if (e.key != 'file' && e.key != 'phase_file' && e.key != 'partis')
+          e.key: e.value,
+      'element': Uri.decodeComponent(reference),
+    },
+  ).toString();
 }
 
 /// Le filtre, le tri et la page de la liste d'ou vient la page [chemin]

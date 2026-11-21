@@ -327,13 +327,17 @@ void main() {
     });
 
     test('notification : la reference ouvre le dossier', () {
+      // PERSONNES-UNE-PAGE (e) : le dossier porte la file de la page
+      // « Personnes » (vue Candidats), pour y revenir.
+      const String dossier =
+          '/admin/personnes/candidatures/CAND-00012?vue=candidats&depuis=liste';
       expect(
         destinationDuDossier('/admin/personnes/dossiers', 'CAND-00012'),
-        '/admin/personnes/candidatures/CAND-00012',
+        dossier,
       );
       expect(
         destinationDuDossier('/admin/personnes/candidatures', 'CAND-00012'),
-        '/admin/personnes/candidatures/CAND-00012',
+        dossier,
       );
       expect(
         destinationDuDossier('/admin/personnes/dossiers', null),
@@ -365,7 +369,10 @@ void main() {
         titrePour: (String _, Map<String, dynamic> _) =>
             const NotificationContenu(titre: 'Une piece'),
       );
-      expect(n.destination, '/admin/personnes/candidatures/CAND-00012');
+      expect(
+        n.destination,
+        '/admin/personnes/candidatures/CAND-00012?vue=candidats&depuis=liste',
+      );
     });
   });
 }

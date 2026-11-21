@@ -503,15 +503,20 @@ Future<void> _corps22_7(
       await souris.down(domaine);
       await souris.up();
       await _stab(tester);
-      // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider » se
-      // choisit, a la souris aussi, dans le sous-lien du panneau.
+      // PERSONNES-UNE-PAGE (e) : « Dossiers a valider » se choisit, a la souris
+      // aussi, dans le menu « Outils » de la page Personnes (« Liste d'avant :
+      // … »), le panneau ne le porte plus.
+      final Offset outils = tester.getCenter(
+        find.byKey(const ValueKey<String>('personnes-autres-pages')),
+      );
+      await souris.moveTo(outils);
+      await souris.down(outils);
+      await souris.up();
+      await _stab(tester);
       final Offset dossiers = tester.getCenter(
         find
-            .descendant(
-              of: find.byKey(AdminShell.barreLateraleKey),
-              matching: find.text(t.dossiers.titre),
-            )
-            .first,
+            .text(t.admin.personnesPage.listeDAvant(nom: t.dossiers.titre))
+            .last,
       );
       await souris.moveTo(dossiers);
       await souris.down(dossiers);
