@@ -121,12 +121,16 @@ Future<void> choisirSection(WidgetTester tester, String libelle) async {
     await tester.pumpAndSettle();
     // PERSONNES-UNE-PAGE (e) : les anciennes listes s'y nomment
     // « Liste d'avant : … ».
-    final Finder exact = find.text(libelle);
-    await tester.tap(
-      exact.evaluate().isNotEmpty
-          ? exact.last
-          : find.text(t.admin.personnesPage.listeDAvant(nom: libelle)).last,
+    final Finder avant = find.text(
+      t.admin.personnesPage.listeDAvant(nom: libelle),
     );
+    final Finder entree = avant.evaluate().isNotEmpty
+        ? avant.last
+        : find.text(libelle).last;
+    // Texte agrandi : le menu defile, l'entree se fait d'abord voir.
+    await tester.ensureVisible(entree);
+    await tester.pumpAndSettle();
+    await tester.tap(entree);
     await tester.pumpAndSettle();
     return;
   }

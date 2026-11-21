@@ -80,10 +80,17 @@ Future<void> _voirPiece(WidgetTester tester, String prenom) async {
           )
           .first,
     );
-    // NAV-SOUS-LIENS : Personnes ouvre le menu de ses pages ; la premiere
-    // (les dossiers) est celle ou menait le domaine.
+    // PERSONNES-UNE-PAGE (e) : le menu de Personnes ne garde qu'Importer et
+    // Suppressions ; on le referme, on ouvre la page Personnes, et « Dossiers
+    // a valider » se choisit dans son menu « Outils ».
     await _stabiliser(tester);
-    await tester.tap(find.text(t.dossiers.titre).last);
+    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+    await _stabiliser(tester);
+    ProviderScope.containerOf(tester.element(find.byType(RewayahApp)))
+        .read(routeurProvider)
+        .go(Routes.adminPersonnes);
+    await _stabiliser(tester);
+    await choisirSection(tester, t.dossiers.titre);
   } else if (mobile) {
     await tester.tap(find.bySemanticsLabel(t.nav.admin.menu));
     await _stabiliser(tester);
