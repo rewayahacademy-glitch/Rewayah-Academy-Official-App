@@ -148,8 +148,10 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       // La sous-navigation Operations, Espace de traitement et Classes, qui
       // tient lieu de titre (§5 ter.2).
       entete: SousNavigationDomaine(
-        onglets: ongletsOperations(),
-        indexActif: 0,
+        onglets: pagesOperations(),
+        indexActif: pagesOperations().indexWhere(
+          (SousLien o) => o.chemin == Routes.adminOperationsTraitement,
+        ),
       ),
       // LISTES-2 et LISTES-3 : la tete defile avec la liste, qui prend toute
       // la largeur au bureau, sans retour (la barre laterale navigue).
