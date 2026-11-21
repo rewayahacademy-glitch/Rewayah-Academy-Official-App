@@ -56,6 +56,7 @@ import '../../features/admin_finance/finance_page.dart'
     deferred as d_finance_page;
 import '../../features/admin_groupes/groupes_page.dart'
     deferred as d_groupes_page;
+import '../../features/admin_guide/commentaires_guide_page.dart';
 import '../../features/admin_import_formulaires/routes_candidats_flux.dart';
 import '../../features/admin_import_inscriptions/import_inscriptions_page.dart'
     deferred as d_import_inscriptions_page;
@@ -2033,6 +2034,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             charger: d_chiffres_page.loadLibrary,
             construire: () => d_chiffres_page.ChiffresAcademiePage(),
           ),
+        ),
+      ),
+      // GUIDE-COMMENTAIRES (21/11/2026) : les commentaires du guide de
+      // l'enseignant, lus et repondus par la direction.
+      GoRouteSure(
+        path: Routes.adminOperationsGuide,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: CommentairesGuidePage(),
         ),
       ),
       // DASH-ADM-PLANNING : le planning de la semaine, atteint depuis l'Accueil.

@@ -52,6 +52,7 @@ import 'core/candidature/attentes_recrutement.dart';
 import 'core/candidature/attentes_recrutement_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
+import 'core/candidature/commentaires_guide_supabase.dart';
 import 'core/candidature/compte_rendu_entretien.dart';
 import 'core/candidature/creneaux_direction.dart';
 import 'core/candidature/entretien_candidat.dart';
@@ -259,6 +260,7 @@ import 'core/vus/vus_compte.dart' show VusSupabase, portVusProvider;
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
+import 'features/admin_guide/port_commentaires_guide.dart';
 import 'features/admin_invitations/familles_importees.dart';
 import 'features/admin_invitations/familles_importees_supabase.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
@@ -598,6 +600,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   // par le serveur (`lire_interactions_guide`, `donner_avis_guide`).
   portInteractionsProvider.overrideWithValue(
     InteractionsGuideSupabase(Supabase.instance.client),
+  ),
+  // GUIDE-COMMENTAIRES (21/11/2026) : la page de la direction.
+  portCommentairesGuideProvider.overrideWithValue(
+    CommentairesGuideSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),

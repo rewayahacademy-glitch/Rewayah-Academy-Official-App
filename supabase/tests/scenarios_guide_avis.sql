@@ -3,7 +3,7 @@
 -- Ce que le scenario prouve (il ECHOUE sans la migration, il PASSE avec) :
 --   1. anonyme : aucun droit d'execution ;
 --   2. tuteur, et candidat sans ses accords : 42501, sans une ligne ;
---   3. enseignant actif : 14 parties p1 a p14 a zero, aucun commentaire, commentaires_ouverts faux ;
+--   3. enseignant actif : 14 parties p1 a p14 a zero, aucun commentaire (commentaires_ouverts : voir scenarios_guide_commentaires) ;
 --   4. deux enseignants : « J'aime » puis « Pas clair » sur p4 donnent jaime 1, pas_clair 1, chacun son mon_avis ;
 --   5. changer d'avis remplace l'avis (jamais deux) ; retirer (NULL) le remet a zero, la ligne reste (jamais d'effacement) ;
 --   6. avis inconnu et partie inconnue : 22023 ;
@@ -128,9 +128,8 @@ SELECT pg_temp.vrai(
       AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(r -> 'parties') x
                        WHERE (x ->> 'jaime')::int <> 0 OR (x ->> 'pas_clair')::int <> 0 OR x ->> 'mon_avis' IS NOT NULL)
       AND r -> 'commentaires' = '[]'::jsonb
-      AND r -> 'commentaires_ouverts' = 'false'::jsonb
      FROM (SELECT pg_temp.en(pg_temp.id('ens'), 'teacher', 'SELECT public.lire_interactions_guide()') AS r) s),
-  'enseignant actif : 14 parties a zero, aucun commentaire, commentaires fermes');
+  'enseignant actif : 14 parties a zero, aucun commentaire');
 
 -- 4. Deux avis --------------------------------------------------------------------------------------------------------------
 SELECT pg_temp.vrai(

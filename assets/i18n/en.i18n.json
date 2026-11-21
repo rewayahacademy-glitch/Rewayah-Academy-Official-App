@@ -8241,6 +8241,21 @@
       "erreur": "The incidents could not be read: the read may not have reached Rewayah. Try again in a moment.",
       "indisponiblePhrase": "Incidents will be shown here once the server is connected. Until then, nothing is shown: no incident is invented."
     },
+    "guideCommentaires": {
+      "lien": "Guide comments",
+      "titre": "Guide comments",
+      "intro": "Questions from readers of the teacher's guide, part by part. The least clear parts come first. Each reader only sees their own thread.",
+      "totaux": "{jaime} likes · {pasClair} not clear",
+      "aucun": "No comments on this part.",
+      "attend": "Waiting for an answer",
+      "direction": "Management",
+      "praxis": "Praxis",
+      "champ": "Your answer to {nom}",
+      "repondre": "Answer",
+      "echec": "The answer is not confirmed: it may not have reached Rewayah. Tap \"Answer\" again.",
+      "erreur": "The guide comments could not be read.",
+      "indisponible": "The guide comments are not available yet."
+    },
     "chiffres": {
       "recalcul": "Last recalculation at {heure}",
       "reserve": "This page is reserved for the management.",

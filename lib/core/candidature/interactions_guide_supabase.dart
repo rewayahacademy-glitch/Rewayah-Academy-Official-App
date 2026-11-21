@@ -4,9 +4,9 @@
 // `public.donner_avis_guide(p_partie text, p_avis text)` de
 // `20261130971000_guide_avis.sql`.
 //
-// Les commentaires n'ont pas encore de serveur : le serveur rend
-// `commentaires_ouverts = false`, l'ecran ne propose ni « Commenter » ni le fil,
-// et `commenter` reste une capacite indisponible. Une fonction que le serveur ne
+// GUIDE-COMMENTAIRES (21/11/2026) : `commenter_guide(p_partie, p_corps)`
+// ecrit dans le fil prive du lecteur ; le serveur dit, par
+// `commentaires_ouverts`, si l'ecran propose « Commenter ». Une fonction que le serveur ne
 // connait pas encore est une capacite indisponible : la barre d'avis ne
 // s'affiche pas et la lecture du guide reste entiere.
 
@@ -24,6 +24,9 @@ const String fonctionLireInteractions = 'lire_interactions_guide';
 
 /// La RPC qui pose ou retire un avis.
 const String fonctionDonnerAvis = 'donner_avis_guide';
+
+/// La RPC du lecteur qui ecrit dans son fil (GUIDE-COMMENTAIRES).
+const String fonctionCommenter = 'commenter_guide';
 
 /// Un appel RPC injectable (tests) ; en production, `client.rpc`.
 typedef AppelAvisGuide = Future<Object?> Function(
@@ -85,7 +88,10 @@ class InteractionsGuideSupabase implements PortInteractionsGuide {
   Future<CommentaireGuide> commenter({
     required String partie,
     required String corps,
-  }) => Future<CommentaireGuide>.error(
-    const CapaciteIndisponible(dependanceAvisGuide),
+  }) async => CommentaireGuide.depuisJson(
+    await _appeler(fonctionCommenter, <String, dynamic>{
+      'p_partie': partie,
+      'p_corps': corps,
+    }),
   );
 }

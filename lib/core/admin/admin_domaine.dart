@@ -504,6 +504,11 @@ Map<AdminDomaine, List<SousLien>> sousLiensAdmin({
       (libelle: t.avis.admin.outil, chemin: Routes.adminOperationsAvis),
       // CHIFFRES-ACADEMIE : une entree discrete, la derniere du domaine.
       (libelle: t.admin.chiffres.lien, chemin: Routes.adminOperationsChiffres),
+      // GUIDE-COMMENTAIRES (21/11/2026) : les commentaires du guide.
+      (
+        libelle: t.admin.guideCommentaires.lien,
+        chemin: Routes.adminOperationsGuide,
+      ),
     ],
     AdminDomaine.personnes: outilsPersonnes(),
     AdminDomaine.pedagogie: ongletsPedagogie(),
