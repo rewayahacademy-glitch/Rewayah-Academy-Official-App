@@ -256,6 +256,20 @@ void main() {
             AppLocale.ar,
           ),
           (
+            'eleves_filtre_1440_fr_clair',
+            '$base?onglet=eleves&etat=attente&q=e',
+            bureau,
+            ThemeMode.light,
+            AppLocale.fr,
+          ),
+          (
+            'eleves_filtre_390_ar_clair',
+            '$base?onglet=eleves&etat=attente',
+            telephone,
+            ThemeMode.light,
+            AppLocale.ar,
+          ),
+          (
             'familles_390_ar_clair',
             '$base?onglet=familles',
             telephone,
