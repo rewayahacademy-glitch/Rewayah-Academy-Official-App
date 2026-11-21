@@ -444,12 +444,13 @@ class PersonnesPage extends ConsumerWidget {
       },
     );
     // Pendant la lecture, l'en-tete reste : seule la liste est un squelette.
-    final Widget squelette = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        entete,
-        Expanded(child: lignesSquelette),
-      ],
+    // (Une colonne qui defile : a 320 x 256, l'en-tete depasse la hauteur.)
+    final Widget squelette = SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[entete, lignesSquelette],
+      ),
     );
     final Widget corps = vue == null
         ? BlocAsynchrone<PageEnseignants>(

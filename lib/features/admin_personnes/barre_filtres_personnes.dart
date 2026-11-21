@@ -21,6 +21,7 @@ import '../../core/widgets/menu_commun.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/puce_filtre_actif.dart';
 import 'filtres_personnes.dart';
+import 'personnes_page.dart' show echelleMaxCoteACote;
 
 /// La barre de recherche et de filtre.
 class BarreFiltresPersonnes extends StatefulWidget {
@@ -130,8 +131,8 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
   Widget build(BuildContext context) {
     final p = t.admin.personnesPage;
     final AppPalette palette = AppPalette.of(context);
-    final TextStyle legende =
-        Theme.of(context).textTheme.bodySmall ?? const TextStyle();
+    final TextStyle corps =
+        Theme.of(context).textTheme.bodyLarge ?? const TextStyle();
     final TypeFiltrePersonnes? ouvert = widget.types
         .where((TypeFiltrePersonnes x) => x.cle == _type)
         .firstOrNull;
@@ -157,44 +158,50 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
     ];
     final int? n = widget.affiches;
     final int? total = widget.total;
+    // Texte agrandi : le champ puis le bouton, l'un sous l'autre (a 200 %,
+    // cote a cote, ils debordent d'un telephone).
+    final bool empile =
+        MediaQuery.textScalerOf(context).scale(1) > echelleMaxCoteACote;
+    final Widget champ = ChampRecherche(
+      controleur: _saisie,
+      libelle: p.rechercher,
+      aide: t.admin.comptes.rechercheAide,
+      cleChamp: BarreFiltresPersonnes.cleRecherche,
+      compact: true,
+      onChange: _chercher,
+      onValider: (String texte) {
+        _attente?.cancel();
+        widget.onRecherche(texte.trim());
+      },
+    );
+    final Widget menu = MenuFiltre<String>(
+      key: BarreFiltresPersonnes.cleFiltrer,
+      controleur: _menu,
+      libelle: p.filtrerPar,
+      valeur: null,
+      entrees: entrees,
+      onChoix: _choisir,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: ChampRecherche(
-                controleur: _saisie,
-                libelle: p.rechercher,
-                aide: t.admin.comptes.rechercheAide,
-                cleChamp: BarreFiltresPersonnes.cleRecherche,
-                compact: true,
-                onChange: _chercher,
-                onValider: (String texte) {
-                  _attente?.cancel();
-                  widget.onRecherche(texte.trim());
-                },
-              ),
-            ),
-            Ecart.hSm,
-            MenuFiltre<String>(
-              key: BarreFiltresPersonnes.cleFiltrer,
-              controleur: _menu,
-              libelle: p.filtrerPar,
-              valeur: null,
-              entrees: entrees,
-              onChoix: _choisir,
-            ),
-          ],
-        ),
-        if (actifs.isNotEmpty) ...<Widget>[
+        if (empile) ...<Widget>[
+          champ,
           Ecart.vSm,
-          FiltresActifs(filtres: actifs, onToutEffacer: widget.onToutEffacer),
-        ],
-        Ecart.vXs,
-        // La ligne du compteur garde sa place meme pendant la lecture : la
-        // liste ne saute pas.
+          Align(alignment: AlignmentDirectional.centerStart, child: menu),
+        ] else
+          Row(
+            children: <Widget>[
+              Expanded(child: champ),
+              Ecart.hSm,
+              menu,
+            ],
+          ),
+        Ecart.vSm,
+        // Le compteur dit ce qui a change : a la taille du texte courant,
+        // toujours a la meme place (sous la recherche, avant les puces), meme
+        // pendant la lecture. La liste ne saute pas.
         Semantics(
           liveRegion: true,
           label: n == null || total == null
@@ -204,10 +211,14 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
             child: Text(
               n == null || total == null ? ' ' : p.compteur(n: n, total: total),
               key: BarreFiltresPersonnes.cleCompteur,
-              style: palette.inkMuted.applyTo(legende),
+              style: palette.inkStrong.applyTo(corps),
             ),
           ),
         ),
+        if (actifs.isNotEmpty) ...<Widget>[
+          Ecart.vSm,
+          FiltresActifs(filtres: actifs, onToutEffacer: widget.onToutEffacer),
+        ],
         Ecart.vSm,
       ],
     );
