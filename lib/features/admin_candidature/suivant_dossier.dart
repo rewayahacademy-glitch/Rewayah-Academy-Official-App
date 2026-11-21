@@ -9,6 +9,12 @@
 // `fileDeLaListe`) ; un dossier ouvert d'ailleurs (un message, un entretien)
 // n'a pas de file : rien ne s'affiche.
 //
+// PERSONNES-UNE-PAGE (d) : la file peut aussi etre une vue des enseignants de
+// la page « Personnes » (`file=enseignants`, la phase, les partis) : le
+// precedent et le suivant viennent alors de `voisins_enseignant`, aux memes
+// filtres et au meme tri que `lister_enseignants`. `vue` (la vue de la page
+// « Personnes » d'ou l'on vient) voyage avec la file, pour le retour.
+//
 // Limite dite : le texte cherche dans la liste n'est pas dans l'adresse (c'est
 // un nom de personne, relecture du coordinateur du 16/11). Si la liste avait
 // une recherche, le suivant suit le filtre et le tri sans ce texte.
@@ -23,6 +29,8 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
+import '../../core/enseignants/modeles_enseignants.dart';
+import '../../core/enseignants/port_enseignants.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../admin_candidatures/adresse_candidatures.dart';
@@ -37,12 +45,44 @@ class FileDuDossier {
   /// ouvert depuis la liste (`depuis=liste`), il n'a pas de file.
   static FileDuDossier? depuis(Map<String, String>? requete) {
     if (requete == null || requete['depuis'] != 'liste') return null;
+    if (requete['file'] == 'enseignants') {
+      return FileDuDossier(<String, String>{
+        for (final String cle in _clesFileEnseignants)
+          if (requete[cle] case final String v) cle: v,
+      });
+    }
     return FileDuDossier(<String, String>{
       for (final MapEntry<String, String> e in requete.entries)
-        if (clesAdresseCandidatures.contains(e.key) && e.key != 'q')
+        if ((clesAdresseCandidatures.contains(e.key) && e.key != 'q') ||
+            e.key == 'vue')
           e.key: e.value,
     });
   }
+
+  /// Les parametres d'une file d'enseignants.
+  static const List<String> _clesFileEnseignants = <String>[
+    'file',
+    'vue',
+    'phase',
+    'phase_file',
+    'partis',
+    'page',
+  ];
+
+  /// Vrai : la file est une vue des enseignants (`voisins_enseignant`).
+  bool get enseignants => adresse['file'] == 'enseignants';
+
+  /// La vue de la page « Personnes » d'ou le dossier a ete ouvert, ou `null`
+  /// (ouvert depuis l'ancienne liste des candidatures).
+  String? get vuePersonnes => adresse['vue'];
+
+  /// Le filtre d'une file d'enseignants.
+  FiltreEnseignants get filtreEnseignants => FiltreEnseignants(
+    // `phase` : le filtre pose dans la page ; `phase_file` : la phase que
+    // la vue impose (elle ne revient pas dans l'adresse de la page).
+    phase: PhaseEnseignant.depuisSql(adresse['phase'] ?? adresse['phase_file']),
+    partis: adresse['partis'] == 'oui',
+  );
 
   /// Les parametres de la liste : filtre, tri (et page, sans effet ici).
   final Map<String, String> adresse;
@@ -93,6 +133,15 @@ voisinsDuDossierProvider = FutureProvider.autoDispose
       Ref ref,
       DemandeVoisins demande,
     ) async {
+      if (demande.file.enseignants) {
+        final Object? enseignants = ref.watch(portEnseignantsProvider);
+        if (enseignants is! PortVoisinsEnseignant) return null;
+        return enseignants.voisins(
+          demande.reference,
+          filtre: demande.file.filtreEnseignants,
+          tri: TriEnseignants.activite,
+        );
+      }
       final PortCandidaturesDirection? port = ref.watch(
         portCandidaturesDirectionProvider,
       );

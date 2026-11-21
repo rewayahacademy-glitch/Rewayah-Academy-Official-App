@@ -35,6 +35,18 @@ const Set<String> clesAdresseCandidatures = <String>{
   'complet',
   'pile',
   'etiquette',
+  // PERSONNES-UNE-PAGE (d) : les filtres de la feuille qui n'avaient pas de
+  // cle (ils ne survivaient ni au rechargement ni au passage au suivant).
+  'responsable',
+  'majorite',
+  'ijaza',
+  'langue',
+  'riwaya',
+  'public',
+  'jours',
+  'heure_de',
+  'heure_a',
+  'jours_min',
   'tri',
   'page',
 };
@@ -58,6 +70,17 @@ RequeteCandidatures requeteDepuisAdresse(Map<String, String> q) {
     final String? v = q[cle];
     return v == null || v.isEmpty ? null : v;
   }
+
+  int? entier(String cle, int min, int max) {
+    final int? n = int.tryParse(q[cle] ?? '');
+    return n == null || n < min || n > max ? null : n;
+  }
+
+  // Les jours (1 a 7), separes par des virgules, sans doublon, dans l'ordre.
+  final List<int> jours = <int>{
+    for (final String j in (q['jours'] ?? '').split(','))
+      if (int.tryParse(j) case final int n when n >= 1 && n <= 7) n,
+  }.toList()..sort();
 
   final int? page = int.tryParse(q['page'] ?? '');
   return RequeteCandidatures(
@@ -89,6 +112,23 @@ RequeteCandidatures requeteDepuisAdresse(Map<String, String> q) {
         q['etiquette'],
         EtiquettePraxis.values.map((EtiquettePraxis e) => e.sql),
       ),
+      responsable: _valeurPermise(q['responsable'], const <String>[
+        'moi',
+        'aucun',
+      ]),
+      majorite: _valeurPermise(q['majorite'], const <String>[
+        'attestee',
+        'non_attestee',
+        'moins_18',
+      ]),
+      ijaza: texte('ijaza'),
+      langueExplication: texte('langue'),
+      riwaya: texte('riwaya'),
+      publicVise: texte('public'),
+      jours: jours.isEmpty ? null : jours,
+      heureMin: entier('heure_de', 0, 23),
+      heureMax: entier('heure_a', 1, 24),
+      joursMin: entier('jours_min', 1, 7),
     ),
     tri: choix(TriCandidatures.values, 'tri') ?? TriCandidatures.activite,
     page: page == null || page < 1 ? 1 : page,
@@ -118,6 +158,16 @@ Map<String, String> requeteEnAdresse(RequeteCandidatures r) {
     if (f.dossierComplet != null) 'complet': oui(f.dossierComplet!),
     if (f.pilePraxis != null) 'pile': f.pilePraxis!,
     if (f.etiquettePraxis != null) 'etiquette': f.etiquettePraxis!,
+    if (f.responsable != null) 'responsable': f.responsable!,
+    if (f.majorite != null) 'majorite': f.majorite!,
+    if (f.ijaza != null) 'ijaza': f.ijaza!,
+    if (f.langueExplication != null) 'langue': f.langueExplication!,
+    if (f.riwaya != null) 'riwaya': f.riwaya!,
+    if (f.publicVise != null) 'public': f.publicVise!,
+    if (f.jours != null && f.jours!.isNotEmpty) 'jours': f.jours!.join(','),
+    if (f.heureMin != null) 'heure_de': '${f.heureMin}',
+    if (f.heureMax != null) 'heure_a': '${f.heureMax}',
+    if (f.joursMin != null) 'jours_min': '${f.joursMin}',
     if (r.tri != TriCandidatures.activite) 'tri': r.tri.name,
     if (r.page > 1) 'page': '${r.page}',
   };

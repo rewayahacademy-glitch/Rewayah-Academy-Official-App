@@ -40,10 +40,10 @@ import 'libelles_candidatures.dart';
 import 'libelles_praxis.dart';
 
 /// Les codes de langue d'explication que la direction peut filtrer.
-const List<String> _langues = <String>['ar', 'fr', 'en'];
+const List<String> languesFiltrables = <String>['ar', 'fr', 'en'];
 
 /// Les riwayat proposees (les plus connues).
-const List<String> _riwayat = <String>[
+const List<String> riwayatFiltrables = <String>[
   'hafs',
   'warsh',
   'qalun',
@@ -53,13 +53,18 @@ const List<String> _riwayat = <String>[
 ];
 
 /// Les publics vises, dans l'ordre.
-const List<String> _publics = <String>['6_9', '10_13', '14_17', 'adultes'];
+const List<String> publicsFiltrables = <String>[
+  '6_9',
+  '10_13',
+  '14_17',
+  'adultes',
+];
 
 /// Les trois valeurs de l'ijaza declaree.
-const List<String> _ijazas = <String>['oui', 'pret_test', 'non'];
+const List<String> ijazasFiltrables = <String>['oui', 'pret_test', 'non'];
 
 /// Le libelle d'une option du questionnaire, ou son code a defaut.
-String _option(String champ, String code) =>
+String libelleOptionFiltre(String champ, String code) =>
     textesOption(champ, code)?.libelle ?? code;
 
 /// Ouvre la feuille « Filtres ».
@@ -314,26 +319,35 @@ class _FeuilleFiltresEtat extends ConsumerState<FeuilleFiltres> {
           EntreeFiltre<String>(valeur: p.code, libelle: p.nom),
       ], (String? v) => _f.avec(paysResidence: () => v)),
       _menu<String>('ijaza', r.ijaza, _f.ijaza, <EntreeFiltre<String>>[
-        for (final String c in _ijazas)
-          EntreeFiltre<String>(valeur: c, libelle: _option('ijaza', c)),
+        for (final String c in ijazasFiltrables)
+          EntreeFiltre<String>(
+            valeur: c,
+            libelle: libelleOptionFiltre('ijaza', c),
+          ),
       ], (String? v) => _f.avec(ijaza: () => v)),
       _menu<String>(
         'langue',
         r.langue,
         _f.langueExplication,
         <EntreeFiltre<String>>[
-          for (final String c in _langues)
+          for (final String c in languesFiltrables)
             EntreeFiltre<String>(valeur: c, libelle: nomDeLangue(c) ?? c),
         ],
         (String? v) => _f.avec(langueExplication: () => v),
       ),
       _menu<String>('riwaya', r.riwaya, _f.riwaya, <EntreeFiltre<String>>[
-        for (final String c in _riwayat)
-          EntreeFiltre<String>(valeur: c, libelle: _option('riwayat', c)),
+        for (final String c in riwayatFiltrables)
+          EntreeFiltre<String>(
+            valeur: c,
+            libelle: libelleOptionFiltre('riwayat', c),
+          ),
       ], (String? v) => _f.avec(riwaya: () => v)),
       _menu<String>('public', r.public, _f.publicVise, <EntreeFiltre<String>>[
-        for (final String c in _publics)
-          EntreeFiltre<String>(valeur: c, libelle: _option('public', c)),
+        for (final String c in publicsFiltrables)
+          EntreeFiltre<String>(
+            valeur: c,
+            libelle: libelleOptionFiltre('public', c),
+          ),
       ], (String? v) => _f.avec(publicVise: () => v)),
       _menu<int>('heure-de', r.heureDe, _f.heureMin, <EntreeFiltre<int>>[
         for (int h = 0; h < 24; h++)
