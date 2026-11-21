@@ -101,6 +101,7 @@ void main() {
         'acces': false,
         'raison': 'accords',
         'manques': <String>['contrat', 'conduite', 'cadre'],
+        'acceptable': false,
       }),
       <_Appel>[],
     ).lire(langue: 'fr');
@@ -111,6 +112,7 @@ void main() {
       AccordManquant.conduite,
       AccordManquant.cadre,
     ]);
+    expect(lu.acceptable, isFalse);
     expect(lu.parties, isEmpty);
   });
 

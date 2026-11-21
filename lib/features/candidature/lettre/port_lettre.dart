@@ -14,12 +14,14 @@
 //      "parties": [{"code": "p1", "titre": "...", "corps": "..."}, ...]}
 //   acces faux :
 //     {"acces": false, "raison": "accords" | "role" | "compte",
-//      "manques": ["contrat", "conduite", "cadre"]}
+//      "manques": ["contrat", "conduite", "cadre"], "acceptable": true}
 //
 // `parties` : dans l'ordre de lecture, quatorze aujourd'hui ; `corps` dans la
 // forme simple que lit `texte_lettre.dart`. `manques` : seulement pour la
-// raison `accords`, dans l'ordre contrat, conduite, cadre. Aucun texte de la
-// lettre quand l'acces est refuse.
+// raison `accords`, dans l'ordre contrat, conduite, cadre. `acceptable` :
+// seulement pour `accords`, faux quand le compte ne peut pas accepter lui-meme
+// ce qui manque (absent : vrai). Aucun texte de la lettre quand l'acces est
+// refuse.
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
@@ -84,12 +86,14 @@ class LectureLettre {
     required this.langue,
   }) : acces = true,
        raison = null,
-       manques = const <AccordManquant>[];
+       manques = const <AccordManquant>[],
+       acceptable = true;
 
   /// La lecture refusee, sans aucun texte.
   const LectureLettre.refusee({
     required RaisonRefusLettre this.raison,
     this.manques = const <AccordManquant>[],
+    this.acceptable = true,
   }) : acces = false,
        parties = const <PartieLettre>[],
        version = null,
@@ -129,7 +133,13 @@ class LectureLettre {
           _ => throw const FormatException('lettre : accord inconnu'),
         },
     ];
-    return LectureLettre.refusee(raison: raison, manques: manques);
+    // LETTRE-SERVEUR (relecture S2, 21/11/2026) : ajout retrocompatible ;
+    // absent, la reponse d'avant se lit comme acceptable.
+    return LectureLettre.refusee(
+      raison: raison,
+      manques: manques,
+      acceptable: brut['acceptable'] != false,
+    );
   }
 
   /// Vrai quand la lettre est lisible.
@@ -140,6 +150,10 @@ class LectureLettre {
 
   /// Les accords qui manquent (raison `accords`).
   final List<AccordManquant> manques;
+
+  /// Faux quand le compte ne peut pas accepter lui-meme ce qui manque
+  /// (raison `accords`) : seule la direction peut ouvrir l'acces.
+  final bool acceptable;
 
   /// Les parties, dans l'ordre de lecture ; vides quand l'acces est refuse.
   final List<PartieLettre> parties;

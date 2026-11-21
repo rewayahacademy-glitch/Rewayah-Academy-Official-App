@@ -12,12 +12,15 @@
 --      C'est un texte de l'academie, aucune donnee de personne.
 --   3. public.lire_lettre_candidats(p_langue text) -> jsonb, SECURITY DEFINER, search_path vide, executable par authenticated seul.
 --      Acces : role enseignant dans le jeton (public.app_role()) ET profil enseignant non efface, au statut pending_kyc,
---      provisional_active ou active, acces non expire ; puis compte actif (account_status = 'active'), OU les trois accords lus par
+--      provisional_active ou active, acces non expire ; puis compte actif (account_status = 'active'), OU candidature
+--      d'enseignant en cours (candidature.issue = 'en_cours' de etat_dossier ; refusee ou retiree : refus « compte ») ET les
+--      trois accords lus par
 --      public.etat_dossier() (la meme source que la page « Votre dossier » : contrat_signe, code_conduite_signe,
 --      candidature.cadreReligieux.accepte ; le cadre n'est exige que s'il est publie, public.cadre_religieux_version_requise()).
 --      Refus sans une ligne du texte : raison « role » (jeton d'un autre role ou sans role), « compte » (sans session, profil
---      absent, efface, desactive, acces expire, profil d'un autre role), « accords » avec « manques » dans l'ordre contrat,
---      conduite, cadre. Langue inconnue ou sans texte : le francais.
+--      absent, efface, desactive, acces expire, profil d'un autre role, candidature absente, refusee ou retiree), « accords »
+--      avec « manques » dans l'ordre contrat, conduite, cadre, et « acceptable » : vrai seulement si le compte (en attente)
+--      peut accepter lui-meme tout ce qui manque ; faux, la page dit d'ecrire a la direction. Langue inconnue : le francais.
 --
 -- MOTS D'EFFACEMENT : ZERO (compte en mots entiers, commentaires et texte de la lettre compris). Un compte en sous-chaine trouve
 -- seulement la colonne profiles.deleted_at (lue) et le mot anglais « deleted » du texte anglais (parties 8 et 12).
@@ -29,6 +32,8 @@ BEGIN
   IF pg_catalog.to_regprocedure('public.etat_dossier()') IS NULL
      OR pg_catalog.to_regprocedure('public.app_role()') IS NULL
      OR pg_catalog.to_regprocedure('public.cadre_religieux_version_requise()') IS NULL
+     OR pg_catalog.to_regprocedure('public.cadre_religieux_acceptable(text)') IS NULL
+     OR pg_catalog.to_regprocedure('public.code_conduite_version_requise()') IS NULL
      OR pg_catalog.to_regnamespace('private') IS NULL THEN
     RAISE EXCEPTION 'LETTRE-SERVEUR : dependances absentes (etat_dossier, app_role, cadre religieux, schema private) ; rien n''est modifie';
   END IF;
@@ -1019,6 +1024,7 @@ DECLARE
   v_ouverte boolean := false;
   v_dossier jsonb;
   v_manques text[] := ARRAY[]::text[];
+  v_acceptable boolean := false;
   v_langue text;
   v_version text;
 BEGIN
@@ -1047,8 +1053,14 @@ BEGIN
     -- L'enseignant actif lit la lettre.
     v_ouverte := true;
   ELSE
-    -- Le candidat : les trois accords, lus a la meme source que la page « Votre dossier ».
+    -- Le candidat : lu a la meme source que la page « Votre dossier ».
     v_dossier := public.etat_dossier();
+    -- Sa candidature d'enseignant doit etre en cours : un candidat refuse ou retire ne lit pas le guide.
+    IF NOT coalesce(v_dossier #>> '{candidature,type}' = 'enseignant'
+                    AND v_dossier #>> '{candidature,issue}' = 'en_cours', false) THEN
+      RETURN pg_catalog.jsonb_build_object('acces', false, 'raison', 'compte');
+    END IF;
+    -- Les trois accords.
     IF NOT coalesce((v_dossier ->> 'contrat_signe')::boolean, false) THEN
       v_manques := v_manques || 'contrat'::text;
     END IF;
@@ -1063,8 +1075,22 @@ BEGIN
   END IF;
 
   IF NOT v_ouverte THEN
+    -- Le compte peut-il accepter lui-meme ce qui manque ? Les pages des accords ne s'ouvrent qu'au compte en attente
+    -- (pending_kyc) ; chaque accord suit la regle de sa politique d'insertion : un contrat courant publie, une version
+    -- requise du code de conduite, et pour le cadre public.cadre_religieux_acceptable (candidature en cours, salle
+    -- d'examen ou de verification). Sinon la page dit d'ecrire a la direction, jamais un chemin sans issue.
+    v_acceptable := coalesce(
+      v_profil.account_status = 'pending_kyc'
+      AND (NOT ('contrat' = ANY (v_manques))
+           OR EXISTS (SELECT 1 FROM public.contract_texts t
+                       WHERE t.contract_kind = 'teacher_nda' AND t.locale = 'fr' AND t.is_current))
+      AND (NOT ('conduite' = ANY (v_manques)) OR public.code_conduite_version_requise() IS NOT NULL)
+      AND (NOT ('cadre' = ANY (v_manques))
+           OR public.cadre_religieux_acceptable(public.cadre_religieux_version_requise())),
+      false);
     RETURN pg_catalog.jsonb_build_object('acces', false, 'raison', 'accords',
-                                         'manques', pg_catalog.to_jsonb(v_manques));
+                                         'manques', pg_catalog.to_jsonb(v_manques),
+                                         'acceptable', v_acceptable);
   END IF;
 
   -- La langue : « fr », « en », « ar » (une forme « ar-EG » ou « en_GB » garde sa langue) ; sinon le francais.
@@ -1101,7 +1127,7 @@ BEGIN
     'F86 candidate allowlist: signature=public.lire_lettre_candidats(p_langue text); md5_functiondef='
     || pg_catalog.md5(pg_catalog.pg_get_functiondef('public.lire_lettre_candidats(text)'::regprocedure))
     || '; guard_type=ROLE_POSITIVE_TEACHER_ACCOUNT_AND_ACCORDS; owner=postgres; search_path=""; reviewer=Claude a relire; '
-    || 'date=2026-11-20. LETTRE-SERVEUR. Role enseignant du jeton (garde positive) ; profil enseignant ouvert ; compte actif ou '
+    || 'date=2026-11-20. LETTRE-SERVEUR. Role enseignant du jeton (garde positive) ; profil enseignant ouvert ; compte actif, ou candidature en cours et '
     || 'accords de public.etat_dossier() ; ne rend que le texte de l''academie, jamais une donnee de personne. '
     || 'Must-pass: supabase/tests/scenarios_lettre_candidats.sql.');
 END

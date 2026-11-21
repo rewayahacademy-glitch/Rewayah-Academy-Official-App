@@ -9,6 +9,9 @@
 --   5. candidat a qui manque un seul accord (le code de conduite) : manques = conduite ;
 --   6. candidat aux trois accords : la lettre ;
 --   7. compte desactive, acces expire : refus « compte » ; jeton enseignant sur un profil d'un autre role : « compte » ;
+--      candidat refuse, retire, ou sans candidature : « compte » (S1, relecture du 21/11) ;
+--   7b. « acceptable » (S2) : vrai quand le compte en attente peut accepter lui-meme ce qui manque ; faux pour un candidat
+--      a l'etape confirmee a qui manque le cadre (cadre_religieux_acceptable faux) et pour un compte provisional_active ;
 --   8. lecture directe de la table refusee a authenticated (et a anon) ;
 --   9. langue : ar et en rendus dans leur langue, « en-GB » rend l'anglais, langue inconnue ou nulle : le francais ;
 --  10. droits : EXECUTE a authenticated seul, RLS active sans politique.
@@ -36,14 +39,17 @@ BEGIN
     'sub', p_id, 'aal', 'aal1', 'app_metadata', pg_catalog.json_build_object('role', p_role))::text END, true);
 END $$;
 
--- Un refus : exactement les cles attendues, aucune partie, aucun titre de la lettre dans la reponse.
-CREATE FUNCTION pg_temp.refus(r jsonb, p_raison text, p_manques text[]) RETURNS boolean
+-- Un refus : exactement les cles attendues, aucune partie, aucun titre de la lettre dans la reponse. Pour « accords » :
+-- les manques dans l'ordre et l'indicateur « acceptable ».
+CREATE FUNCTION pg_temp.refus(r jsonb, p_raison text, p_manques text[], p_acceptable boolean DEFAULT NULL) RETURNS boolean
 LANGUAGE sql AS $$
   SELECT (r ->> 'acces') = 'false'
      AND r ->> 'raison' = p_raison
      AND (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(r) k)
-         = CASE WHEN p_manques IS NULL THEN ARRAY['acces', 'raison'] ELSE ARRAY['acces', 'manques', 'raison'] END
+         = CASE WHEN p_manques IS NULL THEN ARRAY['acces', 'raison']
+                ELSE ARRAY['acceptable', 'acces', 'manques', 'raison'] END
      AND (p_manques IS NULL OR ARRAY(SELECT jsonb_array_elements_text(r -> 'manques')) = p_manques)
+     AND (p_manques IS NULL OR r -> 'acceptable' = pg_catalog.to_jsonb(p_acceptable))
      AND strpos(r::text, 'Rewayah') = 0 AND strpos(r::text, 'Praxis') = 0
 $$;
 
@@ -63,7 +69,8 @@ $$;
 -- Fixtures ------------------------------------------------------------------------------------------------------------------
 INSERT INTO auth.users (id, email)
 SELECT pg_temp.id(x), 'lettre-serveur-' || x || '@test.invalid'
-  FROM unnest(ARRAY['tut', 'elv', 'adm', 'cpt', 'ens', 'c0', 'c1', 'c3', 'sus', 'exp']) AS x;
+  FROM unnest(ARRAY['tut', 'elv', 'adm', 'cpt', 'ens', 'c0', 'c1', 'c3', 'sus', 'exp',
+                    'cr', 'cw', 'cn', 'cc', 'cp']) AS x;
 INSERT INTO public.households (id, timezone) VALUES (pg_temp.id('f'), 'Europe/Paris');
 INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender, access_until)
 VALUES (pg_temp.id('tut'), 'LTS-TUT-0001', 'guardian', pg_temp.id('f'), 'Tuteur', 'Fictif', 'active', 'male', NULL),
@@ -75,14 +82,23 @@ VALUES (pg_temp.id('tut'), 'LTS-TUT-0001', 'guardian', pg_temp.id('f'), 'Tuteur'
        (pg_temp.id('c1'), 'LTS-ENS-0003', 'teacher', NULL, 'Candidat', 'Un', 'pending_kyc', 'male', NULL),
        (pg_temp.id('c3'), 'LTS-ENS-0004', 'teacher', NULL, 'Candidat', 'Trois', 'pending_kyc', 'female', NULL),
        (pg_temp.id('sus'), 'LTS-ENS-0005', 'teacher', NULL, 'Enseignant', 'Desactive', 'pending_kyc', 'male', NULL),
-       (pg_temp.id('exp'), 'LTS-ENS-0006', 'teacher', NULL, 'Enseignant', 'Expire', 'pending_kyc', 'male', NULL);
+       (pg_temp.id('exp'), 'LTS-ENS-0006', 'teacher', NULL, 'Enseignant', 'Expire', 'pending_kyc', 'male', NULL),
+       (pg_temp.id('cr'), 'LTS-ENS-0007', 'teacher', NULL, 'Candidat', 'Refuse', 'pending_kyc', 'male', NULL),
+       (pg_temp.id('cw'), 'LTS-ENS-0008', 'teacher', NULL, 'Candidat', 'Retire', 'pending_kyc', 'female', NULL),
+       (pg_temp.id('cn'), 'LTS-ENS-0009', 'teacher', NULL, 'Candidat', 'Sans', 'pending_kyc', 'male', NULL),
+       (pg_temp.id('cc'), 'LTS-ENS-0010', 'teacher', NULL, 'Candidat', 'Confirme', 'pending_kyc', 'female', NULL),
+       (pg_temp.id('cp'), 'LTS-ENS-0011', 'teacher', NULL, 'Candidat', 'Provisoire', 'pending_kyc', 'male', NULL);
 INSERT INTO public.teacher_profiles (profile_id)
-SELECT pg_temp.id(x) FROM unnest(ARRAY['ens', 'c0', 'c1', 'c3', 'sus', 'exp']) AS x
+SELECT pg_temp.id(x) FROM unnest(ARRAY['ens', 'c0', 'c1', 'c3', 'sus', 'exp', 'cr', 'cw', 'cn', 'cc', 'cp']) AS x
 ON CONFLICT (profile_id) DO NOTHING;
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, en_pause, source)
 VALUES (pg_temp.id('k0'), 'enseignant', pg_temp.id('c0'), 'female', 'Candidat Zero', 'prequalification', 'a_completer', 'en_cours', false, 'lien_public'),
        (pg_temp.id('k1'), 'enseignant', pg_temp.id('c1'), 'male', 'Candidat Un', 'prequalification', 'a_completer', 'en_cours', false, 'lien_public'),
-       (pg_temp.id('k3'), 'enseignant', pg_temp.id('c3'), 'female', 'Candidat Trois', 'prequalification', 'a_completer', 'en_cours', false, 'lien_public');
+       (pg_temp.id('k3'), 'enseignant', pg_temp.id('c3'), 'female', 'Candidat Trois', 'prequalification', 'a_completer', 'en_cours', false, 'lien_public'),
+       (pg_temp.id('kr'), 'enseignant', pg_temp.id('cr'), 'male', 'Candidat Refuse', 'prequalification', 'en_examen', 'refusee', false, 'lien_public'),
+       (pg_temp.id('kw'), 'enseignant', pg_temp.id('cw'), 'female', 'Candidat Retire', 'prequalification', 'a_completer', 'retiree', false, 'lien_public'),
+       (pg_temp.id('kc'), 'enseignant', pg_temp.id('cc'), 'female', 'Candidat Confirme', 'confirmee', NULL, 'en_cours', false, 'lien_public'),
+       (pg_temp.id('kp'), 'enseignant', pg_temp.id('cp'), 'male', 'Candidat Provisoire', 'confirmee', NULL, 'en_cours', false, 'lien_public');
 
 SELECT pg_temp.vrai(
   EXISTS (SELECT 1 FROM public.contract_texts WHERE contract_kind = 'teacher_nda' AND locale = 'fr' AND is_current)
@@ -97,7 +113,7 @@ DO $signer$
 DECLARE
   x text;
 BEGIN
-  FOREACH x IN ARRAY ARRAY['c1', 'c3', 'ens', 'sus', 'exp'] LOOP
+  FOREACH x IN ARRAY ARRAY['c1', 'c3', 'ens', 'sus', 'exp', 'cr', 'cw', 'cn', 'cc', 'cp'] LOOP
     PERFORM pg_temp.qui(pg_temp.id(x), 'teacher');
     SET LOCAL ROLE authenticated;
     INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
@@ -110,17 +126,18 @@ END
 $signer$;
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 SELECT pg_temp.id(x), 'teacher_religious_framework', public.cadre_religieux_version_requise()
-  FROM unnest(ARRAY['c1', 'c3']) AS x;
+  FROM unnest(ARRAY['c1', 'c3', 'cr', 'cw', 'cn', 'cp']) AS x;
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 SELECT pg_temp.id(x), 'teacher_conduct_code', public.code_conduite_version_requise()
-  FROM unnest(ARRAY['c3', 'ens', 'sus', 'exp']) AS x;
+  FROM unnest(ARRAY['c3', 'ens', 'sus', 'exp', 'cr', 'cw', 'cn', 'cc']) AS x;
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 SELECT pg_temp.id(x), 'recording_and_control_notice', r.version
-  FROM public.contract_required_versions r, unnest(ARRAY['ens', 'sus', 'exp']) AS x
+  FROM public.contract_required_versions r, unnest(ARRAY['ens', 'sus', 'exp', 'cp']) AS x
  WHERE r.contract_kind = 'recording_and_control_notice';
 -- Puis les statuts : actif, desactive, actif a l'acces expire.
 UPDATE public.profiles SET account_status = 'active' WHERE id = pg_temp.id('ens');
 UPDATE public.profiles SET account_status = 'disabled' WHERE id = pg_temp.id('sus');
+UPDATE public.profiles SET account_status = 'provisional_active' WHERE id = pg_temp.id('cp');
 UPDATE public.profiles SET account_status = 'active', access_until = pg_catalog.now() - interval '1 day'
  WHERE id = pg_temp.id('exp');
 
@@ -200,14 +217,14 @@ RESET ROLE;
 -- 4. Candidat sans accord ------------------------------------------------------------------------------------------------------
 SELECT pg_temp.qui(pg_temp.id('c0'), 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'accords', ARRAY['contrat', 'conduite', 'cadre']),
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'accords', ARRAY['contrat', 'conduite', 'cadre'], true),
   'candidat sans accord : refus accords, manques contrat, conduite, cadre');
 RESET ROLE;
 
 -- 5. Candidat a qui manque le code de conduite -----------------------------------------------------------------------------------
 SELECT pg_temp.qui(pg_temp.id('c1'), 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('ar'), 'accords', ARRAY['conduite']),
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('ar'), 'accords', ARRAY['conduite'], true),
   'candidat sans code de conduite : manques = conduite');
 RESET ROLE;
 
@@ -221,7 +238,7 @@ RESET ROLE;
 UPDATE public.contract_required_versions SET version = 'lettre-cadre-neuf'
  WHERE contract_kind = 'teacher_religious_framework';
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'accords', ARRAY['cadre']),
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'accords', ARRAY['cadre'], true),
   'cadre neuf publie : le candidat aux anciens accords voit manques = cadre');
 RESET ROLE;
 
@@ -242,6 +259,40 @@ RESET ROLE;
 SELECT pg_temp.qui(pg_temp.id('inconnu'), 'teacher');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'compte', NULL), 'sans profil : refus compte');
+RESET ROLE;
+
+-- S1. Candidature refusee, retiree, absente : aucun texte, meme aux trois accords signes.
+SELECT pg_temp.qui(pg_temp.id('cr'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'compte', NULL),
+  'candidat refuse aux trois accords : refus compte');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.id('cw'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'compte', NULL),
+  'candidat retire aux trois accords : refus compte');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.id('cn'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'compte', NULL),
+  'compte en attente sans candidature : refus compte');
+RESET ROLE;
+
+-- S2. Ce qui manque ne peut pas etre accepte par le compte : acceptable = faux.
+SELECT pg_temp.qui(pg_temp.id('cc'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'accords', ARRAY['cadre'], false)
+  AND NOT public.cadre_religieux_acceptable(public.cadre_religieux_version_requise()),
+  'candidat a l''etape confirmee sans le cadre : manques = cadre, acceptable faux');
+RESET ROLE;
+-- Le cadre neuf publie plus haut est accepte : seul le code de conduite manque, que la politique accepterait d'un compte
+-- provisional_active ; l'indicateur est faux parce que les pages des accords ne s'ouvrent qu'en attente.
+INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
+VALUES (pg_temp.id('cp'), 'teacher_religious_framework', 'lettre-cadre-neuf');
+SELECT pg_temp.qui(pg_temp.id('cp'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.refus(public.lire_lettre_candidats('fr'), 'accords', ARRAY['conduite'], false),
+  'compte provisional_active sans le code de conduite : acceptable faux (les pages des accords sont fermees)');
 RESET ROLE;
 
 -- 10. Droits -------------------------------------------------------------------------------------------------------------------

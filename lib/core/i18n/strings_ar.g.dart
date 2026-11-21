@@ -11166,11 +11166,14 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	@override String get entree => 'افتح دليل المعلّم';
 	@override String get entreeLegende => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا';
 	@override String get verrouTitre => 'يُفتح هذا الدليل بعد قبول اتفاقياتك';
-	@override String get verrouIntro => 'لقراءتها، بقي عليك قبول:';
+	@override String get verrouIntro => 'لقراءته، بقي عليك قبول:';
 	@override String get manqueContrat => 'عقد المعلّم';
 	@override String get manqueConduite => 'ميثاق السلوك';
 	@override String get manqueCadre => 'الالتزام الديني';
 	@override String get completer => 'قبول اتفاقياتي';
+	@override String get directionOuvre => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.';
+	@override String get ecrireDirection => 'اكتب إلى الإدارة';
+	@override String get indisponible => 'الدليل غير متاح بعد.';
 	@override String get nonCharge => 'تعذّر فتح الدليل.';
 	@override String get reservee => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.';
 	@override String get nom => 'دليل المعلّم';
@@ -41551,11 +41554,14 @@ extension on TraductionsAr {
 			'recrutement.lettre.entree' => 'افتح دليل المعلّم',
 			'recrutement.lettre.entreeLegende' => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا',
 			'recrutement.lettre.verrouTitre' => 'يُفتح هذا الدليل بعد قبول اتفاقياتك',
-			'recrutement.lettre.verrouIntro' => 'لقراءتها، بقي عليك قبول:',
+			'recrutement.lettre.verrouIntro' => 'لقراءته، بقي عليك قبول:',
 			'recrutement.lettre.manqueContrat' => 'عقد المعلّم',
 			'recrutement.lettre.manqueConduite' => 'ميثاق السلوك',
 			'recrutement.lettre.manqueCadre' => 'الالتزام الديني',
 			'recrutement.lettre.completer' => 'قبول اتفاقياتي',
+			'recrutement.lettre.directionOuvre' => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.',
+			'recrutement.lettre.ecrireDirection' => 'اكتب إلى الإدارة',
+			'recrutement.lettre.indisponible' => 'الدليل غير متاح بعد.',
 			'recrutement.lettre.nonCharge' => 'تعذّر فتح الدليل.',
 			'recrutement.lettre.reservee' => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.',
 			'recrutement.lettre.nom' => 'دليل المعلّم',
@@ -41996,11 +42002,11 @@ extension on TraductionsAr {
 			'recrutement.accueil.messages.annonces.lire' => ({required Object titre}) => 'قراءة الإعلان: ⁨${titre}⁩',
 			'recrutement.accueil.messages.annonces.vide' => 'لا إعلان الآن. ستظهر إعلانات الإدارة هنا.',
 			'recrutement.accueil.messages.savoir.intro' => 'أجوبة عن أسئلة المترشحين، حين تنشرها الإدارة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.accueil.academie.titre' => 'الأكاديمية',
 			'recrutement.accueil.academie.annoncesVide' => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.',
 			'recrutement.accueil.academie.savoirTitre' => 'ما ينبغي معرفته',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.accueil.academie.cours' => 'سير الدروس',
 			'recrutement.accueil.academie.entretiens' => 'تنظيم المقابلات',
 			'recrutement.accueil.academie.bientot' => 'سيظهر هنا حين تنشره الإدارة.',
@@ -42510,11 +42516,11 @@ extension on TraductionsAr {
 			'recrutement.talents.c.montage_video.libelle' => 'مونتاج الفيديو والتحريك',
 			'recrutement.talents.c.montage_video.description' => 'مونتاج مقاطع فيديو قصيرة وتحريكها.',
 			'recrutement.talents.c.montage_video.exemple' => 'قصّ فيديو، إضافة ترجمة نصية، تحريك عنوان',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.photographie.libelle' => 'التصوير',
 			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
 			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.redaction_contenus.libelle' => 'كتابة المحتوى وصناعته',
 			'recrutement.talents.c.redaction_contenus.description' => 'كتابة نصوص سليمة وممتعة للقراءة.',
 			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
@@ -43024,11 +43030,11 @@ extension on TraductionsAr {
 			'avis.admin.refuser.rester' => 'عدم تغيير شيء',
 			'avis.admin.retirer.titre' => ({required Object deNom}) => 'سحب رأي ⁨${deNom}⁩',
 			'avis.admin.retirer.intro' => 'اختر سبب السحب.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retirer.consequence' => 'سيختفي الرأي من الموقع عند التحديث التالي للموقع. يُحفظ السبب.',
 			'avis.admin.retirer.action' => 'سحب الرأي',
 			'avis.admin.retirer.rester' => 'عدم تغيير شيء',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.motifs.insulte' => 'إهانة',
 			'avis.admin.motifs.tiers' => 'بيانات شخصية لطرف ثالث',
 			'avis.admin.motifs.publicite' => 'إعلان',
@@ -43538,11 +43544,11 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'الملف أكبر من 5 ميغابايت',
 			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'تنسيقه ليس تنسيق ملف CSV مُصدَّر',
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'محتواه ليس محتوى ملف CSV مُصدَّر',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'صدّروا الجدول من جديد بصيغة CSV من جداول بيانات Google ثم اختاروا الملف.',
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'يُقرأ حاليًا في العمود ⁨${n}⁩. اختياره هنا يزيله من ذلك العمود.',
 			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'العمود ⁨${n}⁩: ⁨${titre}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.question' => 'هل يحتوي كل عمود فعلًا على ما تظنه رواية؟',
 			'candidatsFlux.importFormulaires.colonnes.explication' => 'تتعرّف رواية على كل عمود من عنوانه. المسوا عمودًا لتغيير ما يحتويه.',
 			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'العمود ⁨${n}⁩، بلا عنوان',
@@ -44052,11 +44058,11 @@ extension on TraductionsAr {
 			'suiviAttente.enseignant.titre' => 'معلمك',
 			'suiviAttente.enseignant.titreSimple' => 'معلمك',
 			'suiviAttente.enseignant.sayyid' => 'سيّد',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.enseignant.sayyida' => 'سيّدة',
 			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '⁨${prenom}⁩',
 			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom}) => '⁨${titre}⁩ ⁨${prenom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.enseignant.langue' => 'لغة الدرس',
 			'suiviAttente.enseignant.origine' => 'بلد الأصل',
 			'suiviAttente.enseignant.residence' => 'بلد الإقامة',
