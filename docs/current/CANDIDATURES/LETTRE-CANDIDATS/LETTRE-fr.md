@@ -291,9 +291,7 @@ Nous avons donc créé **Praxis**, un assistant d'intelligence artificielle. Ce 
 - **Qui le dirige** : la direction. Il n'agit que si elle lui confie une mission.
 
 
-Où en est-il aujourd'hui ? Nous avons commencé à le tester. Il a fait quelques erreurs, alors nous l'avons mis en pause. Nous étudions ses réponses pour le régler, puis nous le relancerons. Certains d'entre vous ont peut-être déjà reçu un message de lui.
-
-Quand il sera de retour, si sa réponse ne vous suffit pas, dites-le dans votre message : un membre de l'équipe prendra la suite.
+Si sa réponse ne vous suffit pas, dites-le dans votre message : un membre de l'équipe prendra la suite.
 
 ## 12. Si cela ne vous convient pas
 

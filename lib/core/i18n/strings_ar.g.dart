@@ -22337,7 +22337,7 @@ class _Traductions$recrutement$lettre$praxis$ar extends Traductions$recrutement$
 	@override String get retard => 'احفظ ثلاثة أرقام: 3 و8 و11 دقيقة.';
 	@override String get attente => 'قد يطول الانتظار، فلا تترك أعمالك، وتابع رسائلك.';
 	@override String get piece => 'هذا لحماية الأطفال، وفيه حماية لك أنت أيضًا.';
-	@override String get moi => 'هذا أنا! أنا متوقف الآن، والفريق يضبطني قبل أن أعود.';
+	@override String get moi => 'هذا أنا! أجيب عن الأسئلة المتكررة، والقرار للفريق.';
 	@override String get fin => 'أيًّا كان قرارك، جزاك الله خيرًا على قراءتك إلى النهاية.';
 }
 
@@ -41831,7 +41831,7 @@ extension on TraductionsAr {
 			'recrutement.lettre.praxis.retard' => 'احفظ ثلاثة أرقام: 3 و8 و11 دقيقة.',
 			'recrutement.lettre.praxis.attente' => 'قد يطول الانتظار، فلا تترك أعمالك، وتابع رسائلك.',
 			'recrutement.lettre.praxis.piece' => 'هذا لحماية الأطفال، وفيه حماية لك أنت أيضًا.',
-			'recrutement.lettre.praxis.moi' => 'هذا أنا! أنا متوقف الآن، والفريق يضبطني قبل أن أعود.',
+			'recrutement.lettre.praxis.moi' => 'هذا أنا! أجيب عن الأسئلة المتكررة، والقرار للفريق.',
 			'recrutement.lettre.praxis.fin' => 'أيًّا كان قرارك، جزاك الله خيرًا على قراءتك إلى النهاية.',
 			'recrutement.majeur.titre' => 'قبل أن نبدأ',
 			'recrutement.majeur.explication' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر.',

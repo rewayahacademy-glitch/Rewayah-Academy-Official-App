@@ -14321,7 +14321,7 @@ class _Traductions$recrutement$lettre$praxis$en extends Traductions$recrutement$
 	@override String get retard => 'Remember three numbers: 3, 8 and 11 minutes.';
 	@override String get attente => 'The wait can be long. Keep your activities, and watch your messages.';
 	@override String get piece => 'This protects the children. And it protects you too.';
-	@override String get moi => 'That\'s me! I am paused for now: the team is adjusting me before I come back.';
+	@override String get moi => 'That\'s me! I answer the common questions; the team decides.';
 	@override String get fin => 'Whatever you decide, thank you for reading to the end.';
 }
 
@@ -31546,7 +31546,7 @@ extension on TraductionsEn {
 			'recrutement.lettre.praxis.retard' => 'Remember three numbers: 3, 8 and 11 minutes.',
 			'recrutement.lettre.praxis.attente' => 'The wait can be long. Keep your activities, and watch your messages.',
 			'recrutement.lettre.praxis.piece' => 'This protects the children. And it protects you too.',
-			'recrutement.lettre.praxis.moi' => 'That\'s me! I am paused for now: the team is adjusting me before I come back.',
+			'recrutement.lettre.praxis.moi' => 'That\'s me! I answer the common questions; the team decides.',
 			'recrutement.lettre.praxis.fin' => 'Whatever you decide, thank you for reading to the end.',
 			'recrutement.majeur.titre' => 'Before you start',
 			'recrutement.majeur.explication' => 'Recruitment of teachers is reserved for people aged 18 and over.',

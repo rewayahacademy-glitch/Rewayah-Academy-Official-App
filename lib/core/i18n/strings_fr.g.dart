@@ -29519,8 +29519,8 @@ class Traductions$recrutement$lettre$praxis$fr {
 	/// fr: 'C'est pour protéger les enfants. Et c'est vous aussi qu'on protège.'
 	String get piece => 'C\'est pour protéger les enfants. Et c\'est vous aussi qu\'on protège.';
 
-	/// fr: 'C'est moi ! Je suis en pause pour l'instant : on me règle avant de me relancer.'
-	String get moi => 'C\'est moi ! Je suis en pause pour l\'instant : on me règle avant de me relancer.';
+	/// fr: 'C'est moi ! Je réponds aux questions qui reviennent ; l'équipe décide.'
+	String get moi => 'C\'est moi ! Je réponds aux questions qui reviennent ; l\'équipe décide.';
 
 	/// fr: 'Quelle que soit votre réponse, merci d'avoir lu jusqu'au bout.'
 	String get fin => 'Quelle que soit votre réponse, merci d\'avoir lu jusqu\'au bout.';
@@ -60282,7 +60282,7 @@ extension on Traductions {
 			'recrutement.lettre.praxis.retard' => 'Retenez trois chiffres : 3, 8 et 11 minutes.',
 			'recrutement.lettre.praxis.attente' => 'L\'attente peut durer. Gardez vos activités, et surveillez vos messages.',
 			'recrutement.lettre.praxis.piece' => 'C\'est pour protéger les enfants. Et c\'est vous aussi qu\'on protège.',
-			'recrutement.lettre.praxis.moi' => 'C\'est moi ! Je suis en pause pour l\'instant : on me règle avant de me relancer.',
+			'recrutement.lettre.praxis.moi' => 'C\'est moi ! Je réponds aux questions qui reviennent ; l\'équipe décide.',
 			'recrutement.lettre.praxis.fin' => 'Quelle que soit votre réponse, merci d\'avoir lu jusqu\'au bout.',
 			'recrutement.majeur.titre' => 'Avant de commencer',
 			'recrutement.majeur.explication' => 'Le recrutement des enseignants est réservé aux personnes de 18 ans et plus.',

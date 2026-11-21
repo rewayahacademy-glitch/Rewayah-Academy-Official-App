@@ -287,9 +287,7 @@ So we created **Praxis**, an artificial intelligence assistant. Praxis is not a 
 - **Who directs Praxis**: the management. Praxis only acts on a task the management gives.
 
 
-Where are we today? We started testing Praxis. It made some mistakes, so we paused it. We are studying its answers to adjust it, then we will start it again. Some of you may already have received a message from it.
-
-When it is back, if its answer is not enough for you, say so in your message: a member of the team will take over.
+If its answer is not enough for you, say so in your message: a member of the team will take over.
 
 ## 12. If this is not for you
 
