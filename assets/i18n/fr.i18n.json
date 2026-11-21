@@ -8334,6 +8334,21 @@
       "erreur": "Les incidents n'ont pas pu être lus\u00a0: il est possible que la lecture ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "indisponiblePhrase": "Les incidents s'afficheront ici dès le branchement serveur. D'ici là, rien n'est affiché\u00a0: aucun incident n'est inventé."
     },
+    "guideCommentaires": {
+      "lien": "Commentaires du guide",
+      "titre": "Commentaires du guide",
+      "intro": "Les questions des lecteurs du guide de l'enseignant, partie par partie. Les parties les moins claires viennent en premier. Chaque lecteur ne voit que son fil.",
+      "totaux": "{jaime} J'aime · {pasClair} Pas clair",
+      "aucun": "Aucun commentaire sur cette partie.",
+      "attend": "Attend une réponse",
+      "direction": "Direction",
+      "praxis": "Praxis",
+      "champ": "Votre réponse à {nom}",
+      "repondre": "Répondre",
+      "echec": "La réponse n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Touchez de nouveau « Répondre ».",
+      "erreur": "Les commentaires du guide n'ont pas pu être lus. Touchez « Réessayer ».",
+      "indisponible": "Les commentaires du guide ne sont pas encore disponibles."
+    },
     "chiffres": {
       "recalcul": "Dernier recalcul à {heure}",
       "reserve": "Cette page est réservée à la direction.",

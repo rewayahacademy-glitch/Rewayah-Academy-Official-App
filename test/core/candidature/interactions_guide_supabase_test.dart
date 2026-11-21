@@ -6,7 +6,7 @@
 // - la lecture rend les totaux, l'avis du lecteur et `commentairesOuverts`
 //   faux quand le serveur le dit ;
 // - 42501 devient `PermissionInsuffisante`, une fonction absente du serveur
-//   `CapaciteIndisponible` ; `commenter` reste indisponible.
+//   `CapaciteIndisponible` ; `commenter` envoie la partie et le texte.
 
 import 'dart:convert';
 
@@ -140,13 +140,28 @@ void main() {
     );
   });
 
-  test('commenter reste indisponible', () async {
-    await expectLater(
-      _port(
-        (_) => http.Response('{}', 200),
-        <_Appel>[],
-      ).commenter(partie: 'p1', corps: 'Question'),
-      throwsA(isA<CapaciteIndisponible>()),
-    );
+  test('commenter : la partie et le texte ; le commentaire cree', () async {
+    final List<_Appel> appels = <_Appel>[];
+    final CommentaireGuide c = await _port(
+      (_) => http.Response(
+        jsonEncode(<String, dynamic>{
+          'id': 'c1',
+          'partie': 'p4',
+          'corps': 'Question',
+          'cree_le': '2026-11-21T12:00:00Z',
+          'auteur': 'moi',
+          'parent_id': null,
+        }),
+        200,
+        headers: _json,
+      ),
+      appels,
+    ).commenter(partie: 'p4', corps: 'Question');
+    expect(appels.single.fonction, fonctionCommenter);
+    expect(appels.single.corps, <String, dynamic>{
+      'p_partie': 'p4',
+      'p_corps': 'Question',
+    });
+    expect(c.auteur, AuteurCommentaire.moi);
   });
 }
