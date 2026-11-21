@@ -394,8 +394,10 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
       // AD-X : la sous-navigation Operations, Espace de traitement et
       // Classes (`ongletsOperations()`), qui tient lieu de titre (§5 ter.2).
       entete: SousNavigationDomaine(
-        onglets: ongletsOperations(),
-        indexActif: 1,
+        onglets: pagesOperations(),
+        indexActif: pagesOperations().indexWhere(
+          (SousLien o) => o.chemin == Routes.adminOperationsGroupes,
+        ),
       ),
       // LISTES-2 et LISTES-3 : la tete defile avec la liste, qui prend toute
       // la largeur au bureau, sans retour (la barre laterale navigue).

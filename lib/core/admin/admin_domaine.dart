@@ -272,6 +272,16 @@ List<({String libelle, String chemin})> ongletsOperations() =>
       (libelle: t.admin.groupes.titre, chemin: Routes.adminOperationsGroupes),
     ];
 
+/// Toutes les pages d'Operations, celles du panneau de la direction
+/// (`sousLiensAdmin`), pour le selecteur de pages des ecrans d'Operations.
+///
+/// CHIFFRES-ACADEMIE (directeur, 21/11/2026, telephone en portrait) : le
+/// panneau ne s'affiche pas sur un ecran etroit, et le selecteur ne montrait
+/// que Traitement et Classes ; les huit autres pages, dont « Les chiffres de
+/// l'academie », n'etaient atteignables qu'en paysage.
+List<SousLien> pagesOperations() =>
+    sousLiensAdmin()[AdminDomaine.operations] ?? ongletsOperations();
+
 /// Les deux fonctions pairs du domaine Personnes : Dossiers a valider
 /// (`ADM-02`) et Comptes (`ADM-08`), modification UX n°1. Consommee par
 /// `SousNavigationDomaine` dans l'en-tete des deux ecrans.

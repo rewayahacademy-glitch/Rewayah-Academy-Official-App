@@ -5648,6 +5648,8 @@
     },
     "traitement": {
       "titre": "Processing space",
+      "urgences": "Only what is urgent here: requests from families and the {n} documents waiting the longest.",
+      "toutesLesPieces": "All {n} documents to check, in People",
       "filtreTous": "All",
       "filtreDossiers": "Files",
       "filtreDemandes": "Requests",
