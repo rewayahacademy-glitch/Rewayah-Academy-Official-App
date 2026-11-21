@@ -145,6 +145,7 @@ import 'core/communications/libelles_communication_slang.dart';
 import 'core/communications/ma_candidature_fil.dart';
 import 'core/communications/veille_messages.dart';
 import 'core/communications/veille_messages_supabase.dart';
+import 'core/communications/visibilite_onglet.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
@@ -364,6 +365,9 @@ List<Override> _surchargesAppReelle() => <Override>[
   portVeilleMessagesProvider.overrideWithValue(
     VeilleMessagesSupabase(Supabase.instance.client),
   ),
+  // PERSONNES-PERF (20/11/2026) : onglet cache, la veille des messages espace
+  // ses relectures de repli ; au retour, elle relit tout de suite.
+  portVisibiliteProvider.overrideWithValue(const VisibiliteFlutter()),
   surchargeRevueDossiersProduction,
   // Direction : chaque port d'administration lit et ecrit par les RPC de
   // STAGING, avec le jeton de la session (le serveur reste la barriere).

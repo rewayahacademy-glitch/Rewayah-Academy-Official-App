@@ -1,0 +1,21 @@
+PERSONNES-PERF, veille des messages (PR #673), journal de preuve, 21/11/2026.
+Ce n'est PAS une preuve dans un navigateur ni en production.
+
+Captures (messagerie-temps-reel/) : le test de captures existant de la messagerie
+(test/capture/messagerie_temps_reel_capture_test.dart), rejoue sur cette branche : fil ouvert,
+avis « nouveau message », acces aux Messages de la direction avec son nombre (lu desormais par
+lireNonLus), candidat hors direct ; fr, ar, en ; 390 et 1440. Ce que voit la personne ne change pas.
+
+Lectures demandees au port des messages en une heure (minuteur simule,
+test/core/communications/veille_appels_par_heure_test.dart ; coquille et liste des candidatures
+a l'ecran ; « avant » = la meme sonde sur le code de main) :
+
+  Cas                                        Avant              Apres
+  Canal temps reel tombe, onglet vu          242 completes      0 complete, 240 legeres
+  Canal temps reel tombe, onglet cache       242 completes      0 complete, 24 legeres
+  Canal qui se rejoint toutes les 40 s       360 completes      au plus 122 legeres
+  Canal en direct, aucun message             0                  0
+
+« Complete » = com_lister_fils (toute la messagerie) ; « legere » = com_non_lus_par_objet.
+Production du 20/11 (journaux) : un compte de la direction, une session, 90 com_lister_fils par
+heure de 05 h a 10 h UTC sans aucun geste ; 431 reponses en echec a 8 s dans la journee.

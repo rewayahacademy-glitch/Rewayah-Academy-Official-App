@@ -698,7 +698,14 @@ declare
     -- {"note": false} sans rien ecrire. Ce qu'elle peut ecrire : UNE ligne de
     -- journal_sorties_app, heures du serveur, 200 au plus par seance et par
     -- eleve, une par seconde au plus. Relue par l'agent du lot le 13/11/2026.
-    'noter_sortie_app(uuid,integer,boolean,uuid)'
+    'noter_sortie_app(uuid,integer,boolean,uuid)',
+    -- PERSONNES-LECTURES (20261130969000, 21/11/2026) : les lignes de
+    -- dossiers_en_attente() (deja listee : sa garde admin + compte valide, sa
+    -- portee, sa ligne de journal d'acces log_sensitive_access, la seule
+    -- ecriture), plus la reference de la candidature enseignante du compte.
+    -- Volatile parce qu'elle appelle dossiers_en_attente, qui ecrit ce journal ;
+    -- n'ecrit rien d'autre. Relue par l'agent du lot le 21/11/2026.
+    'dossiers_en_attente_references()'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
