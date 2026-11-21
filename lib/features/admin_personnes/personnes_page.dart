@@ -67,6 +67,8 @@ import '../com_messages/apercu_profil_candidat.dart'
     show apercuCandidatureProvider;
 import '../foyer/photo_eleve.dart';
 import 'apercu_candidat.dart';
+import 'barre_filtres_personnes.dart';
+import 'filtres_personnes.dart';
 
 /// Les onglets de la page, un par population.
 enum OngletPersonnes {
@@ -112,6 +114,12 @@ const double echelleMaxCoteACote = 1.3;
 
 /// La part de la liste dans la disposition cote a cote.
 const double _partListe = 0.4;
+
+/// La derniere page d'enseignants affichee : pendant qu'un filtre ou une
+/// recherche se relit au serveur, elle reste a l'ecran (la liste ne saute
+/// pas, le champ de recherche garde sa saisie et son focus). Ce n'est qu'un
+/// confort d'affichage : la liste lue la remplace des qu'elle arrive.
+PageEnseignants? _dernierePageEnseignants;
 
 /// Une ligne de la page : une personne, quel que soit l'onglet.
 @immutable
@@ -210,15 +218,28 @@ class PersonnesPage extends ConsumerWidget {
     OngletPersonnes? onglet,
     String? element,
     int? page,
+    Map<String, String>? filtres,
+    String? recherche,
     bool sansHistorique = false,
   }) {
     final OngletPersonnes o = onglet ?? _onglet;
-    final int p = onglet == null ? (page ?? _page) : 1;
+    // Changer d'onglet, de filtre ou de recherche revient a la premiere page.
+    final bool neuf = onglet != null || filtres != null || recherche != null;
+    final int p = neuf ? 1 : (page ?? _page);
+    // Un autre onglet oublie filtres et recherche : ils ne sont pas les siens.
+    final Map<String, String> f = onglet != null
+        ? const <String, String>{}
+        : filtres ?? filtresDeLAdresse(o, requete);
+    final String q = onglet != null
+        ? ''
+        : recherche ?? rechercheDeLAdresse(requete);
     final String adresse = Uri(
       path: Routes.adminPersonnes,
       queryParameters: <String, String>{
         'onglet': o.cle,
         if (p > 1) 'page': '$p',
+        if (q.isNotEmpty) cleRecherchePersonnes: q,
+        ...f,
         'element': ?element,
       },
     ).toString();
@@ -249,10 +270,36 @@ class PersonnesPage extends ConsumerWidget {
     final p = t.admin.personnesPage;
     final OngletPersonnes onglet = _onglet;
     final AsyncValue<List<CompteAdmin>> comptes = ref.watch(comptesProvider);
-    final RequeteEnseignants requeteEns = RequeteEnseignants(page: _page);
+    final Map<String, String> filtres = filtresDeLAdresse(onglet, requete);
+    final String recherche = rechercheDeLAdresse(requete);
+    final bool filtre = filtres.isNotEmpty || recherche.isNotEmpty;
+    // Les enseignants sont filtres par le serveur ; le nombre de l'onglet
+    // reste celui de la liste entiere (lecture sans filtre, gardee en cache).
+    final bool ens = onglet == OngletPersonnes.enseignants;
+    final RequeteEnseignants requeteEns = RequeteEnseignants(
+      filtre: ens
+          ? filtreEnseignantsDe(filtres, recherche)
+          : const FiltreEnseignants(),
+      page: ens ? _page : 1,
+    );
     final AsyncValue<PageEnseignants> enseignants = ref.watch(
       pageEnseignantsProvider(requeteEns),
     );
+    if (enseignants.hasValue && !enseignants.isLoading) {
+      _dernierePageEnseignants = enseignants.requireValue;
+    }
+    // Relecture apres un filtre : la page precedente reste affichee.
+    final PageEnseignants? precedente = _dernierePageEnseignants;
+    final AsyncValue<PageEnseignants> enseignantsAffiches =
+        enseignants.isLoading && !enseignants.hasError && precedente != null
+        ? AsyncData<PageEnseignants>(precedente)
+        : enseignants;
+    final int? totalEnseignants = ens && filtre
+        ? ref
+              .watch(pageEnseignantsProvider(const RequeteEnseignants()))
+              .value
+              ?.total
+        : enseignants.value?.total;
     // Texte agrandi au-dela de 130 % : une seule colonne qui defile en
     // entier (les onglets agrandis ne tiennent plus au-dessus de deux cadres ;
     // garde de reflow AD-11).
@@ -261,7 +308,7 @@ class PersonnesPage extends ConsumerWidget {
         MediaQuery.textScalerOf(context).scale(1) <= echelleMaxCoteACote;
 
     int? nombre(OngletPersonnes o) => switch (o.vue) {
-      null => enseignants.value?.total,
+      null => totalEnseignants,
       final VueComptes vue =>
         comptes.value
             ?.where((CompteAdmin c) => VueComptes.de(c).contains(vue))
@@ -324,9 +371,68 @@ class PersonnesPage extends ConsumerWidget {
             ],
           );
 
+    // Les comptes de l'onglet, puis ceux qui passent le filtre.
+    final VueComptes? vue = onglet.vue;
+    final List<CompteAdmin>? deLaVue = vue == null
+        ? null
+        : comptes.value
+              ?.where((CompteAdmin c) => VueComptes.de(c).contains(vue))
+              .toList(growable: false);
+    final List<CompteAdmin>? gardes = deLaVue == null
+        ? null
+        : filtrerComptes(
+            deLaVue,
+            filtres: filtres,
+            recherche: recherche,
+            maintenant: DateTime.now(),
+          );
+    final Widget barre = BarreFiltresPersonnes(
+      types: typesDeFiltre(onglet),
+      filtres: filtres,
+      recherche: recherche,
+      affiches: vue == null
+          ? (enseignants.isLoading ? null : enseignants.value?.total)
+          : gardes?.length,
+      total: vue == null ? totalEnseignants : deLaVue?.length,
+      onFiltre: (String type, String? valeur) => _aller(
+        context,
+        filtres: <String, String>{
+          for (final MapEntry<String, String> e in filtres.entries)
+            if (e.key != type) e.key: e.value,
+          type: ?valeur,
+        },
+      ),
+      onRecherche: (String texte) {
+        if (texte != recherche) {
+          _aller(context, recherche: texte, sansHistorique: true);
+        }
+      },
+      onToutEffacer: () =>
+          _aller(context, filtres: const <String, String>{}, recherche: ''),
+    );
+    // Les onglets, puis la recherche et le filtre : toujours a la meme place,
+    // que la liste se lise, soit vide ou pleine.
+    final Widget entete = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        onglets,
+        Ecart.vMd,
+        if (coteACote)
+          // Au-dessus de la liste, a sa largeur.
+          FractionallySizedBox(
+            alignment: AlignmentDirectional.centerStart,
+            widthFactor: _partListe,
+            child: barre,
+          )
+        else
+          barre,
+      ],
+    );
+
     // Autant de lignes que la hauteur en tient (comme Comptes) : a 320 x 256
     // (reflow a 400 %), huit lignes deborderaient.
-    final Widget squelette = LayoutBuilder(
+    final Widget lignesSquelette = LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) {
         final double pas =
             AppMetriques.of(contexte).cibleTactile + AppSpacing.sm;
@@ -337,10 +443,17 @@ class PersonnesPage extends ConsumerWidget {
         );
       },
     );
-    final VueComptes? vue = onglet.vue;
+    // Pendant la lecture, l'en-tete reste : seule la liste est un squelette.
+    final Widget squelette = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        entete,
+        Expanded(child: lignesSquelette),
+      ],
+    );
     final Widget corps = vue == null
         ? BlocAsynchrone<PageEnseignants>(
-            valeur: enseignants,
+            valeur: enseignantsAffiches,
             squelette: squelette,
             titreEchec: t.admin.listeEnseignants.lectureEchec,
             onReessayer: () =>
@@ -348,12 +461,12 @@ class PersonnesPage extends ConsumerWidget {
             construire: (PageEnseignants page) => _contenu(
               context,
               ref,
-              onglets: onglets,
+              onglets: entete,
               coteACote: coteACote,
               lignes: <LignePersonne>[
                 for (final LigneEnseignant l in page.lignes) _deEnseignant(l),
               ],
-              vide: t.admin.comptes.videEnseignants,
+              vide: filtre ? p.aucunResultat : t.admin.comptes.videEnseignants,
               relire: () => ref.invalidate(pageEnseignantsProvider(requeteEns)),
               decalage: (page.page - 1) * page.taillePage,
               total: page.total,
@@ -382,19 +495,20 @@ class PersonnesPage extends ConsumerWidget {
             construire: (List<CompteAdmin> tous) => _contenu(
               context,
               ref,
-              onglets: onglets,
+              onglets: entete,
               coteACote: coteACote,
               lignes: <LignePersonne>[
-                for (final CompteAdmin c in tous)
-                  if (VueComptes.de(c).contains(vue)) _deCompte(c, vue),
+                for (final CompteAdmin c in gardes ?? tous) _deCompte(c, vue),
               ],
               relire: () => ref.invalidate(comptesProvider),
-              vide: switch (vue) {
-                VueComptes.eleves => t.admin.comptes.videEleves,
-                VueComptes.familles => t.admin.comptes.videFamilles,
-                VueComptes.enseignants => t.admin.comptes.videEnseignants,
-                VueComptes.direction => t.admin.comptes.videDirection,
-              },
+              vide: filtre
+                  ? p.aucunResultat
+                  : switch (vue) {
+                      VueComptes.eleves => t.admin.comptes.videEleves,
+                      VueComptes.familles => t.admin.comptes.videFamilles,
+                      VueComptes.enseignants => t.admin.comptes.videEnseignants,
+                      VueComptes.direction => t.admin.comptes.videDirection,
+                    },
             ),
           );
 
@@ -531,7 +645,7 @@ class PersonnesPage extends ConsumerWidget {
           ? SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[onglets, Ecart.vMd, liste],
+                children: <Widget>[onglets, liste],
               ),
             )
           : liste;
@@ -563,7 +677,6 @@ class PersonnesPage extends ConsumerWidget {
           children: <Widget>[
             // Les onglets sur toute la largeur : les quatre restent visibles.
             onglets,
-            Ecart.vMd,
             Expanded(
               child: LayoutBuilder(
                 builder: (BuildContext _, BoxConstraints c) => Row(
