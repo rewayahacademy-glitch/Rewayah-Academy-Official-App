@@ -5277,6 +5277,7 @@
   },
   "admin": {
     "personnesPage": {
+      "typeAcces": "الوصول",
       "vueCandidats": "المترشحون",
       "vueAccueil": "في الاستقبال",
       "vueActifs": "النشطون",

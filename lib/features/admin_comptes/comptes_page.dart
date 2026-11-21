@@ -6,14 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
-import '../../core/admin/personnes_modifiees.dart';
 import '../../core/admin/port_fondateurs.dart';
 import '../../core/admin/service_comptes.dart';
-import '../../core/admission/port_admissions_direction.dart'
-    show PopulationAdmission;
-import '../../core/capacites/capacite_indisponible.dart';
-import '../../core/capacites/permission_insuffisante.dart';
-import '../../core/capacites/port_retraits_comptes.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
@@ -21,8 +15,6 @@ import '../../core/i18n/pays_iso.dart' show nomDuPays;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/lieu/lieu_direction.dart';
-import '../../core/reseau/service_reseau.dart';
-import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -34,7 +26,6 @@ import '../../core/widgets/barre_selection.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_recherche.dart';
-import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -53,9 +44,9 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_candidature/references_dossiers.dart';
 import '../foyer/photo_eleve.dart';
-import '../mfa_controleur/double_verification.dart';
 import 'apercu_compte.dart';
 import 'changements_heure.dart';
+import 'gestes_compte.dart';
 import 'liste_comptes.dart';
 
 /// `ADM-08` : les comptes du produit.
@@ -123,10 +114,10 @@ class ComptesPage extends ConsumerStatefulWidget {
   );
 
   /// SUPPRIMER : ce que la derniere suppression a donne.
-  static const Key bilanKey = ValueKey<String>('comptes-bilan-suppression');
+  static const Key bilanKey = cleBilanSuppression;
 
   /// SUPPRIMER : « Fermer » sous le resultat.
-  static const Key fermerBilanKey = ValueKey<String>('comptes-bilan-fermer');
+  static const Key fermerBilanKey = cleFermerBilanSuppression;
 
   @override
   ConsumerState<ComptesPage> createState() => _ComptesPageEtat();
@@ -193,7 +184,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   bool _suppressionEnCours = false;
 
   /// Ce que la derniere suppression a donne, dit en tete de la liste.
-  _BilanSuppression? _bilan;
+  BilanSuppression? _bilan;
 
   /// V2-e : les fondateurs connus au dernier rendu, ou `null` tant que le
   /// serveur ne les a pas rendus (alors la coche n'est pas proposee).
@@ -781,7 +772,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       selection: lignesPage.any(_supprimableIci)
           ? SelectionCollection<CompteAdmin>(
               estCochee: (CompteAdmin c) => _choisis.containsKey(c.profilId),
-              estCochable: _supprimable,
+              estCochable: compteSupprimable,
               onBasculer: (CompteAdmin c) => setState(() {
                 _bilan = null;
                 if (_choisis.remove(c.profilId) == null) {
@@ -1357,7 +1348,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
 
   /// L2 des listes (constat du directeur, 01/11/2026) : une ligne « En
   /// attente » d'une demande d'admission porte l'action qui la debloque.
-  static bool _ouvreUneDemande(CompteAdmin c) => c.admissionATraiter;
+  static bool _ouvreUneDemande(CompteAdmin c) => ouvreUneDemande(c);
 
   /// Vrai quand la ligne a au moins une action.
   bool _aUneAction(CompteAdmin c) =>
@@ -1373,7 +1364,8 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// en interface standard. Recalcule a chaque rendu.
   bool _suppressionOfferte = true;
 
-  bool _supprimableIci(CompteAdmin c) => _suppressionOfferte && _supprimable(c);
+  bool _supprimableIci(CompteAdmin c) =>
+      _suppressionOfferte && compteSupprimable(c);
 
   /// Les comptes choisis sur la page affichee, compte au dernier rendu.
   int _choisisSurLaPage = 0;
@@ -1383,7 +1375,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   void _relacherAvecMessage() {
     if (_choisis.isEmpty) return;
     _choisis.clear();
-    _bilan = _BilanSuppression.message(
+    _bilan = BilanSuppression.message(
       t.admin.comptes.retrait.selectionRetiree,
       alerte: false,
     );
@@ -1428,7 +1420,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   Widget? _avisSuppression() {
     final r = t.admin.comptes.retrait;
     final int n = _choisis.length;
-    final _BilanSuppression? bilan = _bilan;
+    final BilanSuppression? bilan = _bilan;
     final bool tropGrand = n > _plafondSuppression;
     if (bilan == null && !tropGrand) return null;
     final AppPalette palette = AppPalette.of(context);
@@ -1438,7 +1430,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (bilan != null)
-          _VueBilan(
+          VueBilanSuppression(
             bilan: bilan,
             onFermer: () => setState(() => _bilan = null),
           ),
@@ -1454,137 +1446,43 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     );
   }
 
-  /// SUPPRIMER : un compte d'eleve, de tuteur ou d'enseignant se supprime ici.
-  /// Un compte de la direction, ou de role illisible, jamais (le serveur
-  /// refuse aussi : `compte_direction`).
-  static bool _supprimable(CompteAdmin c) => switch (c.role) {
-    AppRole.student || AppRole.guardian || AppRole.teacher => true,
-    AppRole.admin ||
-    AppRole.accountant ||
-    AppRole.associe ||
-    AppRole.controller ||
-    null => false,
-  };
-
-  /// Supprime [comptes] apres une confirmation qui dit leur nombre. Le
-  /// serveur rend un resultat par compte ; la liste est relue dans tous les
-  /// cas (une reponse perdue apres la suppression ne doit pas laisser une
-  /// ligne qui n'existe plus).
+  /// Supprime [comptes] apres une confirmation qui dit leur nombre
+  /// ([supprimerComptes], le meme geste que la page « Personnes »).
   Future<void> _supprimer(List<CompteAdmin> comptes) async {
     if (_suppressionEnCours || comptes.isEmpty) return;
-    final r = t.admin.comptes.retrait;
-    final bool un = comptes.length == 1;
-    final CompteAdmin premier = comptes.first;
-    final String? nomDuCompte = un ? premier.libelle : null;
-    final bool oui = await ConfirmDestructive.demander(
+    final BilanSuppression? bilan = await supprimerComptes(
       context,
-      question: nomDuCompte != null
-          ? r.questionUn(
-              deNom: deDevant(
-                nomDuCompte,
-                cle: 'admin.comptes.retrait.questionUn',
-              ),
-            )
-          : r.questionPlusieurs(n: comptes.length),
-      consequence: r.consequence,
-      libelleConfirmer: un
-          ? r.confirmerUn
-          : r.supprimerSelection(n: comptes.length),
-      libelleAnnuler: r.rester,
+      ref,
+      comptes,
+      onDebut: () => setState(() {
+        _suppressionEnCours = true;
+        _bilan = null;
+      }),
     );
-    if (!oui || !mounted) return;
-    if (ref.read(horsLigneProvider).value ?? false) {
-      setState(() => _bilan = _BilanSuppression.message(r.horsLigne));
-      return;
-    }
-    setState(() {
-      _suppressionEnCours = true;
-      _bilan = null;
-    });
-    _BilanSuppression bilan;
-    try {
-      // MFA-DIRECTION : en aal1, le code est demande puis le geste rejoue.
-      final List<String> ids = <String>[
-        for (final CompteAdmin c in comptes) c.profilId,
-      ];
-      final List<ResultatRetrait> resultats = await avecDoubleVerification(
-        context,
-        ref,
-        () => ref.read(portRetraitsComptesProvider).retirer(ids),
-      );
-      bilan = _BilanSuppression.depuis(resultats, comptes);
-    } on PermissionInsuffisante {
-      bilan = _BilanSuppression.message(r.refuse);
-    } on CapaciteIndisponible {
-      bilan = _BilanSuppression.message(r.indisponible);
-    } on Object {
-      bilan = _BilanSuppression.message(
-        (ref.read(horsLigneProvider).value ?? false) ? r.horsLigne : r.echec,
-      );
-    }
-    // D2 : toutes les listes de personnes sont relues, pas seulement
-    // celle-ci ; le signal part apres la reponse du serveur (geste sensible).
-    ref.read(personnesModifieesProvider.notifier).signaler();
-    if (!mounted) return;
+    if (bilan == null || !mounted) return;
     setState(() {
       _suppressionEnCours = false;
       _bilan = bilan;
-      _choisis.clear();
+      // Rien n'est parti (hors connexion avant l'envoi) : la selection reste.
+      if (!bilan.avantEnvoi) _choisis.clear();
     });
   }
 
-  /// V2-e (directeur, 03/11/2026) : la coche « fondateur », tenue par la
-  /// direction, sur un membre du personnel au compte actif, dans les vues
-  /// Direction et Enseignants. Proposee seulement quand le serveur a rendu
-  /// les fondateurs : sans eux, la ligne ne saurait pas quoi proposer.
+  /// La coche « fondateur » ([porteLaCocheFondateur]).
   bool _porteLaCoche(CompteAdmin c) =>
-      _fondateurs != null &&
-      (_vue == VueComptes.direction || _vue == VueComptes.enseignants) &&
-      c.etat == AccountStatus.active &&
-      (c.role == AppRole.admin ||
-          c.role == AppRole.teacher ||
-          c.role == AppRole.accountant ||
-          c.role == AppRole.controller);
+      porteLaCocheFondateur(c, _vue, _fondateurs);
 
   /// Coche ou decoche [c] ; le retour local apres la reponse du serveur
   /// seulement. Remis a nul d'abord : deux gestes de suite rejouent
   /// l'apparition.
   Future<void> _poserFondateur(CompteAdmin c, {required bool fondateur}) async {
-    final PortFondateurs? port = ref.read(portFondateursProvider);
-    if (port == null) return;
-    String message;
-    try {
-      await port.poser(c.profilId, fondateur: fondateur);
-      message = fondateur
-          ? t.admin.comptes.fondateurMarque(nom: c.libelle)
-          : t.admin.comptes.fondateurRetire(nom: c.libelle);
-      ref.invalidate(fondateursProvider);
-    } on FondateurRefuse catch (e) {
-      message = switch (e.motif) {
-        MotifFondateurRefuse.nonAutorise =>
-          t.admin.comptes.fondateurRefuseDirection,
-        MotifFondateurRefuse.personnelInactif =>
-          t.admin.comptes.fondateurRefuseInactif,
-        MotifFondateurRefuse.inconnu => t.admin.comptes.fondateurRefuseInconnu,
-      };
-    } on Object {
-      message = t.admin.comptes.fondateurRefuseInconnu;
-    }
-    if (!mounted) return;
+    final String? message = await poserFondateur(ref, c, fondateur: fondateur);
+    if (message == null || !mounted) return;
     setState(() => _retour = null);
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (mounted) setState(() => _retour = message);
     });
   }
-
-  /// La population de la demande d'un compte : un adulte qui apprend pour
-  /// lui-meme, sans enfant au foyer, est un eleve adulte ; sinon, une
-  /// famille. La page des demandes garde le nom cherche si l'on change de
-  /// population.
-  static PopulationAdmission _populationDe(CompteAdmin c) =>
-      c.role == AppRole.guardian && c.apprenant && c.enfantsDuFoyer == 0
-      ? PopulationAdmission.eleveAdulte
-      : PopulationAdmission.famille;
 
   /// PERSONNES-UNE-PAGE (a) : ce que fait le toucher d'une ligne entiere. Un
   /// enseignant qui a un dossier ouvre son dossier ; toute autre personne
@@ -1630,57 +1528,36 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   }
 
   /// Les gestes d'un compte, ceux du menu de sa ligne et de son apercu : les
-  /// memes, dans le meme ordre, le destructif en dernier.
+  /// memes, dans le meme ordre, le destructif en dernier ([gestesDuCompte]).
   List<EntreeAction> _gestes(BuildContext context, CompteAdmin c) =>
-      <EntreeAction>[
-        if (_ouvreUneDemande(c))
-          EntreeAction(
-            libelle: t.admin.comptes.actionVoirDemande,
-            icone: AppIcons.dossiers,
-            // La demande de cette personne : son nom, en `extra`, jamais dans
-            // l'adresse (§5.9).
-            onChoix: () => GoRouter.of(context).push<void>(
-              Routes.adminPersonnesAdmissions,
-              extra: (population: _populationDe(c), recherche: c.libelle),
-            ),
-          ),
-        if (_ouvreUnDossier(c))
-          EntreeAction(
-            // PE-C1 : le dossier du candidat quand sa reference est connue ;
-            // sinon la piece a verifier, comme avant.
-            libelle: _references.containsKey(c.profilId)
-                ? t.admin.candidatures.liste.ouvrirDossier
-                : t.admin.comptes.actionOuvrirDossier,
-            icone: AppIcons.dossiers,
-            onChoix: () => _ouvrirDossier(context, c),
-          ),
-        if (_villeAVerifier(c))
-          EntreeAction(
-            libelle: t.lieu.verifier(deNom: deDevant(c.libelle)),
-            icone: AppIcons.controleQualite,
-            onChoix: () => unawaited(_verifierVille(c)),
-          ),
-        if (_porteLaCoche(c))
-          if (_fondateurs!.contains(c.profilId))
+      gestesDuCompte(
+        context,
+        c,
+        fondateur: _porteLaCoche(c) ? _fondateurs!.contains(c.profilId) : null,
+        onFondateur: ({required bool fondateur}) =>
+            unawaited(_poserFondateur(c, fondateur: fondateur)),
+        onSupprimer: _supprimableIci(c) && !_suppressionEnCours
+            ? () => unawaited(_supprimer(<CompteAdmin>[c]))
+            : null,
+        propres: <EntreeAction>[
+          if (_ouvreUnDossier(c))
             EntreeAction(
-              libelle: t.admin.comptes.actionRetirerFondateur,
-              icone: AppIcons.etoile,
-              onChoix: () => unawaited(_poserFondateur(c, fondateur: false)),
-            )
-          else
-            EntreeAction(
-              libelle: t.admin.comptes.actionMarquerFondateur,
-              icone: AppIcons.etoile,
-              onChoix: () => unawaited(_poserFondateur(c, fondateur: true)),
+              // PE-C1 : le dossier du candidat quand sa reference est connue ;
+              // sinon la piece a verifier, comme avant.
+              libelle: _references.containsKey(c.profilId)
+                  ? t.admin.candidatures.liste.ouvrirDossier
+                  : t.admin.comptes.actionOuvrirDossier,
+              icone: AppIcons.dossiers,
+              onChoix: () => _ouvrirDossier(context, c),
             ),
-        // Le destructif en dernier, separe (MenuActions).
-        if (_supprimableIci(c) && !_suppressionEnCours)
-          EntreeAction(
-            libelle: t.admin.comptes.retrait.actionLigne,
-            destructif: true,
-            onChoix: () => unawaited(_supprimer(<CompteAdmin>[c])),
-          ),
-      ];
+          if (_villeAVerifier(c))
+            EntreeAction(
+              libelle: t.lieu.verifier(deNom: deDevant(c.libelle)),
+              icone: AppIcons.controleQualite,
+              onChoix: () => unawaited(_verifierVille(c)),
+            ),
+        ],
+      );
 
   static String _texteIncoherence(TypeIncoherenceLieu type) => switch (type) {
     TypeIncoherenceLieu.sansVille => t.lieu.incSansVille,
@@ -1745,114 +1622,6 @@ String _nomPiece(EtatPiece piece) => switch (piece) {
   EtatPiece.refusee => t.admin.comptes.pieceRefusee,
   EtatPiece.nonVisible => t.admin.comptes.pieceNonVisible,
 };
-
-/// Ce que la derniere suppression a donne : les comptes supprimes, et pour
-/// chaque refus, le nom et la raison (un resultat par compte, rendu par le
-/// serveur) ; ou un seul message quand rien n'est parti ou rien n'est sur.
-class _BilanSuppression {
-  const _BilanSuppression({required this.supprimes, required this.refus})
-    : message = null,
-      alerte = false;
-
-  const _BilanSuppression.message(String this.message, {this.alerte = true})
-    : supprimes = 0,
-      refus = const <String>[];
-
-  factory _BilanSuppression.depuis(
-    List<ResultatRetrait> resultats,
-    List<CompteAdmin> comptes,
-  ) {
-    final r = t.admin.comptes.retrait;
-    String nomDe(String id) {
-      for (final CompteAdmin c in comptes) {
-        if (c.profilId == id) return c.libelle;
-      }
-      return id;
-    }
-
-    String raison(ResultatRetrait x) => switch (x.raison) {
-      RaisonRefusRetrait.introuvable => r.raison.introuvable,
-      RaisonRefusRetrait.dejaRetire => r.raison.dejaRetire,
-      RaisonRefusRetrait.soiMeme => r.raison.soiMeme,
-      RaisonRefusRetrait.compteDirection => r.raison.compteDirection,
-      RaisonRefusRetrait.seancesAVenir => r.raison.seancesAVenir(
-        n: x.seancesAVenir,
-      ),
-      _ => r.raison.erreur,
-    };
-
-    return _BilanSuppression(
-      supprimes: resultats.where((ResultatRetrait x) => x.retire).length,
-      refus: <String>[
-        for (final ResultatRetrait x in resultats)
-          if (!x.retire) r.raisonLigne(nom: nomDe(x.id), raison: raison(x)),
-      ],
-    );
-  }
-
-  final int supprimes;
-  final List<String> refus;
-  final String? message;
-
-  /// Le [message] dit un echec (encre d'alerte) ; sinon une information.
-  final bool alerte;
-}
-
-class _VueBilan extends StatelessWidget {
-  const _VueBilan({required this.bilan, required this.onFermer});
-
-  final _BilanSuppression bilan;
-
-  final VoidCallback onFermer;
-
-  @override
-  Widget build(BuildContext context) {
-    final r = t.admin.comptes.retrait;
-    final AppPalette palette = AppPalette.of(context);
-    final TextStyle corps =
-        Theme.of(context).textTheme.bodyMedium ?? const TextStyle();
-    final String? message = bilan.message;
-    return Semantics(
-      liveRegion: true,
-      child: Column(
-        key: ComptesPage.bilanKey,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          if (message != null)
-            Text(
-              message,
-              style: (bilan.alerte ? palette.inkAlert : palette.inkStrong)
-                  .applyTo(corps),
-            ),
-          if (bilan.supprimes > 0)
-            Text(
-              r.supprimes(n: bilan.supprimes),
-              style: palette.inkStrong.applyTo(corps),
-            ),
-          if (bilan.refus.isNotEmpty) ...<Widget>[
-            if (bilan.supprimes > 0) Ecart.vSm,
-            BandeauAttention(
-              titre: r.nonSupprimes(n: bilan.refus.length),
-              message: bilan.refus.join('\n'),
-            ),
-          ],
-          Ecart.vSm,
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: ActionPrincipale(
-              key: ComptesPage.fermerBilanKey,
-              libelle: t.commun.fermer,
-              niveau: NiveauAction.tertiaire,
-              compacte: true,
-              pleineLargeur: false,
-              onPress: onFermer,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 /// La vue, son filtre et la page affichee (`_tranche`).
 typedef _Tranche = ({

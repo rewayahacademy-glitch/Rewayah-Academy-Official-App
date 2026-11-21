@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/admin/port_fondateurs.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart'
@@ -54,9 +55,14 @@ CompteAdmin _compte(int i, AppRole role) => CompteAdmin(
   prenom: _prenoms[i % _prenoms.length],
   nom: _noms[(i * 3) % _noms.length],
   role: role,
-  etat: i % 7 == 3 ? AccountStatus.pendingKyc : AccountStatus.active,
+  etat: i % 7 == 3
+      ? AccountStatus.pendingKyc
+      : (i % 9 == 2 ? AccountStatus.provisionalActive : AccountStatus.active),
   inscritLe: DateTime.now().subtract(Duration(days: 3 + i)),
-  accesJusquAu: null,
+  // Un acces provisoire echu de temps en temps (filtre « Acces echus »).
+  accesJusquAu: i % 9 == 2
+      ? DateTime.now().subtract(const Duration(days: 2))
+      : null,
   foyerId: null,
   piece: EtatPiece.aucune,
   contrats: 0,
@@ -200,6 +206,8 @@ Future<void> _monter(
         ...surchargesDemoAdmin(environnement: 'staging'),
         comptesProvider.overrideWith((Ref ref) async => _comptes),
         portEnseignantsProvider.overrideWithValue(_Enseignants()),
+        // Etape (f) : la coche « fondateur » est servie (personne ne l'a).
+        fondateursProvider.overrideWith((Ref ref) async => <String>{}),
         piecesAVerifierProvider.overrideWith((Ref ref) async => _pieces),
         portCandidaturesDirectionProvider.overrideWithValue(
           FauxCandidaturesDirection(
@@ -380,6 +388,35 @@ void main() {
             bureau,
             ThemeMode.light,
             AppLocale.fr,
+          ),
+          // Etape (f) : les gestes des comptes dans la page unique.
+          (
+            'gestes_famille_1440_fr_clair',
+            '$base?onglet=familles&element=RA-26-4131',
+            bureau,
+            ThemeMode.light,
+            AppLocale.fr,
+          ),
+          (
+            'gestes_equipe_1440_ar_clair',
+            '$base?onglet=equipe&element=RA-26-4150',
+            bureau,
+            ThemeMode.light,
+            AppLocale.ar,
+          ),
+          (
+            'gestes_eleves_390_fr_clair',
+            '$base?onglet=eleves&acces=echus',
+            telephone,
+            ThemeMode.light,
+            AppLocale.fr,
+          ),
+          (
+            'gestes_familles_390_ar_clair',
+            '$base?onglet=familles',
+            telephone,
+            ThemeMode.light,
+            AppLocale.ar,
           ),
           (
             'familles_1024_fr_clair',

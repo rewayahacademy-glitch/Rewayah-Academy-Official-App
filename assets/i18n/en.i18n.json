@@ -4404,6 +4404,7 @@
   },
   "admin": {
     "personnesPage": {
+      "typeAcces": "Access",
       "vueCandidats": "Applicants",
       "vueAccueil": "Onboarding",
       "vueActifs": "Active",
