@@ -7689,7 +7689,7 @@ class _Traductions$admin$guideCommentaires$ar extends Traductions$admin$guideCom
 		other: 'عرض المحادثة كاملة (⁨${n}⁩ رسالة)',
 	);
 	@override String get replierFil => 'طيّ المحادثة';
-	@override String get aucunEnAttente => 'لا ينتظر أي قارئ ردّك. كل التعليقات في «كل الأجزاء».';
+	@override String get aucunEnAttente => 'لا ينتظر أي قارئ ردك. كل التعليقات في «كل الأجزاء».';
 }
 
 // Path: admin.chiffres
@@ -37801,7 +37801,7 @@ extension on TraductionsAr {
 			'admin.guideCommentaires.replierFils' => 'الإبقاء على 3 تعليقات فقط',
 			'admin.guideCommentaires.voirFil' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض المحادثة كاملة', one: 'عرض الرسالة كاملة', two: 'عرض المحادثة كاملة (رسالتان)', few: 'عرض المحادثة كاملة (⁨${n}⁩ رسائل)', many: 'عرض المحادثة كاملة (⁨${n}⁩ رسالة)', other: 'عرض المحادثة كاملة (⁨${n}⁩ رسالة)', ), 
 			'admin.guideCommentaires.replierFil' => 'طيّ المحادثة',
-			'admin.guideCommentaires.aucunEnAttente' => 'لا ينتظر أي قارئ ردّك. كل التعليقات في «كل الأجزاء».',
+			'admin.guideCommentaires.aucunEnAttente' => 'لا ينتظر أي قارئ ردك. كل التعليقات في «كل الأجزاء».',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'آخر إعادة حساب: ⁨${heure}⁩',
 			'admin.chiffres.reserve' => 'هذه الصفحة خاصة بالإدارة.',
 			'admin.chiffres.reservePhrase' => 'حسابكم لا يملك حق الاطلاع على أرقام الأكاديمية. إن كان ذلك خطأً فراسلوا الإدارة.',
