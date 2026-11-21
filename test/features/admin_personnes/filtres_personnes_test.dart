@@ -4,9 +4,12 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart'
+    show FiltreCandidatures, RequeteCandidatures;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignants/modeles_enseignants.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/features/admin_candidatures/adresse_candidatures.dart';
 import 'package:rewayah_academy/features/admin_personnes/filtres_personnes.dart';
 import 'package:rewayah_academy/features/admin_personnes/personnes_page.dart';
 
@@ -97,35 +100,68 @@ void main() {
     'l\'adresse ne pose que les filtres de l\'onglet, aux valeurs connues',
     () {
       expect(
-        filtresDeLAdresse(OngletPersonnes.eleves, <String, String>{
-          'etat': 'actif',
-          'age': 'vieux',
-          'role': 'admin',
-          'phase': 'accueil',
-        }),
+        filtresDeLAdresse(
+          typesDeFiltre(OngletPersonnes.eleves),
+          <String, String>{
+            'etat': 'actif',
+            'age': 'vieux',
+            'role': 'admin',
+            'phase': 'accueil',
+          },
+        ),
         <String, String>{'etat': 'actif'},
       );
       expect(
-        filtresDeLAdresse(OngletPersonnes.enseignants, <String, String>{
-          'etat': 'actif',
-          'phase': 'accueil',
-        }),
-        <String, String>{'phase': 'accueil'},
+        filtresDeLAdresse(
+          typesDeFiltre(
+            OngletPersonnes.enseignants,
+            vue: VueEnseignants.actifs,
+          ),
+          <String, String>{'etat': 'actif', 'phase': 'en_poste'},
+        ),
+        <String, String>{'phase': 'en_poste'},
       );
     },
   );
 
-  test('enseignants : la phase et la recherche partent au serveur ; « parti » '
-      'ne se choisit pas ici', () {
-    final FiltreEnseignants f = filtreEnseignantsDe(<String, String>{
-      'phase': 'en_poste',
-    }, 'far');
+  test('enseignants : chaque vue impose sa phase au serveur ; « Actifs » ne '
+      'propose que ses phases', () {
+    final FiltreEnseignants f = filtreEnseignantsDe(
+      VueEnseignants.actifs,
+      <String, String>{'phase': 'en_poste'},
+      'far',
+    );
     expect(f.phase, PhaseEnseignant.enPoste);
     expect(f.recherche, 'far');
     expect(
-      typesDeFiltre(OngletPersonnes.enseignants).single.valeurs
-          .map((ValeurFiltre v) => v.code),
-      isNot(contains(PhaseEnseignant.parti.valeurSql)),
+      filtreEnseignantsDe(
+        VueEnseignants.actifs,
+        const <String, String>{},
+        '',
+      ).phase,
+      isNull,
+    );
+    expect(
+      filtreEnseignantsDe(
+        VueEnseignants.accueil,
+        const <String, String>{},
+        '',
+      ).phase,
+      PhaseEnseignant.accueil,
+    );
+    final FiltreEnseignants partis = filtreEnseignantsDe(
+      VueEnseignants.partis,
+      const <String, String>{},
+      '',
+    );
+    expect(partis.phase, PhaseEnseignant.parti);
+    expect(partis.partis, isTrue);
+    expect(
+      typesDeFiltre(
+        OngletPersonnes.enseignants,
+        vue: VueEnseignants.actifs,
+      ).single.valeurs.map((ValeurFiltre v) => v.code),
+      <String>[for (final PhaseEnseignant p in phasesActives) p.valeurSql],
     );
   });
 
@@ -142,5 +178,116 @@ void main() {
         expect(x.libelle.trim(), isNotEmpty);
       }
     }
+  });
+
+  group('vue « Candidats » (etape d)', () {
+    final List<TypeFiltrePersonnes> types = typesDeFiltre(
+      OngletPersonnes.enseignants,
+    );
+
+    test('les 26 filtres de la file, ranges en familles, aux cles d\'adresse '
+        'de l\'ancienne liste', () {
+      expect(types, hasLength(26));
+      for (final TypeFiltrePersonnes x in types) {
+        expect(clesAdresseCandidatures, contains(x.cle), reason: x.cle);
+        expect(x.famille, isNotNull, reason: x.cle);
+        // Le domaine vient du catalogue : sans lui, les familles seules.
+        expect(x.valeurs, isNotEmpty, reason: x.cle);
+      }
+      expect(
+        types.map((TypeFiltrePersonnes x) => x.famille).toSet(),
+        hasLength(6),
+      );
+    });
+
+    test('chaque valeur proposee se lit par `requeteDepuisAdresse` et se '
+        'reecrit a l\'identique : le serveur recoit ce que la puce dit', () {
+      for (final TypeFiltrePersonnes x in types) {
+        for (final ValeurFiltre v in x.valeurs) {
+          final Map<String, String> adresse = <String, String>{x.cle: v.code};
+          final FiltreCandidatures f = filtreCandidatsDe(adresse, '');
+          expect(f.estVide, isFalse, reason: '${x.cle}=${v.code}');
+          expect(
+            requeteEnAdresse(RequeteCandidatures(filtre: f)),
+            adresse,
+            reason: '${x.cle}=${v.code}',
+          );
+        }
+      }
+    });
+
+    test('les jours se cumulent et se retirent, dans l\'ordre', () {
+      final TypeFiltrePersonnes jours = types.firstWhere(
+        (TypeFiltrePersonnes x) => x.cle == 'jours',
+      );
+      expect(jours.apresChoix(null, '3'), '3');
+      expect(jours.apresChoix('3', '1'), '1,3');
+      expect(jours.apresChoix('1,3', '3'), '1');
+      expect(jours.apresChoix('1', '1'), isNull);
+      expect(jours.libelleDe('1,3'), contains(', '));
+      expect(jours.libelleDe('1,9'), isNull);
+      expect(
+        filtreCandidatsDe(<String, String>{'jours': '1,3'}, '').jours,
+        <int>[1, 3],
+      );
+    });
+
+    test('la recherche part avec le filtre', () {
+      final FiltreCandidatures f = filtreCandidatsDe(<String, String>{
+        'ijaza': 'oui',
+      }, 'far');
+      expect(f.recherche, 'far');
+      expect(f.ijaza, 'oui');
+    });
+  });
+
+  test('la file donnee au dossier : celle de la vue, jamais un nom', () {
+    expect(
+      fileDeLaVue(VueEnseignants.candidats, <String, String>{
+        'etat': 'enExamen',
+      }),
+      <String, String>{'vue': 'candidats', 'etat': 'enExamen'},
+    );
+    expect(
+      fileDeLaVue(VueEnseignants.accueil, const <String, String>{}),
+      <String, String>{
+        'file': 'enseignants',
+        'vue': 'accueil',
+        'phase_file': 'accueil',
+      },
+    );
+    expect(
+      fileDeLaVue(VueEnseignants.partis, const <String, String>{}),
+      <String, String>{
+        'file': 'enseignants',
+        'vue': 'partis',
+        'phase_file': 'parti',
+        'partis': 'oui',
+      },
+    );
+    // « Actifs » sans phase choisie : la file est celle de la phase de la
+    // personne ; avec une phase choisie, celle du filtre.
+    expect(
+      fileDeLaVue(
+        VueEnseignants.actifs,
+        const <String, String>{},
+        phaseDeLaLigne: PhaseEnseignant.absent,
+      ),
+      <String, String>{
+        'file': 'enseignants',
+        'vue': 'actifs',
+        'phase_file': 'absent',
+      },
+    );
+    expect(
+      fileDeLaVue(VueEnseignants.actifs, <String, String>{
+        'phase': 'en_poste',
+      }, phaseDeLaLigne: PhaseEnseignant.enPoste),
+      <String, String>{
+        'file': 'enseignants',
+        'vue': 'actifs',
+        'phase': 'en_poste',
+      },
+    );
   });
 }

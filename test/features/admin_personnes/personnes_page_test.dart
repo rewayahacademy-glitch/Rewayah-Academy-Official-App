@@ -6,16 +6,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderContainer;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidature.dart'
+    show EtatCandidature;
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart'
     show DetailCandidature;
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart'
     show CapacitesCandidatures, LigneCandidature;
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/enseignants/modeles_enseignants.dart';
 import 'package:rewayah_academy/core/enseignants/port_enseignants.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -24,6 +28,8 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/puce_filtre_actif.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
+import 'package:rewayah_academy/features/admin_candidature/navigation_dossier.dart'
+    show ReglagePasserAuSuivant;
 import 'package:rewayah_academy/features/admin_candidature/synthese_tete_dossier.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart'
     show nomAffiche;
@@ -32,6 +38,7 @@ import 'package:rewayah_academy/features/admin_personnes/apercu_candidat.dart';
 import 'package:rewayah_academy/features/admin_personnes/barre_filtres_personnes.dart';
 import 'package:rewayah_academy/features/admin_personnes/personnes_page.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
@@ -51,9 +58,12 @@ class _Comptes implements ServiceComptes {
 final List<FiltreEnseignants> _filtresDemandes = <FiltreEnseignants>[];
 
 class _Enseignants implements PortEnseignants {
-  const _Enseignants(this._lignes);
+  const _Enseignants(this._lignes, {this.taille = 50});
 
   final List<LigneEnseignant> _lignes;
+
+  /// La taille des pages du serveur.
+  final int taille;
 
   @override
   Future<PageEnseignants> lister({
@@ -62,16 +72,100 @@ class _Enseignants implements PortEnseignants {
     required int page,
   }) async {
     _filtresDemandes.add(filtre);
-    return _page();
+    // Comme le serveur : une phase a la fois, les partis sur demande.
+    final List<LigneEnseignant> lignes = <LigneEnseignant>[
+      for (final LigneEnseignant l in _lignes)
+        if (filtre.phase == null
+            ? l.phase != PhaseEnseignant.parti
+            : l.phase == filtre.phase)
+          l,
+    ];
+    final int debut = (page - 1) * taille;
+    return PageEnseignants(
+      lignes: debut >= lignes.length
+          ? const <LigneEnseignant>[]
+          : lignes.sublist(debut, (debut + taille).clamp(0, lignes.length)),
+      total: lignes.length,
+      page: page,
+      taillePage: taille,
+      compteurs: CompteursEnseignants(
+        parPhase: <PhaseEnseignant, int>{
+          for (final PhaseEnseignant p in PhaseEnseignant.values)
+            p: _lignes.where((LigneEnseignant l) => l.phase == p).length,
+        },
+      ),
+    );
   }
-
-  PageEnseignants _page() => PageEnseignants(
-    lignes: _lignes,
-    total: _lignes.length,
-    page: 1,
-    taillePage: 50,
-  );
 }
+
+/// Un serveur qui rend, par phase, des lignes fixees (une meme personne
+/// peut y etre dans deux phases).
+class _ParPhase implements PortEnseignants {
+  const _ParPhase(this._parPhase);
+
+  final Map<PhaseEnseignant, List<LigneEnseignant>> _parPhase;
+
+  @override
+  Future<PageEnseignants> lister({
+    required FiltreEnseignants filtre,
+    required TriEnseignants tri,
+    required int page,
+  }) async {
+    final List<LigneEnseignant> lignes =
+        _parPhase[filtre.phase] ?? const <LigneEnseignant>[];
+    return PageEnseignants(
+      lignes: lignes,
+      total: lignes.length,
+      page: 1,
+      taillePage: 50,
+    );
+  }
+}
+
+class _Pieces implements ServiceValidation {
+  const _Pieces(this._lignes);
+
+  final List<DossierAValider> _lignes;
+
+  @override
+  Future<List<DossierAValider>> enAttente() async => _lignes;
+
+  @override
+  Future<String> apercu(String documentId) => throw UnimplementedError();
+
+  @override
+  Future<void> decider({
+    required String documentId,
+    required bool approuve,
+    String? motif,
+  }) => throw UnimplementedError();
+}
+
+DossierAValider _piece(
+  String id,
+  String prenom, {
+  AppRole role = AppRole.teacher,
+  String? reference,
+}) => DossierAValider(
+  documentId: 'doc-$id',
+  profilId: 'p-$id',
+  type: null,
+  cleObjet: null,
+  deposeLe: DateTime.now().subtract(const Duration(days: 3)),
+  prenom: prenom,
+  nom: 'Essai',
+  identifiantImmuable: 'RA-26-77$id',
+  role: role,
+  candidatureId: reference == null ? null : 'c-$id',
+  candidatureReference: reference,
+);
+
+final List<DossierAValider> _pieces = <DossierAValider>[
+  _piece('1', 'Hind', reference: 'CAND-00009'),
+  _piece('2', 'Ilyes'),
+  // Une famille : sa piece n'est pas dans l'onglet des enseignants.
+  _piece('3', 'Jamila', role: AppRole.guardian),
+];
 
 CompteAdmin _compte(
   String id,
@@ -114,7 +208,23 @@ final List<LigneEnseignant> _enseignants = <LigneEnseignant>[
     dossier: ligneTest(id: 'c2', reference: 'CAND-00002', nom: 'Ghita Essai'),
     phase: PhaseEnseignant.enPoste,
   ),
+  LigneEnseignant(
+    dossier: ligneTest(id: 'c3', reference: 'CAND-00003', nom: 'Karim Essai'),
+    phase: PhaseEnseignant.accueil,
+    quiAttend: 'enseignant',
+  ),
+  LigneEnseignant(
+    dossier: ligneTest(id: 'c4', reference: 'CAND-00004', nom: 'Lina Essai'),
+    phase: PhaseEnseignant.disponible,
+  ),
+  LigneEnseignant(
+    dossier: ligneTest(id: 'c5', reference: 'CAND-00005', nom: 'Mounir Essai'),
+    phase: PhaseEnseignant.parti,
+  ),
 ];
+
+/// Le port des candidatures du dernier montage.
+late FauxCandidaturesDirection _port;
 
 late GoRouter _routeur;
 final List<String> _dossiers = <String>[];
@@ -126,6 +236,9 @@ Future<void> _monter(
   List<CompteAdmin>? comptes,
   bool echec = false,
   CapacitesCandidatures capacites = capacitesQuiLit,
+  List<LigneCandidature>? candidatures,
+  List<LigneEnseignant>? enseignants,
+  int taillePage = 50,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = taille;
@@ -152,19 +265,29 @@ Future<void> _monter(
           _Comptes(comptes ?? _comptes, echec: echec),
         ),
         serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
-        portEnseignantsProvider.overrideWithValue(_Enseignants(_enseignants)),
+        portEnseignantsProvider.overrideWithValue(
+          _Enseignants(enseignants ?? _enseignants, taille: taillePage),
+        ),
+        serviceValidationProvider.overrideWithValue(_Pieces(_pieces)),
         portCandidaturesDirectionProvider.overrideWithValue(
-          FauxCandidaturesDirection(
+          _port = FauxCandidaturesDirection(
             capacitesRendues: capacites,
-            lignes: <LigneCandidature>[
-              for (final LigneEnseignant l in _enseignants) l.dossier,
-            ],
+            taillePage: taillePage,
+            lignes:
+                candidatures ??
+                <LigneCandidature>[
+                  for (final LigneEnseignant l in _enseignants) l.dossier,
+                ],
             details: <DetailCandidature>[
-              for (final LigneEnseignant l in _enseignants)
+              for (final LigneCandidature l
+                  in candidatures ??
+                      <LigneCandidature>[
+                        for (final LigneEnseignant e in _enseignants) e.dossier,
+                      ])
                 detailTest(
-                  id: l.dossier.id,
-                  reference: l.dossier.reference,
-                  nom: nomAffiche(l.dossier),
+                  id: l.id,
+                  reference: l.reference,
+                  nom: nomAffiche(l),
                 ),
             ],
           ),
@@ -179,6 +302,9 @@ String get _adresse =>
     _routeur.routerDelegate.currentConfiguration.uri.toString();
 
 void main() {
+  // Les vraies polices : les cinq vues tiennent en ligne a l'ordinateur (la
+  // police de test, aux glyphes carres, les ferait passer en menu).
+  setUpAll(chargerPolicesDuDepot);
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   testWidgets('quatre onglets, chacun avec son icone et son nombre', (
@@ -187,7 +313,8 @@ void main() {
     await _monter(tester, adresse: '/admin/personnes?onglet=eleves');
     expect(find.text('Élèves (3)'), findsOneWidget);
     expect(find.text('Familles (1)'), findsOneWidget);
-    expect(find.text('Enseignants (2)'), findsOneWidget);
+    // Les partis ne comptent pas dans l'onglet.
+    expect(find.text('Enseignants (4)'), findsOneWidget);
     expect(find.text('Direction et équipe (1)'), findsOneWidget);
     // Quatre dessins differents : jamais deux groupes de personnes voisins.
     final List<AppIcon> icones = <AppIcon>[
@@ -271,7 +398,10 @@ void main() {
     expect(find.byKey(ApercuCandidatPersonnes.cleEcrire), findsNothing);
     await tester.tap(find.byKey(ApercuCandidatPersonnes.cleDossier));
     await tester.pumpAndSettle();
-    expect(_dossiers, <String>['/admin/personnes/candidatures/CAND-00001']);
+    // Le dossier recoit la file de la vue : le suivant y suit la liste.
+    expect(_dossiers, <String>[
+      '/admin/personnes/candidatures/CAND-00001?vue=candidats&depuis=liste',
+    ]);
   });
 
   testWidgets('ordinateur : avec le droit de decider, l\'apercu offre le '
@@ -307,7 +437,7 @@ void main() {
     );
     final Finder barre = find.byKey(PersonnesPage.cleVoisins);
     expect(
-      find.descendant(of: barre, matching: find.text('1 sur 2')),
+      find.descendant(of: barre, matching: find.text('1 sur 5')),
       findsOneWidget,
     );
     expect(
@@ -318,9 +448,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(_adresse, contains('element=CAND-00002'));
     expect(
-      find.descendant(of: barre, matching: find.text('2 sur 2')),
+      find.descendant(of: barre, matching: find.text('2 sur 5')),
       findsOneWidget,
     );
+    _routeur.go(
+      '/admin/personnes?onglet=enseignants&vue=candidats&element=CAND-00005',
+    );
+    await tester.pumpAndSettle();
     expect(find.bySemanticsLabel(t.admin.personnesPage.suivante), findsNothing);
   });
 
@@ -342,7 +476,9 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Ghita Essai').first);
     await tester.pumpAndSettle();
-    expect(_dossiers, <String>['/admin/personnes/candidatures/CAND-00002']);
+    expect(_dossiers, <String>[
+      '/admin/personnes/candidatures/CAND-00002?vue=candidats&depuis=liste',
+    ]);
     expect(tester.takeException(), isNull);
   });
 
@@ -471,16 +607,16 @@ void main() {
       },
     );
 
-    testWidgets('enseignants : la phase et la recherche sont demandees au '
-        'serveur', (WidgetTester tester) async {
+    testWidgets('enseignants actifs : la phase et la recherche sont demandees '
+        'au serveur', (WidgetTester tester) async {
       await _monter(
         tester,
-        adresse: '/admin/personnes?onglet=enseignants&phase=accueil&q=far',
+        adresse: '/admin/personnes?onglet=enseignants&vue=actifs&phase=en_poste&q=ghi',
       );
       expect(
         _filtresDemandes.any(
           (FiltreEnseignants f) =>
-              f.phase == PhaseEnseignant.accueil && f.recherche == 'far',
+              f.phase == PhaseEnseignant.enPoste && f.recherche == 'ghi',
         ),
         isTrue,
       );
@@ -512,6 +648,422 @@ void main() {
       expect(_adresse, contains('age=enfant'));
       expect(compteur(tester), '3 sur 3');
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('les vues de l\'onglet des enseignants (etape d)', () {
+    String compteur(WidgetTester tester) => tester
+        .widget<Text>(find.byKey(BarreFiltresPersonnes.cleCompteur))
+        .data!;
+
+    testWidgets('cinq vues, chacune avec son nombre ; « Candidats » par '
+        'defaut ; les autres onglets n\'ont pas ce selecteur', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, adresse: '/admin/personnes?onglet=enseignants');
+      final Finder vues = find.byKey(PersonnesPage.cleVues);
+      for (final String libelle in <String>[
+        'Candidats (5)',
+        'En accueil (1)',
+        'Actifs (2)',
+        'Partis (1)',
+        'Pièces à vérifier (2)',
+      ]) {
+        expect(
+          find.descendant(of: vues, matching: find.text(libelle)),
+          findsOneWidget,
+          reason: libelle,
+        );
+      }
+      // La vue par defaut lit la file des candidatures.
+      expect(_port.appels, isNotEmpty);
+      expect(find.text('Farid Essai'), findsWidgets);
+      expect(compteur(tester), '5 sur 5');
+
+      _routeur.go('/admin/personnes?onglet=eleves');
+      await tester.pumpAndSettle();
+      expect(vues, findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('changer de vue change l\'adresse, oublie les filtres et la '
+        'personne ; chaque vue demande sa phase au serveur', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse:
+            '/admin/personnes?onglet=enseignants&vue=candidats&etat=enExamen'
+            '&element=CAND-00001',
+      );
+      expect(find.byType(PuceFiltreActif), findsOneWidget);
+
+      await tester.tap(find.text('En accueil (1)'));
+      await tester.pumpAndSettle();
+      expect(_adresse, '/admin/personnes?onglet=enseignants&vue=accueil');
+      expect(find.byType(PuceFiltreActif), findsNothing);
+      expect(find.text('Karim Essai'), findsWidgets);
+      expect(find.text('Farid Essai'), findsNothing);
+      expect(
+        _filtresDemandes.any(
+          (FiltreEnseignants f) => f.phase == PhaseEnseignant.accueil,
+        ),
+        isTrue,
+      );
+      // Une vue sans type de filtre n'a pas de bouton « Filtrer par ».
+      expect(find.byKey(BarreFiltresPersonnes.cleFiltrer), findsNothing);
+      expect(compteur(tester), '1 sur 1');
+
+      await tester.tap(find.text('Partis (1)'));
+      await tester.pumpAndSettle();
+      expect(_adresse, '/admin/personnes?onglet=enseignants&vue=partis');
+      expect(find.text('Mounir Essai'), findsWidgets);
+      expect(
+        _filtresDemandes.any(
+          (FiltreEnseignants f) => f.phase == PhaseEnseignant.parti && f.partis,
+        ),
+        isTrue,
+      );
+    });
+
+    testWidgets('« Actifs » rassemble ses phases, sans candidat ni accueil ; '
+        'le dossier recoit la file de la phase de la personne', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&vue=actifs',
+        taille: const Size(390, 844),
+      );
+      expect(find.text('Ghita Essai'), findsWidgets);
+      expect(find.text('Lina Essai'), findsWidgets);
+      expect(find.text('Farid Essai'), findsNothing);
+      expect(find.text('Karim Essai'), findsNothing);
+      expect(find.text('Mounir Essai'), findsNothing);
+      expect(compteur(tester), '2 sur 2');
+
+      await tester.tap(find.text('Lina Essai').first);
+      await tester.pumpAndSettle();
+      expect(_dossiers, <String>[
+        '/admin/personnes/candidatures/CAND-00004'
+            '?file=enseignants&vue=actifs&phase_file=disponible&depuis=liste',
+      ]);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('« Pieces a verifier » : les pieces des enseignants ; la '
+        'verification s\'ouvre dans le dossier de candidature quand il '
+        'existe, sinon dans « Dossiers a valider »', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&vue=pieces',
+      );
+      expect(find.text('Hind Essai'), findsWidgets);
+      expect(find.text('Ilyes Essai'), findsWidgets);
+      expect(find.text('Jamila Essai'), findsNothing);
+      expect(compteur(tester), '2 sur 2');
+
+      await tester.tap(find.text('Hind Essai').first);
+      await tester.pumpAndSettle();
+      expect(_adresse, contains('element=RA-26-771'));
+      await tester.tap(find.byKey(PersonnesPage.cleVerifierPiece));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Ilyes Essai').first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(PersonnesPage.cleVerifierPiece));
+      await tester.pumpAndSettle();
+      expect(_dossiers, <String>[
+        '/admin/personnes/candidatures/CAND-00009',
+        Routes.adminPersonnesDossiers,
+      ]);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('candidats : « Filtrer par », la famille, le type, la '
+        'valeur ; le filtre part au serveur avec la cle de l\'ancienne liste', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, adresse: '/admin/personnes?onglet=enseignants');
+      await tester.tap(find.byKey(BarreFiltresPersonnes.cleFiltrer));
+      await tester.pumpAndSettle();
+      // Premier niveau : les familles, jamais les 26 types d'un coup.
+      expect(
+        find.text(t.admin.personnesPage.familleEnseignement),
+        findsOneWidget,
+      );
+      expect(find.text(t.recrutement.file.ijaza), findsNothing);
+      await tester.tap(find.text(t.admin.personnesPage.familleEnseignement));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.recrutement.file.langue).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.textContaining(t.recrutement.file.langue).at(1));
+      await tester.pumpAndSettle();
+
+      expect(_adresse, contains('langue='));
+      expect(_adresse, contains('vue=candidats'));
+      expect(find.byType(PuceFiltreActif), findsOneWidget);
+      expect(_port.appels.last.filtre.langueExplication, isNotNull);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('candidats : une puce posee reduit la liste ET le compteur ; '
+        'le compteur dit le total filtre du serveur, pas la longueur de la '
+        'page ; la retirer rend tout', (WidgetTester tester) async {
+      // Sept candidatures : quatre « a completer », trois « en examen » ; le
+      // serveur rend des pages de deux.
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants',
+        taillePage: 2,
+        candidatures: <LigneCandidature>[
+          for (int i = 1; i <= 7; i++)
+            ligneTest(
+              id: 'k$i',
+              reference: 'CAND-0010$i',
+              nom: 'Candidat$i Essai',
+              etat: i <= 4
+                  ? EtatCandidature.aCompleter
+                  : EtatCandidature.enExamen,
+              derniereActivite: DateTime(2026, 11, 20 - i),
+            ),
+        ],
+      );
+      // Sans filtre : sept, dont deux a l'ecran.
+      expect(compteur(tester), '7 sur 7');
+      expect(find.text('Candidat1 Essai'), findsWidgets);
+
+      await tester.tap(find.byKey(BarreFiltresPersonnes.cleFiltrer));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.admin.personnesPage.familleEtape));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.admin.candidatures.filtres.etat).last);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.textContaining(t.admin.candidatures.etats.enExamen).last,
+      );
+      await tester.pumpAndSettle();
+
+      // Le filtre est parti au serveur ; la liste et le compteur le suivent.
+      expect(_adresse, contains('etat=enExamen'));
+      expect(_port.appels.last.filtre.etat, EtatCandidature.enExamen);
+      expect(find.byType(PuceFiltreActif), findsOneWidget);
+      // Trois dossiers passent le filtre (total du serveur), deux sont sur
+      // la page : le compteur dit trois, sur les sept de la vue.
+      expect(compteur(tester), '3 sur 7');
+      expect(find.text('Candidat5 Essai'), findsWidgets);
+      expect(find.text('Candidat6 Essai'), findsWidgets);
+      for (int i = 1; i <= 4; i++) {
+        expect(find.text('Candidat$i Essai'), findsNothing);
+      }
+      // La vue garde son nombre entier.
+      expect(find.text('Candidats (7)'), findsOneWidget);
+
+      await tester.tap(find.byType(PuceFiltreActif));
+      await tester.pumpAndSettle();
+      expect(_adresse, isNot(contains('etat=')));
+      expect(compteur(tester), '7 sur 7');
+      expect(find.text('Candidat1 Essai'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+
+    /// Les references des lignes affichees, dans l'ordre.
+    List<String> references(WidgetTester tester) => <String>[
+      for (final Element e in find.byType(Text).evaluate())
+        if ((e.widget as Text).data case final String d
+            when d.startsWith('Personne') && d.endsWith('Essai'))
+          d,
+    ];
+
+    testWidgets('aucune personne deux fois : la page suivante des candidats '
+        'remplace la precedente', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants',
+        taille: const Size(390, 2400),
+        taillePage: 3,
+        candidatures: <LigneCandidature>[
+          for (int i = 1; i <= 7; i++)
+            ligneTest(
+              id: 'k$i',
+              reference: 'CAND-0010$i',
+              nom: 'Personne$i Essai',
+              derniereActivite: DateTime(2026, 11, 20 - i),
+            ),
+        ],
+      );
+      final List<String> premiere = references(tester);
+      expect(premiere, hasLength(3));
+      expect(premiere.toSet(), hasLength(3));
+
+      _routeur.go('/admin/personnes?onglet=enseignants&vue=candidats&page=2');
+      await tester.pumpAndSettle();
+      final List<String> seconde = references(tester);
+      expect(seconde, hasLength(3));
+      expect(seconde.toSet(), hasLength(3));
+      // Aucune ligne de la premiere page ne reste ni ne revient.
+      expect(seconde.toSet().intersection(premiere.toSet()), isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('aucune personne deux fois : « Actifs » lit chaque phase page '
+        'apres page et les met bout a bout', (WidgetTester tester) async {
+      const List<PhaseEnseignant> phases = <PhaseEnseignant>[
+        PhaseEnseignant.enPoste,
+        PhaseEnseignant.enPoste,
+        PhaseEnseignant.enPoste,
+        PhaseEnseignant.disponible,
+        PhaseEnseignant.disponible,
+        PhaseEnseignant.absent,
+        PhaseEnseignant.candidat,
+      ];
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&vue=actifs',
+        taille: const Size(390, 2400),
+        // Le serveur rend des pages de deux : trois en poste = deux pages.
+        taillePage: 2,
+        enseignants: <LigneEnseignant>[
+          for (final (int i, PhaseEnseignant p) in phases.indexed)
+            LigneEnseignant(
+              dossier: ligneTest(
+                id: 'a$i',
+                reference: 'CAND-0020$i',
+                nom: 'Personne$i Essai',
+              ),
+              phase: p,
+            ),
+        ],
+      );
+      final List<String> lues = references(tester);
+      // Les six actifs, chacun une fois ; le candidat n'y est pas.
+      expect(lues, hasLength(6));
+      expect(lues.toSet(), hasLength(6));
+      expect(lues, isNot(contains('Personne6 Essai')));
+      expect(compteur(tester), '6 sur 6');
+      expect(tester.takeException(), isNull);
+    });
+
+    test('« Actifs » : une personne rendue par deux phases (elle a change '
+        'de phase entre deux lectures) n\'est gardee qu\'une fois, la '
+        'derniere lue', () async {
+      LigneEnseignant ligne(String ref, PhaseEnseignant p) => LigneEnseignant(
+        dossier: ligneTest(id: ref, reference: ref, nom: 'Personne $ref'),
+        phase: p,
+      );
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: [
+          portEnseignantsProvider.overrideWithValue(
+            _ParPhase(<PhaseEnseignant, List<LigneEnseignant>>{
+              // Lue « en poste », puis « en pause » un instant plus tard.
+              PhaseEnseignant.enPoste: <LigneEnseignant>[
+                ligne('CAND-00301', PhaseEnseignant.enPoste),
+                ligne('CAND-00302', PhaseEnseignant.enPoste),
+              ],
+              PhaseEnseignant.pause: <LigneEnseignant>[
+                ligne('CAND-00301', PhaseEnseignant.pause),
+              ],
+            }),
+          ),
+        ],
+      );
+      addTearDown(conteneur.dispose);
+      final PageEnseignants page = await conteneur.read(
+        enseignantsActifsProvider('').future,
+      );
+      expect(
+        page.lignes.map((LigneEnseignant l) => l.dossier.reference).toList(),
+        <String>['CAND-00302', 'CAND-00301'],
+      );
+      expect(page.lignes.last.phase, PhaseEnseignant.pause);
+      expect(page.total, 2);
+    });
+
+    testWidgets('telephone : les vues passent en menu deroulant, rien ne '
+        'deborde', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&vue=accueil',
+        taille: const Size(390, 844),
+      );
+      // La vue ouverte est ecrite ; les autres sont dans le menu.
+      expect(find.text('En accueil (1)'), findsOneWidget);
+      expect(find.text('Partis (1)'), findsNothing);
+      await tester.tap(find.text('En accueil (1)'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Partis (1)').last);
+      await tester.pumpAndSettle();
+      expect(_adresse, '/admin/personnes?onglet=enseignants&vue=partis');
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('apercu : apres une decision, la personne suivante s\'ouvre '
+        'seule (reglage actif) ; « Rester » l\'empeche', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&element=CAND-00001',
+        capacites: capacitesGestes,
+      );
+      Future<void> decider() async {
+        await tester.tap(find.byKey(ApercuCandidatPersonnes.cleGestePrincipal));
+        await tester.pumpAndSettle();
+        expect(find.byType(FeuilleGeste), findsOneWidget);
+        // Le geste que l'etat du dossier propose : confirmer le moyen de
+        // versement (un choix, puis le bouton).
+        await tester.tap(
+          find.descendant(
+            of: find.byType(FeuilleGeste),
+            matching: find.text(t.admin.candidatures.moyens.virement),
+          ),
+        );
+        await tester.pump();
+        await tester.ensureVisible(find.byKey(FeuilleGeste.cleValider));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(FeuilleGeste.cleValider));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 600));
+        await tester.pump(const Duration(milliseconds: 600));
+      }
+
+      await decider();
+      expect(_port.appelsGeste, hasLength(1));
+      // La phrase le dit, la personne n'a pas encore change.
+      expect(
+        find.text(t.recrutement.suivant.decisionEnregistree),
+        findsOneWidget,
+      );
+      expect(_adresse, contains('element=CAND-00001'));
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pumpAndSettle();
+      expect(_adresse, contains('element=CAND-00002'));
+
+      // « Rester sur ce dossier » : la decision est gardee, pas de passage.
+      await decider();
+      expect(_port.appelsGeste, hasLength(2));
+      await tester.tap(find.byKey(ApercuCandidatPersonnes.cleRester));
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pumpAndSettle();
+      expect(_adresse, contains('element=CAND-00002'));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('apercu : le reglage « Passer au suivant » est celui du '
+        'dossier ; il n\'est propose que s\'il y a une personne suivante', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&element=CAND-00001',
+      );
+      expect(find.byType(ReglagePasserAuSuivant), findsOneWidget);
+      _routeur.go(
+        '/admin/personnes?onglet=enseignants&vue=candidats&element=CAND-00005',
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(ReglagePasserAuSuivant), findsNothing);
     });
   });
 
