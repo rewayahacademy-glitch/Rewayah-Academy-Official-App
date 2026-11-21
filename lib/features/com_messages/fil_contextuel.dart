@@ -435,10 +435,12 @@ class _FilContextuelState extends State<FilContextuel>
           m,
           idLocal: _localParCleServeur[m.cleIdempotence],
           // #Ra_staff (directeur, 14/11/2026) : les liens https d'un message
-          // de l'equipe s'ouvrent ; ceux des autres restent du texte.
+          // de l'equipe s'ouvrent ; ceux des autres restent du texte. Praxis,
+          // compte officiel de l'academie, en fait partie (ANNONCE-LIENS,
+          // 21/11/2026 : il donne le lien du guide de l'enseignant).
           complement: complementAvecLiens(
             pieces: piecesDuMessage(m.piecesJointes),
-            equipe: m.auteur.equipe,
+            equipe: m.auteur.equipe || m.auteur.officiel,
             texte: m.texte,
           ),
           // MESSAGERIE-LU : envoye (une coche, pale) ou lu (deux coches).

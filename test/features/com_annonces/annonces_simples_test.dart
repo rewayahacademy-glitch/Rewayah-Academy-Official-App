@@ -10,10 +10,12 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/notifications_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/ouvreur_onglet.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_recues.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces_direction.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
+import 'package:rewayah_academy/features/com_messages/liens_message_staff.dart';
 import 'package:rewayah_academy/features/notifications/contenu_notification.dart';
 
 import '../../capture/outil_capture.dart';
@@ -41,12 +43,23 @@ class _FilFaux extends AnnoncesDirectionIndisponibles {
   Future<void> marquerVue(String id) async => vues.add(id);
 }
 
-Future<void> _monterFil(WidgetTester tester, _FilFaux fil) async {
+Future<void> _monterFil(
+  WidgetTester tester,
+  _FilFaux fil, {
+  List<Override> plus = const <Override>[],
+  TextDirection sens = TextDirection.ltr,
+}) async {
   await tester.pumpWidget(
     hote(
-      const Scaffold(body: SingleChildScrollView(child: AnnoncesRecues())),
+      Directionality(
+        textDirection: sens,
+        child: const Scaffold(
+          body: SingleChildScrollView(child: AnnoncesRecues()),
+        ),
+      ),
       surcharges: <Override>[
         portAnnoncesDirectionProvider.overrideWithValue(fil),
+        ...plus,
       ],
     ),
   );
@@ -128,6 +141,44 @@ void main() {
       expect(fil.vues, <String>['a1']);
     });
 
+    // ANNONCE-LIENS (directeur, 21/11/2026 : « le lien n'a pas marche,
+    // c'est du simple texte ») : l'adresse du texte devient une ligne qui
+    // l'ouvre.
+    testWidgets('le lien du texte s ouvre d un toucher', (
+      WidgetTester tester,
+    ) async {
+      final List<Uri> ouverts = <Uri>[];
+      await _monterFil(
+        tester,
+        _FilFaux(
+          recues: <AnnonceRecue>[
+            AnnonceRecue(
+              id: 'a1',
+              titre: 'Guide',
+              texte:
+                  'Lisez-le ici : '
+                  'https://app.rewayahacademy.com/#/lire/guide-enseignant\n'
+                  'Rien a faire.',
+              publieeLe: _le,
+            ),
+          ],
+        ),
+        plus: <Override>[
+          ouvreurOngletProvider.overrideWithValue((Uri u) {
+            ouverts.add(u);
+            return true;
+          }),
+        ],
+      );
+      final Finder lien = find.byKey(LiensMessageStaff.cle(0));
+      expect(lien, findsOneWidget);
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(ouverts, <Uri>[
+        Uri.parse('https://app.rewayahacademy.com/#/lire/guide-enseignant'),
+      ]);
+    });
+
     testWidgets('aucune annonce : rien n est rendu', (
       WidgetTester tester,
     ) async {
@@ -199,6 +250,48 @@ void main() {
             await capturerVue(tester, 'annonces-simples/$nom-bas');
           });
         }
+      }
+    }
+  }, skip: sautSansCapture);
+
+  group('captures annonce avec lien', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(1440, 900),
+        const Size(390, 844),
+      ]) {
+        final String nom =
+            'annonce-lien-${taille.width.toInt()}-${langue.languageCode}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, 1);
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+          await _monterFil(
+            tester,
+            _FilFaux(
+              recues: <AnnonceRecue>[
+                AnnonceRecue(
+                  id: 'a1',
+                  titre: 'دليل المعلم · Guide de l\'enseignant',
+                  texte:
+                      'Le guide de l\'enseignant est disponible. Lisez-le ici : '
+                      'https://app.rewayahacademy.com/#/lire/guide-enseignant',
+                  publieeLe: _le,
+                ),
+              ],
+            ),
+            plus: <Override>[
+              ouvreurOngletProvider.overrideWithValue((Uri _) => true),
+            ],
+            sens: langue == AppLocale.ar
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+          );
+          await stabiliser(tester);
+          await capturerVue(tester, 'ANNONCE-LIENS/$nom');
+        });
       }
     }
   }, skip: sautSansCapture);
