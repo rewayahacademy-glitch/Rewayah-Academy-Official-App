@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
+import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/puce_filtre_actif.dart';
 import 'package:rewayah_academy/features/admin_candidature/libelles_candidature.dart'
     show libelleGeste;
@@ -213,6 +214,7 @@ Future<void> _monter(
   Size taille = const Size(1440, 900),
   CapacitesCandidatures capacites = _capacites,
   List<LigneCandidature>? lignes,
+  List<CompteAdmin>? comptes,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = taille;
@@ -250,7 +252,7 @@ Future<void> _monter(
         ),
       ],
       surcharges: <Override>[
-        serviceComptesProvider.overrideWithValue(_Comptes(_comptes)),
+        serviceComptesProvider.overrideWithValue(_Comptes(comptes ?? _comptes)),
         serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
         portEnseignantsProvider.overrideWithValue(_Enseignants(_enseignants)),
         portRetraitsComptesProvider.overrideWithValue(_retraits),
@@ -395,6 +397,20 @@ void main() {
           lessThan(hautBarre),
         );
       }
+      // L'entree « Refuser » du menu est la derniere, marquee destructive.
+      final EntreeAction derniere = tester
+          .widget<MenuActions>(find.byKey(BarreLot.cleAutres))
+          .actions
+          .last;
+      expect(derniere.libelle, libelleGesteLot(GesteLot.refuser));
+      expect(derniere.destructif, isTrue);
+      expect(
+        tester
+            .widget<MenuActions>(find.byKey(BarreLot.cleAutres))
+            .actions
+            .where((EntreeAction e) => e.destructif),
+        hasLength(1),
+      );
       await tester.tap(find.byKey(BarreLot.cleAutres));
       await tester.pumpAndSettle();
       expect(find.text(libelleGesteLot(GesteLot.leverPause)), findsOneWidget);
@@ -618,6 +634,9 @@ void main() {
         find.text(t.lieu.verifier(deNom: deDevant('Karim Essai'))).last,
       );
       await tester.pumpAndSettle();
+      // La suppression du compte n'est pas dans ce menu (elle reste dans
+      // Eleves, Familles et Equipe).
+      expect(find.text(t.admin.comptes.retrait.actionLigne), findsNothing);
       expect(_lieux.verifies, <String>['6']);
       expect(
         find.text(t.lieu.villeVerifiee(deNom: deDevant('Karim Essai'))),
@@ -648,6 +667,81 @@ void main() {
       expect(_retraits.envois.single.toSet(), <String>{'1', '3'});
       expect(find.byKey(cleBilanSuppression), findsOneWidget);
       expect(find.byKey(PersonnesPage.cleBarreComptes), findsNothing);
+    });
+
+    testWidgets('150 eleves : la liste se lit par pages ; la case d\'en-tete '
+        'retient la seule page affichee, la barre dit ce nombre', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=eleves',
+        comptes: <CompteAdmin>[
+          for (int i = 100; i < 250; i++)
+            CompteAdmin(
+              profilId: 'e$i',
+              identifiant: 'RA-26-9$i',
+              prenom: 'Eleve$i',
+              nom: 'Essai',
+              role: AppRole.student,
+              etat: AccountStatus.active,
+              inscritLe: DateTime.now().subtract(const Duration(days: 12)),
+              accesJusquAu: null,
+              foyerId: null,
+              piece: EtatPiece.aucune,
+              contrats: 0,
+              aEnseignant: false,
+              enfantsDuFoyer: 0,
+              detailsServis: true,
+              tranche: TrancheAge.enfant,
+            ),
+        ],
+      );
+      await tester.tap(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is CaseACocher && w.libelle == t.commun.listes.cocherPage,
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.admin.comptes.retrait.retenus(n: taillePagePersonnes)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.admin.comptes.retrait.supprimerSelection(n: taillePagePersonnes),
+        ),
+        findsOneWidget,
+      );
+      // La page suivante garde la selection et dit ce qui est ailleurs.
+      _routeur.go('/admin/personnes?onglet=eleves&page=2');
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          t.admin.comptes.retrait.retenusPage(n: taillePagePersonnes, p: '0'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('trier garde la selection ; changer d\'onglet la vide', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, adresse: '/admin/personnes?onglet=eleves');
+      await tester.tap(_caseDe('Amina Essai'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(PersonnesPage.cleBarreComptes), findsOneWidget);
+      _routeur.go('/admin/personnes?onglet=eleves&tri=nom');
+      await tester.pumpAndSettle();
+      expect(find.byKey(PersonnesPage.cleBarreComptes), findsOneWidget);
+      _routeur.go('/admin/personnes?onglet=familles');
+      await tester.pumpAndSettle();
+      expect(find.byKey(PersonnesPage.cleBarreComptes), findsNothing);
+      _routeur.go('/admin/personnes?onglet=eleves');
+      await tester.pumpAndSettle();
+      expect(find.byKey(PersonnesPage.cleBarreComptes), findsNothing);
+      expect(find.byKey(PersonnesPage.cleSupprimerComptes), findsNothing);
     });
 
     testWidgets('equipe : un compte de la direction n\'a pas de case', (
