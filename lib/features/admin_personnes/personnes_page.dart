@@ -31,6 +31,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/domain/enums.dart';
@@ -40,6 +41,7 @@ import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -49,6 +51,7 @@ import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pied_de_liste.dart';
 import '../../core/widgets/selecteur_section.dart';
@@ -100,6 +103,9 @@ enum OngletPersonnes {
 /// La largeur de fenetre a partir de laquelle la liste et l'apercu se posent
 /// cote a cote (pilote, 21/11/2026).
 const double largeurListeEtApercu = 1024;
+
+/// L'echelle du texte au-dela de laquelle la page reste en une colonne.
+const double echelleMaxCoteACote = 1.3;
 
 /// La part de la liste dans la disposition cote a cote.
 const double _partListe = 0.4;
@@ -169,6 +175,9 @@ class PersonnesPage extends ConsumerWidget {
   /// La cle de l'apercu de droite.
   static const Key cleApercu = ValueKey<String>('personnes-apercu');
 
+  /// La cle du menu des anciennes pages de la rubrique.
+  static const Key cleAutresPages = ValueKey<String>('personnes-autres-pages');
+
   /// La cle de la liste.
   static const Key cleListe = ValueKey<String>('personnes-liste');
 
@@ -224,8 +233,12 @@ class PersonnesPage extends ConsumerWidget {
     final AsyncValue<PageEnseignants> enseignants = ref.watch(
       pageEnseignantsProvider(requeteEns),
     );
+    // Texte agrandi au-dela de 130 % : une seule colonne qui defile en
+    // entier (les onglets agrandis ne tiennent plus au-dessus de deux cadres ;
+    // garde de reflow AD-11).
     final bool coteACote =
-        MediaQuery.sizeOf(context).width >= largeurListeEtApercu;
+        MediaQuery.sizeOf(context).width >= largeurListeEtApercu &&
+        MediaQuery.textScalerOf(context).scale(1) <= echelleMaxCoteACote;
 
     int? nombre(OngletPersonnes o) => switch (o.vue) {
       null => enseignants.value?.total,
@@ -266,11 +279,24 @@ class PersonnesPage extends ConsumerWidget {
       ],
     );
 
+    // Autant de lignes que la hauteur en tient (comme Comptes) : a 320 x 256
+    // (reflow a 400 %), huit lignes deborderaient.
+    final Widget squelette = LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) {
+        final double pas =
+            AppMetriques.of(contexte).cibleTactile + AppSpacing.sm;
+        return Skeleton.tableDense(
+          lignes: contraintes.hasBoundedHeight
+              ? (contraintes.maxHeight / pas).floor().clamp(2, 10)
+              : 6,
+        );
+      },
+    );
     final VueComptes? vue = onglet.vue;
     final Widget corps = vue == null
         ? BlocAsynchrone<PageEnseignants>(
             valeur: enseignants,
-            squelette: const Skeleton.tableDense(lignes: 8),
+            squelette: squelette,
             titreEchec: t.admin.listeEnseignants.lectureEchec,
             onReessayer: () =>
                 ref.invalidate(pageEnseignantsProvider(requeteEns)),
@@ -302,7 +328,7 @@ class PersonnesPage extends ConsumerWidget {
           )
         : BlocAsynchrone<List<CompteAdmin>>(
             valeur: comptes,
-            squelette: const Skeleton.tableDense(lignes: 8),
+            squelette: squelette,
             titreEchec: t.admin.comptes.erreur,
             onReessayer: () => ref.invalidate(comptesProvider),
             construire: (List<CompteAdmin> tous) => _contenu(
@@ -326,6 +352,22 @@ class PersonnesPage extends ConsumerWidget {
     return PageShell(
       titre: t.nav.admin.personnes,
       listeBureau: true,
+      // Les anciennes pages restent atteignables d'ici, au telephone aussi
+      // (son tiroir ne montre pas les sous-liens), jusqu'a l'etape (e).
+      actionsEntete: <Widget>[
+        MenuActions(
+          key: cleAutresPages,
+          libelle: p.autresPages,
+          icone: AppIcons.reglages,
+          actions: <EntreeAction>[
+            for (final SousLien lien in ongletsPersonnes())
+              EntreeAction(
+                libelle: lien.libelle,
+                onChoix: () => GoRouter.of(context).go(lien.chemin),
+              ),
+          ],
+        ),
+      ],
       defilante: false,
       child: corps,
     );

@@ -5277,6 +5277,7 @@
   },
   "admin": {
     "personnesPage": {
+      "autresPages": "صفحات الأشخاص الأخرى",
       "ongletEquipe": "الإدارة والفريق",
       "ongletAvecNombre": "⁨{nom}⁩ (⁨{n}⁩)",
       "choix": "الأشخاص المعروضون",
