@@ -40,7 +40,9 @@ suggestion.** Aucun agent ne déclare cette page faite sans que le directeur l'a
 3. **Liste cassée** : sur un écran d'ordinateur de 14 pouces, la liste ne commence qu'à la moitié de l'écran, sous le titre, deux
    rangées d'onglets, la recherche, « Filtrer par », le tri, le compteur et l'en-tête de colonnes ; on ne voit que 4 à 5 lignes à la
    fois. Avec 2 000 personnes, c'est inutilisable. La liste doit occuper l'écran (`DECISION-DEFILEMENT-2026-11-01.md` : la liste est
-   la page, rien de gros collé au-dessus).
+   la page, rien de gros collé au-dessus). **C'est une régression** : les anciennes listes Comptes affichaient
+   14 lignes entières à 1440 x 900 (`DECISION-LISTES-2026-10-23.md` §7, mesure 1 : environ 10 au moins) ; l'alerte est aussi en tête
+   de `DECISION-LISTES`. Critère de fin : la mesure refaite à 1280, 1366 et 1440, chiffres écrits, puis vue par le directeur.
 4. **Filtres en menus déroulants, sur la même ligne que les onglets** (ordre déjà donné, « j'avais bien dit drop down menu ») : pas
    une seconde rangée de vues (Candidats, Accueil, Actifs, Partis, Pièces à vérifier) plus une rangée de recherche et de filtres. Les
    vues et les filtres deviennent des menus déroulants à côté des onglets.

@@ -2,6 +2,8 @@
 
 **Directeur, 23/10/2026.** Point de départ : la page Candidatures, où 684 px séparaient le haut de l'écran de la première ligne et où 2 lignes seulement étaient visibles à 1440 x 900, alors que l'académie reçoit environ 600 personnes en quelques jours et que le volume grandira. La demande vaut pour toute l'application. Ce document est la **source canonique unique** de la règle ; les autres fichiers y renvoient, sans la recopier.
 
+> **ALERTE RÉGRESSION (directeur, 21/11/2026, « j'ai tout détesté ») : la page unique « Personnes » (PR 683) a fait reculer la règle.** Sur un ordinateur de 14 pouces, sa liste commence à la moitié de l'écran et n'affiche que 4 à 5 lignes, sous le titre, deux rangées d'onglets, la recherche, « Filtrer par », le tri, le compteur et l'en-tête de colonnes. Les anciennes listes Comptes en affichaient 14 à 1440 x 900 (mesure du 30/10, §7 ci-dessous) : c'est une régression mesurable de la mesure 1 et de la mesure 3. Correctif attendu et défauts détaillés : `PARCOURS-ENSEIGNANT/RESTE-A-FAIRE.md` §0 bis (vues et filtres en menus déroulants sur la ligne des onglets, liste plein écran, aperçu utile, « Personnes » d'un clic depuis la barre réduite). Non vérifié : si d'autres listes ont reculé de la même façon ; tout agent qui touche une liste remesure à 1280, 1366 et 1440 et écrit les chiffres ici avant de la dire finie.
+
 > **01/11/2026, prévaut sur ce document** : aucune liste ne défile dans un cadre de hauteur fixe ; la liste est la page (`DECISION-DEFILEMENT-2026-11-01.md`).
 
 ## 1. La règle (texte du directeur, mot pour mot)
