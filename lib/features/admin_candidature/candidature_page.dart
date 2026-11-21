@@ -42,6 +42,7 @@ import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/retour_bureau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -183,11 +184,18 @@ class _EtatCandidatureDirectionPage
     final GoRouter? routeur = GoRouter.maybeOf(context);
     if (file == null || routeur == null || !mounted) return;
     _minuteurPassage?.cancel();
-    unawaited(
-      routeur.replace<void>(
-        Routes.adminPersonnesCandidaturePour(
-          reference,
-          fileDeLaListe: file.adresse,
+    // Etape (f) : le dossier voisin remplace aussi l'entree de l'historique du
+    // navigateur (`Router.neglect`), au lieu d'en ajouter une a chaque
+    // dossier : la fleche et le retour du navigateur ramenent a la liste en
+    // un coup.
+    Router.neglect(
+      context,
+      () => unawaited(
+        routeur.replace<void>(
+          Routes.adminPersonnesCandidaturePour(
+            reference,
+            fileDeLaListe: file.adresse,
+          ),
         ),
       ),
     );
@@ -302,7 +310,9 @@ class _EtatCandidatureDirectionPage
     if (retour != null) {
       retour();
     } else if (context.canPop()) {
-      context.pop();
+      // Etape (f) : comme la fleche de la coquille, pour que le retour du
+      // navigateur ne rouvre pas le dossier qu'on vient de fermer.
+      retourBureau(context);
     } else {
       // Sans pile (page rechargee) : la liste, avec la file du dossier.
       final FileDuDossier? file = _file;

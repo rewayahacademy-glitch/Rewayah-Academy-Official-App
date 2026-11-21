@@ -65,6 +65,54 @@ export async function appelant(requete: Request): Promise<{ id: string } | null>
   return { id: data.user.id }
 }
 
+/// PE-B10 (20/11/2026) : l'appelant, avec la raison d'un echec. `appelant()`
+/// ci-dessus confond « aucun jeton », « jeton refuse » et « service
+/// d'authentification injoignable » (tous rendus `null`, donc 401) : pendant
+/// la panne R19 du 15/11, des candidats ont lu « reconnectez-vous » alors que
+/// la base ne repondait plus. Cette fonction ne change rien pour les autres
+/// fonctions, qui gardent `appelant()`.
+export type AppelantDetaille =
+  | { etat: 'ok'; id: string }
+  | { etat: 'absent' }
+  | { etat: 'refuse' }
+  | { etat: 'indisponible' }
+
+/// La raison d'une erreur de `auth.getUser()` : un refus du jeton (statut
+/// 4xx) ou une panne (pas de statut, statut 0, ou 5xx : erreur de reseau ou du
+/// service d'authentification). Fonction pure.
+export function etatErreurAuth(erreur: { status?: number } | null | undefined): 'refuse' | 'indisponible' {
+  const statut = erreur?.status
+  if (typeof statut === 'number' && statut >= 400 && statut < 500) return 'refuse'
+  return 'indisponible'
+}
+
+/// Comme `appelant()`, mais dit pourquoi il n'y a pas d'appelant.
+export async function appelantDetaille(requete: Request): Promise<AppelantDetaille> {
+  const entete = requete.headers.get('Authorization')
+  if (!entete?.startsWith('Bearer ')) {
+    return { etat: 'absent' }
+  }
+  const url = Deno.env.get('SUPABASE_URL')
+  const cle = Deno.env.get('SUPABASE_ANON_KEY')
+  if (!url || !cle) {
+    throw new Error('configuration absente : SUPABASE_URL ou SUPABASE_ANON_KEY')
+  }
+  const client = createClient(url, cle, {
+    global: { headers: { Authorization: entete } },
+    auth: { persistSession: false },
+  })
+  let reponse
+  try {
+    reponse = await client.auth.getUser()
+  } catch {
+    return { etat: 'indisponible' }
+  }
+  const { data, error } = reponse
+  if (error) return { etat: etatErreurAuth(error) }
+  if (!data.user) return { etat: 'refuse' }
+  return { etat: 'ok', id: data.user.id }
+}
+
 /// Client qui conserve le JWT de l'appelant pour les RPC autorisees aux comptes.
 export function clientAuthentifie(requete: Request): SupabaseClient | null {
   const entete = requete.headers.get('Authorization')

@@ -112,6 +112,7 @@ class CoquillePraxisState extends State<CoquillePraxis>
   bool _parfaitDit = false;
   Timer? _minuterie;
   SituationEntree? _jouee;
+  Element? _champ;
 
   @override
   void initState() {
@@ -191,6 +192,40 @@ class CoquillePraxisState extends State<CoquillePraxis>
       if (mounted) setState(() {});
     }
     if (widget.situation == SituationEntree.saisie) _suivreTexte();
+    _viser();
+  }
+
+  /// Dit a la scene ou est le formulaire : le champ de l'adresse, ou la
+  /// carte quand il n'y a plus de champ. Praxis le montre du doigt : vers le
+  /// bas quand la feuille est sous lui (telephone), vers le cote quand la
+  /// carte est a cote de lui (ordinateur ; a gauche en arabe). La direction
+  /// vient de cette place reelle, jamais d'une largeur d'ecran.
+  void _viser() {
+    final RenderObject? decor = _cleDecor.currentContext?.findRenderObject();
+    final RenderObject? feuille = _cleFeuille.currentContext
+        ?.findRenderObject();
+    if (decor is! RenderBox || feuille is! RenderBox) return;
+    if (!decor.attached || !feuille.attached) return;
+    if (_champ?.mounted != true) {
+      _champ = null;
+      void chercher(Element e) {
+        if (_champ != null) return;
+        if (e.widget is EditableText) {
+          _champ = e;
+        } else {
+          e.visitChildren(chercher);
+        }
+      }
+
+      _cleContenu.currentContext?.visitChildElements(chercher);
+    }
+    final RenderObject? champ = _champ?.findRenderObject();
+    final RenderBox vers = champ is RenderBox && champ.attached
+        ? champ
+        : feuille;
+    regie.th.cible = decor.globalToLocal(
+      vers.localToGlobal(vers.size.center(Offset.zero)),
+    );
   }
 
   /// Ses yeux suivent la fin du texte ecrit dans le champ qui a le focus.
@@ -220,6 +255,7 @@ class CoquillePraxisState extends State<CoquillePraxis>
     _jouee = situation;
     final bool depuisPorte =
         neuf || situationDepuisLaPorte(situation, regie.th);
+    _viser();
     unawaited(
       regie.jouer(
         sceneEntree(
@@ -278,6 +314,7 @@ class CoquillePraxisState extends State<CoquillePraxis>
   void _mesurer(Size taille) {
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted) return;
+      _viser();
       final double utile = _hauteurUtile(taille);
       if ((utile - _besoin).abs() < 0.5) return;
       setState(() {

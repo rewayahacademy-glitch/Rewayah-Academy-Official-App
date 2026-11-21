@@ -54,6 +54,7 @@ import '../../core/widgets/status_pill.dart';
 import '../admin_candidature/references_dossiers.dart';
 import '../foyer/photo_eleve.dart';
 import '../mfa_controleur/double_verification.dart';
+import 'apercu_compte.dart';
 import 'changements_heure.dart';
 import 'liste_comptes.dart';
 
@@ -753,6 +754,10 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       );
     }
 
+    final List<ColonneDonnees<CompteAdmin>> colonnes = _colonnes(
+      visibles,
+      filtre,
+    );
     return DataCollection<CompteAdmin>(
       key: ValueKey<String>('comptes-table-${_vue.name}-$page-$taille'),
       prendTeteDePage: true,
@@ -762,7 +767,10 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       lignesCartes: true,
       lignes: lignesPage,
       cle: (CompteAdmin c) => ValueKey<String>(c.profilId),
-      colonnes: _colonnes(visibles, filtre),
+      colonnes: colonnes,
+      // PERSONNES-UNE-PAGE (a) : toute la ligne s'ouvre ; le menu « ... »
+      // reste, et le toucher n'ouvre pas la ligne.
+      onSelectionner: (CompteAdmin c) => _ouvrirLigne(context, c, colonnes),
       // Une colonne d'actions seulement si au moins un compte de la vue en a
       // une, jugee sur toute la liste (la largeur ne saute pas d'une page a
       // l'autre).
@@ -1578,13 +1586,53 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       ? PopulationAdmission.eleveAdulte
       : PopulationAdmission.famille;
 
+  /// PERSONNES-UNE-PAGE (a) : ce que fait le toucher d'une ligne entiere. Un
+  /// enseignant qui a un dossier ouvre son dossier ; toute autre personne
+  /// (eleve, famille, direction) n'a pas de fiche : la ligne ouvre l'apercu,
+  /// avec ce que la vue montre deja et les gestes du menu de la ligne.
+  void _ouvrirLigne(
+    BuildContext context,
+    CompteAdmin c,
+    List<ColonneDonnees<CompteAdmin>> colonnes,
+  ) {
+    if (_ouvreUnDossier(c)) {
+      _ouvrirDossier(context, c);
+      return;
+    }
+    unawaited(
+      ouvrirApercuCompte(
+        context,
+        nom: c.libelle,
+        informations: <InformationCompte>[
+          for (final ColonneDonnees<CompteAdmin> colonne in colonnes)
+            if (colonne.role != RoleColonne.identifiante)
+              (titre: colonne.titre, valeur: colonne.texte(c)),
+        ],
+        // Un geste qui efface ne se presente jamais dans un apercu de lecture
+        // (pilote, 21/11/2026) : il reste dans le menu « ... » de la ligne,
+        // avec sa confirmation.
+        gestes: <EntreeAction>[
+          for (final EntreeAction g in _gestes(context, c))
+            if (!g.destructif) g,
+        ],
+      ),
+    );
+  }
+
   /// Le menu d'une ligne : rien (pas de menu vide) quand elle n'a pas d'action.
   Widget _actions(BuildContext context, CompteAdmin c) {
     if (!_aUneAction(c)) return const SizedBox.shrink();
     return MenuActions(
       points: true,
       objet: c.libelle,
-      actions: <EntreeAction>[
+      actions: _gestes(context, c),
+    );
+  }
+
+  /// Les gestes d'un compte, ceux du menu de sa ligne et de son apercu : les
+  /// memes, dans le meme ordre, le destructif en dernier.
+  List<EntreeAction> _gestes(BuildContext context, CompteAdmin c) =>
+      <EntreeAction>[
         if (_ouvreUneDemande(c))
           EntreeAction(
             libelle: t.admin.comptes.actionVoirDemande,
@@ -1632,9 +1680,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             destructif: true,
             onChoix: () => unawaited(_supprimer(<CompteAdmin>[c])),
           ),
-      ],
-    );
-  }
+      ];
 
   static String _texteIncoherence(TypeIncoherenceLieu type) => switch (type) {
     TypeIncoherenceLieu.sansVille => t.lieu.incSansVille,

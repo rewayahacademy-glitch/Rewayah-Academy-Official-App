@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/contenu_piece.dart';
-import '../../core/dossier/echec_depot.dart';
+import '../../core/dossier/phrase_echec_depot.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/fichiers/formats_admis.dart';
@@ -18,9 +18,11 @@ import '../../core/session/deconnexion.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/status_pill.dart';
 
 /// Le depot de la piece d'identite.
 ///
@@ -40,6 +42,12 @@ class DepotPiecePage extends ConsumerStatefulWidget {
 
   /// La cle de la phrase des formats admis.
   static const Key cleFormats = ValueKey<String>('piece-formats');
+
+  /// PE-B10 : la cle du bandeau « envoi en cours ».
+  static const Key cleEnCours = ValueKey<String>('piece-en-cours');
+
+  /// PE-B10 : la cle du bandeau d'echec.
+  static const Key cleEchec = ValueKey<String>('piece-echec');
 
   @override
   ConsumerState<DepotPiecePage> createState() => _DepotPiecePageState();
@@ -100,25 +108,21 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
       _erreur = null;
     });
     try {
+      // PE-B10 : l'adaptateur reessaie seul une panne passagere, etape par
+      // etape ; ce qui arrive ici est la cause du dernier essai.
       await ref.read(serviceDossierProvider).deposerPiece(piece);
       ref.invalidate(etatDossierProvider);
+      // Reussi : le portail dit « Piece recue » a la ligne de la piece ; on y
+      // revient tout de suite (un second appui enverrait la meme piece).
       if (mounted) {
         GoRouter.of(context).go(Routes.attente);
       }
     } on Object catch (erreur) {
       if (mounted) {
+        // La photo reste choisie : « Envoyer ma piece » la renvoie sans
+        // rouvrir le selecteur.
         setState(
-          () => _erreur = switch (causeEchecDepot(erreur)) {
-            CauseEchecDepot.format => t.kyc.erreurFormat,
-            CauseEchecDepot.taille => t.kyc.tropVolumineux(
-              taille: (ServiceDossier.tailleMaximaleOctets / (1024 * 1024))
-                  .round()
-                  .toString(),
-            ),
-            CauseEchecDepot.contenu => t.kyc.contenuNonConforme,
-            CauseEchecDepot.reseau => t.kyc.erreurReseau,
-            CauseEchecDepot.autre => t.kyc.erreur,
-          },
+          () => _erreur = phraseEchecDepot(erreur, sorte: SorteFichier.piece),
         );
       }
     } finally {
@@ -205,14 +209,23 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
             }),
           ),
           Ecart.vLg,
-          if (_erreur != null || aFaire != null) ...<Widget>[
-            Semantics(
-              liveRegion: _erreur != null,
-              child: Text(
-                _erreur ?? aFaire!,
-                textAlign: TextAlign.center,
-                style: (_erreur != null ? palette.inkAlert : palette.inkMuted)
-                    .applyTo(textes.bodyMedium ?? const TextStyle()),
+          // PE-B10 : trois etats visibles, jamais par la couleur seule
+          // (`BandeauAttention` : icone, titre, phrase, annonce aux lecteurs
+          // d'ecran). Echoue : la cause vraie et le geste utile.
+          if (_erreur != null) ...<Widget>[
+            BandeauAttention(
+              key: DepotPiecePage.cleEchec,
+              titre: t.kyc.echecTitre,
+              message: _erreur!,
+              ton: TonEtat.alerte,
+            ),
+            Ecart.vMd,
+          ] else if (aFaire != null) ...<Widget>[
+            Text(
+              aFaire,
+              textAlign: TextAlign.center,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
               ),
             ),
             Ecart.vMd,
@@ -245,6 +258,17 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
           ],
           // DECISION-ENTREE-2026-10-17 : inactif tant qu'aucune photo n'est
           // choisie, comme dans les autres apps.
+          // En cours : la phrase dit de garder la page ouverte, et que les
+          // nouveaux essais se font seuls.
+          if (_envoi) ...<Widget>[
+            BandeauAttention(
+              key: DepotPiecePage.cleEnCours,
+              titre: t.kyc.enCoursTitre,
+              message: t.kyc.enCours,
+              ton: TonEtat.accent,
+            ),
+            Ecart.vMd,
+          ],
           ActionPrincipale(
             libelle: t.kyc.envoyer,
             enCours: _envoi,
