@@ -1608,7 +1608,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             if (colonne.role != RoleColonne.identifiante)
               (titre: colonne.titre, valeur: colonne.texte(c)),
         ],
-        gestes: _gestes(context, c),
+        // Un geste qui efface ne se presente jamais dans un apercu de lecture
+        // (pilote, 21/11/2026) : il reste dans le menu « ... » de la ligne,
+        // avec sa confirmation.
+        gestes: <EntreeAction>[
+          for (final EntreeAction g in _gestes(context, c))
+            if (!g.destructif) g,
+        ],
       ),
     );
   }

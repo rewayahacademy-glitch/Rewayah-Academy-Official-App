@@ -127,7 +127,9 @@ void main() {
     ('telephone', const Size(390, 844)),
   ]) {
     testWidgets('$nom : la ligne d\'un eleve ouvre l\'apercu, avec ses '
-        'informations et les gestes du menu', (WidgetTester tester) async {
+        'informations et les gestes du menu qui n\'effacent rien', (
+      WidgetTester tester,
+    ) async {
       await _monter(
         tester,
         vue: 'eleves',
@@ -164,12 +166,13 @@ void main() {
         ),
         findsOneWidget,
       );
+      // Le geste qui efface n'est pas dans l'apercu : il reste dans le menu.
       expect(
         find.descendant(
           of: apercu,
           matching: find.text(t.admin.comptes.retrait.actionLigne),
         ),
-        findsOneWidget,
+        findsNothing,
       );
       expect(tester.takeException(), isNull);
     });
