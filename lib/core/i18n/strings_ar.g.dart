@@ -5829,7 +5829,7 @@ class _Traductions$admin$personnesPage$ar extends Traductions$admin$personnesPag
 	@override String get famillePersonne => 'الشخص';
 	@override String get familleEnseignement => 'التعليم';
 	@override String get familleDisponibilites => 'أوقات التفرغ';
-	@override String get famillePraxis => 'Praxis';
+	@override String get famillePraxis => 'قراءة Praxis';
 	@override String get typeNouveau => 'الملفات الجديدة';
 	@override String get typeDomaine => 'المجال';
 	@override String get verifierPiece => 'التحقق من وثيقة الهوية';
@@ -34345,7 +34345,7 @@ extension on TraductionsAr {
 		} ?? switch (path) {
 			'admin.personnesPage.familleEnseignement' => 'التعليم',
 			'admin.personnesPage.familleDisponibilites' => 'أوقات التفرغ',
-			'admin.personnesPage.famillePraxis' => 'Praxis',
+			'admin.personnesPage.famillePraxis' => 'قراءة Praxis',
 			'admin.personnesPage.typeNouveau' => 'الملفات الجديدة',
 			'admin.personnesPage.typeDomaine' => 'المجال',
 			'admin.personnesPage.verifierPiece' => 'التحقق من وثيقة الهوية',
