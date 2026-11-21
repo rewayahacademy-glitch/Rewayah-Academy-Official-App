@@ -675,6 +675,7 @@ class LigneCandidature {
     this.nouveau = false,
     this.complementEnCours = false,
     this.gestes = const <String>[],
+    this.nomLatin,
   });
 
   /// Lit une ligne rendue par le serveur, ou `null` quand elle n'a pas
@@ -698,6 +699,7 @@ class LigneCandidature {
       id: id,
       reference: reference,
       nomComplet: texte('nomComplet') ?? '',
+      nomLatin: texte('nomLatin'),
       type: texte('type') ?? '',
       etape: EtapeCandidature.depuisSql(json['etape']),
       etat: EtatCandidature.depuisSql(json['etat']),
@@ -731,6 +733,12 @@ class LigneCandidature {
 
   /// L'identifiant de la candidature.
   final String id;
+
+  /// PE-B3 : le nom en lettres latines (cle `nomLatin` de
+  /// `private.cand_ligne_json`, CAND-NOM-LATIN) : celui que la personne a
+  /// confirme, ou son nom d'origine quand il est deja latin ; `null` quand il
+  /// reste a confirmer ou qu'un serveur d'avant ne le rend pas.
+  final String? nomLatin;
 
   /// NOUVEAU-LISTE : vrai quand la candidature est arrivee depuis moins de 7
   /// jours et que personne de l'equipe n'a ouvert son dossier (regle du

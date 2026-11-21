@@ -1558,7 +1558,8 @@
       "libelle": "Votre nom en lettres latines",
       "raison": "Pour les listes, les attestations et les échanges avec l'académie.",
       "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi.",
-      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer."
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
+      "court": "Nom en lettres latines"
     }
   },
   "protectionEnfants": {
@@ -1857,7 +1858,12 @@
     "photoFormat": "Ce fichier n'est pas accepté\u00a0: une photo se dépose en JPEG, PNG ou WebP. Choisissez une autre photo.",
     "heicNonConverti": "Cette photo d'iPhone (HEIC) ne peut pas être convertie sur cet appareil. Ouvrez cette page sur votre iPhone et choisissez la photo de nouveau, ou enregistrez-la d'abord en JPEG.",
     "tropLourd": "Ce fichier dépasse {taille}\u00a0Mo. Reprenez la photo en qualité plus basse, puis choisissez-la de nouveau.",
-    "formatsPiece": "Une photo JPEG ou PNG, {taille}\u00a0Mo au plus. Une photo d'iPhone est convertie avant l'envoi."
+    "formatsPiece": "Une photo JPEG ou PNG, {taille}\u00a0Mo au plus. Une photo d'iPhone est convertie avant l'envoi.",
+    "echecIndisponible": "Rewayah n'a pas pu enregistrer votre photo pour le moment, même après deux nouveaux essais. Votre photo reste choisie\u00a0: réessayez dans quelques minutes.",
+    "echecReseau": "Votre photo n'est pas parvenue jusqu'à Rewayah, même après deux nouveaux essais\u00a0: la connexion internet de cet appareil est coupée ou trop lente. Votre photo reste choisie\u00a0: réessayez quand la connexion revient, ou passez sur un autre réseau (Wi-Fi par exemple).",
+    "echecSession": "Votre session a expiré\u00a0: Rewayah ne peut pas enregistrer votre photo sans elle. Déconnectez-vous, reconnectez-vous avec votre adresse, puis choisissez de nouveau la photo.",
+    "echecRefus": "Rewayah a refusé ce dépôt pour votre compte\u00a0: un nouvel essai donnerait le même résultat. Écrivez à la direction pour qu'elle regarde.",
+    "echecAutre": "L'enregistrement de votre photo n'a pas abouti, pour une raison que l'application ne sait pas nommer. Votre photo reste choisie\u00a0: réessayez\u00a0; si cela recommence, écrivez à la direction."
   },
   "kyc": {
     "titre": "Votre pièce d'identité",
@@ -1878,13 +1884,14 @@
     "envoyer": "Envoyer ma pièce",
     "envoiEnCours": "Envoi en cours",
     "deposee": "Pièce reçue",
-    "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
     "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG ou PNG le sont. Prenez votre pièce en photo, puis choisissez cette photo.",
-    "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
     "contenuNonConforme": "Ce fichier ne s'ouvre pas comme une photo\u00a0: il est peut-être abîmé, ou d'un autre type renommé. Choisissez une photo JPEG ou PNG de votre pièce d'identité.",
     "memeNom": "Envoyez une pièce qui porte exactement le nom écrit dans votre compte.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
-    "manqueType": "Choisissez d'abord la pièce que vous déposez."
+    "manqueType": "Choisissez d'abord la pièce que vous déposez.",
+    "enCoursTitre": "Envoi de votre pièce",
+    "enCours": "Gardez cette page ouverte. Si la connexion internet coupe, l'application réessaie seule, deux fois.",
+    "echecTitre": "Votre pièce n'est pas encore envoyée"
   },
   "appareils": {
     "titre": "Appareils",
@@ -3334,6 +3341,7 @@
       "conditionsNonCharge": "Les conditions de rémunération n'ont pas pu être chargées.",
       "envoyee": "Votre candidature est envoyée. L'académie vous préviendra ici s'il faut la compléter.",
       "envoyeeLe": "Envoyée le {date}.",
+      "identiteTitre": "Votre nom et votre ville",
       "etatVersement": "Moyen de versement\u00a0: {etat}",
       "retourDossier": "Retour à mon dossier",
       "complementCarte": "L'académie vous demande de compléter cette partie.",
@@ -10448,7 +10456,6 @@
       "changer": "Changer la photo",
       "alternatif": "Votre photo publique",
       "succes": "La photo est enregistrée.",
-      "echec": "La photo n'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.",
       "enregistree": "Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
       "horsLigne": "La photo pourra être envoyée quand la connexion reviendra."
