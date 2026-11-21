@@ -13,7 +13,7 @@ import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart'
     show DetailCandidature;
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart'
-    show LigneCandidature;
+    show CapacitesCandidatures, LigneCandidature;
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignants/modeles_enseignants.dart';
@@ -22,13 +22,16 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
+import 'package:rewayah_academy/features/admin_candidature/synthese_tete_dossier.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart'
     show nomAffiche;
 import 'package:rewayah_academy/features/admin_comptes/apercu_compte.dart';
+import 'package:rewayah_academy/features/admin_personnes/apercu_candidat.dart';
 import 'package:rewayah_academy/features/admin_personnes/personnes_page.dart';
-import 'package:rewayah_academy/features/com_messages/apercu_profil_candidat.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
+import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
 class _Comptes implements ServiceComptes {
@@ -107,6 +110,7 @@ Future<void> _monter(
   Size taille = const Size(1440, 900),
   List<CompteAdmin>? comptes,
   bool echec = false,
+  CapacitesCandidatures capacites = capacitesQuiLit,
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = taille;
@@ -135,6 +139,7 @@ Future<void> _monter(
         portEnseignantsProvider.overrideWithValue(_Enseignants(_enseignants)),
         portCandidaturesDirectionProvider.overrideWithValue(
           FauxCandidaturesDirection(
+            capacitesRendues: capacites,
             lignes: <LigneCandidature>[
               for (final LigneEnseignant l in _enseignants) l.dossier,
             ],
@@ -240,10 +245,67 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(_adresse, contains('element=CAND-00001'));
-    expect(find.byKey(ApercuProfilCandidat.cle), findsOneWidget);
-    await tester.tap(find.byKey(ApercuProfilCandidat.cleDossier));
+    // La synthese du dossier complet, en tete ; le pays ; aucun geste sans
+    // le droit de decider.
+    expect(find.byKey(SyntheseTeteDossier.cle), findsOneWidget);
+    expect(find.text(t.recrutement.dossier3.tete.anciennete), findsOneWidget);
+    expect(find.text(t.com.messages.apercu.pays), findsOneWidget);
+    expect(find.byKey(ApercuCandidatPersonnes.cleGestePrincipal), findsNothing);
+    expect(find.byKey(ApercuCandidatPersonnes.cleComplement), findsNothing);
+    expect(find.byKey(ApercuCandidatPersonnes.cleEcrire), findsNothing);
+    await tester.tap(find.byKey(ApercuCandidatPersonnes.cleDossier));
     await tester.pumpAndSettle();
     expect(_dossiers, <String>['/admin/personnes/candidatures/CAND-00001']);
+  });
+
+  testWidgets('ordinateur : avec le droit de decider, l\'apercu offre le '
+      'prochain geste (seul bouton plein), « Demander un complement » et '
+      '« Ecrire » ; le geste ouvre la feuille de la fiche', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      adresse: '/admin/personnes?onglet=enseignants&element=CAND-00001',
+      capacites: capacitesGestes,
+    );
+    expect(
+      find.byKey(ApercuCandidatPersonnes.cleGestePrincipal),
+      findsOneWidget,
+    );
+    expect(find.byKey(ApercuCandidatPersonnes.cleComplement), findsOneWidget);
+    verifierUnSeulBoutonPlein(tester);
+
+    await tester.tap(find.byKey(ApercuCandidatPersonnes.cleComplement));
+    await tester.pumpAndSettle();
+    expect(find.byType(FeuilleGeste), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('ordinateur : la barre precedent / suivant passe a la personne '
+      'voisine ; au bout de la liste, la fleche disparait', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      adresse: '/admin/personnes?onglet=enseignants&element=CAND-00001',
+    );
+    final Finder barre = find.byKey(PersonnesPage.cleVoisins);
+    expect(
+      find.descendant(of: barre, matching: find.text('1 sur 2')),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel(t.admin.personnesPage.precedente),
+      findsNothing,
+    );
+    await tester.tap(find.bySemanticsLabel(t.admin.personnesPage.suivante));
+    await tester.pumpAndSettle();
+    expect(_adresse, contains('element=CAND-00002'));
+    expect(
+      find.descendant(of: barre, matching: find.text('2 sur 2')),
+      findsOneWidget,
+    );
+    expect(find.bySemanticsLabel(t.admin.personnesPage.suivante), findsNothing);
   });
 
   testWidgets('telephone : la ligne d\'un eleve ouvre l\'apercu en feuille, '
