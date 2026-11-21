@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_avatar.dart';
+import '../../core/dossier/echec_depot.dart';
+import '../../core/dossier/phrase_echec_depot.dart';
 import '../../core/fichiers/formats_admis.dart';
 import '../../core/fichiers/phrase_refus_fichier.dart';
 import '../../core/i18n/strings.g.dart';
@@ -106,8 +108,9 @@ class EnvoiPhotoPubliqueServeur implements EnvoiPhotoPublique {
   Future<String> envoyer(PhotoChoisie photo) async {
     final String? id = moi();
     final Uint8List? octets = photo.octets;
-    if (id == null || octets == null) {
-      throw StateError('photo publique : aucune session ou aucun fichier');
+    if (id == null) throw const SessionAbsente();
+    if (octets == null) {
+      throw StateError('photo publique : aucun fichier');
     }
     // Le candidat a deja sa ligne d'enseignant : son seau est celui des
     // enseignants, meme avant la premiere photo.
@@ -277,6 +280,7 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
   _Phase _phase = _Phase.repos;
   PhotoChoisie? _photo;
   String? _refus;
+  String? _echec;
   bool _succes = false;
 
   static const double _diametre = AppSpacing.respiration + AppSpacing.xxxl;
@@ -329,8 +333,15 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
     final String cle;
     try {
       cle = await ref.read(envoiPhotoPubliqueProvider).envoyer(photo);
-    } on Object {
-      if (mounted) setState(() => _phase = _Phase.echec);
+    } on Object catch (erreur) {
+      // PE-B10 : la cause vraie (l'adaptateur a deja reessaye seul une panne
+      // passagere), et le geste utile ; la photo reste choisie.
+      if (mounted) {
+        setState(() {
+          _phase = _Phase.echec;
+          _echec = phraseEchecDepot(erreur, sorte: SorteFichier.photo);
+        });
+      }
       return;
     }
     // Le succes ne s'affiche que sur reponse (UX_REVIEW_04 ligne ENS-05A c).
@@ -480,7 +491,7 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
         if (_phase == _Phase.echec) ...<Widget>[
           Semantics(
             liveRegion: true,
-            child: Text(t.enseignant.photo.echec, style: alerte),
+            child: Text(_echec ?? t.fichiers.echecAutre, style: alerte),
           ),
           Ecart.vMd,
         ],
