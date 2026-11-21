@@ -15413,7 +15413,7 @@ class Traductions$admin$guideCommentaires$fr {
 	String get replierFil => 'Replier la conversation';
 
 	/// fr: 'Aucun lecteur n'attend votre réponse. Tous les fils sont dans « Toutes les parties ».'
-	String get aucunEnAttente => 'Aucun lecteur n\'attend votre réponse. Tous les fils sont dans « Toutes les parties ».';
+	String get aucunEnAttente => 'Aucun lecteur n\'attend votre réponse. Tous les fils sont dans « Toutes les parties ».';
 }
 
 // Path: admin.chiffres
@@ -64861,7 +64861,7 @@ extension on Traductions {
 			'admin.guideCommentaires.replierFils' => 'Ne garder que 3 fils',
 			'admin.guideCommentaires.voirFil' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir le message entier', other: 'Voir toute la conversation (${n} messages)', ), 
 			'admin.guideCommentaires.replierFil' => 'Replier la conversation',
-			'admin.guideCommentaires.aucunEnAttente' => 'Aucun lecteur n\'attend votre réponse. Tous les fils sont dans « Toutes les parties ».',
+			'admin.guideCommentaires.aucunEnAttente' => 'Aucun lecteur n\'attend votre réponse. Tous les fils sont dans « Toutes les parties ».',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'Dernier recalcul à ${heure}',
 			'admin.chiffres.reserve' => 'Cette page est réservée à la direction.',
 			'admin.chiffres.reservePhrase' => 'Votre compte n\'a pas accès aux chiffres de l\'académie. Si c\'est une erreur, écrivez à la direction.',
