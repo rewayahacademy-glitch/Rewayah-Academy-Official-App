@@ -1,0 +1,33 @@
+PERSONNES-PERF (PR #672), journal de preuve, 21/11/2026.
+Ce n'est PAS une preuve en production : rien n'y est installe.
+
+Captures (liste_avatars_390.png, liste_avatars_1440.png) : 24 personnes fictives, avatars servis
+par le VRAI adaptateur PhotosSupabase (serveur simule, aucune photo visible : initiales).
+test/capture/personnes_perf_avatars_capture_test.dart compte les appels : 24 avatars de la meme
+image = 1 appel photos_personnes (avant ce lot : 24). Rien de visible ne change.
+
+Base locale PostgreSQL 16, etat de main + donnees fictives a l'echelle de la production du
+20/11/2026 (supabase/tests/fixtures/personnes_perf_volume.sql : 733 profils, 650 candidatures,
+3 900 evenements, 460 pieces, 360 fils, 860 messages). Lecteur : la direction.
+
+1. Reponses identiques avant / apres (supabase/tests/perf/personnes_perf_avant_apres.sh) :
+   REPONSES IDENTIQUES : 132 appels compares (22 lectures x 6 comptes).
+
+2. EXPLAIN (ANALYZE, BUFFERS), deuxieme appel de la meme connexion
+   com_lister_fils             avant 1 024,7 ms, 47 310 blocs   apres 240,0 ms, 23 385 blocs
+   comptes_admin_par_role      avant   179,7 ms, 15 603 blocs   apres  55,9 ms,  7 517 blocs
+   lister_candidatures p. 1    avant   113,3 ms, 16 426 blocs   apres  68,2 ms,  8 336 blocs
+
+3. Chronometre, six appels (ms ; le premier compte la compilation)
+   com_lister_fils             avant 999 948 924 965 970 1017   apres 285 228 243 233 230 234
+   lister_candidatures p. 1    avant 149 132 108 114 116 128    apres  78  63  64  62  99  82
+   comptes_admin_par_role      avant 231 178 227 177 170 184    apres  60  52  50  51  80  80
+   dossiers_en_attente         avant  58  59  79  48  50  53    apres  52  38  41  38  39  40
+   lire_candidature            avant  23 6,3 5,5 4,9 4,6 4,8    apres 20 5,8 5,1 4,4 4,4 4,9
+   com_non_lus_par_objet       (nouvelle)                       apres  64  49  48  49  49  47
+   comptes_admin_page (mince)  (nouvelle)                       apres  58  47  51  51  50  45
+   voisins_enseignant          (nouvelle)                       apres  16   7   6   5   5   6
+
+4. Rejeu complet comme la CI (stub_auth puis les 573 migrations, puis les 202 scenarios nommes
+   dans ci.yml) : 202 verts, 0 rouge ; scenarios_personnes_perf.sql et
+   scenarios_personnes_lectures.sql : verts.
