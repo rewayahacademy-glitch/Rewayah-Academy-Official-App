@@ -11282,26 +11282,26 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'كل ما تحتاج معرفته قبل أن تواصل';
-	@override String get chapeau => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا، وما هو صعب في هذا العمل. في النهاية ستعرف هل تواصل معنا أم لا.';
-	@override String get duree => 'نحو 15 دقيقة من القراءة';
+	@override String get titre => 'كل ما يلزمك أن تعرفه قبل أن تواصل';
+	@override String get chapeau => 'المكافأة، وساعات العمل، وانتظار الفصل، وقواعدنا، وما الصعب في هذا العمل. وفي آخره ستعرف هل تواصل معنا أم لا.';
+	@override String get duree => 'قراءته تأخذ نحو 15 دقيقة';
 	@override String get miseAJour => 'آخر تحديث: 20 نوفمبر 2026';
 	@override String get sommaire => 'المحتويات';
 	@override String get revenirSommaire => 'العودة إلى المحتويات';
 	@override String allerA({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩';
 	@override String get entree => 'افتح دليل المعلّم';
-	@override String get entreeLegende => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا';
-	@override String get verrouTitre => 'يُفتح هذا الدليل بعد قبول اتفاقياتك';
-	@override String get verrouIntro => 'لقراءته، بقي عليك قبول:';
+	@override String get entreeLegende => 'المكافأة، وساعات العمل، وانتظار الفصل، وقواعدنا';
+	@override String get verrouTitre => 'يُفتح هذا الدليل بعد أن توقّع تعهداتك';
+	@override String get verrouIntro => 'لتقرأه، بقي أن توقّع:';
 	@override String get manqueContrat => 'عقد المعلّم';
 	@override String get manqueConduite => 'ميثاق السلوك';
 	@override String get manqueCadre => 'الالتزام الديني';
-	@override String get completer => 'قبول اتفاقياتي';
-	@override String get directionOuvre => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.';
+	@override String get completer => 'وقّع تعهداتي';
+	@override String get directionOuvre => 'الإدارة هي التي تفتح لك الدليل. اكتب إليها.';
 	@override String get ecrireDirection => 'اكتب إلى الإدارة';
 	@override String get indisponible => 'الدليل غير متاح بعد.';
 	@override String get nonCharge => 'تعذّر فتح الدليل.';
-	@override String get reservee => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.';
+	@override String get reservee => 'هذا الدليل لمعلّمي الأكاديمية، وللمرشّحين الذين وقّعوا تعهداتهم.';
 	@override String get nom => 'دليل المعلّم';
 	@override String get jaime => 'أعجبني';
 	@override String get pasClair => 'غير واضح';
@@ -11311,7 +11311,7 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	@override String commentaires({required Object n}) => 'تعليقاتك على هذا الجزء: ⁨${n}⁩';
 	@override String get filTitre => 'تعليقاتك';
 	@override String get filPrive => 'لا يقرأ تعليقاتك إلا الإدارة وPraxis. القرّاء الآخرون لا يرونها.';
-	@override String get questionPasClair => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ويمكنك أيضًا الإغلاق دون أن تكتب شيئًا.';
+	@override String get questionPasClair => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ولك أن تغلق دون أن تكتب شيئًا.';
 	@override String get filVide => 'لم تكتب شيئًا عن هذا الجزء.';
 	@override String get champ => 'تعليقك';
 	@override String get envoyer => 'أرسل تعليقي';
@@ -22332,13 +22332,13 @@ class _Traductions$recrutement$lettre$praxis$ar extends Traductions$recrutement$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get accueil => 'مرحبًا! أنا Praxis. سأرافقك في هذا الدليل. خذ وقتك.';
-	@override String get paie => 'هنا الأرقام الحقيقية. انظر إلى الجدول، كل شيء فيه.';
-	@override String get retard => 'تذكّر ثلاثة أرقام: 3 و8 و11 دقيقة.';
-	@override String get attente => 'قد يطول الانتظار. واصل أنشطتك، وتابع رسائلك.';
-	@override String get piece => 'هذا لحماية الأطفال. وهو يحميك أنت أيضًا.';
-	@override String get moi => 'هذا أنا! أنا متوقف الآن: الفريق يضبطني قبل أن أعود.';
-	@override String get fin => 'مهما كان قرارك، شكرًا لأنك قرأت حتى النهاية.';
+	@override String get accueil => 'أهلًا بك! أنا براكسيس، وسأرافقك في هذا الدليل. خذ راحتك.';
+	@override String get paie => 'هذه هي الأرقام كما هي. كل شيء في الجدول.';
+	@override String get retard => 'احفظ ثلاثة أرقام: 3 و8 و11 دقيقة.';
+	@override String get attente => 'قد يطول الانتظار، فلا تترك أعمالك، وتابع رسائلك.';
+	@override String get piece => 'هذا لحماية الأطفال، وفيه حماية لك أنت أيضًا.';
+	@override String get moi => 'هذا أنا! أنا متوقف الآن، والفريق يضبطني قبل أن أعود.';
+	@override String get fin => 'أيًّا كان قرارك، جزاك الله خيرًا على قراءتك إلى النهاية.';
 }
 
 // Path: recrutement.majeur.portail
@@ -41786,26 +41786,26 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
-			'recrutement.lettre.titre' => 'كل ما تحتاج معرفته قبل أن تواصل',
-			'recrutement.lettre.chapeau' => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا، وما هو صعب في هذا العمل. في النهاية ستعرف هل تواصل معنا أم لا.',
-			'recrutement.lettre.duree' => 'نحو 15 دقيقة من القراءة',
+			'recrutement.lettre.titre' => 'كل ما يلزمك أن تعرفه قبل أن تواصل',
+			'recrutement.lettre.chapeau' => 'المكافأة، وساعات العمل، وانتظار الفصل، وقواعدنا، وما الصعب في هذا العمل. وفي آخره ستعرف هل تواصل معنا أم لا.',
+			'recrutement.lettre.duree' => 'قراءته تأخذ نحو 15 دقيقة',
 			'recrutement.lettre.miseAJour' => 'آخر تحديث: 20 نوفمبر 2026',
 			'recrutement.lettre.sommaire' => 'المحتويات',
 			'recrutement.lettre.revenirSommaire' => 'العودة إلى المحتويات',
 			'recrutement.lettre.allerA' => ({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩',
 			'recrutement.lettre.entree' => 'افتح دليل المعلّم',
-			'recrutement.lettre.entreeLegende' => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا',
-			'recrutement.lettre.verrouTitre' => 'يُفتح هذا الدليل بعد قبول اتفاقياتك',
-			'recrutement.lettre.verrouIntro' => 'لقراءته، بقي عليك قبول:',
+			'recrutement.lettre.entreeLegende' => 'المكافأة، وساعات العمل، وانتظار الفصل، وقواعدنا',
+			'recrutement.lettre.verrouTitre' => 'يُفتح هذا الدليل بعد أن توقّع تعهداتك',
+			'recrutement.lettre.verrouIntro' => 'لتقرأه، بقي أن توقّع:',
 			'recrutement.lettre.manqueContrat' => 'عقد المعلّم',
 			'recrutement.lettre.manqueConduite' => 'ميثاق السلوك',
 			'recrutement.lettre.manqueCadre' => 'الالتزام الديني',
-			'recrutement.lettre.completer' => 'قبول اتفاقياتي',
-			'recrutement.lettre.directionOuvre' => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.',
+			'recrutement.lettre.completer' => 'وقّع تعهداتي',
+			'recrutement.lettre.directionOuvre' => 'الإدارة هي التي تفتح لك الدليل. اكتب إليها.',
 			'recrutement.lettre.ecrireDirection' => 'اكتب إلى الإدارة',
 			'recrutement.lettre.indisponible' => 'الدليل غير متاح بعد.',
 			'recrutement.lettre.nonCharge' => 'تعذّر فتح الدليل.',
-			'recrutement.lettre.reservee' => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.',
+			'recrutement.lettre.reservee' => 'هذا الدليل لمعلّمي الأكاديمية، وللمرشّحين الذين وقّعوا تعهداتهم.',
 			'recrutement.lettre.nom' => 'دليل المعلّم',
 			'recrutement.lettre.jaime' => 'أعجبني',
 			'recrutement.lettre.pasClair' => 'غير واضح',
@@ -41815,7 +41815,7 @@ extension on TraductionsAr {
 			'recrutement.lettre.commentaires' => ({required Object n}) => 'تعليقاتك على هذا الجزء: ⁨${n}⁩',
 			'recrutement.lettre.filTitre' => 'تعليقاتك',
 			'recrutement.lettre.filPrive' => 'لا يقرأ تعليقاتك إلا الإدارة وPraxis. القرّاء الآخرون لا يرونها.',
-			'recrutement.lettre.questionPasClair' => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ويمكنك أيضًا الإغلاق دون أن تكتب شيئًا.',
+			'recrutement.lettre.questionPasClair' => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ولك أن تغلق دون أن تكتب شيئًا.',
 			'recrutement.lettre.filVide' => 'لم تكتب شيئًا عن هذا الجزء.',
 			'recrutement.lettre.champ' => 'تعليقك',
 			'recrutement.lettre.envoyer' => 'أرسل تعليقي',
@@ -41826,13 +41826,13 @@ extension on TraductionsAr {
 			'recrutement.lettre.echecAvis' => 'لم يتأكد رأيك: ربما لم يصل إلى Rewayah. اضغط عليه مرة أخرى.',
 			'recrutement.lettre.tropLong' => ({required Object max}) => 'تعليقك أطول من ⁨${max}⁩ حرف. اختصره ثم أرسله.',
 			'recrutement.lettre.praxisNom' => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)',
-			'recrutement.lettre.praxis.accueil' => 'مرحبًا! أنا Praxis. سأرافقك في هذا الدليل. خذ وقتك.',
-			'recrutement.lettre.praxis.paie' => 'هنا الأرقام الحقيقية. انظر إلى الجدول، كل شيء فيه.',
-			'recrutement.lettre.praxis.retard' => 'تذكّر ثلاثة أرقام: 3 و8 و11 دقيقة.',
-			'recrutement.lettre.praxis.attente' => 'قد يطول الانتظار. واصل أنشطتك، وتابع رسائلك.',
-			'recrutement.lettre.praxis.piece' => 'هذا لحماية الأطفال. وهو يحميك أنت أيضًا.',
-			'recrutement.lettre.praxis.moi' => 'هذا أنا! أنا متوقف الآن: الفريق يضبطني قبل أن أعود.',
-			'recrutement.lettre.praxis.fin' => 'مهما كان قرارك، شكرًا لأنك قرأت حتى النهاية.',
+			'recrutement.lettre.praxis.accueil' => 'أهلًا بك! أنا براكسيس، وسأرافقك في هذا الدليل. خذ راحتك.',
+			'recrutement.lettre.praxis.paie' => 'هذه هي الأرقام كما هي. كل شيء في الجدول.',
+			'recrutement.lettre.praxis.retard' => 'احفظ ثلاثة أرقام: 3 و8 و11 دقيقة.',
+			'recrutement.lettre.praxis.attente' => 'قد يطول الانتظار، فلا تترك أعمالك، وتابع رسائلك.',
+			'recrutement.lettre.praxis.piece' => 'هذا لحماية الأطفال، وفيه حماية لك أنت أيضًا.',
+			'recrutement.lettre.praxis.moi' => 'هذا أنا! أنا متوقف الآن، والفريق يضبطني قبل أن أعود.',
+			'recrutement.lettre.praxis.fin' => 'أيًّا كان قرارك، جزاك الله خيرًا على قراءتك إلى النهاية.',
 			'recrutement.majeur.titre' => 'قبل أن نبدأ',
 			'recrutement.majeur.explication' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر.',
 			'recrutement.majeur.coche' => 'عمري 18 سنة أو أكثر.',

@@ -57,7 +57,8 @@ $$;
 CREATE FUNCTION pg_temp.ouverte(r jsonb, p_langue text) RETURNS boolean
 LANGUAGE sql AS $$
   SELECT (r ->> 'acces') = 'true'
-     AND r ->> 'version' = '2026-11-20'
+     -- GUIDE-ARABE-NATIF (21/11/2026) : l'arabe et l'anglais ont une version 2026-11-21, le francais reste en 2026-11-20.
+     AND r ->> 'version' = CASE p_langue WHEN 'fr' THEN '2026-11-20' ELSE '2026-11-21' END
      AND r ->> 'langue' = p_langue
      AND jsonb_array_length(r -> 'parties') = 14
      AND ARRAY(SELECT x ->> 'code' FROM jsonb_array_elements(r -> 'parties') WITH ORDINALITY e(x, o) ORDER BY o)
@@ -191,10 +192,10 @@ SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('fr'), 'fr'), '
 
 -- 9. Langues (enseignant actif) ------------------------------------------------------------------------------------------------
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('ar'), 'ar')
-  AND public.lire_lettre_candidats('ar') -> 'parties' -> 0 ->> 'titre' = 'لماذا يصلك هذا الدليل',
+  AND public.lire_lettre_candidats('ar') -> 'parties' -> 0 ->> 'titre' = 'لماذا وصلك هذا الدليل',
   'langue ar : la lettre en arabe');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('en'), 'en')
-  AND public.lire_lettre_candidats('en') -> 'parties' -> 0 ->> 'titre' = 'Why you are receiving this guide',
+  AND public.lire_lettre_candidats('en') -> 'parties' -> 0 ->> 'titre' = 'Why this guide reached you',
   'langue en : la lettre en anglais');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats(' en-GB '), 'en'), 'langue en-GB : l''anglais');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('es'), 'fr')
