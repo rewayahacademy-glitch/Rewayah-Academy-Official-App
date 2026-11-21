@@ -15,7 +15,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart'
-    show DetailCandidature;
+    show ControleCandidature, DetailCandidature;
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart'
     show LigneCandidature;
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
@@ -101,6 +101,25 @@ final List<LigneEnseignant> _enseignants = <LigneEnseignant>[
     ),
 ];
 
+/// Ce que `lire_candidature` rend en plus, pour la synthese de l'apercu :
+/// ce qui manque, la piece, la derniere connexion.
+DetailCandidature _enrichi(DetailCandidature d) => DetailCandidature(
+  ligne: d.ligne,
+  version: d.version,
+  documents: d.documents,
+  provenance: d.provenance,
+  controles: const <ControleCandidature>[
+    ControleCandidature(
+      nom: 'piece_validee',
+      valeur: false,
+      cause: 'piece_a_verifier',
+    ),
+  ],
+  derniereConnexionServie: true,
+  derniereConnexion: DateTime.now().subtract(const Duration(days: 1)),
+  manquants: const <String>['pays_versement'],
+);
+
 class _Enseignants implements PortEnseignants {
   @override
   Future<PageEnseignants> lister({
@@ -130,17 +149,21 @@ Future<void> _monter(
         portEnseignantsProvider.overrideWithValue(_Enseignants()),
         portCandidaturesDirectionProvider.overrideWithValue(
           FauxCandidaturesDirection(
+            capacitesRendues: capacitesGestes,
             lignes: <LigneCandidature>[
               for (final LigneEnseignant l in _enseignants) l.dossier,
             ],
             details: <DetailCandidature>[
               for (final (int i, LigneEnseignant l) in _enseignants.indexed)
-                detailTest(
-                  id: l.dossier.id,
-                  reference: l.dossier.reference,
-                  nom:
-                      '${_prenoms[(i + 2) % _prenoms.length]} '
-                      '${_noms[i % _noms.length]}',
+                _enrichi(
+                  detailTest(
+                    id: l.dossier.id,
+                    reference: l.dossier.reference,
+                    nom:
+                        '${_prenoms[(i + 2) % _prenoms.length]} '
+                        '${_noms[i % _noms.length]}',
+                    recueLe: DateTime.now().subtract(const Duration(days: 12)),
+                  ),
                 ),
             ],
           ),
@@ -211,6 +234,13 @@ void main() {
             AppLocale.ar,
           ),
           ('eleve_1440_en_clair', eleve, bureau, ThemeMode.light, AppLocale.en),
+          (
+            'candidat_1024_ar_clair',
+            candidat,
+            const Size(1024, 768),
+            ThemeMode.light,
+            AppLocale.ar,
+          ),
           (
             'eleves_390_fr_clair',
             '$base?onglet=eleves',
