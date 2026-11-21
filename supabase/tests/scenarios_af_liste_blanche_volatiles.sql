@@ -155,6 +155,9 @@ declare
     -- ANNONCES-SIMPLES (20261126900000, 14/11/2026) : envoi par la direction active (com_appelant admin + app_account_valid) ; vue par un lecteur adulte ou candidat, jamais un mineur.
     'com_annonce_envoyer(text[],text,text,timestamp with time zone,boolean,uuid)',
     'com_annonce_vue(uuid)',
+    -- ANNONCES-SERVEUR (20261130976000, 21/11/2026) : fermer et rouvrir une annonce, par son lecteur seulement (private.com_annonce_lecteur : adulte au compte actif ou candidat, jamais un mineur ; annonce lisible par lui, 42501 sinon). Ce qu'elles ecrivent : la seule ligne de l'appelant dans com_annonce_fermetures (fermee vrai ou faux), rien d'autre.
+    'com_annonce_fermer(uuid)',
+    'com_annonce_rouvrir(uuid)',
     'com_annonce_publier(text,text,text,timestamp with time zone,uuid)',
     'com_envoyer_message(uuid,text,uuid)',
     -- IMAGES-MESSAGERIE (20261129100100 et 20261129100300, 16/11/2026) : depot, confirmation signee (HMAC) et annulation d'une image, coeur pose ou retire. Garde positive app_account_valid() ET droits du fil (private.com_image_droits : participant, ecriture pour le depot) ; le depot refuse en plus tout eleve mineur ; 42501 sinon. Ce qu'elles peuvent ecrire : UNE ligne com_message_images (20 par heure et par personne) ou le coeur de l'appelant, jamais celui d'un autre.

@@ -81,13 +81,17 @@ class _Fil extends AnnoncesDirectionIndisponibles {
   final List<String> vues = <String>[];
 
   @override
-  Future<List<AnnonceRecue>> mesAnnonces() async {
+  Future<PageAnnonces> mesAnnonces({
+    int limite = 20,
+    DateTime? avant,
+    bool fermees = false,
+  }) async {
     if (jamais) {
-      return Future<List<AnnonceRecue>>.delayed(const Duration(days: 1));
+      return Future<PageAnnonces>.delayed(const Duration(days: 1));
     }
     final Exception? e = erreur;
     if (e != null) throw e;
-    return recues;
+    return PageAnnonces(annonces: recues);
   }
 
   @override

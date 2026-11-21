@@ -33,10 +33,14 @@ class _FilFaux extends AnnoncesDirectionIndisponibles {
   final List<String> vues = <String>[];
 
   @override
-  Future<List<AnnonceRecue>> mesAnnonces() async {
+  Future<PageAnnonces> mesAnnonces({
+    int limite = 20,
+    DateTime? avant,
+    bool fermees = false,
+  }) async {
     final Exception? e = erreur;
     if (e != null) throw e;
-    return recues;
+    return PageAnnonces(annonces: recues);
   }
 
   @override
@@ -291,6 +295,52 @@ void main() {
           );
           await stabiliser(tester);
           await capturerVue(tester, 'ANNONCE-LIENS/$nom');
+        });
+      }
+    }
+  }, skip: sautSansCapture);
+
+  // ANNONCES-SERVEUR (21/11/2026) : le fil existant, nourri par la nouvelle
+  // page du port (PageAnnonces), avec une annonce traduite par le serveur.
+  // L'ecran ne change pas (les nouveaux ecrans sont le lot CLOCHE-C) : ces
+  // captures prouvent qu'il lit toujours le fil apres le changement de port.
+  group('captures fil apres le port pagine', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(1440, 900),
+        const Size(390, 844),
+      ]) {
+        final String nom =
+            'fil-port-pagine-${taille.width.toInt()}-${langue.languageCode}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, 1);
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+          final bool ar = langue == AppLocale.ar;
+          await _monterFil(
+            tester,
+            _FilFaux(
+              recues: <AnnonceRecue>[
+                AnnonceRecue(
+                  id: 'a1',
+                  titre: ar ? 'العودة إلى الدراسة' : 'Rentrée',
+                  texte: ar
+                      ? 'تبدأ الدراسة يوم الاثنين.'
+                      : 'La rentrée est lundi.',
+                  publieeLe: _le,
+                  titreOriginal: 'Rentrée',
+                  texteOriginal: 'La rentrée est lundi.',
+                  langueOriginale: 'fr',
+                  traduite: ar,
+                ),
+              ],
+            ),
+            sens: ar ? TextDirection.rtl : TextDirection.ltr,
+          );
+          await stabiliser(tester);
+          await capturerVue(tester, 'ANNONCES-SERVEUR/$nom');
         });
       }
     }
