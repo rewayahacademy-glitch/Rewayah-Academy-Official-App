@@ -55,71 +55,73 @@ const List<String> _prenoms = <String>[
 String _id(int n) => '9e9c0000-0000-4000-8000-${n.toString().padLeft(12, '0')}';
 
 void main() {
-  setUpAll(() async {
-    await chargerPolicesDuDepot();
-  });
+  group('Capture : PERSONNES-PERF', skip: sautSansCapture, () {
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+    });
 
-  for (final (Size taille, String nom) in const <(Size, String)>[
-    (Size(390, 844), '390'),
-    (Size(1440, 900), '1440'),
-  ]) {
-    testWidgets(
-      'liste de 24 personnes, $nom : un seul appel photos_personnes',
-      (WidgetTester tester) async {
-        int appels = 0;
-        final SupabaseClient client = SupabaseClient(
-          'https://exemple.supabase.co',
-          'cle-anonyme',
-          // Aucune minuterie de renouvellement de session dans un test.
-          authOptions: const AuthClientOptions(autoRefreshToken: false),
-          httpClient: MockClient((http.Request r) async {
-            if (r.url.pathSegments.last == 'photos_personnes') appels += 1;
-            // Aucune photo visible : le serveur ne rend personne, la liste
-            // montre les initiales (la meme image avant et apres le lot).
-            return http.Response(
-              jsonEncode(<Object?>[]),
-              200,
-              headers: <String, String>{'content-type': 'application/json'},
-              request: r,
-            );
-          }),
-        );
-        final PhotosSupabase photos = PhotosSupabase(client);
-        fixerVueCapture(tester, taille, taille.width < 600 ? 2 : 1);
-        await tester.pumpWidget(
-          hoteCapture(
-            Scaffold(
-              body: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: CarteLignes(
-                  lignes: <Widget>[
-                    for (int i = 0; i < _prenoms.length; i++)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AppSpacing.sm,
+    for (final (Size taille, String nom) in const <(Size, String)>[
+      (Size(390, 844), '390'),
+      (Size(1440, 900), '1440'),
+    ]) {
+      testWidgets(
+        'liste de 24 personnes, $nom : un seul appel photos_personnes',
+        (WidgetTester tester) async {
+          int appels = 0;
+          final SupabaseClient client = SupabaseClient(
+            'https://exemple.supabase.co',
+            'cle-anonyme',
+            // Aucune minuterie de renouvellement de session dans un test.
+            authOptions: const AuthClientOptions(autoRefreshToken: false),
+            httpClient: MockClient((http.Request r) async {
+              if (r.url.pathSegments.last == 'photos_personnes') appels += 1;
+              // Aucune photo visible : le serveur ne rend personne, la liste
+              // montre les initiales (la meme image avant et apres le lot).
+              return http.Response(
+                jsonEncode(<Object?>[]),
+                200,
+                headers: <String, String>{'content-type': 'application/json'},
+                request: r,
+              );
+            }),
+          );
+          final PhotosSupabase photos = PhotosSupabase(client);
+          fixerVueCapture(tester, taille, taille.width < 600 ? 2 : 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              Scaffold(
+                body: SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: CarteLignes(
+                    lignes: <Widget>[
+                      for (int i = 0; i < _prenoms.length; i++)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.sm,
+                          ),
+                          child: AvatarNom(
+                            prenom: _prenoms[i],
+                            nom: 'Exemple',
+                            personneId: _id(i + 1),
+                            disposition: DispositionAvatar.enLigne,
+                          ),
                         ),
-                        child: AvatarNom(
-                          prenom: _prenoms[i],
-                          nom: 'Exemple',
-                          personneId: _id(i + 1),
-                          disposition: DispositionAvatar.enLigne,
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
+              surcharges: <Override>[
+                portPhotosProvider.overrideWithValue(photos),
+              ],
             ),
-            surcharges: <Override>[
-              portPhotosProvider.overrideWithValue(photos),
-            ],
-          ),
-        );
-        await tester.pumpAndSettle();
-        expect(appels, 1);
-        expect(tester.takeException(), isNull);
-        debugPrint('PNG ${await capturer(tester, 'liste_avatars_$nom')}');
-        await tester.pumpWidget(const SizedBox.shrink());
-      },
-    );
-  }
+          );
+          await tester.pumpAndSettle();
+          expect(appels, 1);
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, 'liste_avatars_$nom')}');
+          await tester.pumpWidget(const SizedBox.shrink());
+        },
+      );
+    }
+  });
 }
