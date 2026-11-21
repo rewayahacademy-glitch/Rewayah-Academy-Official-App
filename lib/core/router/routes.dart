@@ -873,6 +873,10 @@ abstract final class Routes {
   /// Operations.
   static const String adminOperationsPilotage = '/admin/operations/pilotage';
 
+  /// CHIFFRES-ACADEMIE (directeur, 20/11/2026) : « Les chiffres de
+  /// l'academie », la vitrine en chiffres, sous Operations.
+  static const String adminOperationsChiffres = '/admin/operations/chiffres';
+
   /// DASH-ADM-PLANNING : le planning de la direction, les seances de la
   /// semaine toutes classes confondues. Atteint depuis l'Accueil.
   static const String adminOperationsPlanning = '/admin/operations/planning';
