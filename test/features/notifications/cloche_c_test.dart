@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/widgets/controle_segmente.dart'
     show Segment;
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_section.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/notifications/cloche/annonces_cloche.dart';
@@ -26,8 +27,8 @@ import 'support_cloche.dart';
 
 Finder _ligne(String cle) => find.byKey(ContenuCloche.cleLigne(cle));
 
-/// Les libelles des onglets, quel que soit le mode du selecteur (en ligne, ou
-/// menu deroulant quand la police de test les rend trop larges).
+/// Ce que dit chaque onglet (son nom et son nombre), quel que soit son
+/// rendu (libelle et pastille, ou icone seule a l'etroit).
 List<String> _onglets(WidgetTester tester) => <String>[
   for (final Segment<OngletCloche> s
       in tester
@@ -35,27 +36,27 @@ List<String> _onglets(WidgetTester tester) => <String>[
             find.byKey(ContenuCloche.cleOnglets),
           )
           .sections)
-    s.libelle,
+    s.libelleLu ?? s.libelle,
 ];
 
-/// Choisit un onglet comme une personne.
-Future<void> _onglet(WidgetTester tester, String libelle) async {
-  final Finder menu = find.descendant(
-    of: find.byKey(ContenuCloche.cleOnglets),
-    matching: find.byType(MenuFiltre<OngletCloche>),
+/// Choisit un onglet comme une personne : le segment a sa place (jamais un
+/// menu deroulant, CLOCHE-C).
+Future<void> _onglet(WidgetTester tester, OngletCloche onglet) async {
+  expect(
+    find.descendant(
+      of: find.byKey(ContenuCloche.cleOnglets),
+      matching: find.byType(MenuFiltre<OngletCloche>),
+    ),
+    findsNothing,
   );
-  if (menu.evaluate().isNotEmpty) {
-    await tester.tap(menu);
-    await pas(tester);
-    await tester.tap(find.text(libelle).last);
-  } else {
-    await tester.tap(
-      find.descendant(
-        of: find.byKey(ContenuCloche.cleOnglets),
-        matching: find.text(libelle),
-      ),
-    );
-  }
+  await tester.tap(
+    find
+        .descendant(
+          of: find.byKey(ContenuCloche.cleOnglets),
+          matching: find.byType(Pressable),
+        )
+        .at(onglet.index),
+  );
   await pas(tester);
 }
 
@@ -328,13 +329,7 @@ void main() {
         source: FausseSourceAnnonces(annoncesDemo()),
       );
       await ouvrirLaCloche(tester);
-      await _onglet(
-        tester,
-        t.notifications.cloche.avecNombre(
-          libelle: t.notifications.sectionAFaire,
-          n: 1,
-        ),
-      );
+      await _onglet(tester, OngletCloche.aFaire);
       expect(_ligne('n-n1'), findsOneWidget);
       expect(_ligne('n-n2'), findsNothing);
       expect(
@@ -423,7 +418,7 @@ void main() {
       );
       await ouvrirLaCloche(tester);
       expect(find.text(t.notifications.cloche.videToutTitre), findsOneWidget);
-      await _onglet(tester, t.notifications.cloche.ongletAnnonces);
+      await _onglet(tester, OngletCloche.annonces);
       expect(
         find.text(t.notifications.cloche.videAnnoncesTitre),
         findsOneWidget,
@@ -444,5 +439,40 @@ void main() {
       expect(find.text(t.notifications.cloche.horsLigne), findsOneWidget);
       expect(_ligne('n-n1'), findsOneWidget);
     });
+  });
+
+  test('texteSansLiens : l adresse quitte le texte affiche', () {
+    expect(
+      texteSansLiens('Lisez-le ici : https://exemple.org/guide\nRien a faire.'),
+      'Lisez-le ici\nRien a faire.',
+    );
+    expect(
+      texteSansLiens('Tout sur les règles. https://exemple.org/guide'),
+      'Tout sur les règles.',
+    );
+    expect(texteSansLiens('Sans lien.'), 'Sans lien.');
+  });
+
+  testWidgets('320, texte x2 : des onglets, jamais un menu deroulant', (
+    WidgetTester tester,
+  ) async {
+    await monterCloche(
+      tester,
+      taille: const Size(320, 700),
+      echelle: 2,
+      port: FauxNotifsCloche(notifsDemo()),
+      source: FausseSourceAnnonces(annoncesDemo()),
+    );
+    await ouvrirLaCloche(tester);
+    expect(
+      find.descendant(
+        of: find.byKey(ContenuCloche.cleOnglets),
+        matching: find.byType(MenuFiltre<OngletCloche>),
+      ),
+      findsNothing,
+    );
+    await _onglet(tester, OngletCloche.aFaire);
+    expect(_ligne('n-n1'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

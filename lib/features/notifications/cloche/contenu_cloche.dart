@@ -14,6 +14,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/accessibilite/texte_agrandi.dart';
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_notifications.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -21,11 +22,13 @@ import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/tc_bibliotheque/ouvreur_onglet.dart';
 import '../../../core/tc_horloge/mon_horloge.dart';
+import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_mouvement.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/controle_segmente.dart' show Segment;
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/lien_fleche.dart';
@@ -207,29 +210,6 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
     } on Object {
       // Rien a dire : la lecture n'est pas perdue.
     }
-  }
-
-  Future<void> _toutLire(
-    List<NotificationTuteur> notifs,
-    List<AnnonceCloche> annonces,
-  ) async {
-    for (final AnnonceCloche a in annonces) {
-      if (!a.vue) unawaited(_voirAnnonce(a));
-    }
-    final PortNotifications port = ref.read(notificationsPagePortProvider);
-    if (port is! PortLectureGroupeeNotifications) return;
-    if (!notifs.any((NotificationTuteur n) => !n.lue)) return;
-    try {
-      await (port as PortLectureGroupeeNotifications).marquerToutesLues();
-    } on CapaciteIndisponible {
-      return;
-    } on Object {
-      if (mounted) {
-        setState(() => _retour = t.notifications.lectureNonConfirmee);
-      }
-      return;
-    }
-    if (mounted) ref.invalidate(notificationsTuteurProvider);
   }
 
   /// Ferme [a] : la ligne devient « Annonce fermee. Annuler » pendant 5 s,
@@ -435,9 +415,16 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
       annoncesOuvertes: ouvertes.lues,
       fermeturesLocales: fermetures,
     );
-    String libelle(OngletCloche o, String nom) {
+    Segment<OngletCloche> segment(OngletCloche o, String nom, AppIcon icone) {
       final int n = nombre(o);
-      return n > 0 ? c.avecNombre(libelle: nom, n: n) : nom;
+      return Segment<OngletCloche>(
+        valeur: o,
+        libelle: nom,
+        libelleCourt: nom,
+        icone: icone,
+        compteur: n,
+        libelleLu: n > 0 ? c.avecNombre(libelle: nom, n: n) : nom,
+      );
     }
 
     final bool notifsIndispo = valeur.error is CapaciteIndisponible;
@@ -473,28 +460,10 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
       }
     }
 
-    final int nonLus = nombre(OngletCloche.tout);
     final bool rien = elements.isEmpty;
     final Widget? enTete = rien && !attente
         ? null
-        : nonLus > 0
-        ? ActionPrincipale(
-            key: ContenuCloche.cleToutLire,
-            libelle: t.notifications.toutMarquerLu,
-            niveau: NiveauAction.tertiaire,
-            compacte: true,
-            pleineLargeur: false,
-            onPress: () => unawaited(_toutLire(notifs, ouvertes.lues)),
-          )
-        : attente
-        ? null
-        : Text(
-            c.toutLu,
-            key: ContenuCloche.cleToutLu,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          );
+        : const ActionToutLireCloche();
 
     final int montres = _montresDe(_onglet);
     final bool suiteNotifs =
@@ -604,58 +573,96 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // Le titre au debut (panneau), l'action au bord de fin ; a l'etroit
-        // (texte agrandi), l'action passe dessous, toujours au bord de fin.
-        if (widget.forme == FormeCloche.panneau || enTete != null)
+        // Le panneau : le titre et l'action sur une rangee. La feuille porte
+        // l'action sur la rangee de son titre (`AppBottomSheet.actionTitre`).
+        if (widget.forme == FormeCloche.panneau) ...<Widget>[
           Padding(
             padding: _marges,
+            // Le titre au debut, l'action au bord de fin, sur une rangee ;
+            // a texte agrandi, l'action (une icone) reste a cote.
             child: OverflowBar(
-              alignment: widget.forme == FormeCloche.panneau
-                  ? MainAxisAlignment.spaceBetween
-                  : MainAxisAlignment.end,
+              alignment: MainAxisAlignment.spaceBetween,
               overflowAlignment: OverflowBarAlignment.end,
-              spacing: AppSpacing.md,
-              overflowSpacing: AppSpacing.xs,
+              spacing: AppSpacing.sm,
               children: <Widget>[
-                if (widget.forme == FormeCloche.panneau)
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      t.notifications.titre,
-                      style: palette.inkStrong.applyTo(
-                        textes.titleLarge ?? const TextStyle(),
-                      ),
+                Semantics(
+                  header: true,
+                  child: Text(
+                    t.notifications.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleLarge ?? const TextStyle(),
                     ),
                   ),
+                ),
                 ?enTete,
               ],
             ),
           ),
-        Ecart.vSm,
+          Ecart.vSm,
+        ],
         Padding(
           padding: _marges,
-          child: SelecteurSection<OngletCloche>(
-            key: ContenuCloche.cleOnglets,
-            libelle: c.ongletsLibelle,
-            sections: <Segment<OngletCloche>>[
-              Segment<OngletCloche>(
-                valeur: OngletCloche.tout,
-                libelle: libelle(OngletCloche.tout, c.ongletTout),
-              ),
-              Segment<OngletCloche>(
-                valeur: OngletCloche.annonces,
-                libelle: libelle(OngletCloche.annonces, c.ongletAnnonces),
-              ),
-              Segment<OngletCloche>(
-                valeur: OngletCloche.aFaire,
-                libelle: libelle(
-                  OngletCloche.aFaire,
-                  t.notifications.sectionAFaire,
-                ),
-              ),
-            ],
-            valeur: _onglet,
-            onChange: (OngletCloche o) => setState(() => _onglet = o),
+          child: LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints contraintes) {
+              final Widget onglets = SelecteurSection<OngletCloche>(
+                key: ContenuCloche.cleOnglets,
+                libelle: c.ongletsLibelle,
+                // A l'etroit (320, texte agrandi), des icones et non un menu
+                // deroulant (RESTE-A-FAIRE §0 bis).
+                iconesEnRepli: true,
+                sections: <Segment<OngletCloche>>[
+                  segment(
+                    OngletCloche.tout,
+                    c.ongletTout,
+                    AppIcons.notifications,
+                  ),
+                  segment(
+                    OngletCloche.annonces,
+                    c.ongletAnnonces,
+                    AppIcons.annonce,
+                  ),
+                  segment(
+                    OngletCloche.aFaire,
+                    t.notifications.sectionAFaire,
+                    AppIcons.reaffectation,
+                  ),
+                ],
+                valeur: _onglet,
+                onChange: (OngletCloche o) => setState(() => _onglet = o),
+              );
+              // La page : l'action au bout de la rangee des onglets des
+              // qu'elle tient (tablette et ordinateur), sinon au-dessus.
+              if (widget.forme != FormeCloche.page || enTete == null) {
+                return onglets;
+              }
+              if (contraintes.maxWidth >= AppGabarit.seuilTablette) {
+                return Row(
+                  children: <Widget>[
+                    Expanded(flex: 3, child: onglets),
+                    Ecart.hLg,
+                    Flexible(
+                      flex: 2,
+                      child: Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: enTete,
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: enTete,
+                  ),
+                  Ecart.vSm,
+                  onglets,
+                ],
+              );
+            },
           ),
         ),
         Ecart.vMd,
@@ -671,10 +678,11 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
           ),
           Ecart.vSm,
         ],
-        if (_retour != null) ...<Widget>[
+        if (_retour ?? ref.watch(retourClocheProvider)
+            case final String r) ...<Widget>[
           Padding(
             padding: _marges,
-            child: LocalFeedback(message: _retour),
+            child: LocalFeedback(message: r),
           ),
           Ecart.vSm,
         ],
@@ -852,7 +860,7 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
           categorie: CategorieLigneCloche.annonce,
           prefixe: t.notifications.cloche.annonce,
           titre: a.titre,
-          texte: a.texte,
+          texte: texteSansLiens(a.texte),
           quand: _quand(a.publieeLe),
           nonLu: !a.vue,
           fermee: a.fermee,
@@ -954,6 +962,8 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
     final String texte = original ? (a.texteOriginal ?? a.texte) : a.texte;
     final bool fermable =
         ref.watch(sourceAnnoncesClocheProvider).fermetureServie && !a.fermee;
+    final OuvreurOnglet? ouvreur = ref.watch(ouvreurOngletProvider);
+    final List<Uri> liens = liensHttps(texte);
     // L'original garde le sens de sa langue (l'arabe de droite a gauche dans
     // une interface en francais, et l'inverse).
     final TextDirection? sens = !original || a.langueOriginale == null
@@ -1008,28 +1018,198 @@ class _ContenuClocheState extends ConsumerState<ContenuCloche> {
         SizedBox(
           width: double.infinity,
           child: Text(
-            texte,
+            // Les adresses ne s'affichent pas : le bouton les ouvre.
+            texteSansLiens(texte),
             textDirection: sens,
             style: palette.inkStrong.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),
         ),
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: IntrinsicWidth(child: LiensMessageStaff(texte: texte)),
-        ),
-        if (fermable) ...<Widget>[
-          Ecart.vMd,
-          ActionPrincipale(
-            key: LigneCloche.cleFermer('detail-${a.id}'),
-            libelle: c.fermerAnnonce,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-            onPress: () => unawaited(_fermer(a)),
+        // Les gestes du detail, alignes sur le texte : « Ouvrir le lien »
+        // (un bouton par adresse, comme sur la ligne) et « Fermer
+        // l'annonce », en boutons secondaires (K-56 : aucun bouton plein).
+        if (ouvreur != null && liens.isNotEmpty || fermable) ...<Widget>[
+          Ecart.vLg,
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              if (ouvreur != null)
+                for (int i = 0; i < liens.length; i++)
+                  ActionPrincipale(
+                    key: LiensMessageStaff.cle(i),
+                    libelle: liens.length == 1
+                        ? c.ouvrirLien
+                        : t.com.messages.liens.ouvrir(site: liens[i].host),
+                    libelleSemantique: t.com.messages.liens.ouvrirLu(
+                      site: liens[i].host,
+                    ),
+                    niveau: NiveauAction.secondaire,
+                    compacte: true,
+                    pleineLargeur: false,
+                    prefixe: Icon(AppIcons.lienExterne.repos),
+                    onPress: () => ouvreur(liens[i]),
+                  ),
+              if (fermable)
+                ActionPrincipale(
+                  key: LigneCloche.cleFermer('detail-${a.id}'),
+                  libelle: c.fermerAnnonce,
+                  niveau: NiveauAction.secondaire,
+                  compacte: true,
+                  pleineLargeur: false,
+                  prefixe: Icon(AppIcons.fermer.repos),
+                  onPress: () => unawaited(_fermer(a)),
+                ),
+            ],
           ),
         ],
       ],
     );
   }
+}
+
+/// Le dernier geste de la cloche qui n'a pas ete confirme (« Tout marquer
+/// comme lu » pose depuis la rangee du titre de la feuille) ; nul sinon.
+class RetourCloche extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  /// Pose ou efface le retour.
+  void poser(String? message) => state = message;
+}
+
+/// Le retour de la cloche, lu par [ContenuCloche].
+final NotifierProvider<RetourCloche, String?> retourClocheProvider =
+    NotifierProvider<RetourCloche, String?>(RetourCloche.new);
+
+/// « Tout marquer comme lu » de la cloche (panneau, feuille, page) : un
+/// lien a l'aise, une icone avec infobulle a texte agrandi ; « Tout est lu »
+/// quand il n'y a plus rien ; rien tant que la liste n'est pas lue.
+class ActionToutLireCloche extends ConsumerWidget {
+  /// Cree l'action.
+  const ActionToutLireCloche({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<NotificationTuteur>> valeur = ref.watch(
+      notificationsTuteurProvider,
+    );
+    final EtatAnnoncesCloche annonces = ref.watch(
+      annoncesClocheProvider(false),
+    );
+    final Map<String, bool> fermetures = ref.watch(fermeturesClocheProvider);
+    final List<NotificationTuteur> notifs = valeur.hasValue
+        ? valeur.requireValue
+        : const <NotificationTuteur>[];
+    if (!valeur.hasValue && annonces.chargement) return const SizedBox.shrink();
+    final bool rien =
+        notifs.isEmpty &&
+        annonces.lues
+            .where((AnnonceCloche a) => !(fermetures[a.id] ?? a.fermee))
+            .isEmpty;
+    if (rien) return const SizedBox.shrink();
+    final int nonLus = nombreOnglet(
+      OngletCloche.tout,
+      notifications: notifs,
+      annoncesOuvertes: annonces.lues,
+      fermeturesLocales: fermetures,
+    );
+    final AppPalette palette = AppPalette.of(context);
+    if (nonLus == 0) {
+      return Text(
+        t.notifications.cloche.toutLu,
+        key: ContenuCloche.cleToutLu,
+        style: palette.inkMuted.applyTo(
+          Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+        ),
+      );
+    }
+    void lire() => unawaited(
+      toutLireCloche(ref, notifications: notifs, annonces: annonces.lues),
+    );
+    final TextStyle styleLien =
+        Theme.of(context).textTheme.labelLarge ?? const TextStyle();
+    final TextPainter mesure = TextPainter(
+      text: TextSpan(text: t.notifications.toutMarquerLu, style: styleLien),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final double largeurTexte = mesure.width + 2 * AppSpacing.xxl;
+    mesure.dispose();
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) =>
+          _rendu(contexte, lire, contraintes.maxWidth < largeurTexte),
+    );
+  }
+
+  /// L'icone avec infobulle quand le libelle ne tient pas sur une ligne (a
+  /// cote du titre de la feuille, a texte agrandi), sinon le lien.
+  Widget _rendu(BuildContext context, VoidCallback lire, bool serre) {
+    if (serre || SeuilsTexteAgrandi.texteAgrandi(context)) {
+      return BoutonIcone(
+        key: ContenuCloche.cleToutLire,
+        icone: AppIcons.messageLu,
+        libelle: t.notifications.toutMarquerLu,
+        infobulle: t.notifications.toutMarquerLu,
+        forme: FormeBoutonIcone.nue,
+        onPress: lire,
+      );
+    }
+    return ActionPrincipale(
+      key: ContenuCloche.cleToutLire,
+      libelle: t.notifications.toutMarquerLu,
+      niveau: NiveauAction.tertiaire,
+      compacte: true,
+      pleineLargeur: false,
+      onPress: lire,
+    );
+  }
+}
+
+/// Marque lues toutes les notifications (si le port le sait) et vues les
+/// annonces lues ; un echec garde tout et le dit ([retourClocheProvider]).
+Future<void> toutLireCloche(
+  WidgetRef ref, {
+  required List<NotificationTuteur> notifications,
+  required List<AnnonceCloche> annonces,
+}) async {
+  final SourceAnnoncesCloche source = ref.read(sourceAnnoncesClocheProvider);
+  for (final AnnonceCloche a in annonces) {
+    if (a.vue) continue;
+    ref.read(annoncesClocheProvider(false).notifier).vue(a.id);
+    ref.read(annoncesClocheProvider(true).notifier).vue(a.id);
+    unawaited(source.marquerVue(a.id).catchError((Object _) {}));
+  }
+  final PortNotifications port = ref.read(notificationsPagePortProvider);
+  if (port is! PortLectureGroupeeNotifications) return;
+  if (!notifications.any((NotificationTuteur n) => !n.lue)) return;
+  try {
+    await (port as PortLectureGroupeeNotifications).marquerToutesLues();
+  } on CapaciteIndisponible {
+    return;
+  } on Object {
+    ref
+        .read(retourClocheProvider.notifier)
+        .poser(t.notifications.lectureNonConfirmee);
+    return;
+  }
+  ref.read(retourClocheProvider.notifier).poser(null);
+  ref.invalidate(notificationsTuteurProvider);
+}
+
+/// Le texte d'une annonce sans ses adresses https (le bouton « Ouvrir le
+/// lien » les ouvre) : espaces et ponctuation laisses en trop retires. Pur et
+/// teste.
+String texteSansLiens(String texte) {
+  String r = texte;
+  for (final Uri u in liensHttps(texte)) {
+    r = r.replaceAll(u.toString(), '');
+  }
+  return r
+      .replaceAll(RegExp(r'[ \t]*:[ \t]*(?=\n|$)'), '')
+      .replaceAll(RegExp(r'[ \t]+(?=\n|$)'), '')
+      .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+      .trim();
 }

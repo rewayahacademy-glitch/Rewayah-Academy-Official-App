@@ -42,6 +42,8 @@ Future<void> ouvrirCloche(BuildContext contexte, {String? cheminPage}) {
       contexte,
       titre: t.notifications.titre,
       libelleFermer: t.commun.fermer,
+      // Le titre, « Tout marquer comme lu » et la croix sur une rangee.
+      actionTitre: (BuildContext _) => const ActionToutLireCloche(),
       constructeur: (BuildContext feuille) => ContenuCloche(
         forme: FormeCloche.feuille,
         cheminPage: cheminPage,

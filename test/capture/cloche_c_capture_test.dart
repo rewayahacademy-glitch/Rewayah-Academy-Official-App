@@ -97,6 +97,8 @@ void main() {
         sombre: true,
       ),
       _cas('07-telephone-320-feuille-texte-x2', 320, 700, echelle: 2),
+      _cas('09-telephone-390-feuille-en', 390, 844, langue: AppLocale.en),
+      _cas('09-ordinateur-1440-ouvert-en', 1440, 900, langue: AppLocale.en),
       _cas(
         '08-ordinateur-1440-ouvert-ar-sombre',
         1440,

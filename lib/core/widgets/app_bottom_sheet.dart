@@ -82,7 +82,13 @@ class AppBottomSheet extends StatefulWidget {
     this.actions,
     this.forme = FormeModale.feuille,
     this.libelleFermer,
+    this.actionTitre,
   });
+
+  /// CLOCHE-C (pilote, 21/11/2026) : une action courte posee sur la rangee
+  /// du titre, au bord de fin, avant la croix (« Tout marquer comme lu »).
+  /// Nulle : rien ne change.
+  final Widget? actionTitre;
 
   /// Le titre de la feuille, en une phrase.
   final String titre;
@@ -224,6 +230,7 @@ class AppBottomSheet extends StatefulWidget {
     Widget Function(BuildContext context)? actions,
     String? libelleFermer,
     bool panneauLateral = false,
+    Widget Function(BuildContext context)? actionTitre,
   }) {
     final AppPalette palette = AppPalette.of(context);
     // WEB-BUREAU (B9, P2 ; M3 bottom sheets : « Use bottom sheets in compact
@@ -345,6 +352,7 @@ class AppBottomSheet extends StatefulWidget {
               forme: forme,
               actions: actions?.call(contexte),
               libelleFermer: libelleFermer,
+              actionTitre: actionTitre?.call(contexte),
               child: constructeur(contexte),
             ),
           ),
@@ -552,14 +560,27 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
     final Widget? croix = _croix(context, palette, parDefaut: pleineFenetre);
     final bool croixEnBarre = croix != null && _deborde && !basse;
     final Widget titre = _titre(surface, textes);
-    final Widget tete = croix == null || croixEnBarre
+    final Widget? action = widget.actionTitre;
+    final Widget tete = (croix == null || croixEnBarre) && action == null
         ? titre
         : Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: action == null
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(child: titre),
-              Ecart.hMd,
-              croix,
+              if (action != null) ...<Widget>[
+                Ecart.hSm,
+                // L'action ne prend jamais plus de 40 % de la rangee : le titre
+                // garde sa place (aucun mot coupe a 200 %).
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                  ),
+                  child: action,
+                ),
+              ],
+              if (croix != null && !croixEnBarre) ...<Widget>[Ecart.hMd, croix],
             ],
           );
     _mesurerApres();
@@ -611,8 +632,37 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
               // La barre fine du haut : la poignee, et la croix quand le
               // contenu deborde (elle ne cache aucune ligne : le corps
               // commence dessous).
-              if (!dialogue || croixEnBarre) ...<Widget>[
-                _barreFine(palette, dialogue, croixEnBarre ? croix : null),
+              // CLOCHE-C : avec une action de titre, la rangee titre, action
+              // et croix reste fixe en haut (sous la poignee), le corps defile
+              // dessous : jamais de croix seule dans la barre fine.
+              if (!dialogue || (croixEnBarre && action == null)) ...<Widget>[
+                _barreFine(
+                  palette,
+                  dialogue,
+                  croixEnBarre && action == null ? croix : null,
+                ),
+                action == null ? Ecart.vLg : Ecart.vSm,
+              ],
+              if (action != null && !basse) ...<Widget>[
+                if (croixEnBarre)
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: titre),
+                      Ecart.hSm,
+                      // L'action ne prend jamais plus de 40 % de la rangee : le titre
+                      // garde sa place (aucun mot coupe a 200 %).
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                        ),
+                        child: action,
+                      ),
+                      Ecart.hMd,
+                      croix,
+                    ],
+                  )
+                else
+                  tete,
                 Ecart.vLg,
               ],
               if (basse) ...<Widget>[tete, Ecart.vLg, corps] else
@@ -627,7 +677,10 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[tete, Ecart.vLg, corps],
+                        children: <Widget>[
+                          if (action == null) ...<Widget>[tete, Ecart.vLg],
+                          corps,
+                        ],
                       ),
                     ),
                   ),
