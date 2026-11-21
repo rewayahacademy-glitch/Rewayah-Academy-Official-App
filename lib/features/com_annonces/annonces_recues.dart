@@ -24,6 +24,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/status_pill.dart';
+import '../com_messages/liens_message_staff.dart';
 import '../suivi_foyer/filtres_historique.dart';
 import 'port_annonces_direction.dart';
 
@@ -143,6 +144,17 @@ class _AnnoncesRecuesState extends ConsumerState<AnnoncesRecues> {
                       a.texte,
                       style: palette.inkStrong.applyTo(
                         textes.bodyMedium ?? const TextStyle(),
+                      ),
+                    ),
+                    // ANNONCE-LIENS (directeur, 21/11/2026 : « le lien n'a pas
+                    // marche, c'est du simple texte ») : seule la direction
+                    // publie une annonce ; chaque adresse https du texte
+                    // devient une ligne qui l'ouvre, comme sous un message de
+                    // l'equipe.
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: IntrinsicWidth(
+                        child: LiensMessageStaff(texte: a.texte),
                       ),
                     ),
                     Ecart.vSm,
