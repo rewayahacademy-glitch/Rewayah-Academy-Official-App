@@ -29,6 +29,9 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/admin_dossiers/revue_dossier.dart';
+import 'package:rewayah_academy/features/admin_personnes/personnes_page.dart';
 
 import '../fixtures/candidature/faux_candidatures_direction.dart';
 import '../support/demo/mode_demonstration.dart';
@@ -200,6 +203,7 @@ Future<void> _monter(
   WidgetTester tester,
   String route, {
   required ThemeMode mode,
+  bool piecesDeLaDemonstration = false,
 }) async {
   late GoRouter routeur;
   await tester.pumpWidget(
@@ -211,7 +215,10 @@ Future<void> _monter(
         portEnseignantsProvider.overrideWithValue(_Enseignants()),
         // Etape (f) : la coche « fondateur » est servie (personne ne l'a).
         fondateursProvider.overrideWith((Ref ref) async => <String>{}),
-        piecesAVerifierProvider.overrideWith((Ref ref) async => _pieces),
+        // Etape (f3) : les pieces de la demonstration, celles que sa revue
+        // sait ouvrir.
+        if (!piecesDeLaDemonstration)
+          piecesAVerifierProvider.overrideWith((Ref ref) async => _pieces),
         portCandidaturesDirectionProvider.overrideWithValue(
           FauxCandidaturesDirection(
             capacitesRendues: capacitesGestes,
@@ -490,6 +497,53 @@ void main() {
         }
         await stabiliser(tester);
         debugPrint('PNG ${await capturer(tester, 'personnes_${c.$1}')}');
+      });
+    }
+  });
+
+  // Etape (f) point 3 : la revue de la piece, ouverte depuis « Pieces a
+  // verifier », sur le vrai routeur.
+  group('PERSONNES (f3) : la piece elle-meme', skip: sautSansCapture, () {
+    const String vue = '${Routes.adminPersonnes}?onglet=enseignants&vue=pieces';
+    for (final (String, Size, AppLocale) c in <(String, Size, AppLocale)>[
+      ('piece_1440_fr', const Size(1440, 900), AppLocale.fr),
+      ('piece_1440_ar', const Size(1440, 900), AppLocale.ar),
+      ('piece_390_fr', const Size(390, 844), AppLocale.fr),
+      ('piece_390_ar', const Size(390, 844), AppLocale.ar),
+    ]) {
+      testWidgets('personnes ${c.$1}', (WidgetTester tester) async {
+        await LocaleSettings.setLocale(c.$3);
+        fixerVueCapture(tester, c.$2, c.$2.width < 500 ? 2 : 1);
+        await _monter(
+          tester,
+          vue,
+          mode: ThemeMode.light,
+          piecesDeLaDemonstration: true,
+        );
+        // La premiere piece : la ligne (telephone : elle ouvre la revue ;
+        // ordinateur : elle remplit l'apercu, puis « Verifier la piece »).
+        final Finder lignes = find.descendant(
+          of: find.byKey(PersonnesPage.cleListe),
+          matching: find.byType(StatusPill),
+        );
+        expect(lignes, findsWidgets);
+        await tester.tap(lignes.first);
+        await stabiliser(tester);
+        if (c.$2.width >= 1024) {
+          debugPrint('PNG ${await capturer(tester, 'personnes_${c.$1}_vue')}');
+          await tester.tap(find.byKey(PersonnesPage.cleVerifierPiece));
+          await stabiliser(tester);
+        }
+        await stabiliser(tester);
+        expect(find.byType(RevueDossier), findsOneWidget);
+        debugPrint('PNG ${await capturer(tester, 'personnes_${c.$1}_revue')}');
+        // Fermer ramene a Personnes, vue « Pieces a verifier ».
+        await tester.binding.handlePopRoute();
+        await stabiliser(tester);
+        await stabiliser(tester);
+        expect(find.byType(RevueDossier), findsNothing);
+        expect(find.byKey(PersonnesPage.cleVues), findsOneWidget);
+        debugPrint('PNG ${await capturer(tester, 'personnes_${c.$1}_retour')}');
       });
     }
   });
