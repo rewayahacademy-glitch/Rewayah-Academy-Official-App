@@ -1,7 +1,7 @@
 // MESSAGERIE-TEMPS-REEL (14/11/2026) : le nombre de messages non lus de la
 // personne, sur tous ses fils metier, relu a chaque signal de la veille des
-// messages. Lu par la messagerie existante (`fils()`), jamais par un second
-// circuit : le serveur ne rend a chacun que ses fils (pour la direction, ceux
+// messages. Lu par la messagerie existante (`lireNonLus`, qui retombe sur
+// `fils()`), jamais par un second circuit : le serveur ne rend a chacun que ses fils (pour la direction, ceux
 // de son cote, CAND-Q07).
 //
 // Sans compte a montrer (capacite indisponible, lecture qui echoue), 0 :
@@ -22,14 +22,12 @@ final FutureProvider<int> nonLusMessagesProvider =
         etatVeilleMessagesProvider.select((EtatVeilleMessages e) => e.rang),
       );
       try {
-        int total = 0;
-        for (final ResumeFil f
-            in await ref.watch(portMessagesMetierProvider).fils()) {
-          // FINITIONS-MESSAGERIE : le compteur de l'icone compte les
-          // conversations non ouvertes, pas les messages.
-          if (estFilMetier(f) && f.attention.nonLus > 0) total += 1;
-        }
-        return total;
+        // FINITIONS-MESSAGERIE : le compteur de l'icone compte les
+        // conversations non ouvertes, pas les messages. PERSONNES-PERF
+        // (20/11/2026) : lu par la lecture legere des non-lus
+        // (`com_non_lus_par_objet`), plus par toute la messagerie ; meme
+        // compte (les fils metier qui ont au moins un non-lu).
+        return (await lireNonLus(ref.watch(portMessagesMetierProvider))).length;
       } on CapaciteIndisponible {
         return 0;
       } on Object catch (e) {

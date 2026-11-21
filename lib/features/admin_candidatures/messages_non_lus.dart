@@ -1,6 +1,6 @@
 // Les messages non lus d'une candidature, dans la liste de la direction
 // (MESSAGES-CANDIDAT, CAND-Q06) : un message que personne ne voit ne sert a
-// rien. Lus par la messagerie metier existante (`fils()`), jamais par un second
+// rien. Lus par la messagerie metier existante (`lireNonLus`), jamais par un second
 // circuit : le serveur ne rend a la direction que les fils de son cote
 // (CAND-Q07), donc le compte ne dit rien d'un autre cote.
 //
@@ -28,14 +28,16 @@ final FutureProvider<Map<String, int>> nonLusParCandidatureProvider =
         etatVeilleMessagesProvider.select((EtatVeilleMessages e) => e.rang),
       );
       try {
-        final List<ResumeFil> fils = await ref
-            .watch(portMessagesMetierProvider)
-            .fils();
+        // PERSONNES-PERF (20/11/2026) : la lecture legere des non-lus
+        // (`com_non_lus_par_objet`) au lieu de toute la messagerie ; memes
+        // fils, memes comptes, et repli sur `fils()` tant que le serveur ne
+        // la connait pas.
+        final List<NonLusFil> nonLus = await lireNonLus(
+          ref.watch(portMessagesMetierProvider),
+        );
         return <String, int>{
-          for (final ResumeFil f in fils)
-            if (f.objet.type == TypeObjetLie.candidature &&
-                f.attention.nonLus > 0)
-              f.objet.id: f.attention.nonLus,
+          for (final NonLusFil f in nonLus)
+            if (f.type == TypeObjetLie.candidature) f.objetId: f.nonLus,
         };
       } on CapaciteIndisponible {
         return const <String, int>{};

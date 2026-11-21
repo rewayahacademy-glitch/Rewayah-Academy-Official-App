@@ -109,4 +109,28 @@ abstract final class AppDelais {
   /// 16 s), puis la salle rend la main a la personne (revue du 13/11/2026 :
   /// jamais un appel par seconde sans fin).
   static const Duration essaiSeulAttente = Duration(seconds: 2);
+
+  /// PERSONNES-PERF (20/11/2026) : en production, un onglet du bureau laisse
+  /// ouvert la nuit relisait toute la messagerie 90 fois par heure (canal
+  /// temps reel tombe, repli de 30 s). Onglet cache, le repli s'espace a ce
+  /// rythme ; au retour de l'onglet, une relecture immediate, puis le rythme
+  /// de [repliMessages].
+  static const Duration repliMessagesCache = Duration(minutes: 5);
+
+  /// Le canal des messages qui se rejoint en boucle ne fait relire qu'une fois
+  /// par cette fenetre : les retours suivants, dans la fenetre, sont reunis en
+  /// une seule relecture a sa fin (rien n'est perdu, tout est relu une fois).
+  static const Duration rejointeMessagesMin = Duration(minutes: 1);
+
+  /// Apres [echecsCanalAvantPause] echecs du canal des messages sans retour
+  /// en direct, la veille ferme le canal et le rouvre apres cette attente,
+  /// doublee a chaque nouvel echec jusqu'a [reouvertureCanalMax].
+  static const Duration reouvertureCanalMin = Duration(seconds: 30);
+
+  /// L'attente la plus longue avant de rouvrir le canal des messages.
+  static const Duration reouvertureCanalMax = Duration(minutes: 10);
+
+  /// Le nombre d'echecs du canal des messages laisses au client temps reel
+  /// (qui retente seul) avant que la veille espace elle-meme les tentatives.
+  static const int echecsCanalAvantPause = 3;
 }
