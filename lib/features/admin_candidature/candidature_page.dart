@@ -39,6 +39,8 @@ import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/enseignants/port_enseignants.dart'
+    show pageEnseignantsProvider;
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -302,6 +304,7 @@ class _EtatCandidatureDirectionPage
     // La file affichait l'etat d'avant le geste : elle se relit au retour.
     ref
       ..invalidate(pageCandidaturesProvider)
+      ..invalidate(pageEnseignantsProvider)
       ..invalidate(capacitesCandidaturesProvider);
   }
 
@@ -319,6 +322,22 @@ class _EtatCandidatureDirectionPage
       context.go(
         file == null
             ? Routes.adminPersonnesCandidatures
+            : file.vuePersonnes != null
+            // Ouvert depuis la page « Personnes » : sa vue et ses filtres.
+            ? Uri(
+                path: Routes.adminPersonnes,
+                queryParameters: <String, String>{
+                  'onglet': 'enseignants',
+                  for (final MapEntry<String, String> e in file.adresse.entries)
+                    if (!const <String>{
+                      'file',
+                      'partis',
+                      'phase_file',
+                    }.contains(e.key))
+                      e.key: e.value,
+                  'element': widget.reference,
+                },
+              ).toString()
             : Uri(
                 path: Routes.adminPersonnesCandidatures,
                 queryParameters: file.adresse.isEmpty ? null : file.adresse,

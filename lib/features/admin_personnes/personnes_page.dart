@@ -17,6 +17,14 @@
 // ligne ouvre le dossier (enseignant) ou l'apercu en feuille (les autres),
 // comme dans Comptes depuis l'etape (a).
 //
+// Etape (d) : l'onglet des enseignants a ses vues (`vue` dans l'adresse) :
+// Candidats (`lister_candidatures`, les 26 filtres de la file), En accueil,
+// Actifs, Partis (`lister_enseignants`), Pieces a verifier
+// (`dossiers_en_attente_references`). Chaque vue dit son nombre. Le dossier
+// complet recoit la file de la vue : precedent, suivant et passage au suivant
+// apres une decision y marchent comme depuis l'ancienne liste ; l'apercu passe
+// lui aussi au suivant apres une decision (meme reglage).
+//
 // Aucune regle ici : les comptes viennent de `comptesProvider`, les
 // enseignants de `pageEnseignantsProvider` (phase, « qui attend » decides par
 // le serveur), l'apercu d'un enseignant de `lire_candidature`
@@ -33,7 +41,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
+import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/port_autres_competences.dart';
+import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/domain/enums.dart';
+import '../../core/dossier/service_validation.dart';
 import '../../core/enseignants/modeles_enseignants.dart';
 import '../../core/enseignants/port_enseignants.dart';
 import '../../core/i18n/identifiant_insecable.dart';
@@ -51,6 +63,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
@@ -58,7 +71,10 @@ import '../../core/widgets/pied_de_liste.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../admin_candidatures/libelles_candidatures.dart' show nomAffiche;
+import '../admin_candidature/references_dossiers.dart'
+    show referenceDossierValide;
+import '../admin_candidatures/libelles_candidatures.dart'
+    show etatAffiche, libelleSalle, nomAffiche;
 import '../admin_comptes/apercu_compte.dart';
 import '../admin_comptes/liste_comptes.dart';
 import '../admin_enseignants/enseignants_page.dart'
@@ -115,11 +131,65 @@ const double echelleMaxCoteACote = 1.3;
 /// La part de la liste dans la disposition cote a cote.
 const double _partListe = 0.4;
 
-/// La derniere page d'enseignants affichee : pendant qu'un filtre ou une
-/// recherche se relit au serveur, elle reste a l'ecran (la liste ne saute
-/// pas, le champ de recherche garde sa saisie et son focus). Ce n'est qu'un
-/// confort d'affichage : la liste lue la remplace des qu'elle arrive.
-PageEnseignants? _dernierePageEnseignants;
+/// Une liste lue au serveur pour une vue des enseignants.
+typedef ListeVue = ({
+  List<LignePersonne> lignes,
+  int total,
+  int page,
+  int taillePage,
+});
+
+/// La derniere liste d'une vue des enseignants affichee : pendant qu'un filtre
+/// ou une recherche se relit au serveur, elle reste a l'ecran (la liste ne
+/// saute pas, le champ de recherche garde sa saisie et son focus). Ce n'est
+/// qu'un confort d'affichage : la liste lue la remplace des qu'elle arrive.
+({VueEnseignants vue, ListeVue liste})? _derniereListe;
+
+/// La vue « Actifs » sans phase choisie : chaque phase de [phasesActives] est
+/// lue au serveur (`lister_enseignants` ne filtre qu'une phase a la fois), en
+/// entier, puis les lignes se suivent phase par phase. La cle : le texte
+/// cherche.
+final enseignantsActifsProvider = FutureProvider.autoDispose
+    .family<PageEnseignants, String>((Ref ref, String recherche) async {
+      // Une seule ligne par dossier : une personne qui change de phase entre
+      // deux lectures serait rendue par deux phases. La derniere lue gagne,
+      // a sa place la plus recente.
+      final Map<String, LigneEnseignant> parReference =
+          <String, LigneEnseignant>{};
+      CompteursEnseignants compteurs = const CompteursEnseignants();
+      for (final PhaseEnseignant phase in phasesActives) {
+        for (int page = 1; page <= _pagesMaxParPhase; page++) {
+          final PageEnseignants lue = await ref.watch(
+            pageEnseignantsProvider(
+              RequeteEnseignants(
+                filtre: FiltreEnseignants(recherche: recherche, phase: phase),
+                page: page,
+              ),
+            ).future,
+          );
+          compteurs = lue.compteurs;
+          for (final LigneEnseignant l in lue.lignes) {
+            parReference
+              ..remove(l.dossier.reference)
+              ..[l.dossier.reference] = l;
+          }
+          if (lue.lignes.isEmpty || page >= lue.pages) break;
+        }
+      }
+      final List<LigneEnseignant> lignes = parReference.values.toList(
+        growable: false,
+      );
+      return PageEnseignants(
+        lignes: lignes,
+        total: lignes.length,
+        page: 1,
+        taillePage: lignes.isEmpty ? 1 : lignes.length,
+        compteurs: compteurs,
+      );
+    }, retry: (int _, Object _) => null);
+
+/// Garde-fou de [enseignantsActifsProvider] : jamais plus de pages par phase.
+const int _pagesMaxParPhase = 20;
 
 /// Une ligne de la page : une personne, quel que soit l'onglet.
 @immutable
@@ -133,7 +203,9 @@ class LignePersonne {
     this.etat,
     this.ton = TonEtat.neutre,
     this.compte,
+    this.dossier,
     this.enseignant,
+    this.piece,
   });
 
   /// Ce qui designe la personne dans l'adresse : son matricule, ou la
@@ -161,8 +233,14 @@ class LignePersonne {
   /// Le compte, pour un eleve, une famille, un membre de l'equipe.
   final CompteAdmin? compte;
 
-  /// La ligne du serveur, pour un enseignant.
+  /// Le dossier de candidature, pour un candidat ou un enseignant.
+  final LigneCandidature? dossier;
+
+  /// La ligne du serveur, pour un enseignant (vues hors « Candidats »).
   final LigneEnseignant? enseignant;
+
+  /// La piece a verifier (vue « Pieces a verifier »).
+  final DossierAValider? piece;
 }
 
 /// L'ecran « Personnes ».
@@ -174,11 +252,19 @@ class PersonnesPage extends ConsumerWidget {
     this.ouvrirDossier,
   });
 
-  /// `onglet`, `element`, `page`.
+  /// `onglet`, `vue`, `element`, `page`, la recherche et les filtres.
   final Map<String, String> requete;
 
   /// Ouvre le dossier complet d'un enseignant ; par defaut, le routeur.
   final void Function(String chemin, String identifiant)? ouvrirDossier;
+
+  /// La cle du selecteur des vues de l'onglet des enseignants.
+  static const Key cleVues = ValueKey<String>('personnes-vues');
+
+  /// La cle du lien « Verifier la piece » de l'apercu d'une piece.
+  static const Key cleVerifierPiece = ValueKey<String>(
+    'personnes-verifier-piece',
+  );
 
   /// La cle des onglets.
   static const Key cleOnglets = ValueKey<String>('personnes-onglets');
@@ -213,9 +299,12 @@ class PersonnesPage extends ConsumerWidget {
 
   int get _page => (int.tryParse(requete['page'] ?? '') ?? 1).clamp(1, 100000);
 
+  VueEnseignants get _vue => VueEnseignants.depuis(requete['vue']);
+
   void _aller(
     BuildContext context, {
     OngletPersonnes? onglet,
+    VueEnseignants? vue,
     String? element,
     int? page,
     Map<String, String>? filtres,
@@ -223,20 +312,26 @@ class PersonnesPage extends ConsumerWidget {
     bool sansHistorique = false,
   }) {
     final OngletPersonnes o = onglet ?? _onglet;
-    // Changer d'onglet, de filtre ou de recherche revient a la premiere page.
-    final bool neuf = onglet != null || filtres != null || recherche != null;
+    // Changer d'onglet, de vue, de filtre ou de recherche revient a la
+    // premiere page.
+    final bool autreListe = onglet != null || vue != null;
+    final bool neuf = autreListe || filtres != null || recherche != null;
     final int p = neuf ? 1 : (page ?? _page);
-    // Un autre onglet oublie filtres et recherche : ils ne sont pas les siens.
-    final Map<String, String> f = onglet != null
+    // Un autre onglet ou une autre vue oublie filtres et recherche : ils ne
+    // sont pas les siens.
+    final Map<String, String> f = autreListe
         ? const <String, String>{}
-        : filtres ?? filtresDeLAdresse(o, requete);
-    final String q = onglet != null
+        : filtres ?? _filtresPoses;
+    final String q = autreListe
         ? ''
         : recherche ?? rechercheDeLAdresse(requete);
     final String adresse = Uri(
       path: Routes.adminPersonnes,
       queryParameters: <String, String>{
         'onglet': o.cle,
+        if (o == OngletPersonnes.enseignants)
+          'vue':
+              (vue ?? (onglet == null ? _vue : VueEnseignants.candidats)).cle,
         if (p > 1) 'page': '$p',
         if (q.isNotEmpty) cleRecherchePersonnes: q,
         ...f,
@@ -253,15 +348,127 @@ class PersonnesPage extends ConsumerWidget {
     }
   }
 
-  void _ouvrirDossier(BuildContext context, LigneEnseignant l) {
+  /// Les filtres de l'adresse, sans le catalogue des competences (les cles
+  /// posees y restent : seule une valeur inconnue du menu est ecartee a
+  /// l'affichage).
+  Map<String, String> get _filtresPoses => <String, String>{
+    for (final TypeFiltrePersonnes type in typesDeFiltre(_onglet, vue: _vue))
+      if (requete[type.cle] case final String v when v.isNotEmpty) type.cle: v,
+  };
+
+  /// Ouvre le dossier complet de [dossier], avec la file de la vue : dans le
+  /// dossier, precedent, suivant et passage au suivant suivent cette liste.
+  void _ouvrirDossier(
+    BuildContext context,
+    LigneCandidature dossier, {
+    PhaseEnseignant? phase,
+  }) {
     final String chemin = Routes.adminPersonnesCandidaturePour(
-      l.dossier.reference,
+      dossier.reference,
+      fileDeLaListe: <String, String>{
+        ...fileDeLaVue(_vue, _filtresPoses, phaseDeLaLigne: phase),
+        if (_page > 1) 'page': '$_page',
+      },
     );
+    _ouvrir(context, chemin, dossier.id);
+  }
+
+  void _ouvrir(BuildContext context, String chemin, String identifiant) {
     final void Function(String, String)? ouvrir = ouvrirDossier;
     if (ouvrir != null) {
-      ouvrir(chemin, l.dossier.id);
+      ouvrir(chemin, identifiant);
     } else {
-      unawaited(GoRouter.of(context).push<void>(chemin, extra: l.dossier.id));
+      unawaited(GoRouter.of(context).push<void>(chemin, extra: identifiant));
+    }
+  }
+
+  /// La liste de la vue [vue] des enseignants, telle que le serveur la rend.
+  ({
+    AsyncValue<ListeVue> valeur,
+    VoidCallback relire,
+    String echec,
+    String vide,
+  })
+  _listeEnseignants(
+    WidgetRef ref,
+    VueEnseignants vue,
+    Map<String, String> filtres,
+    String recherche,
+  ) {
+    switch (vue) {
+      case VueEnseignants.candidats:
+        final RequeteCandidatures r = RequeteCandidatures(
+          filtre: filtreCandidatsDe(filtres, recherche),
+          page: _page,
+        );
+        return (
+          valeur: ref
+              .watch(pageCandidaturesProvider(r))
+              .whenData(
+                (PageCandidatures page) => (
+                  lignes: <LignePersonne>[
+                    for (final LigneCandidature l in page.lignes)
+                      _deCandidat(l),
+                  ],
+                  total: page.total,
+                  page: page.page,
+                  taillePage: page.taillePage,
+                ),
+              ),
+          relire: () => ref.invalidate(pageCandidaturesProvider),
+          echec: t.admin.candidatures.lectureEchec,
+          vide: t.admin.candidatures.vide,
+        );
+      case VueEnseignants.pieces:
+        return (
+          valeur: ref.watch(piecesAVerifierProvider).whenData((
+            List<DossierAValider> tous,
+          ) {
+            final List<LignePersonne> lignes = <LignePersonne>[
+              for (final DossierAValider d in _piecesEnseignants(tous))
+                if (_pieceCorrespond(d, recherche)) _dePiece(d),
+            ];
+            return (
+              lignes: lignes,
+              total: lignes.length,
+              page: 1,
+              taillePage: lignes.isEmpty ? 1 : lignes.length,
+            );
+          }),
+          relire: () => ref.invalidate(piecesAVerifierProvider),
+          echec: t.dossiers.file.erreur,
+          vide: t.dossiers.aucun,
+        );
+      case VueEnseignants.accueil ||
+          VueEnseignants.actifs ||
+          VueEnseignants.partis:
+        final FiltreEnseignants f = filtreEnseignantsDe(
+          vue,
+          filtres,
+          recherche,
+        );
+        final bool fusion = vue == VueEnseignants.actifs && f.phase == null;
+        final RequeteEnseignants r = RequeteEnseignants(filtre: f, page: _page);
+        final AsyncValue<PageEnseignants> lue = fusion
+            ? ref.watch(enseignantsActifsProvider(f.rechercheNette))
+            : ref.watch(pageEnseignantsProvider(r));
+        return (
+          valeur: lue.whenData(
+            (PageEnseignants page) => (
+              lignes: <LignePersonne>[
+                for (final LigneEnseignant l in page.lignes) _deEnseignant(l),
+              ],
+              total: page.total,
+              page: page.page,
+              taillePage: page.taillePage,
+            ),
+          ),
+          relire: () => ref
+            ..invalidate(pageEnseignantsProvider)
+            ..invalidate(enseignantsActifsProvider),
+          echec: t.admin.listeEnseignants.lectureEchec,
+          vide: t.admin.comptes.videEnseignants,
+        );
     }
   }
 
@@ -270,36 +477,78 @@ class PersonnesPage extends ConsumerWidget {
     final p = t.admin.personnesPage;
     final OngletPersonnes onglet = _onglet;
     final AsyncValue<List<CompteAdmin>> comptes = ref.watch(comptesProvider);
-    final Map<String, String> filtres = filtresDeLAdresse(onglet, requete);
+    final bool ens = onglet == OngletPersonnes.enseignants;
+    final VueEnseignants vueEns = _vue;
+    final bool candidats = ens && vueEns == VueEnseignants.candidats;
+    final List<TypeFiltrePersonnes> types = typesDeFiltre(
+      onglet,
+      vue: vueEns,
+      // Le catalogue des autres competences et « Garder pour suivi » ne se
+      // lisent que pour la vue qui les propose.
+      catalogue: candidats
+          ? ref.watch(catalogueCompetencesProvider).value
+          : null,
+      garderPourSuivi:
+          candidats &&
+          (ref
+                  .watch(capacitesCandidaturesProvider)
+                  .value
+                  ?.peutGarderPourSuivi ??
+              false),
+    );
+    final Map<String, String> filtres = filtresDeLAdresse(types, requete);
     final String recherche = rechercheDeLAdresse(requete);
     final bool filtre = filtres.isNotEmpty || recherche.isNotEmpty;
-    // Les enseignants sont filtres par le serveur ; le nombre de l'onglet
-    // reste celui de la liste entiere (lecture sans filtre, gardee en cache).
-    final bool ens = onglet == OngletPersonnes.enseignants;
-    final RequeteEnseignants requeteEns = RequeteEnseignants(
-      filtre: ens
-          ? filtreEnseignantsDe(filtres, recherche)
-          : const FiltreEnseignants(),
-      page: ens ? _page : 1,
-    );
-    final AsyncValue<PageEnseignants> enseignants = ref.watch(
-      pageEnseignantsProvider(requeteEns),
-    );
-    if (enseignants.hasValue && !enseignants.isLoading) {
-      _dernierePageEnseignants = enseignants.requireValue;
+    // Le nombre de l'onglet des enseignants et ceux de ses vues : la lecture
+    // sans filtre (gardee en cache), ses compteurs par phase.
+    final PageEnseignants? tousEnseignants = ref
+        .watch(pageEnseignantsProvider(const RequeteEnseignants()))
+        .value;
+    final int? totalEnseignants = tousEnseignants?.total;
+    // La liste de la vue, filtree par le serveur.
+    final liste = ens
+        ? _listeEnseignants(ref, vueEns, filtres, recherche)
+        : null;
+    final AsyncValue<ListeVue>? lue = liste?.valeur;
+    if (lue != null && lue.hasValue && !lue.isLoading) {
+      _derniereListe = (vue: vueEns, liste: lue.requireValue);
     }
-    // Relecture apres un filtre : la page precedente reste affichee.
-    final PageEnseignants? precedente = _dernierePageEnseignants;
-    final AsyncValue<PageEnseignants> enseignantsAffiches =
-        enseignants.isLoading && !enseignants.hasError && precedente != null
-        ? AsyncData<PageEnseignants>(precedente)
-        : enseignants;
-    final int? totalEnseignants = ens && filtre
-        ? ref
-              .watch(pageEnseignantsProvider(const RequeteEnseignants()))
-              .value
-              ?.total
-        : enseignants.value?.total;
+    // Relecture apres un filtre : la liste precedente de la vue reste affichee.
+    final ListeVue? precedente = _derniereListe?.vue == vueEns
+        ? _derniereListe?.liste
+        : null;
+    final AsyncValue<ListeVue>? listeAffichee =
+        lue != null && lue.isLoading && !lue.hasError && precedente != null
+        ? AsyncData<ListeVue>(precedente)
+        : lue;
+    // Le nombre de chaque vue, sans filtre ; `null` tant qu'il n'est pas lu.
+    int? nombreVue(VueEnseignants v) => switch (v) {
+      VueEnseignants.candidats =>
+        ref
+            .watch(pageCandidaturesProvider(const RequeteCandidatures()))
+            .value
+            ?.total,
+      VueEnseignants.accueil => tousEnseignants?.compteurs.de(
+        PhaseEnseignant.accueil,
+      ),
+      VueEnseignants.actifs =>
+        tousEnseignants == null
+            ? null
+            : phasesActives.fold<int>(
+                0,
+                (int n, PhaseEnseignant ph) =>
+                    n + tousEnseignants.compteurs.de(ph),
+              ),
+      VueEnseignants.partis => tousEnseignants?.compteurs.de(
+        PhaseEnseignant.parti,
+      ),
+      VueEnseignants.pieces =>
+        ref.watch(piecesAVerifierProvider).value == null
+            ? null
+            : _piecesEnseignants(
+                ref.watch(piecesAVerifierProvider).requireValue,
+              ).length,
+    };
     // Texte agrandi au-dela de 130 % : une seule colonne qui defile en
     // entier (les onglets agrandis ne tiennent plus au-dessus de deux cadres ;
     // garde de reflow AD-11).
@@ -349,6 +598,34 @@ class PersonnesPage extends ConsumerWidget {
     // lettres, sous les onglets : on sait toujours quelle liste on regarde,
     // meme quand les onglets se reduisent a leurs icones.
     final TextTheme textes = Theme.of(context).textTheme;
+    String libelleVue(VueEnseignants v) {
+      final String nom = switch (v) {
+        VueEnseignants.candidats => p.vueCandidats,
+        VueEnseignants.accueil => p.vueAccueil,
+        VueEnseignants.actifs => p.vueActifs,
+        VueEnseignants.partis => p.vuePartis,
+        VueEnseignants.pieces => p.vuePieces,
+      };
+      final int? n = nombreVue(v);
+      return n == null ? nom : p.ongletAvecNombre(nom: nom, n: n);
+    }
+
+    // Les vues de l'onglet des enseignants : cinq sections, donc en ligne a
+    // l'ordinateur et en menu deroulant au telephone (ONGLETS-1 : jamais une
+    // rangee qui defile).
+    final Widget? vues = ens
+        ? SelecteurSection<VueEnseignants>(
+            key: cleVues,
+            libelle: p.choixVue,
+            menuAuContenu: true,
+            valeur: vueEns,
+            onChange: (VueEnseignants v) => _aller(context, vue: v),
+            sections: <Segment<VueEnseignants>>[
+              for (final VueEnseignants v in VueEnseignants.values)
+                Segment<VueEnseignants>(valeur: v, libelle: libelleVue(v)),
+            ],
+          )
+        : null;
     final Widget onglets =
         MediaQuery.sizeOf(context).width >= AppGabarit.seuilTablette
         ? selecteur
@@ -387,13 +664,19 @@ class PersonnesPage extends ConsumerWidget {
             maintenant: DateTime.now(),
           );
     final Widget barre = BarreFiltresPersonnes(
-      types: typesDeFiltre(onglet),
+      types: types,
       filtres: filtres,
       recherche: recherche,
       affiches: vue == null
-          ? (enseignants.isLoading ? null : enseignants.value?.total)
+          ? (lue == null || lue.isLoading ? null : lue.value?.total)
           : gardes?.length,
-      total: vue == null ? totalEnseignants : deLaVue?.length,
+      // Sans filtre, le total est celui de la liste lue ; avec, celui de la
+      // vue entiere.
+      total: vue == null
+          ? (filtre
+                ? nombreVue(vueEns)
+                : (lue == null || lue.isLoading ? null : lue.value?.total))
+          : deLaVue?.length,
       onFiltre: (String type, String? valeur) => _aller(
         context,
         filtres: <String, String>{
@@ -410,13 +693,14 @@ class PersonnesPage extends ConsumerWidget {
       onToutEffacer: () =>
           _aller(context, filtres: const <String, String>{}, recherche: ''),
     );
-    // Les onglets, puis la recherche et le filtre : toujours a la meme place,
-    // que la liste se lise, soit vide ou pleine.
+    // Les onglets, les vues (enseignants), puis la recherche et le filtre :
+    // toujours a la meme place, que la liste se lise, soit vide ou pleine.
     final Widget entete = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         onglets,
+        if (vues != null) ...<Widget>[Ecart.vSm, vues],
         Ecart.vMd,
         if (coteACote)
           // Au-dessus de la liste, a sa largeur.
@@ -453,22 +737,19 @@ class PersonnesPage extends ConsumerWidget {
       ),
     );
     final Widget corps = vue == null
-        ? BlocAsynchrone<PageEnseignants>(
-            valeur: enseignantsAffiches,
+        ? BlocAsynchrone<ListeVue>(
+            valeur: listeAffichee!,
             squelette: squelette,
-            titreEchec: t.admin.listeEnseignants.lectureEchec,
-            onReessayer: () =>
-                ref.invalidate(pageEnseignantsProvider(requeteEns)),
-            construire: (PageEnseignants page) => _contenu(
+            titreEchec: liste!.echec,
+            onReessayer: liste.relire,
+            construire: (ListeVue page) => _contenu(
               context,
               ref,
               onglets: entete,
               coteACote: coteACote,
-              lignes: <LignePersonne>[
-                for (final LigneEnseignant l in page.lignes) _deEnseignant(l),
-              ],
-              vide: filtre ? p.aucunResultat : t.admin.comptes.videEnseignants,
-              relire: () => ref.invalidate(pageEnseignantsProvider(requeteEns)),
+              lignes: page.lignes,
+              vide: filtre ? p.aucunResultat : liste.vide,
+              relire: liste.relire,
               decalage: (page.page - 1) * page.taillePage,
               total: page.total,
               pied: page.total > page.lignes.length
@@ -553,13 +834,12 @@ class PersonnesPage extends ConsumerWidget {
     final int rang = lignes.indexWhere((LignePersonne l) => l.cle == element);
     final LignePersonne? choisie = rang < 0 ? null : lignes[rang];
 
-    void toucher(LignePersonne l) {
-      if (coteACote) {
-        _aller(context, element: l.cle, sansHistorique: true);
-        return;
-      }
-      if (l.enseignant case final LigneEnseignant e) {
-        _ouvrirDossier(context, e);
+    // Ouvre la page de la personne (dossier, piece, apercu en feuille).
+    void toucherLigne(LignePersonne l) {
+      if (l.piece case final DossierAValider d) {
+        _ouvrirPiece(context, d);
+      } else if (l.dossier case final LigneCandidature d) {
+        _ouvrirDossier(context, d, phase: l.enseignant?.phase);
       } else if (l.compte case final CompteAdmin c) {
         unawaited(
           ouvrirApercuCompte(
@@ -569,6 +849,14 @@ class PersonnesPage extends ConsumerWidget {
             gestes: const [],
           ),
         );
+      }
+    }
+
+    void toucher(LignePersonne l) {
+      if (coteACote) {
+        _aller(context, element: l.cle, sansHistorique: true);
+      } else {
+        toucherLigne(l);
       }
     }
 
@@ -630,8 +918,11 @@ class PersonnesPage extends ConsumerWidget {
                   OngletPersonnes.eleves => t.admin.comptes.colonneClasse,
                   OngletPersonnes.familles =>
                     t.admin.comptes.colonneElevesRattaches,
-                  OngletPersonnes.enseignants =>
-                    t.admin.listeEnseignants.colonnes.attend,
+                  OngletPersonnes.enseignants => switch (_vue) {
+                    VueEnseignants.candidats => t.recrutement.file.salle,
+                    VueEnseignants.pieces => t.admin.comptes.colonneAttente,
+                    _ => t.admin.listeEnseignants.colonnes.attend,
+                  },
                   OngletPersonnes.equipe => t.admin.comptes.colonneRole,
                 },
                 flex: 2,
@@ -656,7 +947,7 @@ class PersonnesPage extends ConsumerWidget {
     final LignePersonne? suivante = rang >= 0 && rang + 1 < lignes.length
         ? lignes[rang + 1]
         : null;
-    final String? aPrecharger = suivante?.enseignant?.dossier.id;
+    final String? aPrecharger = suivante?.dossier?.id;
 
     void voisin(int pas) {
       if (lignes.isEmpty) return;
@@ -715,7 +1006,17 @@ class PersonnesPage extends ConsumerWidget {
                               ),
                               Ecart.vMd,
                             ],
-                            _apercu(context, choisie, relire),
+                            _apercu(
+                              context,
+                              choisie,
+                              relire,
+                              ouvrir: choisie == null
+                                  ? null
+                                  : () => toucherLigne(choisie),
+                              suivant: rang >= 0 && rang + 1 < lignes.length
+                                  ? () => voisin(1)
+                                  : null,
+                            ),
                           ],
                         ),
                       ),
@@ -737,7 +1038,26 @@ class PersonnesPage extends ConsumerWidget {
     );
   }
 
-  Widget _apercu(BuildContext context, LignePersonne? l, VoidCallback relire) {
+  /// Ouvre la verification de la piece : dans le dossier de candidature quand
+  /// le compte en a un (la piece s'y decide), sinon dans « Dossiers a
+  /// valider ».
+  void _ouvrirPiece(BuildContext context, DossierAValider d) {
+    final String? reference = d.candidatureReference;
+    final String? id = d.candidatureId;
+    if (reference != null && id != null && referenceDossierValide(reference)) {
+      _ouvrir(context, Routes.adminPersonnesCandidaturePour(reference), id);
+    } else {
+      _ouvrir(context, Routes.adminPersonnesDossiers, d.profilId);
+    }
+  }
+
+  Widget _apercu(
+    BuildContext context,
+    LignePersonne? l,
+    VoidCallback relire, {
+    VoidCallback? ouvrir,
+    VoidCallback? suivant,
+  }) {
     final p = t.admin.personnesPage;
     if (l == null) {
       return EmptyState(
@@ -746,14 +1066,67 @@ class PersonnesPage extends ConsumerWidget {
         icone: AppIcons.profil,
       );
     }
-    if (l.enseignant case final LigneEnseignant e) {
+    if (l.piece case final DossierAValider d) {
+      final k = t.admin.comptes;
+      final int jours = d.joursDAttente(DateTime.now());
+      return AppCard(
+        key: ValueKey<String>('apercu-${l.cle}'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            AvatarNom.enLigne(
+              prenom: l.prenom,
+              avatar: PhotoEleve(
+                prenom: l.prenom,
+                cleAvatar: null,
+                personneId: l.profilId,
+                diametre: AppAvatar.moyen,
+              ),
+              nom: l.nom,
+              diametre: AppAvatar.moyen,
+              roleWidget: l.etat == null
+                  ? null
+                  : StatusPill(libelle: l.etat!, ton: l.ton),
+            ),
+            Ecart.vLg,
+            if (d.identifiantImmuable.isNotEmpty)
+              LigneCleValeur(
+                cle: k.colonneIdentifiant,
+                valeur: identifiantInsecable(d.identifiantImmuable),
+              ),
+            LigneCleValeur(cle: k.colonnePiece, valeur: _libellePiece(d)),
+            LigneCleValeur(
+              cle: k.colonneAttente,
+              valeur: switch (jours) {
+                0 => k.attendAujourdhui,
+                1 => k.attendUnJour,
+                _ => k.attendJours(jours: jours),
+              },
+            ),
+            Ecart.vMd,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: cleVerifierPiece,
+                libelle: p.verifierPiece,
+                alignerEnDebut: true,
+                onPress: ouvrir ?? () {},
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (l.dossier case final LigneCandidature d) {
       return AppCard(
         // Une cle par dossier : l'apercu du voisin ne garde rien du precedent.
-        key: ValueKey<String>('apercu-${e.dossier.id}'),
+        key: ValueKey<String>('apercu-${d.id}'),
         child: ApercuCandidatPersonnes(
-          ligne: e.dossier,
-          onOuvrirDossier: () => _ouvrirDossier(context, e),
+          ligne: d,
+          onOuvrirDossier: ouvrir ?? () {},
           onChange: relire,
+          onSuivant: suivant,
         ),
       );
     }
@@ -812,8 +1185,73 @@ LignePersonne _deEnseignant(LigneEnseignant l) => LignePersonne._(
     PhaseEnseignant.accueil => TonEtat.accent,
     _ => TonEtat.neutre,
   },
+  dossier: l.dossier,
   enseignant: l,
 );
+
+/// Une candidature de la vue « Candidats » : son etat en pastille (celui de la
+/// file des candidatures), sa salle en colonne.
+LignePersonne _deCandidat(LigneCandidature l) {
+  final etat = etatAffiche(l);
+  return LignePersonne._(
+    cle: l.reference,
+    nom: nomAffiche(l),
+    prenom: nomAffiche(l),
+    profilId: null,
+    colonne: libelleSalle(l.etape) ?? '',
+    etat: etat?.libelle,
+    ton: etat?.ton ?? TonEtat.neutre,
+    dossier: l,
+  );
+}
+
+/// Les pieces de la vue : celles des enseignants (la file des pieces porte
+/// aussi d'autres comptes, qui ont leur onglet).
+List<DossierAValider> _piecesEnseignants(List<DossierAValider> tous) =>
+    <DossierAValider>[
+      for (final DossierAValider d in tous)
+        if (d.role == AppRole.teacher) d,
+    ];
+
+/// Vrai quand [recherche] se lit dans le nom ou l'identifiant de [d].
+bool _pieceCorrespond(DossierAValider d, String recherche) {
+  final String q = recherche.trim().toLowerCase();
+  return q.isEmpty ||
+      d.libelle.toLowerCase().contains(q) ||
+      d.identifiantImmuable.toLowerCase().contains(q) ||
+      (d.candidatureReference ?? '').toLowerCase().contains(q);
+}
+
+String _libellePiece(DossierAValider d) => switch (d.etatPiece) {
+  EtatPiece.aucune => t.admin.comptes.pieceAucune,
+  EtatPiece.aVerifier => t.admin.comptes.pieceAVerifier,
+  EtatPiece.validee => t.admin.comptes.pieceValidee,
+  EtatPiece.refusee => t.admin.comptes.pieceRefusee,
+  EtatPiece.nonVisible => t.admin.comptes.pieceNonVisible,
+};
+
+LignePersonne _dePiece(DossierAValider d) {
+  final int jours = d.joursDAttente(DateTime.now());
+  return LignePersonne._(
+    // Le matricule, ou la reference du dossier : jamais un nom dans l'adresse.
+    cle: d.identifiantImmuable.isNotEmpty
+        ? d.identifiantImmuable
+        : d.candidatureReference ?? d.profilId,
+    nom: d.nomConnu ? d.libelle : identifiantInsecable(d.libelle),
+    prenom: d.prenom,
+    profilId: d.profilId,
+    colonne: switch (jours) {
+      0 => t.admin.comptes.attendAujourdhui,
+      1 => t.admin.comptes.attendUnJour,
+      _ => t.admin.comptes.attendJours(jours: jours),
+    },
+    etat: _libellePiece(d),
+    ton: d.etatPiece == EtatPiece.aVerifier
+        ? TonEtat.avertissement
+        : TonEtat.neutre,
+    piece: d,
+  );
+}
 
 LignePersonne _deCompte(CompteAdmin c, VueComptes vue) {
   final EtatAffiche e = EtatAffiche.de(c);

@@ -36,6 +36,8 @@ class DossierAValider {
     this.etatPiece = EtatPiece.aVerifier,
     this.inscritLeConnue,
     this.etatCompte,
+    this.candidatureId,
+    this.candidatureReference,
   });
 
   /// Lit une ligne rendue par la fonction.
@@ -66,6 +68,8 @@ class DossierAValider {
       etatPiece: EtatPiece.depuisSql(json['etat_piece'] as String?),
       inscritLeConnue: inscription,
       etatCompte: AccountStatus.depuisSql(json['account_status'] as String?),
+      candidatureId: json['candidature_id'] as String?,
+      candidatureReference: json['candidature_reference'] as String?,
     );
   }
 
@@ -114,6 +118,14 @@ class DossierAValider {
 
   /// L'etat du compte de la personne.
   final AccountStatus? etatCompte;
+
+  /// PERSONNES-UNE-PAGE (d) : la candidature enseignante du compte, quand il
+  /// en a une (`dossiers_en_attente_references`). Nulles par l'ancienne
+  /// lecture.
+  final String? candidatureId;
+
+  /// La reference `CAND-…` de cette candidature, ou `null`.
+  final String? candidatureReference;
 
   /// Vrai quand l'identite de la personne est lisible.
   ///
@@ -228,6 +240,30 @@ class ServiceValidationSupabase implements ServiceValidation {
     }
   }
 
+  /// PERSONNES-UNE-PAGE (d) : la meme file, avec la candidature enseignante de
+  /// chaque compte (`dossiers_en_attente_references`, migration
+  /// 20261130969000). Fonction absente (`PGRST202`, `42883`) : repli
+  /// silencieux sur [enAttente], sans les references.
+  Future<List<DossierAValider>> enAttenteAvecReferences() async {
+    try {
+      final List<dynamic> lignes = await _client.rpc<List<dynamic>>(
+        'dossiers_en_attente_references',
+      );
+      return lignes
+          .cast<Map<String, dynamic>>()
+          .map(DossierAValider.depuisJson)
+          .toList();
+    } on PostgrestException catch (erreur) {
+      if (erreur.message.contains('genre du lecteur inconnu')) {
+        throw const GenreLecteurInconnu();
+      }
+      if (erreur.code == 'PGRST202' || erreur.code == '42883') {
+        return enAttente();
+      }
+      rethrow;
+    }
+  }
+
   /// La porte `piece-identite-acces` : elle verifie le compte, journalise
   /// l'acces, resout la cle d'objet cote serveur et signe une lecture courte.
   /// Le corps ne porte que l'identifiant du document.
@@ -290,3 +326,15 @@ final FutureProvider<List<DossierAValider>> dossiersEnAttenteProvider =
       (Ref ref) => ref.watch(serviceValidationProvider).enAttente(),
       retry: (int retryCount, Object error) => null,
     );
+
+/// PERSONNES-UNE-PAGE (d) : les pieces a verifier, avec la reference du
+/// dossier de candidature quand le service sait la rendre ; sinon la file
+/// simple. Aucune retentative automatique (meme raison que
+/// [dossiersEnAttenteProvider]).
+final FutureProvider<List<DossierAValider>> piecesAVerifierProvider =
+    FutureProvider.autoDispose<List<DossierAValider>>((Ref ref) {
+      final ServiceValidation service = ref.watch(serviceValidationProvider);
+      return service is ServiceValidationSupabase
+          ? service.enAttenteAvecReferences()
+          : service.enAttente();
+    }, retry: (int retryCount, Object error) => null);
