@@ -1856,6 +1856,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$recrutement$lettre$ar lettre = _Traductions$recrutement$lettre$ar._(_root);
 	@override late final _Traductions$recrutement$majeur$ar majeur = _Traductions$recrutement$majeur$ar._(_root);
 	@override late final _Traductions$recrutement$suivant$ar suivant = _Traductions$recrutement$suivant$ar._(_root);
 	@override late final _Traductions$recrutement$dossier3$ar dossier3 = _Traductions$recrutement$dossier3$ar._(_root);
@@ -11249,6 +11250,56 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
 	@override String get canalStudio => 'قناة الاستوديو';
 	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
+}
+
+// Path: recrutement.lettre
+class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$fr {
+	_Traductions$recrutement$lettre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'كل ما تحتاج معرفته قبل أن تواصل';
+	@override String get chapeau => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا، وما هو صعب في هذا العمل. في النهاية ستعرف هل تواصل معنا أم لا.';
+	@override String get duree => 'نحو 15 دقيقة من القراءة';
+	@override String get miseAJour => 'آخر تحديث: 20 نوفمبر 2026';
+	@override String get sommaire => 'المحتويات';
+	@override String get revenirSommaire => 'العودة إلى المحتويات';
+	@override String allerA({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩';
+	@override String get entree => 'افتح دليل المعلّم';
+	@override String get entreeLegende => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا';
+	@override String get verrouTitre => 'يُفتح هذا الدليل بعد قبول اتفاقياتك';
+	@override String get verrouIntro => 'لقراءته، بقي عليك قبول:';
+	@override String get manqueContrat => 'عقد المعلّم';
+	@override String get manqueConduite => 'ميثاق السلوك';
+	@override String get manqueCadre => 'الالتزام الديني';
+	@override String get completer => 'قبول اتفاقياتي';
+	@override String get directionOuvre => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.';
+	@override String get ecrireDirection => 'اكتب إلى الإدارة';
+	@override String get indisponible => 'الدليل غير متاح بعد.';
+	@override String get nonCharge => 'تعذّر فتح الدليل.';
+	@override String get reservee => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.';
+	@override String get nom => 'دليل المعلّم';
+	@override String get jaime => 'أعجبني';
+	@override String get pasClair => 'غير واضح';
+	@override String jaimeLecteur({required Object n}) => 'أعجبني هذا الجزء، ⁨${n}⁩ في المجموع';
+	@override String pasClairLecteur({required Object n}) => 'هذا الجزء غير واضح، ⁨${n}⁩ في المجموع';
+	@override String get commenter => 'علّق على هذا الجزء';
+	@override String commentaires({required Object n}) => 'تعليقاتك على هذا الجزء: ⁨${n}⁩';
+	@override String get filTitre => 'تعليقاتك';
+	@override String get filPrive => 'لا يقرأ تعليقاتك إلا الإدارة وPraxis. القرّاء الآخرون لا يرونها.';
+	@override String get questionPasClair => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ويمكنك أيضًا الإغلاق دون أن تكتب شيئًا.';
+	@override String get filVide => 'لم تكتب شيئًا عن هذا الجزء.';
+	@override String get champ => 'تعليقك';
+	@override String get envoyer => 'أرسل تعليقي';
+	@override String get auteurMoi => 'أنت';
+	@override String get auteurDirection => 'الإدارة';
+	@override String get auteurPraxis => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)';
+	@override String get echecEnvoi => 'لم يتأكد إرسال تعليقك: ربما لم يصل إلى Rewayah. اضغط «أرسل تعليقي» مرة أخرى.';
+	@override String get echecAvis => 'لم يتأكد رأيك: ربما لم يصل إلى Rewayah. اضغط عليه مرة أخرى.';
+	@override String tropLong({required Object max}) => 'تعليقك أطول من ⁨${max}⁩ حرف. اختصره ثم أرسله.';
+	@override String get praxisNom => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)';
+	@override late final _Traductions$recrutement$lettre$praxis$ar praxis = _Traductions$recrutement$lettre$praxis$ar._(_root);
 }
 
 // Path: recrutement.majeur
@@ -22251,6 +22302,22 @@ class _Traductions$recherche$guide$initial$ar extends Traductions$recherche$guid
 	@override String get phrase => 'اكتب كلمة لتجد إحدى موادك.';
 }
 
+// Path: recrutement.lettre.praxis
+class _Traductions$recrutement$lettre$praxis$ar extends Traductions$recrutement$lettre$praxis$fr {
+	_Traductions$recrutement$lettre$praxis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'مرحبًا! أنا Praxis. سأرافقك في هذا الدليل. خذ وقتك.';
+	@override String get paie => 'هنا الأرقام الحقيقية. انظر إلى الجدول، كل شيء فيه.';
+	@override String get retard => 'تذكّر ثلاثة أرقام: 3 و8 و11 دقيقة.';
+	@override String get attente => 'قد يطول الانتظار. واصل أنشطتك، وتابع رسائلك.';
+	@override String get piece => 'هذا لحماية الأطفال. وهو يحميك أنت أيضًا.';
+	@override String get moi => 'هذا أنا! أنا متوقف الآن: الفريق يضبطني قبل أن أعود.';
+	@override String get fin => 'مهما كان قرارك، شكرًا لأنك قرأت حتى النهاية.';
+}
+
 // Path: recrutement.majeur.portail
 class _Traductions$recrutement$majeur$portail$ar extends Traductions$recrutement$majeur$portail$fr {
 	_Traductions$recrutement$majeur$portail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -22651,7 +22718,6 @@ class _Traductions$recrutement$accueil$academie$ar extends Traductions$recruteme
 	@override String get titre => 'الأكاديمية';
 	@override String get annoncesVide => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.';
 	@override String get savoirTitre => 'ما ينبغي معرفته';
-	@override String get remuneration => 'مستحقات المعلّم';
 	@override String get cours => 'سير الدروس';
 	@override String get entretiens => 'تنظيم المقابلات';
 	@override String get bientot => 'سيظهر هنا حين تنشره الإدارة.';
@@ -41684,6 +41750,53 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
+			'recrutement.lettre.titre' => 'كل ما تحتاج معرفته قبل أن تواصل',
+			'recrutement.lettre.chapeau' => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا، وما هو صعب في هذا العمل. في النهاية ستعرف هل تواصل معنا أم لا.',
+			'recrutement.lettre.duree' => 'نحو 15 دقيقة من القراءة',
+			'recrutement.lettre.miseAJour' => 'آخر تحديث: 20 نوفمبر 2026',
+			'recrutement.lettre.sommaire' => 'المحتويات',
+			'recrutement.lettre.revenirSommaire' => 'العودة إلى المحتويات',
+			'recrutement.lettre.allerA' => ({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩',
+			'recrutement.lettre.entree' => 'افتح دليل المعلّم',
+			'recrutement.lettre.entreeLegende' => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا',
+			'recrutement.lettre.verrouTitre' => 'يُفتح هذا الدليل بعد قبول اتفاقياتك',
+			'recrutement.lettre.verrouIntro' => 'لقراءته، بقي عليك قبول:',
+			'recrutement.lettre.manqueContrat' => 'عقد المعلّم',
+			'recrutement.lettre.manqueConduite' => 'ميثاق السلوك',
+			'recrutement.lettre.manqueCadre' => 'الالتزام الديني',
+			'recrutement.lettre.completer' => 'قبول اتفاقياتي',
+			'recrutement.lettre.directionOuvre' => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.',
+			'recrutement.lettre.ecrireDirection' => 'اكتب إلى الإدارة',
+			'recrutement.lettre.indisponible' => 'الدليل غير متاح بعد.',
+			'recrutement.lettre.nonCharge' => 'تعذّر فتح الدليل.',
+			'recrutement.lettre.reservee' => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.',
+			'recrutement.lettre.nom' => 'دليل المعلّم',
+			'recrutement.lettre.jaime' => 'أعجبني',
+			'recrutement.lettre.pasClair' => 'غير واضح',
+			'recrutement.lettre.jaimeLecteur' => ({required Object n}) => 'أعجبني هذا الجزء، ⁨${n}⁩ في المجموع',
+			'recrutement.lettre.pasClairLecteur' => ({required Object n}) => 'هذا الجزء غير واضح، ⁨${n}⁩ في المجموع',
+			'recrutement.lettre.commenter' => 'علّق على هذا الجزء',
+			'recrutement.lettre.commentaires' => ({required Object n}) => 'تعليقاتك على هذا الجزء: ⁨${n}⁩',
+			'recrutement.lettre.filTitre' => 'تعليقاتك',
+			'recrutement.lettre.filPrive' => 'لا يقرأ تعليقاتك إلا الإدارة وPraxis. القرّاء الآخرون لا يرونها.',
+			'recrutement.lettre.questionPasClair' => 'ما الذي لم يتضح لك في هذا الجزء؟ اكتبه، وستجيبك الإدارة هنا. ويمكنك أيضًا الإغلاق دون أن تكتب شيئًا.',
+			'recrutement.lettre.filVide' => 'لم تكتب شيئًا عن هذا الجزء.',
+			'recrutement.lettre.champ' => 'تعليقك',
+			'recrutement.lettre.envoyer' => 'أرسل تعليقي',
+			'recrutement.lettre.auteurMoi' => 'أنت',
+			'recrutement.lettre.auteurDirection' => 'الإدارة',
+			'recrutement.lettre.auteurPraxis' => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)',
+			'recrutement.lettre.echecEnvoi' => 'لم يتأكد إرسال تعليقك: ربما لم يصل إلى Rewayah. اضغط «أرسل تعليقي» مرة أخرى.',
+			'recrutement.lettre.echecAvis' => 'لم يتأكد رأيك: ربما لم يصل إلى Rewayah. اضغط عليه مرة أخرى.',
+			'recrutement.lettre.tropLong' => ({required Object max}) => 'تعليقك أطول من ⁨${max}⁩ حرف. اختصره ثم أرسله.',
+			'recrutement.lettre.praxisNom' => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)',
+			'recrutement.lettre.praxis.accueil' => 'مرحبًا! أنا Praxis. سأرافقك في هذا الدليل. خذ وقتك.',
+			'recrutement.lettre.praxis.paie' => 'هنا الأرقام الحقيقية. انظر إلى الجدول، كل شيء فيه.',
+			'recrutement.lettre.praxis.retard' => 'تذكّر ثلاثة أرقام: 3 و8 و11 دقيقة.',
+			'recrutement.lettre.praxis.attente' => 'قد يطول الانتظار. واصل أنشطتك، وتابع رسائلك.',
+			'recrutement.lettre.praxis.piece' => 'هذا لحماية الأطفال. وهو يحميك أنت أيضًا.',
+			'recrutement.lettre.praxis.moi' => 'هذا أنا! أنا متوقف الآن: الفريق يضبطني قبل أن أعود.',
+			'recrutement.lettre.praxis.fin' => 'مهما كان قرارك، شكرًا لأنك قرأت حتى النهاية.',
 			'recrutement.majeur.titre' => 'قبل أن نبدأ',
 			'recrutement.majeur.explication' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر.',
 			'recrutement.majeur.coche' => 'عمري 18 سنة أو أكثر.',
@@ -42011,6 +42124,8 @@ extension on TraductionsAr {
 			'recrutement.entretien.pris' => 'حُجز هذا الموعد للتو. اختر موعدًا آخر.',
 			'recrutement.entretien.dejaPlanifie' => 'موعد مقابلتك محدد بالفعل.',
 			'recrutement.entretien.perime' => 'تغيّر ترشّحك في هذه الأثناء. أعد تحميل الصفحة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.entretien.erreurReservation' => 'لم يتم الحجز. أعد المحاولة.',
 			'recrutement.entretien.votreEntretien' => 'مقابلتك',
 			'recrutement.entretien.rejoindre' => 'الانضمام إلى المقابلة',
@@ -42058,8 +42173,6 @@ extension on TraductionsAr {
 			'recrutement.partage.fait.partage' => 'تمت مشاركة البطاقة.',
 			'recrutement.partage.fait.enregistre' => 'تم تسجيل الصورة.',
 			'recrutement.partage.fait.copie' => 'تم نسخ الرابط.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.partage.echec.partage' => 'لم تُفتح قائمة المشاركة: رفضها جهازك هذه المرة. يمكنك حفظ الصورة أو نسخ الرابط.',
 			'recrutement.partage.echec.enregistrement' => 'لم يتأكد حفظ الصورة. حاول مرة أخرى، أو انسخ الرابط.',
 			'recrutement.partage.echec.copie' => 'تعذّر نسخ الرابط. حدّده في الصفحة ثم انسخه يدويًا.',
@@ -42118,7 +42231,6 @@ extension on TraductionsAr {
 			'recrutement.accueil.academie.titre' => 'الأكاديمية',
 			'recrutement.accueil.academie.annoncesVide' => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.',
 			'recrutement.accueil.academie.savoirTitre' => 'ما ينبغي معرفته',
-			'recrutement.accueil.academie.remuneration' => 'مستحقات المعلّم',
 			'recrutement.accueil.academie.cours' => 'سير الدروس',
 			'recrutement.accueil.academie.entretiens' => 'تنظيم المقابلات',
 			'recrutement.accueil.academie.bientot' => 'سيظهر هنا حين تنشره الإدارة.',
@@ -42526,6 +42638,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.options.inconnu.exemple' => 'يتوقف جدولك على جواب ما زلت تنتظره.',
 			'recrutement.parcours.q.publics.titre' => 'أي طلاب تستطيع تعليمهم؟',
 			'recrutement.parcours.q.publics.explication' => 'اختر الفئات العمرية التي ترتاح في تعليمها. لا توجد إجابة خاطئة: يمكنك اختيار فئة واحدة أو عدة فئات.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.publics.court' => 'الفئات',
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'أطفال من 6 إلى 9 سنوات',
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'يبدؤون بكتاب القراءة الخاص بأكاديمية الرواية، حرفًا حرفًا، إلى الشدّة. ثم تأتي السور القصيرة الأولى وكلمات الصلاة والوضوء.',
@@ -42572,8 +42686,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.moyensAccessibles.titre' => 'ما وسائل الدفع الشائعة حيث تعيش؟',
 			'recrutement.parcours.q.moyensAccessibles.explication' => 'هذه هي الوسائل التي تعرفها الأكاديمية. اختر ما هو شائع في بلدك، إن وُجد.',
 			'recrutement.parcours.q.moyensAccessibles.court' => 'وسائل الدفع في بلدك',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.classes.libelle' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل', one: 'فصل واحد', two: 'فصلان', few: '⁨${n}⁩ فصول', many: '⁨${n}⁩ فصلًا', other: '⁨${n}⁩ فصل', ), 
 			'recrutement.parcours.classes.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حصص في الأسبوع.', one: 'حصة واحدة في الأسبوع.', two: 'حصتان في الأسبوع.', few: '⁨${n}⁩ حصص في الأسبوع.', many: '⁨${n}⁩ حصة في الأسبوع.', other: '⁨${n}⁩ حصة في الأسبوع.', ), 
 			'recrutement.parcours.classes.heuresEnfants' => ({required Object heures}) => 'أي ⁨${heures}⁩ في الأسبوع مع الأطفال.',
@@ -43040,6 +43152,8 @@ extension on TraductionsAr {
 			'avis.form.titre' => 'شاركنا رأيك',
 			'avis.form.sousTitre' => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.',
 			'avis.form.nom.libelle' => 'الاسم الظاهر',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.nom.aide' => 'يكفي اسمك الأول والحرف الأول من اسم عائلتك.',
 			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
 			'avis.form.qualite.libelle' => 'أنت',
@@ -43086,8 +43200,6 @@ extension on TraductionsAr {
 			'avis.form.aCorriger' => 'بعض الحقول تحتاج إلى تصحيح قبل الإرسال.',
 			'avis.form.erreurChamp' => 'هناك حقل غير مقبول. راجع النموذج ثم أرسل من جديد.',
 			'avis.form.echec' => 'تعذّر تأكيد وصول رأيك. ربما انقطع الاتصال. تحقق منه ثم المس «إرسال رأيي» من جديد.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.horsLigne' => 'لم يُرسل شيء وما كتبته باقٍ على هذه الشاشة. أرسل رأيك عند عودة الشبكة.',
 			'avis.form.ferme.titre' => 'هذا الرابط لم يعد يقبل آراء',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'إما أنه أُغلق، أو انتهت مدته، أو بلغ عدد الآراء المقرر. لتشاركنا رأيك اطلب رابطًا جديدًا من الإدارة: ⁨${courriel}⁩.',
@@ -43554,6 +43666,8 @@ extension on TraductionsAr {
 			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
 			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
@@ -43600,8 +43714,6 @@ extension on TraductionsAr {
 			'souratesRetirables.jusquaDemain' => ({required Object heure}) => 'ممكن حتى الغد، ⁨${heure}⁩',
 			'souratesRetirables.retirerPour' => ({required Object sourate, required Object eleve}) => 'سحب ⁨${sourate}⁩ لـ ⁨${eleve}⁩',
 			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
-			_ => null,
-		} ?? switch (path) {
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
 			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
 			'candidatsFlux.importFormulaires.titre' => 'استيراد نماذج الترشح',
@@ -44068,6 +44180,8 @@ extension on TraductionsAr {
 			'apprendre.sections.livret' => 'سجلّي',
 			'apprendre.bibliotheque.rayonCours' => 'وثائق الدروس',
 			'apprendre.bibliotheque.rayonClasse' => 'لهذا الفصل',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.bibliotheque.classeErreur.message' => 'لا تظهر مستندات هذا الفصل الآن',
 			'apprendre.bibliotheque.classeErreur.invitation' => 'اضغط إعادة المحاولة بعد لحظات.',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'للتعمّق أكثر',
@@ -44114,8 +44228,6 @@ extension on TraductionsAr {
 			'suiviAttente.tu.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.',
 			'suiviAttente.tu.titreRefusee' => 'لم يُقبل طلبك',
 			'suiviAttente.tu.retraitFamille' => 'سحب ولي أمرك هذا الطلب.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.tu.erreur' => 'تعذّرت قراءة طلبك. يحدث هذا غالبًا بسبب الاتصال. حاول مرة أخرى بعد قليل.',
 			'suiviAttente.tu.sansDonnees' => 'تعذّر تحميل طلبك',
 			'suiviAttente.tu.introuvable' => 'لم يعد هذا الطلب موجودًا.',
@@ -44582,6 +44694,8 @@ extension on TraductionsAr {
 			'reprisesAdmin.dejaTraitee' => 'سبقت معالجة هذا الطلب. القائمة محدَّثة.',
 			'reprisesAdmin.echecReseau' => 'تعذّر تأكيد القرار. تحقّق من القائمة قبل إعادة المحاولة.',
 			'reprisesAdmin.vide' => 'لا طلب استلام للمعالجة.',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.erreur' => 'تعذّر تحميل الطلبات. أعد المحاولة.',
 			'reprisesAdmin.sansDonnees' => 'طلبات الاستلام',
 			'reprisesAdmin.indisponibleTitre' => 'استلام الأسرة غير متاح',

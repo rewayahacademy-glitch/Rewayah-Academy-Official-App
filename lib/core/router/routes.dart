@@ -1513,6 +1513,15 @@ abstract final class Routes {
   /// formulaire (le serveur dit seulement si le lien est ouvert).
   static const String avis = '/avis';
 
+  /// LETTRE-CANDIDATS (directeur, 20/11/2026) : les pages a lire qui se
+  /// partagent par un lien, **ouvertes a toute personne connectee**, en
+  /// attente comme active, jamais sans connexion (`deciderRedirection` : un
+  /// visiteur sans session passe par la connexion, qui le ramene ici).
+  static const String lecture = '/lire';
+
+  /// La lettre aux candidats enseignants (paie, heures, attente, regles).
+  static const String lettreEnseignants = '$lecture/guide-enseignant';
+
   /// L'adresse du formulaire d'avis pour [jeton].
   static String avisPour(String jeton) => '$avis/${Uri.encodeComponent(jeton)}';
 

@@ -1,0 +1,404 @@
+<title>Lettre aux candidats enseignants</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500;9..40,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Mise en page : une seule colonne de lecture qui défile d'un seul tenant (DECISION-DEFILEMENT),
+   comme une page de l'application ; Praxis accompagne certaines parties. Couleurs = jetons AppPalette. */
+:root {
+  --fond: #F7F5FE;          /* surface de page claire */
+  --carte: #FFFFFF;
+  --encre: #110E20;
+  --muet: #655E70;
+  --filet: #E3DEE9;
+  --accent: #6538E4;         /* inkAccent */
+  --violet: #8652E6;         /* violet du logo */
+  --lilas: #DCCAFD;
+  --lilas-pale: #EEE6FA;
+  --sur-lilas-pale: #4E2983;
+  --attention-fond: #FEF5E4;
+  --attention-encre: #755200;
+  --demo: #211E28;
+  --sur-demo: #F5F2FA;
+  --titre: "DM Sans", "Plus Jakarta Sans", system-ui, sans-serif;
+  --corps: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --arabe: "Noto Naskh Arabic", "Amiri", serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --fond: #16161E; --carte: #262534; --encre: #F5F2FA; --muet: #B9B3C6; --filet: #3A3848;
+  --accent: #BA98FB; --violet: #BA98FB; --lilas-pale: #2D2840; --sur-lilas-pale: #DCCAFD;
+  --attention-fond: #3A2F14; --attention-encre: #FFD98A; --demo: #2D2D3B; --sur-demo: #F5F2FA;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --fond: #16161E; --carte: #262534; --encre: #F5F2FA; --muet: #B9B3C6; --filet: #3A3848;
+  --accent: #BA98FB; --violet: #BA98FB; --lilas-pale: #2D2840; --sur-lilas-pale: #DCCAFD;
+  --attention-fond: #3A2F14; --attention-encre: #FFD98A; --demo: #2D2D3B; --sur-demo: #F5F2FA;
+  color-scheme: dark }
+
+* { box-sizing: border-box }
+body { background: var(--fond); color: var(--encre); font-family: var(--corps); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--accent) }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px }
+
+.demo { max-width: 760px; margin: 12px auto 0; background: var(--demo); color: var(--sur-demo); border-radius: 12px;
+  padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-size: 13px }
+.demo strong { font-weight: 700; letter-spacing: .02em }
+.demo .choix { display: flex; gap: 6px; flex-wrap: wrap }
+.demo button { font: inherit; border: 1px solid #ffffff40; background: transparent; color: inherit; border-radius: 999px; padding: 4px 12px; cursor: pointer }
+.demo button[aria-pressed="true"] { background: var(--sur-demo); color: var(--demo) }
+
+.progression { position: sticky; top: env(safe-area-inset-top, 0px); height: 3px; z-index: 5; max-width: 760px; margin: 0 auto }
+.progression span { display: block; height: 100%; width: 0; background: var(--violet); border-radius: 3px }
+
+.page { max-width: 760px; margin: 0 auto; padding-block: 8px 64px }
+.fil { display: flex; align-items: center; gap: 8px; color: var(--muet); font-size: 14px; padding-block: 14px 6px }
+.fil .retour { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--carte); border: 1px solid var(--filet); color: var(--encre) }
+
+.entete { padding-block: 12px 8px }
+.entete h1 { font-family: var(--titre); font-weight: 700; font-size: clamp(28px, 6vw, 40px); line-height: 1.12; margin: 0; text-wrap: balance; letter-spacing: -.01em }
+.entete .chapeau { color: var(--muet); margin: 10px 0 0; max-width: 52ch }
+.entete .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px }
+.pastille { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--lilas-pale); color: var(--sur-lilas-pale); font-weight: 600 }
+.sommaire { background: var(--carte); border: 1px solid var(--filet); border-radius: 16px; padding: 16px 18px; margin-block: 18px 8px }
+.sommaire h2 { font-family: var(--titre); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muet); margin: 0 0 8px }
+.sommaire ol { list-style: none; margin: 0; padding: 0; columns: 2 260px; column-gap: 24px }
+.sommaire li { break-inside: avoid }
+.sommaire a { display: flex; gap: 10px; padding: 6px 0; text-decoration: none; color: var(--encre); font-size: 15px; border-bottom: 1px solid var(--filet) }
+.sommaire a:hover { color: var(--accent) }
+.num { font-family: var(--titre); font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 700; min-width: 1.6em }
+
+.partie { padding-block: 28px 4px; border-bottom: 1px solid var(--filet); scroll-margin-top: 16px }
+.partie h2 { font-family: var(--titre); font-weight: 700; font-size: clamp(22px, 4.6vw, 28px); line-height: 1.2; margin: 0 0 14px; text-wrap: balance; display: flex; gap: 10px; align-items: baseline }
+.partie h3 { font-family: var(--titre); font-weight: 700; font-size: 18px; margin: 26px 0 8px }
+.partie p, .partie li { max-width: 66ch }
+.partie p { margin: 0 0 12px }
+.partie ul, .partie ol { padding-left: 1.3em; margin: 0 0 14px }
+.partie li { margin-bottom: 6px }
+strong { font-weight: 700 }
+
+.etapes { list-style: none; padding: 0 !important; counter-reset: e }
+.etapes li { counter-increment: e; position: relative; padding-left: 44px; min-height: 32px }
+.etapes li::before { content: counter(e); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--lilas-pale); color: var(--sur-lilas-pale); font-family: var(--titre); font-weight: 700; display: grid; place-items: center; font-size: 14px }
+
+.chrono { list-style: none; padding: 0 !important; border-left: 2px solid var(--lilas); margin-left: 8px !important }
+.chrono li { position: relative; padding: 2px 0 10px 22px }
+.chrono li::before { content: ""; position: absolute; left: -7px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 0 3px var(--fond) }
+
+.tableau { overflow-x: auto; margin: 6px 0 16px; border: 1px solid var(--filet); border-radius: 14px; background: var(--carte) }
+table { border-collapse: collapse; width: 100%; min-width: 470px; font-size: 15px }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--filet); vertical-align: top }
+thead th { font-family: var(--titre); font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muet) }
+tbody th { font-weight: 600; color: var(--muet) }
+tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0 }
+tr.fort td { font-weight: 700; color: var(--encre); font-variant-numeric: tabular-nums }
+tr.fort { background: var(--lilas-pale) }
+
+.faq details { border: 1px solid var(--filet); background: var(--carte); border-radius: 12px; margin-bottom: 8px }
+.faq summary { cursor: pointer; padding: 12px 16px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 12px }
+.faq summary::after { content: "+"; font-family: var(--titre); color: var(--accent); font-size: 20px; line-height: 1 }
+.faq details[open] summary::after { content: "–" }
+.faq details p { padding: 0 16px 12px; margin: 0; color: var(--encre) }
+.signature { font-family: var(--titre); font-weight: 700; margin-top: 18px !important }
+
+/* Praxis */
+.cadre { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 32px; align-items: start }
+.colonne { min-width: 0 }
+.suiveur { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 8px }
+.suiveur .px-fig { width: 150px; height: 160px }
+.suiveur .px-bulle { margin: 0; border-radius: 18px 6px 18px 18px; transition: opacity .25s ease }
+.suiveur .px-bulle.change { opacity: 0 }
+@media (max-width: 900px) {
+  .cadre { grid-template-columns: minmax(0, 1fr); gap: 0 }
+  .suiveur { order: -1; top: env(safe-area-inset-top, 0px); z-index: 4; flex-direction: row; align-items: center; gap: 4px;
+    background: var(--fond); padding: 6px 0; border-bottom: 1px solid var(--filet); margin-inline: -4px }
+  .suiveur .px-fig { width: 60px; height: 64px }
+  .suiveur .px-bulle { font-size: 14px; padding: 6px 12px; border-radius: 6px 18px 18px 18px; max-width: none; flex: 1 }
+  .suiveur .px-nom { display: none }
+}
+.px-fig { flex: none }
+.px-fig svg { width: 100%; height: 100%; overflow: visible; display: block }
+.px-bulle { position: relative; background: var(--lilas-pale); color: var(--encre); border-radius: 18px 18px 18px 6px; padding: 10px 14px; margin: 0 0 26px; font-size: 15px; line-height: 1.45; max-width: 40ch }
+.px-nom { display: block; font-family: var(--titre); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--sur-lilas-pale); margin-bottom: 2px }
+.px-bulle .ia { font-weight: 500; text-transform: none; letter-spacing: 0; opacity: .8 }
+
+/* Vue verrouillée (le serveur dit : accords manquants) */
+.verrou[hidden] { display: none }
+.verrou { background: var(--carte); border: 1px solid var(--filet); border-radius: 18px; padding: 22px; margin-block: 20px; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start }
+.verrou h2 { font-family: var(--titre); margin: 0 0 6px; font-size: 22px }
+.verrou ul { margin: 8px 0 14px; padding-left: 1.2em }
+.verrou .bouton { display: inline-block; background: var(--violet); color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: 600 }
+.verrou .exemple { font-size: 12px; color: var(--attention-encre); background: var(--attention-fond); padding: 2px 8px; border-radius: 6px; margin-left: 6px }
+.floute .suiveur { visibility: hidden }
+.floute { filter: blur(6px); pointer-events: none; user-select: none; opacity: .5 }
+@media (max-width: 520px) { .verrou { grid-template-columns: 1fr } }
+.haut { font-size: 14px; display: inline-block; margin: 6px 0 18px }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+html { scroll-behavior: smooth }
+</style>
+
+<div class="demo" role="region" aria-label="Commandes de la maquette">
+  <strong>Maquette, hors application</strong>
+  <span>Ce que voit le candidat :</span>
+  <div class="choix">
+    <button type="button" id="vue-ouverte" aria-pressed="true">Accords acceptés</button>
+    <button type="button" id="vue-verrou" aria-pressed="false">Accords manquants</button>
+  </div>
+</div>
+
+<div class="progression" aria-hidden="true"><span id="barre"></span></div>
+
+<main class="page">
+  <div class="fil"><span class="retour" aria-hidden="true">←</span><span>Messages · À savoir</span></div>
+
+  <header class="entete">
+    <div>
+      <h1>Tout ce que vous devez savoir avant de continuer</h1>
+      <p class="chapeau">La paie, les heures, l'attente d'une classe, nos règles, et ce qui est dur dans ce travail. À la fin, vous saurez si vous continuez avec nous.</p>
+      <div class="meta"><span class="pastille">Environ 15 minutes de lecture</span><span class="pastille">Mise à jour : 20 novembre 2026</span></div>
+    </div>
+  </header>
+
+  <section class="verrou" id="bloc-verrou" hidden>
+    <div class="px-fig" data-geste="un" data-expr="attente" role="img" aria-label="Praxis"></div>
+    <div>
+      <h2>Cette lettre s'ouvre quand votre dossier est complet</h2>
+      <p>Pour la lire, il vous reste à accepter :</p>
+      <ul><li>le contrat d'enseignant <span class="exemple">exemple</span></li><li>l'engagement religieux <span class="exemple">exemple</span></li></ul>
+      <a class="bouton" href="#">Compléter mon dossier</a>
+      <p style="color:var(--muet);font-size:14px;margin:12px 0 0">La liste réelle viendra du serveur.</p>
+    </div>
+  </section>
+
+  <div class="cadre" id="contenu">
+   <div class="colonne">
+    <nav class="sommaire" id="sommaire" aria-label="Sommaire">
+      <h2>Sommaire</h2>
+      <ol>{{TOC}}</ol>
+    </nav>
+    {{CONTENT}}
+   </div>
+   <aside class="suiveur" aria-live="polite" aria-label="Praxis">
+     <div class="px-fig" id="suiveur-fig" data-geste="salut" data-expr="joie" data-vague="1" role="img" aria-label="Praxis, l'assistant de l'académie"></div>
+     <p class="px-bulle" id="suiveur-bulle"><span class="px-nom">Praxis</span><span id="suiveur-texte">Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps.</span></p>
+   </aside>
+  </div>
+</main>
+
+<script>
+(() => {
+  const INK = "#110E20", LILAS = "#DCCAFD", CORAIL = "#E0375A";
+  const reduit = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const R = 86, CX = 100, CY = 108;
+
+  // Plateau de la toque : coins à 68 de l'axe, tourné de 0,20 rad, vu en plongée (0,27 rad).
+  function plateau(dy) {
+    const pts = [];
+    for (let k = 0; k < 4; k++) {
+      const a = 0.20 + Math.PI / 4 + k * Math.PI / 2;
+      pts.push([CX + 72 * Math.cos(a), 22 + dy + 72 * Math.sin(a) * 0.16]);
+    }
+    return pts;
+  }
+  const P = plateau(0), coinDroit = P.reduce((m, p) => p[0] > m[0] ? p : m, P[0]);
+  const poly = (pts) => pts.map(p => p.map(v => v.toFixed(1)).join(",")).join(" ");
+
+  const BOUCHES = {
+    neutre:   `<path d="M91 166 Q103 170 115 166" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`,
+    sourire:  `<path d="M89 163 Q103 177 117 163" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`,
+    attente:  `<path d="M90 165 Q103 171 116 165" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`,
+    concentre:`<path d="M92 167 L114 167" fill="none" stroke="${INK}" stroke-width="4" stroke-linecap="round"/>`,
+    joie:     `<path d="M88 161 Q103 186 118 161 Z" fill="${INK}" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/><ellipse cx="103" cy="174" rx="7" ry="4" fill="${CORAIL}"/>`,
+  };
+  BOUCHES.gene = BOUCHES.sourire; BOUCHES.paisible = BOUCHES.sourire;
+
+  // Mains : [x, y] de la main droite et de la gauche selon le geste.
+  const GESTES = {
+    repos:  { g: [16, 168], d: [184, 168] },
+    salut:  { g: [16, 168], d: [178, 76] },
+    pointe: { g: [16, 168], d: [194, 150], doigt: "droite" },
+    un:     { g: [16, 168], d: [174, 92], doigt: "haut" },
+    montre: { g: [44, 186], d: [184, 168], montre: true },
+    coeur:  { g: [16, 168], d: [136, 182], devant: true },
+  };
+
+  let uid = 0;
+  function dessiner(el) {
+    const id = "px" + (uid++);
+    const expr = el.dataset.expr || "sourire";
+    const geste = GESTES[el.dataset.geste] || GESTES.repos;
+    const joues = (expr === "joie" || expr === "gene")
+      ? `<ellipse cx="60" cy="152" rx="11" ry="6" fill="${CORAIL}" opacity=".22"/><ellipse cx="146" cy="152" rx="11" ry="6" fill="${CORAIL}" opacity=".22"/>` : "";
+    const main = (x, y, cls) => `<g class="${cls}"><circle cx="${x}" cy="${y}" r="19" fill="url(#${id}m)"/><circle cx="${x}" cy="${y}" r="19" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="1.5"/></g>`;
+    let doigt = "";
+    if (geste.doigt === "droite") doigt = `<rect x="${geste.d[0] + 12}" y="${geste.d[1] - 5}" width="18" height="10" rx="5" fill="url(#${id}m)"/>`;
+    if (geste.doigt === "haut") doigt = `<rect x="${geste.d[0] - 5}" y="${geste.d[1] - 34}" width="10" height="20" rx="5" fill="url(#${id}m)"/>`;
+    const montre = geste.montre ? `<g><circle cx="${geste.g[0] + 10}" cy="${geste.g[1] - 4}" r="11" fill="${INK}"/><circle cx="${geste.g[0] + 10}" cy="${geste.g[1] - 4}" r="7.5" fill="#fff"/><path d="M${geste.g[0] + 10} ${geste.g[1] - 9} V${geste.g[1] - 4} H${geste.g[0] + 14}" stroke="${INK}" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>` : "";
+    const ombreContact = geste.devant ? `<ellipse cx="${geste.d[0] + 2}" cy="${geste.d[1] + 14}" rx="16" ry="5" fill="${INK}" opacity=".12"/>` : "";
+    const yeuxFermes = expr === "paisible";
+
+    el.innerHTML = `
+<svg viewBox="-24 -36 248 256" aria-hidden="true">
+  <defs>
+    <radialGradient id="${id}c" cx="36%" cy="30%" r="75%">
+      <stop offset="0" stop-color="#F6F0FF"/><stop offset=".42" stop-color="${LILAS}"/><stop offset=".78" stop-color="#C6B1EE"/><stop offset="1" stop-color="#A68ED6"/>
+    </radialGradient>
+    <radialGradient id="${id}m" cx="38%" cy="32%" r="80%">
+      <stop offset="0" stop-color="#F6F0FF"/><stop offset=".55" stop-color="${LILAS}"/><stop offset="1" stop-color="#B49CE2"/>
+    </radialGradient>
+    <radialGradient id="${id}h" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#BA98FB" stop-opacity=".55"/><stop offset=".6" stop-color="#DCCAFD" stop-opacity=".22"/><stop offset="1" stop-color="#DCCAFD" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="${id}k"><circle cx="${CX}" cy="${CY}" r="${R}"/></clipPath>
+  </defs>
+  <ellipse cx="100" cy="100" rx="120" ry="118" fill="url(#${id}h)"/>
+  <ellipse cx="100" cy="212" rx="64" ry="7" fill="${INK}" opacity=".13"/>
+  <g class="pieds"><ellipse cx="80" cy="203" rx="19.5" ry="8.8" fill="${INK}"/><ellipse cx="122" cy="203" rx="19.5" ry="8.8" fill="${INK}"/></g>
+  <g class="corps">
+    ${geste.devant ? "" : main(geste.g[0], geste.g[1], "main-g")}
+    <circle cx="${CX}" cy="${CY}" r="${R}" fill="url(#${id}c)"/>
+    <path d="M150 40 A86 86 0 0 1 176 150" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round"/>
+    <path clip-path="url(#${id}k)" d="M27.3 62 A86 86 0 0 1 172.7 62 A72.7 21 0 0 1 27.3 62 Z" fill="${INK}"/>
+    <g class="toque" transform="rotate(-5 100 22)">
+      <polygon points="${poly(plateau(6))}" fill="${INK}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+      <polygon points="${poly(P)}" fill="${LILAS}" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+      <line x1="${CX}" y1="20" x2="${coinDroit[0].toFixed(1)}" y2="${coinDroit[1].toFixed(1)}" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="${CX}" cy="20" r="5" fill="${INK}"/>
+      <g class="pompon" style="transform-origin:${coinDroit[0].toFixed(1)}px ${coinDroit[1].toFixed(1)}px">
+        <line x1="${coinDroit[0].toFixed(1)}" y1="${coinDroit[1].toFixed(1)}" x2="${coinDroit[0].toFixed(1)}" y2="${(coinDroit[1] + 29).toFixed(1)}" stroke="${INK}" stroke-width="3"/>
+        <rect x="${(coinDroit[0] - 6).toFixed(1)}" y="${(coinDroit[1] + 27).toFixed(1)}" width="12" height="19" rx="4" fill="${INK}"/>
+      </g>
+    </g>
+    ${joues}
+    <g class="oeil" data-cx="84"><ellipse cx="84" cy="128" rx="13" ry="18" fill="${INK}"/><circle class="pupille" cx="84" cy="128" r="6" fill="#fff"/></g>
+    <g class="oeil" data-cx="122"><ellipse cx="122" cy="128" rx="13" ry="18" fill="${INK}"/><circle class="pupille" cx="122" cy="128" r="6" fill="#fff"/></g>
+    <g class="bouche">${BOUCHES[expr] || BOUCHES.sourire}</g>
+    ${montre}
+    ${ombreContact}
+    ${geste.devant ? main(geste.d[0], geste.d[1], "main-d") : ""}
+  </g>
+  ${geste.devant ? main(geste.g[0], geste.g[1], "main-g") : `<g class="bras-d">${main(geste.d[0], geste.d[1], "main-d")}${doigt}</g>`}
+</svg>`;
+    const svg = el.querySelector("svg");
+    return {
+      el, svg, expr, geste: el.dataset.geste || "repos",
+      corps: svg.querySelector(".corps"), yeux: [...svg.querySelectorAll(".oeil")],
+      pupilles: [...svg.querySelectorAll(".pupille")], pompon: svg.querySelector(".pompon"),
+      brasD: svg.querySelector(".bras-d"), vague: el.dataset.vague === "1",
+      fermes: yeuxFermes, prochainClin: performance.now() + 1500 + Math.random() * 3000,
+      clin: 0, visible: false, entree: -1, regard: [3, 0], decal: Math.random() * 6,
+    };
+  }
+
+  const figures = [...document.querySelectorAll(".px-fig")].map(dessiner);
+  const suiveurEl = document.getElementById("suiveur-fig");
+  const bulle = document.getElementById("suiveur-bulle"), texte = document.getElementById("suiveur-texte");
+  function changer(geste, expr, phrase) {
+    const i = figures.findIndex(x => x.el === suiveurEl); if (i < 0) return;
+    if (suiveurEl.dataset.geste === geste && suiveurEl.dataset.expr === expr && texte.textContent === phrase) return;
+    suiveurEl.dataset.geste = geste; suiveurEl.dataset.expr = expr; suiveurEl.dataset.vague = geste === "salut" ? "1" : "0";
+    const n = dessiner(suiveurEl); n.visible = true; n.entree = performance.now(); figures[i] = n; poser(n, performance.now());
+    bulle.classList.add("change");
+    setTimeout(() => { texte.textContent = phrase; bulle.classList.remove("change"); }, 220);
+  }
+  const parties = [...document.querySelectorAll(".partie[data-phrase]")];
+  const vues = new IntersectionObserver(es => {
+    const vis = es.filter(e => e.isIntersecting);
+    if (!vis.length) return;
+    const s = vis[0].target;
+    changer(s.dataset.geste, s.dataset.expr, s.dataset.phrase);
+  }, { rootMargin: "-20% 0px -65% 0px" });
+  parties.forEach(p => vues.observe(p));
+  // Il rebondit quand on défile : un petit saut au début de chaque mouvement.
+  let dernierSaut = 0, enMouvement = null;
+  addEventListener("scroll", () => {
+    const t = performance.now();
+    if (!enMouvement && t - dernierSaut > 900) { const f = figures.find(x => x.el === suiveurEl); if (f) { f.entree = t; dernierSaut = t; } }
+    clearTimeout(enMouvement); enMouvement = setTimeout(() => { enMouvement = null; }, 250);
+  }, { passive: true });
+  let pointeur = null;
+  addEventListener("pointermove", e => { pointeur = [e.clientX, e.clientY]; }, { passive: true });
+
+  function poser(f, t) {
+    const respire = reduit ? 0 : Math.sin((t / 1000 + f.decal) * 2 * Math.PI / 3.2) * 0.012;
+    let saut = 0, ecrase = 0;
+    if (!reduit && f.entree >= 0) {
+      const k = (t - f.entree) / 700;
+      if (k < 1) { saut = -Math.sin(k * Math.PI) * 4; ecrase = k > .85 ? (1 - k) * 0.25 : 0; }
+    }
+    const sy = 1 + respire - ecrase, sx = 1 - respire * .5 + ecrase;
+    f.corps.setAttribute("transform", `translate(0 ${saut.toFixed(2)}) translate(100 206) scale(${sx.toFixed(4)} ${sy.toFixed(4)}) translate(-100 -206)`);
+    if (f.brasD) f.brasD.setAttribute("transform", `translate(0 ${saut.toFixed(2)})`);
+
+    // Clignement : l'ovale se ferme le long de sa hauteur (reste 8,5 %).
+    let ouv = f.fermes ? 0.085 : 1;
+    if (!f.fermes && !reduit) {
+      if (t > f.prochainClin) { f.clin = t; f.prochainClin = t + 2800 + Math.random() * 3800; }
+      const c = (t - f.clin) / 160;
+      if (c >= 0 && c < 1) ouv = 0.085 + (1 - 0.085) * Math.abs(1 - 2 * c);
+    }
+    f.yeux.forEach(o => { const cx = +o.dataset.cx; o.setAttribute("transform", `translate(${cx} 128) scale(1 ${ouv.toFixed(3)}) translate(${-cx} -128)`); });
+
+    // Regard : suit le pointeur, sinon le texte (vers la droite). Pupille : 5,5 au plus.
+    let cible = [3.5, 0.5];
+    if (pointeur && !reduit) {
+      const r = f.el.getBoundingClientRect();
+      const dx = pointeur[0] - (r.left + r.width / 2), dy = pointeur[1] - (r.top + r.height * .55);
+      const d = Math.hypot(dx, dy) || 1, m = Math.min(5.5, d / 40);
+      cible = [dx / d * m, dy / d * m];
+    }
+    if (f.geste === "montre") cible = [-4, 3.5];
+    f.regard[0] += (cible[0] - f.regard[0]) * .12; f.regard[1] += (cible[1] - f.regard[1]) * .12;
+    f.pupilles.forEach(p => { p.setAttribute("transform", `translate(${f.regard[0].toFixed(2)} ${f.regard[1].toFixed(2)})`); p.style.opacity = ouv < .4 ? 0 : 1; });
+
+    // Salut : la main droite balance à l'entrée ; le pompon suit en pendule amorti.
+    if (f.brasD && f.vague && !reduit && f.entree >= 0) {
+      const k = (t - f.entree) / 2400;
+      const a = k < 1 ? Math.sin(k * Math.PI * 7) * 16 * (1 - k) : 0;
+      f.brasD.setAttribute("transform", `translate(0 ${saut.toFixed(2)}) rotate(${a.toFixed(2)} 150 120)`);
+    }
+    if (f.pompon && !reduit) {
+      const k = f.entree >= 0 ? (t - f.entree) / 1000 : 9;
+      const a = Math.sin(k * 6) * 14 * Math.exp(-k * 1.6) + Math.sin(t / 900 + f.decal) * 1.2;
+      f.pompon.style.transform = `rotate(${a.toFixed(2)}deg)`;
+    }
+  }
+
+  const obs = new IntersectionObserver(es => es.forEach(e => {
+    const f = figures.find(x => x.el === e.target); if (!f) return;
+    f.visible = e.isIntersecting;
+    if (e.isIntersecting) f.entree = performance.now();
+  }), { threshold: .4 });
+  figures.forEach(f => { obs.observe(f.el); poser(f, performance.now()); });
+
+  function boucle(t) {
+    figures.forEach(f => { if (f.visible) poser(f, t); });
+    requestAnimationFrame(boucle);
+  }
+  if (!reduit) requestAnimationFrame(boucle);
+
+  // Barre de lecture.
+  const barre = document.getElementById("barre");
+  const maj = () => { const h = document.documentElement; const p = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight); barre.style.width = (p * 100).toFixed(1) + "%"; };
+  addEventListener("scroll", maj, { passive: true }); maj();
+
+  // Vue de démonstration : accords acceptés ou manquants (le vrai choix viendra du serveur).
+  const bOuv = document.getElementById("vue-ouverte"), bVer = document.getElementById("vue-verrou");
+  const contenu = document.getElementById("contenu"), verrou = document.getElementById("bloc-verrou");
+  function vue(v) {
+    const ferme = v === "verrou";
+    bOuv.setAttribute("aria-pressed", String(!ferme)); bVer.setAttribute("aria-pressed", String(ferme));
+    verrou.hidden = !ferme; contenu.classList.toggle("floute", ferme); contenu.setAttribute("aria-hidden", String(ferme));
+    figures.forEach(f => { f.entree = performance.now(); });
+  }
+  bOuv.addEventListener("click", () => vue("ouverte")); bVer.addEventListener("click", () => vue("verrou"));
+
+  // Retour au sommaire au bout de chaque partie.
+  document.querySelectorAll(".partie").forEach(s => {
+    const a = document.createElement("a"); a.href = "#sommaire"; a.className = "haut"; a.textContent = "↑ Revenir au sommaire"; s.appendChild(a);
+  });
+  // Praxis dit qu'il est une IA, dans chaque bulle.
+  document.querySelectorAll(".px-nom").forEach(n => { n.innerHTML = 'Praxis <span class="ia">· Assistant de l\'académie · IA</span>'; });
+})();
+</script>

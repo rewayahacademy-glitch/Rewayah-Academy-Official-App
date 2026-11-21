@@ -122,6 +122,11 @@ class ProfilEnseignantPage extends ConsumerWidget {
   /// La ligne du code de conduite.
   static const Key codeConduiteKey = ValueKey<String>('compte-ens-conduite');
 
+  /// La ligne de la lettre aux candidats enseignants (LETTRE-SERVEUR).
+  static const Key lettreCandidatsKey = ValueKey<String>(
+    'compte-ens-lettre-candidats',
+  );
+
   /// L'ouverture par defaut : la pose de la branche Profil.
   static void ouvrirRevenus(BuildContext context) =>
       unawaited(context.push(Routes.enseignantRevenus));
@@ -365,6 +370,16 @@ class ProfilEnseignantPage extends ConsumerWidget {
         ],
         SectionCompte.aide: <LigneRubrique>[
           ?aide,
+          // LETTRE-SERVEUR (directeur, 20/11/2026 : « dans l'espace d'attente,
+          // mais aussi dans l'espace enseignant ») : la lettre aux candidats
+          // enseignants ; le serveur decide qui la lit.
+          LigneRubrique(
+            cle: lettreCandidatsKey,
+            icone: AppIcons.dossiers,
+            libelle: t.recrutement.lettre.entree,
+            legende: t.recrutement.lettre.entreeLegende,
+            onPress: () => unawaited(context.push(Routes.lettreEnseignants)),
+          ),
           ligneInformationsLegales(context),
           // La politique que le contrat fait « confirmer avoir recue »,
           // « disponible dans votre espace » (clause du contrat).

@@ -192,6 +192,23 @@ String? deciderRedirection({
         final bool presentable = billet != null && billet.valideA(maintenant);
         return presentable ? null : Routes.attente;
       }
+      // LETTRE-CANDIDATS (directeur, 20/11/2026) : les pages a lire par un
+      // lien partage s'ouvrent au candidat enseignant en attente (jamais a un
+      // compte suspendu ni a une famille) ; au sortir de la connexion, il y
+      // est ramene. La page dit ensuite ce qui manque (les accords).
+      if (session.porte == PorteAcces.attente &&
+          session.role == AppRole.teacher) {
+        if (_dansLeSousArbre(cheminDemande, Routes.lecture)) {
+          return null;
+        }
+        if (cheminDemande == Routes.connexion) {
+          final String? cible = cheminRetourValide(retour);
+          if (cible != null &&
+              _dansLeSousArbre(Uri.parse(cible).path, Routes.lecture)) {
+            return cible;
+          }
+        }
+      }
       return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null
           : Routes.attente;
@@ -244,6 +261,13 @@ String? deciderRedirection({
       }
       if (_dansLeSousArbre(cheminDemande, Routes.mfaControleur)) {
         return racine;
+      }
+
+      // LETTRE-CANDIDATS (directeur, 20/11/2026 : « seulement les enseignants
+      // et les candidats qui ont complete les consentements ») : les pages a
+      // lire par un lien partage s'ouvrent a l'enseignant actif, a lui seul.
+      if (_dansLeSousArbre(cheminDemande, Routes.lecture)) {
+        return role == AppRole.teacher ? null : racine;
       }
 
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,

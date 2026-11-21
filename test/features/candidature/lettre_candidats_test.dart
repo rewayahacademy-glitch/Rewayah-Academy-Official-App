@@ -1,0 +1,590 @@
+// LETTRE-CANDIDATS (directeur, 20/11/2026) : la lettre aux candidats
+// enseignants, page interne partageable par lien, un seul Praxis en tete.
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/redirection.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/features/candidature/lettre/interactions_guide.dart';
+import 'package:rewayah_academy/features/candidature/lettre/lettre_candidats_page.dart';
+import 'package:rewayah_academy/features/candidature/lettre/port_interactions_guide.dart';
+import 'package:rewayah_academy/features/candidature/lettre/port_lettre.dart';
+import 'package:rewayah_academy/features/candidature/lettre/praxis_lettre.dart';
+import 'package:rewayah_academy/features/candidature/lettre/texte_lettre.dart';
+import 'package:rewayah_academy/features/candidature/praxis_candidat.dart';
+
+import '../../fixtures/candidature/faux_ma_candidature.dart';
+import '../../support/garde_interface.dart';
+import '../../support/harnais.dart';
+import 'faux_port_lettre.dart';
+import 'hote_candidature.dart';
+
+SessionState _session(AccountStatus statut, {AppRole role = AppRole.teacher}) =>
+    SessionState(
+      resolue: true,
+      profileId: 'p1',
+      role: role,
+      accountStatus: statut,
+      lectureProfil: LectureProfil.presente,
+    );
+
+class _Candidat extends SessionControleur {
+  @override
+  SessionState build() => _session(AccountStatus.pendingKyc);
+}
+
+const String _avant = '/avant-test';
+
+/// Ouvre le guide par-dessus la page d'avant, comme depuis le Compte.
+Future<void> _ouvrirDepuisAvant(WidgetTester tester) async {
+  unawaited(
+    GoRouter.of(tester.element(find.text('PAGE D AVANT')))
+        .push(Routes.lettreEnseignants),
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> _monter(
+  WidgetTester tester, {
+  LectureLettre? reponse,
+  Exception? erreur,
+  PortInteractionsGuide? interactions,
+  Size taille = const Size(390, 844),
+  double echelle = 1,
+  TextDirection? direction,
+  String depart = Routes.lettreEnseignants,
+}) async {
+  tester.view.physicalSize = taille;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    hoteRoutant(
+      depart: depart,
+      echelle: echelle,
+      direction: direction,
+      routes: <RouteBase>[
+        GoRoute(
+          path: Routes.lettreEnseignants,
+          builder: (BuildContext _, GoRouterState _) =>
+              const LettreCandidatsPage(),
+        ),
+        ...routesCandidature(),
+        // LETTRE-SERVEUR : la messagerie du candidat et une page d'avant
+        // (le Compte de l'enseignant, par exemple), en pastilles.
+        GoRoute(
+          path: Routes.attenteMessages,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('PAGE DES MESSAGES')),
+        ),
+        GoRoute(
+          path: _avant,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('PAGE D AVANT')),
+        ),
+      ],
+      surcharges: <Override>[
+        ...surchargesCandidature(
+          port: FauxMaCandidature(),
+          etat: etatCandidat(candidature: candidatureAFaire()),
+        ),
+        sessionProvider.overrideWith(_Candidat.new),
+        portLettreProvider.overrideWithValue(
+          FauxPortLettre(reponse: reponse, erreur: erreur),
+        ),
+        if (interactions != null)
+          portInteractionsProvider.overrideWithValue(interactions),
+      ],
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+  group('la page', () {
+    testWidgets('accords acceptes : la lettre, son sommaire, UN seul Praxis', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(find.byKey(ContenuLettre.cleSommaire), findsOneWidget);
+      expect(find.byKey(LettreCandidatsPage.cleVerrou), findsNothing);
+      expect(find.byType(PraxisLettre), findsOneWidget);
+      expect(find.byType(AvatarPraxisCandidat), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.praxis.accueil), findsOneWidget);
+    });
+
+    testWidgets('Praxis suit la partie lue et reste seul', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await tester.scrollUntilVisible(
+        find.byKey(ContenuLettre.clePartie(4)),
+        400,
+        scrollable: find
+            .descendant(
+              of: find.byKey(LettreCandidatsPage.cleDefilement),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.drag(
+        find.byKey(LettreCandidatsPage.cleDefilement),
+        const Offset(0, -200),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.recrutement.lettre.praxis.paie), findsOneWidget);
+      expect(find.byType(AvatarPraxisCandidat), findsOneWidget);
+      // Il est reste en haut de l'ecran : la tete ne defile pas avec le corps.
+      final Rect praxis = tester.getRect(find.byType(PraxisLettre));
+      expect(praxis.top, greaterThanOrEqualTo(0));
+      expect(praxis.bottom, lessThan(844 / 3));
+    });
+
+    testWidgets(
+      'le serveur refuse (accords) : le verrou, sans Praxis ni lettre',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          reponse: const LectureLettre.refusee(
+            raison: RaisonRefusLettre.accords,
+            manques: <AccordManquant>[AccordManquant.contrat],
+          ),
+        );
+        expect(find.byKey(LettreCandidatsPage.cleVerrou), findsOneWidget);
+        expect(find.byKey(ContenuLettre.cleSommaire), findsNothing);
+        expect(find.byType(PraxisLettre), findsNothing);
+        expect(
+          find.textContaining(t.recrutement.lettre.manqueContrat),
+          findsOneWidget,
+        );
+        await tester.tap(find.text(t.recrutement.lettre.completer));
+        await tester.pumpAndSettle();
+        expect(find.text('PAGE DES ACCORDS'), findsOneWidget);
+      },
+    );
+
+    // LETTRE-SERVEUR (relecture S2) : ce qui manque ne peut pas etre accepte
+    // par le compte : on ecrit a la direction, jamais un ecran sans issue.
+    testWidgets('accords impossibles a accepter : ecrire a la direction', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        reponse: const LectureLettre.refusee(
+          raison: RaisonRefusLettre.accords,
+          manques: <AccordManquant>[AccordManquant.cadre],
+          acceptable: false,
+        ),
+      );
+      expect(find.byKey(VerrouLettre.cleDirection), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.directionOuvre), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.completer), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      await tester.tap(find.text(t.recrutement.lettre.ecrireDirection));
+      await tester.pumpAndSettle();
+      expect(find.text('PAGE DES MESSAGES'), findsOneWidget);
+    });
+
+    test('le port lit « acceptable », absent : vrai', () {
+      final LectureLettre ferme = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': false,
+        'raison': 'accords',
+        'manques': <String>['cadre'],
+        'acceptable': false,
+      });
+      expect(ferme.acceptable, isFalse);
+      final LectureLettre ancien = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': false,
+        'raison': 'accords',
+        'manques': <String>['contrat'],
+      });
+      expect(ancien.acceptable, isTrue);
+    });
+
+    // LETTRE-SERVEUR (relecture S3) : indisponible et echec dans la page du
+    // guide, avec sa phrase et son retour vers la page d'avant.
+    for (final (String nom, Exception erreur) in <(String, Exception)>[
+      ('indisponible', const CapaciteIndisponible('LETTRE-SERVEUR')),
+      ('echec', Exception('panne')),
+    ]) {
+      testWidgets('$nom : le retour ramene a la page d\'avant', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, erreur: erreur, depart: _avant);
+        await _ouvrirDepuisAvant(tester);
+        expect(find.byKey(LettreCandidatsPage.cle), findsOneWidget);
+        if (nom == 'indisponible') {
+          expect(find.byKey(GuideIndisponible.cle), findsOneWidget);
+          expect(find.text(t.recrutement.lettre.indisponible), findsOneWidget);
+          expect(
+            find.text(t.recrutement.questionnaire.nonOuverte),
+            findsNothing,
+          );
+        }
+        await tester.tap(find.byType(DisqueRetour));
+        await tester.pumpAndSettle();
+        expect(find.text('PAGE D AVANT'), findsOneWidget);
+      });
+    }
+
+    testWidgets('le serveur refuse (role) : une phrase, aucun texte', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        reponse: const LectureLettre.refusee(raison: RaisonRefusLettre.role),
+      );
+      expect(find.byKey(LettreCandidatsPage.cleReservee), findsOneWidget);
+      expect(find.byKey(ContenuLettre.cleSommaire), findsNothing);
+    });
+
+    testWidgets('serveur pas encore branche : aucune lettre', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        erreur: const CapaciteIndisponible('LETTRE-SERVEUR'),
+      );
+      expect(find.byKey(ContenuLettre.cleSommaire), findsNothing);
+      expect(find.byType(PraxisLettre), findsNothing);
+    });
+
+    testWidgets('320 points, texte x2 : rien ne deborde', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille: const Size(320, 640), echelle: 2);
+      expect(tester.takeException(), isNull);
+      expect(find.byType(PraxisLettre), findsOneWidget);
+    });
+
+    testWidgets('en arabe, de droite a gauche', (WidgetTester tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      await _monter(tester, direction: TextDirection.rtl);
+      expect(tester.takeException(), isNull);
+      expect(find.text(t.recrutement.lettre.sommaire), findsOneWidget);
+    });
+  });
+
+  group('les interactions', () {
+    Future<void> versPartie(WidgetTester tester, String cle) async {
+      await tester.scrollUntilVisible(
+        find.byKey(ValueKey<String>(cle)),
+        300,
+        scrollable: find
+            .descendant(
+              of: find.byKey(LettreCandidatsPage.cleDefilement),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('serveur pas encore branche : la lecture, sans boutons', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(find.byKey(ContenuLettre.cleSommaire), findsOneWidget);
+      expect(find.byKey(InteractionsPartie.cleJaime('p1')), findsNothing);
+    });
+
+    testWidgets('J\'aime : le total monte tout de suite, retouche le retire', (
+      WidgetTester tester,
+    ) async {
+      final FauxPortInteractions port = FauxPortInteractions();
+      await _monter(tester, interactions: port);
+      await versPartie(tester, 'guide-jaime-p1');
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.jaimeLecteur(n: 3)),
+        findsWidgets,
+      );
+      await tester.tap(find.byKey(InteractionsPartie.cleJaime('p1')));
+      await tester.pumpAndSettle();
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.jaimeLecteur(n: 4)),
+        findsOneWidget,
+      );
+      await tester.tap(find.byKey(InteractionsPartie.cleJaime('p1')));
+      await tester.pumpAndSettle();
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.jaimeLecteur(n: 4)),
+        findsNothing,
+      );
+    });
+
+    testWidgets(
+      'serveur en panne : l\'avis revient en arriere, une phrase le dit',
+      (WidgetTester tester) async {
+        final FauxPortInteractions port = FauxPortInteractions(enPanne: true);
+        await _monter(tester, interactions: port);
+        await versPartie(tester, 'guide-pas-clair-p1');
+        await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
+        await tester.pumpAndSettle();
+        // Le fil s'est ouvert avec la question ; on le ferme.
+        await tester.tapAt(const Offset(8, 8));
+        await tester.pumpAndSettle();
+        expect(
+          find.bySemanticsLabel(t.recrutement.lettre.pasClairLecteur(n: 0)),
+          findsWidgets,
+        );
+        expect(find.text(t.recrutement.lettre.echecAvis), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'pas clair : le fil s\'ouvre avec la question, ecrire reste libre',
+      (WidgetTester tester) async {
+        final FauxPortInteractions port = FauxPortInteractions();
+        await _monter(tester, interactions: port);
+        await versPartie(tester, 'guide-pas-clair-p1');
+        await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(FilCommentaires.cleQuestion), findsOneWidget);
+        expect(find.text(t.recrutement.lettre.filVide), findsNothing);
+        // Fermer sans rien ecrire : l'avis reste compte.
+        await tester.tapAt(const Offset(8, 8));
+        await tester.pumpAndSettle();
+        expect(find.byKey(FilCommentaires.cleQuestion), findsNothing);
+        expect(
+          find.bySemanticsLabel(t.recrutement.lettre.pasClairLecteur(n: 1)),
+          findsWidgets,
+        );
+        expect(port.fil, isEmpty);
+        // Le retirer n'ouvre rien.
+        await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
+        await tester.pumpAndSettle();
+        expect(find.byKey(FilCommentaires.cleQuestion), findsNothing);
+      },
+    );
+
+    testWidgets('commenter : le fil prive s\'ouvre, le commentaire y entre', (
+      WidgetTester tester,
+    ) async {
+      final FauxPortInteractions port = FauxPortInteractions();
+      await _monter(tester, interactions: port);
+      await versPartie(tester, 'guide-commenter-p1');
+      await tester.tap(find.byKey(InteractionsPartie.cleCommenter('p1')));
+      await tester.pumpAndSettle();
+      expect(find.text(t.recrutement.lettre.filPrive), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.filVide), findsOneWidget);
+      await tester.enterText(
+        find.descendant(
+          of: find.byKey(FilCommentaires.cleChamp),
+          matching: find.byType(EditableText),
+        ),
+        'Combien de classes au plus ?',
+      );
+      await tester.tap(find.byKey(FilCommentaires.cleEnvoyer));
+      await tester.pumpAndSettle();
+      expect(port.fil.single.partie, 'p1');
+      expect(find.text('Combien de classes au plus ?'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          '${t.recrutement.lettre.auteurMoi} : Combien de classes au plus ?',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    test('les interactions se lisent depuis le serveur', () {
+      final InteractionsGuide g = InteractionsGuide.depuisJson(
+        <String, dynamic>{
+          'parties': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'code': 'p1',
+              'jaime': 2,
+              'pas_clair': 1,
+              'mon_avis': 'pas_clair',
+            },
+          ],
+          'commentaires': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'id': 'a',
+              'partie': 'p1',
+              'corps': 'x',
+              'cree_le': '2026-11-20T23:00:00Z',
+              'auteur': 'praxis',
+              'parent_id': null,
+            },
+          ],
+        },
+      );
+      expect(g.avis['p1']!.monAvis, AvisGuide.pasClair);
+      expect(g.avis['p1']!.avec(AvisGuide.jaime).pasClair, 0);
+      expect(g.avis['p1']!.avec(AvisGuide.jaime).jaime, 3);
+      expect(g.commentaires.single.auteur, AuteurCommentaire.praxis);
+    });
+  });
+
+  group('le texte', () {
+    test('aucun texte de la lettre dans l\'application compilee', () {
+      // Une phrase propre a la lettre, par langue : elle ne vient que du
+      // serveur.
+      const Map<String, String> phrases = <String, String>{
+        'fr': 'Douze élèves s',
+        'en': 'Twelve students sign up',
+        'ar': 'اثنا عشر طالبًا',
+      };
+      for (final MapEntry<String, String> e in phrases.entries) {
+        final String brut = File('assets/i18n/${e.key}.i18n.json')
+            .readAsStringSync();
+        expect(brut.contains(e.value), isFalse, reason: e.key);
+        expect(
+          File('docs/current/CANDIDATURES/LETTRE-CANDIDATS/LETTRE-${e.key}.md')
+              .readAsStringSync()
+              .contains(e.value),
+          isTrue,
+          reason: 'la phrase temoin existe dans le texte du depot',
+        );
+      }
+    });
+
+    test('les quatorze parties existent dans les trois langues du depot', () {
+      for (final String l in <String>['fr', 'en', 'ar']) {
+        final List<PartieLettre> p = partiesDuDepot(l);
+        expect(p, hasLength(14), reason: l);
+        expect(p.every((PartieLettre x) => x.titre.isNotEmpty), isTrue);
+        expect(p.every((PartieLettre x) => x.corps.isNotEmpty), isTrue);
+      }
+    });
+
+    test('la reponse du serveur se lit, et une forme inconnue est refusee', () {
+      final LectureLettre ouverte = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': true,
+        'version': '2026-11-20',
+        'langue': 'fr',
+        'parties': <Map<String, dynamic>>[
+          <String, dynamic>{'code': 'p1', 'titre': 'T', 'corps': 'C'},
+        ],
+      });
+      expect(ouverte.acces, isTrue);
+      expect(ouverte.parties.single.code, 'p1');
+      final LectureLettre refusee = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': false,
+        'raison': 'accords',
+        'manques': <String>['contrat', 'cadre'],
+      });
+      expect(refusee.parties, isEmpty);
+      expect(refusee.manques, <AccordManquant>[
+        AccordManquant.contrat,
+        AccordManquant.cadre,
+      ]);
+      expect(
+        () => LectureLettre.depuisJson(<String, dynamic>{
+          'acces': false,
+          'raison': 'autre',
+        }),
+        throwsFormatException,
+      );
+    });
+
+    test('lireCorps reconnait sous-titre, listes, tableau et paragraphe', () {
+      final List<BlocLettre> b = lireCorps(
+        'Un **gras**.\n\n### Titre\n\n- a\n- b\n\n1. un\n2. deux\n\n'
+        '| | A | B |\n| --- | --- | --- |\n| X | 1 | 2 |',
+      );
+      expect(b[0], isA<ParagrapheLettre>());
+      expect(b[1], isA<SousTitreLettre>());
+      expect((b[2] as ListeLettre).numerotee, isFalse);
+      expect((b[3] as ListeLettre).elements, <String>['un', 'deux']);
+      final TableauLettre tab = b[4] as TableauLettre;
+      expect(tab.entete, <String>['', 'A', 'B']);
+      expect(tab.lignes.single, <String>['X', '1', '2']);
+    });
+
+    test('le tableau de la paie se lit dans chaque langue', () {
+      for (final String l in <String>['fr', 'en', 'ar']) {
+        final TableauLettre tab = lireCorps(partiesDuDepot(l)[3].corps)
+            .whereType<TableauLettre>()
+            .single;
+        expect(tab.lignes, hasLength(8), reason: l);
+        expect(tab.lignes.every((List<String> r) => r.length == 3), isTrue);
+      }
+    });
+
+    test('Praxis : le moment de chaque partie', () {
+      expect(MomentLettre.pourPartie(1), MomentLettre.accueil);
+      expect(MomentLettre.pourPartie(3), MomentLettre.accueil);
+      expect(MomentLettre.pourPartie(5), MomentLettre.paie);
+      expect(MomentLettre.pourPartie(6), MomentLettre.retard);
+      expect(MomentLettre.pourPartie(10), MomentLettre.piece);
+      expect(MomentLettre.pourPartie(13), MomentLettre.moi);
+      expect(MomentLettre.pourPartie(14), MomentLettre.fin);
+    });
+  });
+
+  group('le lien partage', () {
+    final DateTime maintenant = DateTime(2026, 11, 20);
+    String? decider(SessionState s, String chemin, {String? retour}) =>
+        deciderRedirection(
+          session: s,
+          cheminDemande: chemin,
+          maintenant: maintenant,
+          retour: retour,
+        );
+
+    test('sans connexion : la connexion, qui garde la destination', () {
+      expect(
+        decider(const SessionState.deconnecte(), Routes.lettreEnseignants),
+        Uri(
+          path: Routes.connexion,
+          queryParameters: <String, String>{'retour': Routes.lettreEnseignants},
+        ).toString(),
+      );
+    });
+
+    test('un candidat en attente l\'ouvre, et y revient apres connexion', () {
+      final SessionState s = _session(AccountStatus.pendingKyc);
+      expect(decider(s, Routes.lettreEnseignants), isNull);
+      expect(
+        decider(s, Routes.connexion, retour: Routes.lettreEnseignants),
+        Routes.lettreEnseignants,
+      );
+    });
+
+    test('un compte suspendu ne l\'ouvre pas', () {
+      expect(
+        decider(_session(AccountStatus.disabled), Routes.lettreEnseignants),
+        Routes.attente,
+      );
+    });
+
+    test('seul l\'enseignant actif l\'ouvre ; famille et direction non', () {
+      expect(
+        decider(_session(AccountStatus.active), Routes.lettreEnseignants),
+        isNull,
+      );
+      for (final AppRole r in <AppRole>[AppRole.guardian, AppRole.admin]) {
+        expect(
+          decider(
+            _session(AccountStatus.active, role: r),
+            Routes.lettreEnseignants,
+          ),
+          isNotNull,
+          reason: r.name,
+        );
+      }
+    });
+
+    test('une famille en attente ne l\'ouvre pas', () {
+      expect(
+        decider(
+          _session(AccountStatus.pendingKyc, role: AppRole.guardian),
+          Routes.lettreEnseignants,
+        ),
+        Routes.attente,
+      );
+    });
+  });
+}

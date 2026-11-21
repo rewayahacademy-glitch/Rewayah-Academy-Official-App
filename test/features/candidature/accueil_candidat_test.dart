@@ -593,10 +593,14 @@ void main() {
       for (final EmplacementSavoir e in EmplacementSavoir.values) {
         expect(find.byKey(ASavoirCandidat.cleEmplacement(e)), findsOneWidget);
       }
-      expect(_texte(a.remuneration), findsOneWidget);
+      // LETTRE-SERVEUR : la ligne de la paie est retiree, la lettre la dit.
+      expect(
+        EmplacementSavoir.values.map((EmplacementSavoir e) => e.name),
+        <String>['cours', 'entretiens'],
+      );
       expect(_texte(a.cours), findsOneWidget);
       expect(_texte(a.entretiens), findsOneWidget);
-      expect(_texte(a.bientot), findsNWidgets(3));
+      expect(_texte(a.bientot), findsNWidgets(2));
       verifierUnSeulBoutonPlein(tester);
     });
   });

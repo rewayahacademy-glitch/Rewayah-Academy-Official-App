@@ -208,6 +208,10 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // LETTRE-CANDIDATS (directeur, 20/11/2026) : le nom propre « Praxis »,
+  // ecrit en latin. Le texte de la lettre lui-meme vient du serveur.
+  'recrutement.lettre.praxisNom',
+  'recrutement.lettre.praxis.accueil',
   // PX-3 : « Praxis », le nom propre du secretaire de l'academie, ecrit en
   // latin dans toutes les langues (le titre de sa section n'est que ce nom).
   'admin.praxis.titre',
