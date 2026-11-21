@@ -195,6 +195,19 @@ class SelecteurSection<T> extends StatelessWidget {
           container: true,
           label: libelle,
           child: switch (mode) {
+            // PERSONNES-UNE-PAGE (b) : quatre sections au plus, qui portent
+            // TOUTES une icone, et dont les mots ne tiennent pas : les icones
+            // seules, jamais un menu sans icone (le nom reste lu et en
+            // infobulle). Sans icone, rien ne change : le menu.
+            ModeSelecteurSection.menu
+                when sections.length <= maxSegmentsTelephone &&
+                    sections.every((Segment<T> s) => s.icone != null) =>
+              ControleSegmente<T>(
+                segments: sections,
+                valeur: valeur,
+                onChange: onChange,
+                iconesSeules: true,
+              ),
             ModeSelecteurSection.menu => _largeurMenu(
               disponible,
               libelleMax,

@@ -5276,6 +5276,13 @@
     "augmenter": "زيادة بواحد"
   },
   "admin": {
+    "personnesPage": {
+      "ongletEquipe": "الإدارة والفريق",
+      "ongletAvecNombre": "⁨{nom}⁩ (⁨{n}⁩)",
+      "choix": "الأشخاص المعروضون",
+      "apercuVide": "اختر شخصًا من القائمة لعرض ملخّصه.",
+      "demandeATraiter": "لهذا الشخص طلب تسجيل ينتظر قرارًا."
+    },
     "listeEnseignants": {
       "titre": "المعلّمون",
       "phase": "المرحلة",

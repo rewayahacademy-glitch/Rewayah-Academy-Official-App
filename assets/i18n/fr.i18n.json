@@ -4355,6 +4355,13 @@
     }
   },
   "admin": {
+    "personnesPage": {
+      "ongletEquipe": "Direction et équipe",
+      "ongletAvecNombre": "{nom} ({n})",
+      "choix": "Personnes affichées",
+      "apercuVide": "Choisissez une personne dans la liste pour voir son aperçu.",
+      "demandeATraiter": "Une demande d'inscription de cette personne attend une décision."
+    },
     "listeEnseignants": {
       "titre": "Enseignants",
       "phase": "Phase",

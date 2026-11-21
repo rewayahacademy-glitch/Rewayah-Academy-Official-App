@@ -57,7 +57,15 @@ class ControleSegmente<T> extends StatelessWidget {
     super.key,
     this.rectangle = false,
     this.dense = false,
+    this.iconesSeules = false,
   });
+
+  /// PERSONNES-UNE-PAGE (b) (directeur, 20/11/2026 : des icones sur les
+  /// onglets, « pour etre plus reconnaissable ») : quand les mots ne tiennent
+  /// pas, un segment **qui porte une icone** la montre seule ; son nom reste
+  /// dit au lecteur d'ecran et en infobulle. Un segment sans icone garde son
+  /// mot. Faux par defaut : rien ne change ailleurs.
+  final bool iconesSeules;
 
   /// Vrai : un petit rectangle a coins arrondis (`AppRadius.md`) au lieu de la
   /// pilule, pour les segments qui portent une icone au-dessus du libelle
@@ -110,6 +118,7 @@ class ControleSegmente<T> extends StatelessWidget {
                     ? AppRadius.arrondiSm
                     : AppRadius.arrondiFull,
                 dense: dense,
+                iconeSeule: iconesSeules && segment.icone != null,
               ),
             ),
         ],
@@ -141,7 +150,11 @@ class _Segment<T> extends StatelessWidget {
     required this.onChange,
     required this.arrondi,
     required this.dense,
+    this.iconeSeule = false,
   });
+
+  /// L'icone sans le mot ; le mot reste lu et en infobulle.
+  final bool iconeSeule;
 
   final Segment<T> segment;
 
@@ -221,19 +234,29 @@ class _Segment<T> extends StatelessWidget {
                               : palette.inkMuted.applyTo(base).color,
                         ),
                       ),
-                      Ecart.vXs,
+                      if (!iconeSeule) Ecart.vXs,
                     ],
-                    // COUPE-MOTS-1 point 6 : les segments ont la meme
-                    // largeur ; l'echelle est bornee par le mot le plus long
-                    // de TOUS, pour que les voisins gardent la meme taille.
-                    TexteSansCoupure(
-                      segment.libelle,
-                      voisins: voisins,
-                      textAlign: TextAlign.center,
-                      style: selectionne
-                          ? palette.washAccent.applyTo(base)
-                          : palette.inkMuted.applyTo(base),
-                    ),
+                    if (iconeSeule)
+                      // Le nom, pour le lecteur d'ecran et au survol.
+                      Tooltip(
+                        message: segment.libelle,
+                        child: Semantics(
+                          label: segment.libelle,
+                          child: const SizedBox.shrink(),
+                        ),
+                      )
+                    else
+                      // COUPE-MOTS-1 point 6 : les segments ont la meme
+                      // largeur ; l'echelle est bornee par le mot le plus long
+                      // de TOUS, pour que les voisins gardent la meme taille.
+                      TexteSansCoupure(
+                        segment.libelle,
+                        voisins: voisins,
+                        textAlign: TextAlign.center,
+                        style: selectionne
+                            ? palette.washAccent.applyTo(base)
+                            : palette.inkMuted.applyTo(base),
+                      ),
                   ],
                 ),
               ),
