@@ -2746,8 +2746,8 @@
       "auteurMoi": "You",
       "auteurDirection": "The management",
       "auteurPraxis": "Praxis, the academy's assistant (AI)",
-      "echecEnvoi": "Your comment is not confirmed. Check your connection, then tap \"Send my comment\" again.",
-      "echecAvis": "Your reaction is not confirmed. Check your connection, then tap it again.",
+      "echecEnvoi": "Your comment is not confirmed: it may not have reached Rewayah. Tap \"Send my comment\" again.",
+      "echecAvis": "Your reaction is not confirmed: it may not have reached Rewayah. Tap it again.",
       "tropLong": "Your comment is longer than {max} characters. Shorten it, then send it.",
       "praxisNom": "Praxis, the academy's assistant (AI)",
       "praxis": {

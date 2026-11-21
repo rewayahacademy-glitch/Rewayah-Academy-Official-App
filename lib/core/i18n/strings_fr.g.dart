@@ -9736,11 +9736,11 @@ class Traductions$recrutement$lettre$fr {
 	/// fr: 'Praxis, assistant de l'académie (IA)'
 	String get auteurPraxis => 'Praxis, assistant de l\'académie (IA)';
 
-	/// fr: 'Votre commentaire n'est pas confirmé. Vérifiez votre connexion, puis touchez de nouveau « Envoyer mon commentaire ».'
-	String get echecEnvoi => 'Votre commentaire n\'est pas confirmé. Vérifiez votre connexion, puis touchez de nouveau « Envoyer mon commentaire ».';
+	/// fr: 'Votre commentaire n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau « Envoyer mon commentaire ».'
+	String get echecEnvoi => 'Votre commentaire n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau « Envoyer mon commentaire ».';
 
-	/// fr: 'Votre avis n'est pas confirmé. Vérifiez votre connexion, puis touchez-le de nouveau.'
-	String get echecAvis => 'Votre avis n\'est pas confirmé. Vérifiez votre connexion, puis touchez-le de nouveau.';
+	/// fr: 'Votre avis n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez-le de nouveau.'
+	String get echecAvis => 'Votre avis n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez-le de nouveau.';
 
 	/// fr: 'Votre commentaire dépasse {max} caractères. Raccourcissez-le, puis envoyez-le.'
 	String tropLong({required Object max}) => 'Votre commentaire dépasse ${max} caractères. Raccourcissez-le, puis envoyez-le.';
@@ -60212,8 +60212,8 @@ extension on Traductions {
 			'recrutement.lettre.auteurMoi' => 'Vous',
 			'recrutement.lettre.auteurDirection' => 'La direction',
 			'recrutement.lettre.auteurPraxis' => 'Praxis, assistant de l\'académie (IA)',
-			'recrutement.lettre.echecEnvoi' => 'Votre commentaire n\'est pas confirmé. Vérifiez votre connexion, puis touchez de nouveau « Envoyer mon commentaire ».',
-			'recrutement.lettre.echecAvis' => 'Votre avis n\'est pas confirmé. Vérifiez votre connexion, puis touchez-le de nouveau.',
+			'recrutement.lettre.echecEnvoi' => 'Votre commentaire n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez de nouveau « Envoyer mon commentaire ».',
+			'recrutement.lettre.echecAvis' => 'Votre avis n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Touchez-le de nouveau.',
 			'recrutement.lettre.tropLong' => ({required Object max}) => 'Votre commentaire dépasse ${max} caractères. Raccourcissez-le, puis envoyez-le.',
 			'recrutement.lettre.praxisNom' => 'Praxis, assistant de l\'académie (IA)',
 			'recrutement.lettre.praxis.accueil' => 'Bonjour ! Je suis Praxis. Je vous accompagne dans ce guide. Prenez votre temps.',

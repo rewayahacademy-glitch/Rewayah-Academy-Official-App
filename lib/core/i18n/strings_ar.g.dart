@@ -11291,8 +11291,8 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	@override String get auteurMoi => 'أنت';
 	@override String get auteurDirection => 'الإدارة';
 	@override String get auteurPraxis => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)';
-	@override String get echecEnvoi => 'لم يتأكد إرسال تعليقك. تحقّق من اتصالك، ثم اضغط «أرسل تعليقي» مرة أخرى.';
-	@override String get echecAvis => 'لم يتأكد رأيك. تحقّق من اتصالك، ثم اضغط عليه مرة أخرى.';
+	@override String get echecEnvoi => 'لم يتأكد إرسال تعليقك: ربما لم يصل إلى Rewayah. اضغط «أرسل تعليقي» مرة أخرى.';
+	@override String get echecAvis => 'لم يتأكد رأيك: ربما لم يصل إلى Rewayah. اضغط عليه مرة أخرى.';
 	@override String tropLong({required Object max}) => 'تعليقك أطول من ⁨${max}⁩ حرف. اختصره ثم أرسله.';
 	@override String get praxisNom => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)';
 	@override late final _Traductions$recrutement$lettre$praxis$ar praxis = _Traductions$recrutement$lettre$praxis$ar._(_root);
@@ -41778,8 +41778,8 @@ extension on TraductionsAr {
 			'recrutement.lettre.auteurMoi' => 'أنت',
 			'recrutement.lettre.auteurDirection' => 'الإدارة',
 			'recrutement.lettre.auteurPraxis' => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)',
-			'recrutement.lettre.echecEnvoi' => 'لم يتأكد إرسال تعليقك. تحقّق من اتصالك، ثم اضغط «أرسل تعليقي» مرة أخرى.',
-			'recrutement.lettre.echecAvis' => 'لم يتأكد رأيك. تحقّق من اتصالك، ثم اضغط عليه مرة أخرى.',
+			'recrutement.lettre.echecEnvoi' => 'لم يتأكد إرسال تعليقك: ربما لم يصل إلى Rewayah. اضغط «أرسل تعليقي» مرة أخرى.',
+			'recrutement.lettre.echecAvis' => 'لم يتأكد رأيك: ربما لم يصل إلى Rewayah. اضغط عليه مرة أخرى.',
 			'recrutement.lettre.tropLong' => ({required Object max}) => 'تعليقك أطول من ⁨${max}⁩ حرف. اختصره ثم أرسله.',
 			'recrutement.lettre.praxisNom' => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)',
 			'recrutement.lettre.praxis.accueil' => 'مرحبًا! أنا Praxis. سأرافقك في هذا الدليل. خذ وقتك.',

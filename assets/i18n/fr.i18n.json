@@ -2746,8 +2746,8 @@
       "auteurMoi": "Vous",
       "auteurDirection": "La direction",
       "auteurPraxis": "Praxis, assistant de l'académie (IA)",
-      "echecEnvoi": "Votre commentaire n'est pas confirmé. Vérifiez votre connexion, puis touchez de nouveau « Envoyer mon commentaire ».",
-      "echecAvis": "Votre avis n'est pas confirmé. Vérifiez votre connexion, puis touchez-le de nouveau.",
+      "echecEnvoi": "Votre commentaire n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez de nouveau « Envoyer mon commentaire ».",
+      "echecAvis": "Votre avis n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Touchez-le de nouveau.",
       "tropLong": "Votre commentaire dépasse {max} caractères. Raccourcissez-le, puis envoyez-le.",
       "praxisNom": "Praxis, assistant de l'académie (IA)",
       "praxis": {

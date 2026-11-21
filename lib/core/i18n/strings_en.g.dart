@@ -4962,8 +4962,8 @@ class _Traductions$recrutement$lettre$en extends Traductions$recrutement$lettre$
 	@override String get auteurMoi => 'You';
 	@override String get auteurDirection => 'The management';
 	@override String get auteurPraxis => 'Praxis, the academy\'s assistant (AI)';
-	@override String get echecEnvoi => 'Your comment is not confirmed. Check your connection, then tap "Send my comment" again.';
-	@override String get echecAvis => 'Your reaction is not confirmed. Check your connection, then tap it again.';
+	@override String get echecEnvoi => 'Your comment is not confirmed: it may not have reached Rewayah. Tap "Send my comment" again.';
+	@override String get echecAvis => 'Your reaction is not confirmed: it may not have reached Rewayah. Tap it again.';
 	@override String tropLong({required Object max}) => 'Your comment is longer than ${max} characters. Shorten it, then send it.';
 	@override String get praxisNom => 'Praxis, the academy\'s assistant (AI)';
 	@override late final _Traductions$recrutement$lettre$praxis$en praxis = _Traductions$recrutement$lettre$praxis$en._(_root);
@@ -31510,8 +31510,8 @@ extension on TraductionsEn {
 			'recrutement.lettre.auteurMoi' => 'You',
 			'recrutement.lettre.auteurDirection' => 'The management',
 			'recrutement.lettre.auteurPraxis' => 'Praxis, the academy\'s assistant (AI)',
-			'recrutement.lettre.echecEnvoi' => 'Your comment is not confirmed. Check your connection, then tap "Send my comment" again.',
-			'recrutement.lettre.echecAvis' => 'Your reaction is not confirmed. Check your connection, then tap it again.',
+			'recrutement.lettre.echecEnvoi' => 'Your comment is not confirmed: it may not have reached Rewayah. Tap "Send my comment" again.',
+			'recrutement.lettre.echecAvis' => 'Your reaction is not confirmed: it may not have reached Rewayah. Tap it again.',
 			'recrutement.lettre.tropLong' => ({required Object max}) => 'Your comment is longer than ${max} characters. Shorten it, then send it.',
 			'recrutement.lettre.praxisNom' => 'Praxis, the academy\'s assistant (AI)',
 			'recrutement.lettre.praxis.accueil' => 'Hello! I am Praxis. I will walk with you through this guide. Take your time.',
