@@ -101,4 +101,62 @@ void main() {
       verifierUnSeulBoutonPlein(tester);
     });
   }
+
+  // PERSONNES-UNE-PAGE (f2) : le mode « une ligne » de la barre compacte, a
+  // l'etroit. Sans lui, rien ne change (deux rangees, le mot « Deselectionner »).
+  group('barre compacte, une ligne', () {
+    Widget compacte({required bool uneLigne}) => BarreSelection.compacte(
+      titre: '2 sélectionnées',
+      uneLigne: uneLigne,
+      onRelacher: () {},
+      operations: <Widget>[
+        ActionPrincipale(
+          libelle: 'Agir',
+          niveau: NiveauAction.secondaire,
+          compacte: true,
+          pleineLargeur: false,
+          onPress: () {},
+        ),
+      ],
+    );
+
+    testWidgets('a 390 points : le compte, l\'operation et la croix sur une '
+        'seule rangee ; sans le mode, deux rangees comme avant', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(hoteTheme(compacte(uneLigne: false)));
+      final double avant = tester.getSize(find.byType(BarreSelection)).height;
+      expect(find.text('Désélectionner'), findsOneWidget);
+      await tester.pumpWidget(hoteTheme(compacte(uneLigne: true)));
+      final double apres = tester.getSize(find.byType(BarreSelection)).height;
+      expect(apres, lessThan(avant));
+      expect(
+        tester.getCenter(find.text('Agir')).dy,
+        closeTo(tester.getCenter(find.text('2 sélectionnées')).dy, 1),
+      );
+      expect(find.byKey(BarreSelection.cleRelacher), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a 320 points, texte x2 : rien ne deborde', (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(320, 800);
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hoteTheme(
+          MediaQuery(
+            data: const MediaQueryData(
+              size: Size(320, 800),
+              textScaler: TextScaler.linear(2),
+            ),
+            child: compacte(uneLigne: true),
+          ),
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

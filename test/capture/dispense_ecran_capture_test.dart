@@ -19,6 +19,7 @@ import 'package:rewayah_academy/features/admin_candidatures/ligne_candidature.da
 import '../features/admin_candidature/hote_candidature.dart';
 import '../features/admin_candidatures/hote_candidatures.dart';
 import '../fixtures/candidature/faux_candidatures_direction.dart';
+import '../support/barre_lot.dart';
 import '../support/monter_recrutement.dart' show laisser;
 import 'outil_capture.dart';
 
@@ -108,8 +109,10 @@ void main() {
             await laisser(tester);
           }
           await tester.tap(
-            find.byKey(
+            await operationDeLot(
+              tester,
               CandidaturesPage.cleOperationLot(GesteLot.dispenserEntretien),
+              GesteLot.dispenserEntretien,
             ),
           );
           await laisser(tester, fois: 12);

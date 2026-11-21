@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/widgets/badge_nouveau.dart';
 import 'package:rewayah_academy/features/admin_enseignants/enseignants_page.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
+import '../../support/barre_lot.dart';
 import '../../support/monter_recrutement.dart';
 
 class _AppelEnseignants {
@@ -314,17 +315,28 @@ void main() {
         await tester.tap(_cle('enseignant-c1'));
         await laisser(tester);
         // Une ligne : pause et refus.
-        expect(_cle('enseignants-lot-mettreEnPause'), findsOneWidget);
-        expect(_cle('enseignants-lot-refuser'), findsOneWidget);
+        expect(
+          await gestesOffertsDuLot(tester, EnseignantsPage.cleOperationLot),
+          <GesteLot>{GesteLot.mettreEnPause, GesteLot.refuser},
+        );
         await tester.tap(_cle('enseignant-c2'));
         await laisser(tester);
         // Deux lignes : seulement ce que les deux permettent.
-        expect(_cle('enseignants-lot-mettreEnPause'), findsOneWidget);
-        expect(_cle('enseignants-lot-refuser'), findsNothing);
+        expect(
+          await gestesOffertsDuLot(tester, EnseignantsPage.cleOperationLot),
+          <GesteLot>{GesteLot.mettreEnPause},
+        );
         await tester.tap(_cle('enseignant-c3'));
         await laisser(tester);
         // La troisieme ne groupe rien : aucune operation, la phrase le dit.
-        expect(_cle('enseignants-lot-mettreEnPause'), findsNothing);
+        expect(
+          await gestesOffertsDuLot(tester, EnseignantsPage.cleOperationLot),
+          isEmpty,
+        );
+        expect(
+          find.text(t.admin.candidatures.lot.autresGestes),
+          findsOneWidget,
+        );
       },
     );
 

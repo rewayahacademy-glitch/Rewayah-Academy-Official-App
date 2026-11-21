@@ -193,6 +193,8 @@ class BarreSelection extends StatelessWidget {
     final String relacher = libelleRelacher.isEmpty
         ? t.commun.listes.deselectionner
         : libelleRelacher;
+    // Au-dela de 130 %, la rangee unique ne tient plus a 320 points.
+    final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
     final Widget compte = Text(
       titre,
       style: palette.washAccent.applyTo(textes.labelLarge ?? const TextStyle()),
@@ -269,7 +271,7 @@ class BarreSelection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      if (uneLigne)
+                      if (uneLigne && !agrandi)
                         // Une seule rangee : le compte, les operations, puis
                         // la croix qui relache tout (le mot ne tient pas a
                         // 390 points a cote d'un menu ; il reste dans la voix
@@ -296,7 +298,13 @@ class BarreSelection extends StatelessWidget {
                           crossAxisAlignment: WrapCrossAlignment.center,
                           spacing: AppSpacing.md,
                           runSpacing: AppSpacing.xs,
-                          children: <Widget>[compte, deselectionner],
+                          children: <Widget>[
+                            compte,
+                            // Texte agrandi : tout passe a la ligne, rien ne
+                            // deborde.
+                            if (uneLigne) ...operations,
+                            deselectionner,
+                          ],
                         ),
                       if (operations.isNotEmpty && !uneLigne)
                         Wrap(

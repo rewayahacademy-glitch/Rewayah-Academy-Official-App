@@ -340,7 +340,7 @@ class BarreLot extends StatelessWidget {
           : l.selectionnees(n: n),
       // Une phrase seulement quand elle dit pourquoi un geste manque ou sur
       // quoi il porte ; « les autres gestes se font un par un » ne prend plus
-      // de place.
+      // de place tant qu'un geste est offert.
       phrase: horsLigne
           ? t.admin.candidatures.selection.horsLigne
           : tropNombreuses
@@ -350,7 +350,8 @@ class BarreLot extends StatelessWidget {
                     reste: n - plafondLotCandidatures,
                   )
                 : l.plafond(n: plafondLotCandidatures))
-          : '',
+          // Aucun geste a offrir : la phrase dit ou ils se font.
+          : (offerts.isEmpty ? l.autresGestes : ''),
       onRelacher: onRelacher,
       operations: <Widget>[
         for (final GesteLot g in boutons)
