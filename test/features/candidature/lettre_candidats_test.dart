@@ -1,5 +1,6 @@
 // LETTRE-CANDIDATS (directeur, 20/11/2026) : la lettre aux candidats
 // enseignants, page interne partageable par lien, un seul Praxis en tete.
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/candidature/lettre/interactions_guide.dart';
 import 'package:rewayah_academy/features/candidature/lettre/lettre_candidats_page.dart';
 import 'package:rewayah_academy/features/candidature/lettre/port_interactions_guide.dart';
@@ -22,6 +24,7 @@ import 'package:rewayah_academy/features/candidature/lettre/texte_lettre.dart';
 import 'package:rewayah_academy/features/candidature/praxis_candidat.dart';
 
 import '../../fixtures/candidature/faux_ma_candidature.dart';
+import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import 'faux_port_lettre.dart';
 import 'hote_candidature.dart';
@@ -40,6 +43,17 @@ class _Candidat extends SessionControleur {
   SessionState build() => _session(AccountStatus.pendingKyc);
 }
 
+const String _avant = '/avant-test';
+
+/// Ouvre le guide par-dessus la page d'avant, comme depuis le Compte.
+Future<void> _ouvrirDepuisAvant(WidgetTester tester) async {
+  unawaited(
+    GoRouter.of(tester.element(find.text('PAGE D AVANT')))
+        .push(Routes.lettreEnseignants),
+  );
+  await tester.pumpAndSettle();
+}
+
 Future<void> _monter(
   WidgetTester tester, {
   LectureLettre? reponse,
@@ -48,13 +62,14 @@ Future<void> _monter(
   Size taille = const Size(390, 844),
   double echelle = 1,
   TextDirection? direction,
+  String depart = Routes.lettreEnseignants,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     hoteRoutant(
-      depart: Routes.lettreEnseignants,
+      depart: depart,
       echelle: echelle,
       direction: direction,
       routes: <RouteBase>[
@@ -64,6 +79,18 @@ Future<void> _monter(
               const LettreCandidatsPage(),
         ),
         ...routesCandidature(),
+        // LETTRE-SERVEUR : la messagerie du candidat et une page d'avant
+        // (le Compte de l'enseignant, par exemple), en pastilles.
+        GoRoute(
+          path: Routes.attenteMessages,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('PAGE DES MESSAGES')),
+        ),
+        GoRoute(
+          path: _avant,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('PAGE D AVANT')),
+        ),
       ],
       surcharges: <Override>[
         ...surchargesCandidature(
@@ -146,6 +173,70 @@ void main() {
         expect(find.text('PAGE DES ACCORDS'), findsOneWidget);
       },
     );
+
+    // LETTRE-SERVEUR (relecture S2) : ce qui manque ne peut pas etre accepte
+    // par le compte : on ecrit a la direction, jamais un ecran sans issue.
+    testWidgets('accords impossibles a accepter : ecrire a la direction', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        reponse: const LectureLettre.refusee(
+          raison: RaisonRefusLettre.accords,
+          manques: <AccordManquant>[AccordManquant.cadre],
+          acceptable: false,
+        ),
+      );
+      expect(find.byKey(VerrouLettre.cleDirection), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.directionOuvre), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.completer), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      await tester.tap(find.text(t.recrutement.lettre.ecrireDirection));
+      await tester.pumpAndSettle();
+      expect(find.text('PAGE DES MESSAGES'), findsOneWidget);
+    });
+
+    test('le port lit « acceptable », absent : vrai', () {
+      final LectureLettre ferme = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': false,
+        'raison': 'accords',
+        'manques': <String>['cadre'],
+        'acceptable': false,
+      });
+      expect(ferme.acceptable, isFalse);
+      final LectureLettre ancien = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': false,
+        'raison': 'accords',
+        'manques': <String>['contrat'],
+      });
+      expect(ancien.acceptable, isTrue);
+    });
+
+    // LETTRE-SERVEUR (relecture S3) : indisponible et echec dans la page du
+    // guide, avec sa phrase et son retour vers la page d'avant.
+    for (final (String nom, Exception erreur) in <(String, Exception)>[
+      ('indisponible', const CapaciteIndisponible('LETTRE-SERVEUR')),
+      ('echec', Exception('panne')),
+    ]) {
+      testWidgets('$nom : le retour ramene a la page d\'avant', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, erreur: erreur, depart: _avant);
+        await _ouvrirDepuisAvant(tester);
+        expect(find.byKey(LettreCandidatsPage.cle), findsOneWidget);
+        if (nom == 'indisponible') {
+          expect(find.byKey(GuideIndisponible.cle), findsOneWidget);
+          expect(find.text(t.recrutement.lettre.indisponible), findsOneWidget);
+          expect(
+            find.text(t.recrutement.questionnaire.nonOuverte),
+            findsNothing,
+          );
+        }
+        await tester.tap(find.byType(DisqueRetour));
+        await tester.pumpAndSettle();
+        expect(find.text('PAGE D AVANT'), findsOneWidget);
+      });
+    }
 
     testWidgets('le serveur refuse (role) : une phrase, aucun texte', (
       WidgetTester tester,

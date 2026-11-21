@@ -22,16 +22,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/candidature/lettre_supabase.dart' show dependanceLettre;
+import '../../../core/candidature/port_ma_candidature.dart';
+import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/reseau/etat_sans_donnees.dart';
+import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/session/session_controleur.dart';
+import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/bloc_asynchrone.dart';
 import '../../../core/widgets/carte_lignes.dart';
+import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/setting_row.dart';
-import '../lecture_page.dart';
+import '../../../core/widgets/skeleton.dart';
 import 'interactions_guide.dart';
 import 'port_lettre.dart';
 import 'praxis_lettre.dart';
@@ -136,47 +145,110 @@ class _EtatLettre extends ConsumerState<LettreCandidatsPage> {
     );
   }
 
+  // LETTRE-SERVEUR (relecture S3, 21/11/2026) : chargement, echec, hors
+  // ligne et guide indisponible vivent dans la page du guide elle-meme, avec
+  // son retour (`pop`, sinon la racine) ; jamais la page de la candidature,
+  // dont le retour mene au portail d'attente.
   @override
   Widget build(BuildContext context) {
     final String langue = TranslationProvider.of(context).locale.languageCode;
-    return lecturePage<LectureLettre>(
-      ref: ref,
-      titre: t.recrutement.lettre.titre,
-      valeur: ref.watch(lettreProvider(langue)),
-      titreEchec: t.recrutement.lettre.nonCharge,
-      onReessayer: () => ref.invalidate(lettreProvider(langue)),
-      construire: (LectureLettre lu) {
-        if (!lu.acces) {
-          return _page(
-            corps:
-                lu.raison == RaisonRefusLettre.accords && lu.manques.isNotEmpty
-                ? VerrouLettre(manques: lu.manques)
-                : Text(
-                    t.recrutement.lettre.reservee,
-                    key: LettreCandidatsPage.cleReservee,
-                  ),
-          );
-        }
-        return _page(
-          guide: true,
-          corps: ContenuLettre(
-            parties: lu.parties,
-            moment: _moment,
-            secousses: _secousses,
-          ),
-        );
-      },
+    final AsyncValue<LectureLettre> valeur = ref.watch(lettreProvider(langue));
+    if (!valeur.hasValue) {
+      final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+      final String echec = t.recrutement.lettre.nonCharge;
+      return _page(
+        corps: BlocAsynchrone<LectureLettre>(
+          valeur: valeur,
+          squelette: const Skeleton.liste(lignes: 3),
+          titreEchec: echec,
+          onReessayer: () => ref.invalidate(lettreProvider(langue)),
+          erreurVersEtat: (Object erreur, VoidCallback? reessayer) {
+            if (erreur is CapaciteIndisponible) {
+              return const GuideIndisponible();
+            }
+            if (erreur is HorsLigneCandidature || horsLigne) {
+              return EtatSansDonnees(quoi: echec, onAction: reessayer);
+            }
+            return null;
+          },
+          construire: (LectureLettre _) => const SizedBox.shrink(),
+        ),
+      );
+    }
+    final LectureLettre lu = valeur.requireValue;
+    if (!lu.acces) {
+      // Ecrire a la direction : la messagerie du candidat tant que le compte
+      // est en attente, celle de l'espace enseignant sinon.
+      final bool enAttente =
+          ref.watch(sessionProvider).porte == PorteAcces.attente;
+      return _page(
+        corps: lu.raison == RaisonRefusLettre.accords && lu.manques.isNotEmpty
+            ? VerrouLettre(
+                manques: lu.manques,
+                acceptable: lu.acceptable,
+                cheminEcrire: enAttente
+                    ? Routes.attenteMessages
+                    : Routes.enseignantMessages,
+              )
+            : Text(
+                t.recrutement.lettre.reservee,
+                key: LettreCandidatsPage.cleReservee,
+              ),
+      );
+    }
+    return _page(
+      guide: true,
+      corps: ContenuLettre(
+        parties: lu.parties,
+        moment: _moment,
+        secousses: _secousses,
+      ),
     );
   }
 }
 
-/// Le verrou : ce qui manque, et le chemin pour l'accepter.
+/// « Le guide n'est pas encore disponible. », sans « Reessayer » : une
+/// capacite absente (fonction pas encore installee) ne revient pas en
+/// insistant.
+class GuideIndisponible extends StatelessWidget {
+  /// Cree le bloc.
+  const GuideIndisponible({super.key});
+
+  /// La cle du bloc.
+  static const Key cle = ValueKey<String>('lettre-indisponible');
+
+  @override
+  Widget build(BuildContext context) => EtatSysteme(
+    key: cle,
+    nature: NatureEtat.indisponible,
+    phrase: t.recrutement.lettre.indisponible,
+    dependance: dependanceLettre,
+  );
+}
+
+/// Le verrou : ce qui manque, et le chemin pour l'accepter ; quand le compte
+/// ne peut pas l'accepter lui-meme ([acceptable] faux), la direction ouvre
+/// l'acces : on lui ecrit, jamais un lien vers un ecran sans issue.
 class VerrouLettre extends StatelessWidget {
   /// Cree le verrou.
-  const VerrouLettre({required this.manques, super.key});
+  const VerrouLettre({
+    required this.manques,
+    this.acceptable = true,
+    this.cheminEcrire = Routes.attenteMessages,
+    super.key,
+  });
 
   /// Les accords qui manquent.
   final List<AccordManquant> manques;
+
+  /// Vrai quand le compte peut accepter lui-meme ce qui manque.
+  final bool acceptable;
+
+  /// Ou ecrire a la direction, quand [acceptable] est faux.
+  final String cheminEcrire;
+
+  /// La cle de la phrase « la direction ouvre l'acces ».
+  static const Key cleDirection = ValueKey<String>('lettre-verrou-direction');
 
   @override
   Widget build(BuildContext context) {
@@ -216,9 +288,16 @@ class VerrouLettre extends StatelessWidget {
             child: Text('• ${m.nom}', style: corps),
           ),
         Ecart.vXl,
+        // Un seul bouton plein : accepter ce qui manque, ou, quand le compte
+        // ne le peut pas, ecrire a la direction (K-56).
+        if (!acceptable) ...<Widget>[
+          Text(l.directionOuvre, key: VerrouLettre.cleDirection, style: corps),
+          Ecart.vXl,
+        ],
         ActionPrincipale(
-          libelle: l.completer,
-          onPress: () => GoRouter.of(context).go(chemin),
+          libelle: acceptable ? l.completer : l.ecrireDirection,
+          onPress: () =>
+              GoRouter.of(context).go(acceptable ? chemin : cheminEcrire),
         ),
       ],
     );

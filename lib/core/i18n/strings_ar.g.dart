@@ -11265,11 +11265,14 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	@override String get entree => 'افتح دليل المعلّم';
 	@override String get entreeLegende => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا';
 	@override String get verrouTitre => 'يُفتح هذا الدليل بعد قبول اتفاقياتك';
-	@override String get verrouIntro => 'لقراءتها، بقي عليك قبول:';
+	@override String get verrouIntro => 'لقراءته، بقي عليك قبول:';
 	@override String get manqueContrat => 'عقد المعلّم';
 	@override String get manqueConduite => 'ميثاق السلوك';
 	@override String get manqueCadre => 'الالتزام الديني';
 	@override String get completer => 'قبول اتفاقياتي';
+	@override String get directionOuvre => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.';
+	@override String get ecrireDirection => 'اكتب إلى الإدارة';
+	@override String get indisponible => 'الدليل غير متاح بعد.';
 	@override String get nonCharge => 'تعذّر فتح الدليل.';
 	@override String get reservee => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.';
 	@override String get nom => 'دليل المعلّم';
@@ -22711,7 +22714,6 @@ class _Traductions$recrutement$accueil$academie$ar extends Traductions$recruteme
 	@override String get titre => 'الأكاديمية';
 	@override String get annoncesVide => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.';
 	@override String get savoirTitre => 'ما ينبغي معرفته';
-	@override String get remuneration => 'مستحقات المعلّم';
 	@override String get cours => 'سير الدروس';
 	@override String get entretiens => 'تنظيم المقابلات';
 	@override String get bientot => 'سيظهر هنا حين تنشره الإدارة.';
@@ -41750,11 +41752,14 @@ extension on TraductionsAr {
 			'recrutement.lettre.entree' => 'افتح دليل المعلّم',
 			'recrutement.lettre.entreeLegende' => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا',
 			'recrutement.lettre.verrouTitre' => 'يُفتح هذا الدليل بعد قبول اتفاقياتك',
-			'recrutement.lettre.verrouIntro' => 'لقراءتها، بقي عليك قبول:',
+			'recrutement.lettre.verrouIntro' => 'لقراءته، بقي عليك قبول:',
 			'recrutement.lettre.manqueContrat' => 'عقد المعلّم',
 			'recrutement.lettre.manqueConduite' => 'ميثاق السلوك',
 			'recrutement.lettre.manqueCadre' => 'الالتزام الديني',
 			'recrutement.lettre.completer' => 'قبول اتفاقياتي',
+			'recrutement.lettre.directionOuvre' => 'يجب أن تفتح الإدارة وصولك إلى الدليل. اكتب إليها.',
+			'recrutement.lettre.ecrireDirection' => 'اكتب إلى الإدارة',
+			'recrutement.lettre.indisponible' => 'الدليل غير متاح بعد.',
 			'recrutement.lettre.nonCharge' => 'تعذّر فتح الدليل.',
 			'recrutement.lettre.reservee' => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.',
 			'recrutement.lettre.nom' => 'دليل المعلّم',
@@ -42115,11 +42120,11 @@ extension on TraductionsAr {
 			'recrutement.entretien.votreEntretien' => 'مقابلتك',
 			'recrutement.entretien.rejoindre' => 'الانضمام إلى المقابلة',
 			'recrutement.entretien.ouvreA' => ({required Object heure}) => 'يمكنك الانضمام ابتداءً من ⁨${heure}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.entretien.termine' => 'مضى موعد مقابلتك. ستراسلك الأكاديمية بالخطوة التالية.',
 			'recrutement.entretien.pasEncore' => 'المقابلة غير متاحة بعد لترشّحك.',
 			'recrutement.entretien.portailChoisir' => 'اختيار موعد مقابلتنا',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.entretien.commenceDans' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تبدأ مقابلتك الآن.', one: 'تبدأ مقابلتك بعد دقيقة واحدة.', two: 'تبدأ مقابلتك بعد دقيقتين.', few: 'تبدأ مقابلتك بعد ⁨${n}⁩ دقائق.', many: 'تبدأ مقابلتك بعد ⁨${n}⁩ دقيقة.', other: 'تبدأ مقابلتك بعد ⁨${n}⁩ دقيقة.', ), 
 			'recrutement.entretien.aCommence' => 'بدأت مقابلتك: نحن في انتظارك. انضمّ إليها الآن.',
 			'recrutement.entretien.prevu' => ({required Object horaire}) => 'حُدّد موعد مقابلتك: ⁨${horaire}⁩.',
@@ -42218,7 +42223,6 @@ extension on TraductionsAr {
 			'recrutement.accueil.academie.titre' => 'الأكاديمية',
 			'recrutement.accueil.academie.annoncesVide' => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.',
 			'recrutement.accueil.academie.savoirTitre' => 'ما ينبغي معرفته',
-			'recrutement.accueil.academie.remuneration' => 'مستحقات المعلّم',
 			'recrutement.accueil.academie.cours' => 'سير الدروس',
 			'recrutement.accueil.academie.entretiens' => 'تنظيم المقابلات',
 			'recrutement.accueil.academie.bientot' => 'سيظهر هنا حين تنشره الإدارة.',
@@ -42630,10 +42634,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'أطفال من 6 إلى 9 سنوات',
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'يبدؤون بكتاب القراءة الخاص بأكاديمية الرواية، حرفًا حرفًا، إلى الشدّة. ثم تأتي السور القصيرة الأولى وكلمات الصلاة والوضوء.',
 			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة. يُعرض الوضوء والصلاة عمليًا ومعهما رسوم توضيحية.',
-			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'فصل لأطفال في الثامنة من العمر، أيام الاثنين والأربعاء والجمعة.',
-			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'أطفال من 10 إلى 13 سنة',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'فصل لأطفال في الثامنة من العمر، أيام الاثنين والأربعاء والجمعة.',
+			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'أطفال من 10 إلى 13 سنة',
 			'recrutement.parcours.q.publics.options.o_10_13.description' => 'البداية نفسها بكتاب القراءة، مع سورة الفاتحة منذ الأسبوع الأول، لأن الطفل في هذا العمر يجب أن يصلّي.',
 			'recrutement.parcours.q.publics.options.o_10_13.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة.',
 			'recrutement.parcours.q.publics.options.o_10_13.exemple' => 'فصل لطلاب في الثانية عشرة من العمر، ثلاث مرات في الأسبوع.',
@@ -43144,10 +43148,10 @@ extension on TraductionsAr {
 			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
 			'avis.form.qualite.libelle' => 'أنت',
 			'avis.form.qualite.parent' => 'ولي أمر أو وصي',
-			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
-			'avis.form.qualite.erreur' => 'اختر صفتك.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
+			'avis.form.qualite.erreur' => 'اختر صفتك.',
 			'avis.form.pays.libelle' => 'بلد الإقامة',
 			'avis.form.pays.choisir' => 'اختيار بلد',
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
@@ -43658,10 +43662,10 @@ extension on TraductionsAr {
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
-			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
-			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			_ => null,
 		} ?? switch (path) {
+			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
+			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
@@ -44172,10 +44176,10 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.classeErreur.invitation' => 'اضغط إعادة المحاولة بعد لحظات.',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'للتعمّق أكثر',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'ستظهر وثائق الدروس هنا',
-			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',
-			'apprendre.bibliotheque.rayonPlusLoinVide' => 'ستظهر وثائق أخرى هنا',
 			_ => null,
 		} ?? switch (path) {
+			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',
+			'apprendre.bibliotheque.rayonPlusLoinVide' => 'ستظهر وثائق أخرى هنا',
 			'apprendre.bibliotheque.affichage.libelle' => 'طريقة عرض الوثائق',
 			'apprendre.bibliotheque.affichage.grille' => 'شبكة',
 			'apprendre.bibliotheque.affichage.liste' => 'قائمة',
