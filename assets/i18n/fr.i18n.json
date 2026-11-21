@@ -8346,7 +8346,7 @@
       "champ": "Votre réponse à {nom}",
       "repondre": "Répondre",
       "echec": "La réponse n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Touchez de nouveau « Répondre ».",
-      "erreur": "Les commentaires du guide n'ont pas pu être lus.",
+      "erreur": "Les commentaires du guide n'ont pas pu être lus. Touchez « Réessayer ».",
       "indisponible": "Les commentaires du guide ne sont pas encore disponibles."
     },
     "chiffres": {

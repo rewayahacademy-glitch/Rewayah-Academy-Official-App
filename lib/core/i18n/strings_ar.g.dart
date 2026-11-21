@@ -7666,7 +7666,7 @@ class _Traductions$admin$guideCommentaires$ar extends Traductions$admin$guideCom
 	@override String champ({required Object nom}) => 'جوابك إلى ⁨${nom}⁩';
 	@override String get repondre => 'أجب';
 	@override String get echec => 'لم يتأكد إرسال الجواب: ربما لم يصل إلى Rewayah. اضغط «أجب» مرة أخرى.';
-	@override String get erreur => 'تعذّرت قراءة تعليقات الدليل.';
+	@override String get erreur => 'تعذّرت قراءة تعليقات الدليل. اضغط «إعادة المحاولة».';
 	@override String get indisponible => 'تعليقات الدليل غير متاحة بعد.';
 }
 
@@ -37770,7 +37770,7 @@ extension on TraductionsAr {
 			'admin.guideCommentaires.champ' => ({required Object nom}) => 'جوابك إلى ⁨${nom}⁩',
 			'admin.guideCommentaires.repondre' => 'أجب',
 			'admin.guideCommentaires.echec' => 'لم يتأكد إرسال الجواب: ربما لم يصل إلى Rewayah. اضغط «أجب» مرة أخرى.',
-			'admin.guideCommentaires.erreur' => 'تعذّرت قراءة تعليقات الدليل.',
+			'admin.guideCommentaires.erreur' => 'تعذّرت قراءة تعليقات الدليل. اضغط «إعادة المحاولة».',
 			'admin.guideCommentaires.indisponible' => 'تعليقات الدليل غير متاحة بعد.',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'آخر إعادة حساب: ⁨${heure}⁩',
 			'admin.chiffres.reserve' => 'هذه الصفحة خاصة بالإدارة.',

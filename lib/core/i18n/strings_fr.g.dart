@@ -15379,8 +15379,8 @@ class Traductions$admin$guideCommentaires$fr {
 	/// fr: 'La réponse n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Touchez de nouveau « Répondre ».'
 	String get echec => 'La réponse n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Touchez de nouveau « Répondre ».';
 
-	/// fr: 'Les commentaires du guide n'ont pas pu être lus.'
-	String get erreur => 'Les commentaires du guide n\'ont pas pu être lus.';
+	/// fr: 'Les commentaires du guide n'ont pas pu être lus. Touchez « Réessayer ».'
+	String get erreur => 'Les commentaires du guide n\'ont pas pu être lus. Touchez « Réessayer ».';
 
 	/// fr: 'Les commentaires du guide ne sont pas encore disponibles.'
 	String get indisponible => 'Les commentaires du guide ne sont pas encore disponibles.';
@@ -64822,7 +64822,7 @@ extension on Traductions {
 			'admin.guideCommentaires.champ' => ({required Object nom}) => 'Votre réponse à ${nom}',
 			'admin.guideCommentaires.repondre' => 'Répondre',
 			'admin.guideCommentaires.echec' => 'La réponse n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Touchez de nouveau « Répondre ».',
-			'admin.guideCommentaires.erreur' => 'Les commentaires du guide n\'ont pas pu être lus.',
+			'admin.guideCommentaires.erreur' => 'Les commentaires du guide n\'ont pas pu être lus. Touchez « Réessayer ».',
 			'admin.guideCommentaires.indisponible' => 'Les commentaires du guide ne sont pas encore disponibles.',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'Dernier recalcul à ${heure}',
 			'admin.chiffres.reserve' => 'Cette page est réservée à la direction.',

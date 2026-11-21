@@ -7342,7 +7342,7 @@ class _Traductions$admin$guideCommentaires$en extends Traductions$admin$guideCom
 	@override String champ({required Object nom}) => 'Your answer to ${nom}';
 	@override String get repondre => 'Answer';
 	@override String get echec => 'The answer is not confirmed: it may not have reached Rewayah. Tap "Answer" again.';
-	@override String get erreur => 'The guide comments could not be read.';
+	@override String get erreur => 'The guide comments could not be read. Tap "Try again".';
 	@override String get indisponible => 'The guide comments are not available yet.';
 }
 
@@ -36008,7 +36008,7 @@ extension on TraductionsEn {
 			'admin.guideCommentaires.champ' => ({required Object nom}) => 'Your answer to ${nom}',
 			'admin.guideCommentaires.repondre' => 'Answer',
 			'admin.guideCommentaires.echec' => 'The answer is not confirmed: it may not have reached Rewayah. Tap "Answer" again.',
-			'admin.guideCommentaires.erreur' => 'The guide comments could not be read.',
+			'admin.guideCommentaires.erreur' => 'The guide comments could not be read. Tap "Try again".',
 			'admin.guideCommentaires.indisponible' => 'The guide comments are not available yet.',
 			'admin.chiffres.recalcul' => ({required Object heure}) => 'Last recalculation at ${heure}',
 			'admin.chiffres.reserve' => 'This page is reserved for the management.',

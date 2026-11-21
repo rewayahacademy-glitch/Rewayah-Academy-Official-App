@@ -8253,7 +8253,7 @@
       "champ": "Your answer to {nom}",
       "repondre": "Answer",
       "echec": "The answer is not confirmed: it may not have reached Rewayah. Tap \"Answer\" again.",
-      "erreur": "The guide comments could not be read.",
+      "erreur": "The guide comments could not be read. Tap \"Try again\".",
       "indisponible": "The guide comments are not available yet."
     },
     "chiffres": {
