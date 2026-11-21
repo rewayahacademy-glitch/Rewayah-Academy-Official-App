@@ -157,6 +157,9 @@ class FauxServiceDossier implements ServiceDossier {
   /// Les pieces deposees.
   final List<PieceAEnvoyer> depots = <PieceAEnvoyer>[];
 
+  /// PE-B10 : un depot qui attend ce futur avant d'aboutir (etat « en cours »).
+  Future<void>? depotEnAttente;
+
   void _peutEchouer() {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
@@ -202,6 +205,8 @@ class FauxServiceDossier implements ServiceDossier {
 
   @override
   Future<void> deposerPiece(PieceAEnvoyer piece) async {
+    final Future<void>? enAttente = depotEnAttente;
+    if (enAttente != null) await enAttente;
     _peutEchouer();
     depots.add(piece);
   }

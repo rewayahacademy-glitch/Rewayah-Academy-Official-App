@@ -22,6 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../appairage/service_avatar.dart';
+import '../dossier/depot_resilient.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
 
@@ -157,8 +158,21 @@ final FutureProvider<bool> peutPoserMaPhotoProvider =
 
 /// Le seau ou un adulte range sa propre photo : celui que le serveur rend pour
 /// lui (`photos_enseignants` pour un enseignant, `avatars` sinon).
-Future<String> seauDeMaPhoto(PortPhotos port, String moi) async =>
-    (await port.sources(<String>[moi]))[moi]?.seau ?? 'avatars';
+///
+/// PE-B10 (relecture du 20/11, S2) : cette lecture fait partie de l'envoi de
+/// la photo ; elle se reessaie seule sur une panne passagere, pour que la
+/// phrase « meme apres deux nouveaux essais » soit vraie sur ce chemin aussi.
+Future<String> seauDeMaPhoto(
+  PortPhotos port,
+  String moi, {
+  Attente attendre = attenteReelle,
+}) async =>
+    (await avecNouveauxEssais<Map<String, SourcePhoto>>(
+      () => port.sources(<String>[moi]),
+      attendre: attendre,
+      delai: delaiEtapeCourte,
+    ))[moi]?.seau ??
+    'avatars';
 
 /// Envoie puis pose la photo de l'appelant, et fait relire toutes ses vues.
 Future<void> envoyerMaPhoto(

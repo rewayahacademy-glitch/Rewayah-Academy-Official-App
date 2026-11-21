@@ -8,6 +8,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../appairage/service_avatar.dart';
+import '../dossier/depot_resilient.dart';
 import 'photo_personne.dart';
 
 /// Duree de validite demandee pour une URL signee, en secondes (borne du
@@ -17,9 +18,12 @@ const int dureeUrlPhotoSecondes = 600;
 /// La photo des personnes, lue et posee au serveur.
 class PhotosSupabase implements PortPhotos {
   /// Cree l'adaptateur.
-  const PhotosSupabase(this._client);
+  const PhotosSupabase(this._client, {this.attendre = attenteReelle});
 
   final SupabaseClient _client;
+
+  /// L'attente avant un nouvel essai (remplacee dans les tests).
+  final Attente attendre;
 
   /// Les lignes `(profile_id, seau, cle)` rendues par le serveur.
   static Map<String, SourcePhoto> lignes(Object? brut) {
@@ -58,21 +62,32 @@ class PhotosSupabase implements PortPhotos {
     final String cle =
         '$profileId/${DateTime.now().toUtc().millisecondsSinceEpoch}'
         '.${photo.extension}';
-    await _client.storage
-        .from(seau)
-        .uploadBinary(
-          cle,
-          photo.octets,
-          fileOptions: FileOptions(contentType: photo.typeMime),
-        );
+    // PE-B10 : nouveaux essais sur une panne passagere, cle stable (un
+    // nouvel essai qui trouve le fichier deja la le tient pour envoye).
+    await envoyerAuSeau(
+      _client,
+      seau: seau,
+      cle: cle,
+      octets: photo.octets,
+      typeMime: photo.typeMime,
+      attendre: attendre,
+    );
     return cle;
   }
 
   @override
+  ///
+  /// PE-B10 (relecture du 20/11, S2) : la pose remplace la cle de la photo
+  /// (idempotente) ; elle se reessaie seule sur une panne passagere, comme
+  /// celle du candidat.
   Future<SourcePhoto?> poserMaPhoto(String? cle) async => lignes(
-    await _client.rpc<Object?>(
-      'poser_ma_photo',
-      params: <String, dynamic>{'p_cle': cle},
+    await avecNouveauxEssais<Object?>(
+      () => _client.rpc<Object?>(
+        'poser_ma_photo',
+        params: <String, dynamic>{'p_cle': cle},
+      ),
+      attendre: attendre,
+      delai: delaiEtapeCourte,
     ),
   ).values.firstOrNull;
 
@@ -86,11 +101,18 @@ class PhotosSupabase implements PortPhotos {
       ).values.firstOrNull;
 
   /// CAND-PHOTO : `poser_photo_candidat` (20261110330000).
+  ///
+  /// PE-B10 : la pose est idempotente (elle remplace la cle de la photo du
+  /// candidat) ; elle est reessayee seule sur une panne passagere.
   @override
   Future<SourcePhoto?> poserPhotoCandidat(String? cle) async => lignes(
-    await _client.rpc<Object?>(
-      'poser_photo_candidat',
-      params: <String, dynamic>{'p_cle': cle},
+    await avecNouveauxEssais<Object?>(
+      () => _client.rpc<Object?>(
+        'poser_photo_candidat',
+        params: <String, dynamic>{'p_cle': cle},
+      ),
+      attendre: attendre,
+      delai: delaiEtapeCourte,
     ),
   ).values.firstOrNull;
 
