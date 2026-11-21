@@ -5648,6 +5648,8 @@
     },
     "traitement": {
       "titre": "Espace de traitement",
+      "urgences": "Ici, les seules urgences : les demandes des familles et les {n} pièces qui attendent depuis le plus longtemps.",
+      "toutesLesPieces": "Les {n} pièces à vérifier, dans Personnes",
       "filtreTous": "Tous",
       "filtreDossiers": "Dossiers",
       "filtreDemandes": "Demandes",

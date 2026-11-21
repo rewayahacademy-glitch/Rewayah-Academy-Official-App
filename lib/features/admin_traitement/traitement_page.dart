@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/admin/service_comptes.dart' show EtatPiece;
+import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
@@ -19,6 +20,7 @@ import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pied_de_liste.dart';
@@ -58,6 +60,13 @@ class TraitementPage extends ConsumerStatefulWidget {
 
   /// La liste.
   static const Key cleFile = ValueKey<String>('adm18-file');
+
+  /// ESPACE-URGENCES (directeur, 21/11/2026) : le nombre de pieces gardees
+  /// ici, les plus anciennes ; toutes les autres sont dans Personnes.
+  static const int piecesUrgentes = 10;
+
+  /// Le lien vers toutes les pieces, dans Personnes.
+  static const Key cleToutesLesPieces = ValueKey<String>('adm18-toutes-pieces');
 
   /// La cle d'une ligne.
   static ValueKey<String> cleLigne(String id) =>
@@ -208,8 +217,22 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       }
     }
 
+    // ESPACE-URGENCES (directeur, 21/11/2026 : « si elle doit servir a des
+    // choses urgentes on la garde, mais pas pour recopier toute la liste ») :
+    // les demandes des familles, et seulement les pieces qui attendent depuis
+    // le plus longtemps ; toutes les pieces restent dans Personnes.
+    final List<DossierAValider> touteLaFile =
+        RevueDossiersDepuisValidation.enseignantsSeulement(
+          dossiers.value ?? const <DossierAValider>[],
+        );
     final List<DossierAValider> lusDossiers =
-        dossiers.value ?? const <DossierAValider>[];
+        (List<DossierAValider>.of(touteLaFile)..sort(
+              (DossierAValider a, DossierAValider b) =>
+                  a.deposeLe.compareTo(b.deposeLe),
+            ))
+            .take(TraitementPage.piecesUrgentes)
+            .toList();
+    final bool fileCoupee = touteLaFile.length > lusDossiers.length;
     final List<Demande> lusDemandes = demandes.value ?? const <Demande>[];
     final List<ElementATraiter> tous = reunirFile(
       dossiers: lusDossiers,
@@ -278,6 +301,35 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        if (fileCoupee) ...<Widget>[
+          Text(
+            t.admin.traitement.urgences(n: TraitementPage.piecesUrgentes),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: TraitementPage.cleToutesLesPieces,
+              alignerEnDebut: true,
+              libelle: t.admin.traitement.toutesLesPieces(
+                n: touteLaFile.length,
+              ),
+              onPress: () => unawaited(
+                GoRouter.of(context).push<void>(
+                  Uri(
+                    path: Routes.adminPersonnes,
+                    queryParameters: <String, String>{
+                      'onglet': 'enseignants',
+                      'vue': 'pieces',
+                    },
+                  ).toString(),
+                ),
+              ),
+            ),
+          ),
+          Ecart.vLg,
+        ],
         if (tous.isNotEmpty)
           if (!bureau) ...<Widget>[
             RangeeFiltres(filtres: puces),

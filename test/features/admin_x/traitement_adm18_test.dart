@@ -112,6 +112,11 @@ Future<void> _monter(
               Scaffold(body: Text('ADM-02 ${etat.extra}')),
         ),
         GoRoute(
+          path: Routes.adminPersonnes,
+          builder: (BuildContext _, GoRouterState etat) =>
+              Scaffold(body: Text('PERSONNES ${etat.uri.query}')),
+        ),
+        GoRoute(
           path: Routes.adminOperationsDemandes,
           builder: (BuildContext _, GoRouterState _) =>
               const Scaffold(body: Text('ADM-06')),
@@ -291,6 +296,76 @@ void main() {
   });
 
   group('ADM-18 : etats', () {
+    // ESPACE-URGENCES (directeur, 21/11/2026) : les seules urgences ; toutes
+    // les pieces restent dans Personnes.
+    testWidgets(
+      '12 pieces : les 10 plus anciennes, et le lien vers Personnes',
+      (WidgetTester tester) async {
+        final FauxServiceValidation validation = FauxServiceValidation()
+          ..file = <DossierAValider>[
+            for (int i = 0; i < 12; i++)
+              _dossier('e$i', 'Ens$i', depose: DateTime(2026, 9, 1 + i, 9)),
+            // Un tuteur, le plus ancien : jamais dans la file, jamais compte.
+            _dossier(
+              't',
+              'Tarek',
+              depose: DateTime(2026, 8, 1),
+              role: AppRole.guardian,
+            ),
+          ];
+        await _monter(
+          tester,
+          taille: const Size(1440, 2400),
+          validation: validation,
+        );
+        for (int i = 0; i < 10; i++) {
+          expect(
+            find.byKey(TraitementPage.cleLigne('dossier-p-e$i')),
+            findsOneWidget,
+          );
+        }
+        expect(
+          find.byKey(TraitementPage.cleLigne('dossier-p-e10')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(TraitementPage.cleLigne('dossier-p-e11')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(TraitementPage.cleLigne('dossier-p-t')),
+          findsNothing,
+        );
+        expect(
+          find.text(
+            t.admin.traitement.urgences(n: TraitementPage.piecesUrgentes),
+          ),
+          findsOneWidget,
+        );
+        final Finder lien = find.byKey(TraitementPage.cleToutesLesPieces);
+        expect(
+          find.descendant(
+            of: lien,
+            matching: find.text(t.admin.traitement.toutesLesPieces(n: 12)),
+          ),
+          findsOneWidget,
+        );
+        await tester.tap(lien);
+        await tester.pumpAndSettle();
+        expect(
+          find.text('PERSONNES onglet=enseignants&vue=pieces'),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('10 pieces ou moins : ni phrase ni lien', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille: const Size(1440, 900));
+      expect(find.byKey(TraitementPage.cleToutesLesPieces), findsNothing);
+    });
+
     testWidgets('vide : une phrase, sans file', (WidgetTester tester) async {
       await _monter(
         tester,
