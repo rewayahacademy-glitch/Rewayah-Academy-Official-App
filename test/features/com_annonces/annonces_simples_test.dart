@@ -33,10 +33,14 @@ class _FilFaux extends AnnoncesDirectionIndisponibles {
   final List<String> vues = <String>[];
 
   @override
-  Future<List<AnnonceRecue>> mesAnnonces() async {
+  Future<PageAnnonces> mesAnnonces({
+    int limite = 20,
+    DateTime? avant,
+    bool fermees = false,
+  }) async {
     final Exception? e = erreur;
     if (e != null) throw e;
-    return recues;
+    return PageAnnonces(annonces: recues);
   }
 
   @override

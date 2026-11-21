@@ -156,24 +156,35 @@ class EnvoiAnnonce {
 }
 
 /// Une annonce recue par la personne (fil d'annonces).
+///
+/// ANNONCES-SERVEUR (21/11/2026, DECISION-ANNONCES-NOTIFS-2026-11-21.md §2) :
+/// [titre] et [texte] sont dans la langue du lecteur quand le serveur a la
+/// traduction ([traduite]), sinon l'original ; jamais vides. L'original est
+/// toujours a cote ([titreOriginal], [texteOriginal]) pour « عرض النص الأصلي ».
 @immutable
 class AnnonceRecue {
-  /// Cree l'annonce.
+  /// Cree l'annonce. Sans original fourni, l'original est le texte affiche.
   const AnnonceRecue({
     required this.id,
     required this.titre,
     required this.texte,
     required this.publieeLe,
     this.vue = false,
-  });
+    String? titreOriginal,
+    String? texteOriginal,
+    this.langueOriginale,
+    this.traduite = false,
+    this.fermee = false,
+  }) : titreOriginal = titreOriginal ?? titre,
+       texteOriginal = texteOriginal ?? texte;
 
   /// Identifiant.
   final String id;
 
-  /// Le titre.
+  /// Le titre, dans la langue du lecteur si traduit, sinon l'original.
   final String titre;
 
-  /// Le texte.
+  /// Le texte, dans la langue du lecteur si traduit, sinon l'original.
   final String texte;
 
   /// L'instant de diffusion (UTC).
@@ -181,6 +192,53 @@ class AnnonceRecue {
 
   /// Vrai si la personne l'a deja vue.
   final bool vue;
+
+  /// Le titre tel que la direction l'a ecrit.
+  final String titreOriginal;
+
+  /// Le texte tel que la direction l'a ecrit.
+  final String texteOriginal;
+
+  /// La langue d'ecriture detectee par le serveur (`fr`, `en`, `ar`...) ;
+  /// `null` tant que la traduction n'a pas tourne.
+  final String? langueOriginale;
+
+  /// Vrai si [titre] et [texte] sont une traduction (l'original differe).
+  final bool traduite;
+
+  /// Vrai si la personne a ferme l'annonce (elle reste lisible dans
+  /// « الإعلانات », jamais dans « الكل » ni sur l'accueil).
+  final bool fermee;
+
+  /// La meme annonce, fermee ou rouverte.
+  AnnonceRecue avecFermee(bool valeur) => AnnonceRecue(
+    id: id,
+    titre: titre,
+    texte: texte,
+    publieeLe: publieeLe,
+    vue: vue,
+    titreOriginal: titreOriginal,
+    texteOriginal: texteOriginal,
+    langueOriginale: langueOriginale,
+    traduite: traduite,
+    fermee: valeur,
+  );
+}
+
+/// Une page du fil d'annonces (20 par defaut, 50 au plus).
+@immutable
+class PageAnnonces {
+  /// Cree la page.
+  const PageAnnonces({required this.annonces, this.suite});
+
+  /// Une page vide, sans suite.
+  static const PageAnnonces vide = PageAnnonces(annonces: <AnnonceRecue>[]);
+
+  /// Les annonces, de la plus recente a la plus ancienne.
+  final List<AnnonceRecue> annonces;
+
+  /// Le curseur de la page suivante (a passer en `avant`) ; `null` : fin.
+  final DateTime? suite;
 }
 
 /// Les annonces de la direction vers des publics, et le fil de la personne.
@@ -198,11 +256,24 @@ abstract interface class PortAnnoncesDirection {
     required String cleIdempotence,
   });
 
-  /// Les annonces recues par la personne connectee (adulte ou candidat).
-  Future<List<AnnonceRecue>> mesAnnonces();
+  /// Une page des annonces recues par la personne connectee (adulte ou
+  /// candidat) : [limite] (20, 50 au plus) annonces publiees avant [avant]
+  /// (`null` : les plus recentes). [fermees] faux : seulement les annonces
+  /// non fermees (« الكل », accueil) ; vrai : toutes (« الإعلانات »).
+  Future<PageAnnonces> mesAnnonces({
+    int limite = 20,
+    DateTime? avant,
+    bool fermees = false,
+  });
 
   /// Enregistre que la personne a vu l'annonce [id].
   Future<void> marquerVue(String id);
+
+  /// Ferme l'annonce [id] pour la personne (idempotent).
+  Future<void> fermer(String id);
+
+  /// Rouvre l'annonce [id] (« تراجع » ; idempotent).
+  Future<void> rouvrir(String id);
 }
 
 /// Le port tant qu'aucune source n'existe.
@@ -230,11 +301,20 @@ class AnnoncesDirectionIndisponibles implements PortAnnoncesDirection {
   }) => Future<AnnonceConfirmee>.error(manque);
 
   @override
-  Future<List<AnnonceRecue>> mesAnnonces() =>
-      Future<List<AnnonceRecue>>.error(manque);
+  Future<PageAnnonces> mesAnnonces({
+    int limite = 20,
+    DateTime? avant,
+    bool fermees = false,
+  }) => Future<PageAnnonces>.error(manque);
 
   @override
   Future<void> marquerVue(String id) => Future<void>.error(manque);
+
+  @override
+  Future<void> fermer(String id) => Future<void>.error(manque);
+
+  @override
+  Future<void> rouvrir(String id) => Future<void>.error(manque);
 }
 
 /// Le port employe par l'application : neutre par defaut.
@@ -260,11 +340,14 @@ final FutureProviderFamily<AudienceAnnonce, String> audienceAnnonceProvider =
 /// La cle stable d'une combinaison de publics.
 String clePublics(Set<String> publics) => (publics.toList()..sort()).join(',');
 
-/// Les annonces recues par la personne connectee.
-final FutureProvider<List<AnnonceRecue>> mesAnnoncesProvider =
-    FutureProvider<List<AnnonceRecue>>(
-      (Ref ref) => ref.watch(portAnnoncesDirectionProvider).mesAnnonces(),
-    );
+/// Les annonces recues par la personne connectee : la premiere page des
+/// annonces non fermees (accueil, « الكل »). Les ecrans qui paginent ou
+/// montrent les annonces fermees appellent [PortAnnoncesDirection.mesAnnonces].
+final FutureProvider<List<AnnonceRecue>>
+mesAnnoncesProvider = FutureProvider<List<AnnonceRecue>>(
+  (Ref ref) async =>
+      (await ref.watch(portAnnoncesDirectionProvider).mesAnnonces()).annonces,
+);
 
 /// Le nom d'un public, dans la langue courante.
 String libellePublic(String code) {
