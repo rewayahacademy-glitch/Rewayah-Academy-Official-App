@@ -11,13 +11,24 @@ import 'ressort.dart';
 /// lecteur d'ecran ne lit que la valeur courante.
 class NombreRouleaux extends StatefulWidget {
   /// Cree le compteur.
-  const NombreRouleaux(this.valeur, {required this.style, super.key});
+  const NombreRouleaux(
+    this.valeur, {
+    required this.style,
+    super.key,
+    this.miseEnForme,
+  });
 
   /// Le nombre affiche.
   final int valeur;
 
   /// Son style (couleur comprise).
   final TextStyle style;
+
+  /// Comment ecrire le nombre (un separateur de milliers, par exemple). Nul :
+  /// le nombre brut, comme avant.
+  final String Function(int valeur)? miseEnForme;
+
+  String _ecrire(int v) => miseEnForme?.call(v) ?? '$v';
 
   @override
   State<NombreRouleaux> createState() => _EtatNombreRouleaux();
@@ -48,7 +59,11 @@ class _EtatNombreRouleaux extends State<NombreRouleaux>
   Widget build(BuildContext context) {
     final TextStyle style = AppTypography.tabulaire(widget.style);
     final double p = _passage.x;
-    final Widget courant = Text('${widget.valeur}', style: style, maxLines: 1);
+    final Widget courant = Text(
+      widget._ecrire(widget.valeur),
+      style: style,
+      maxLines: 1,
+    );
     if (!enMouvement || _ancienne == null) return courant;
     return ClipRect(
       child: Stack(
@@ -59,7 +74,11 @@ class _EtatNombreRouleaux extends State<NombreRouleaux>
               translation: Offset(0, -p),
               child: Opacity(
                 opacity: (1 - p).clamp(0, 1),
-                child: Text('$_ancienne', style: style, maxLines: 1),
+                child: Text(
+                  widget._ecrire(_ancienne!),
+                  style: style,
+                  maxLines: 1,
+                ),
               ),
             ),
           ),

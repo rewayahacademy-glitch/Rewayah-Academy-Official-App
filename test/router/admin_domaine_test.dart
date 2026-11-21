@@ -77,8 +77,9 @@ void main() {
             ciblesRechercheAdmin(voitDirection: true);
 
         // Les domaines actifs, puis les Communications (sous Operations) et
-        // Le Studio, deux ecrans qu'aucun libelle de domaine ne nomme (COM-F).
-        expect(cibles.length, 9);
+        // Le Studio, deux ecrans qu'aucun libelle de domaine ne nomme (COM-F),
+        // puis « Les chiffres de l'academie » (CHIFFRES-ACADEMIE).
+        expect(cibles.length, 10);
         for (final ({String libelle, String chemin}) cible in cibles) {
           expect(cible.libelle, isNotEmpty);
           expect(cible.chemin, startsWith('/admin'));
