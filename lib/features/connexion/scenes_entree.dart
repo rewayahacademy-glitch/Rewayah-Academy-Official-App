@@ -131,9 +131,7 @@ ScenePraxis sceneEntree(
         ..poser(Expr.sourire);
       await att(250);
       await th.parler(dit.bonjour, g, tenir: 1.2);
-      px
-        ..faire(Geste.pointe)
-        ..regarder(0, 0.9);
+      px.montrer();
       await th.parler(dit.adresseEtPorte, g, tenir: 2);
       px
         ..faire(Geste.aucun)
@@ -145,9 +143,8 @@ ScenePraxis sceneEntree(
       await att(250);
       await th.parler(dit.session, g);
       px
-        ..faire(Geste.pointe)
         ..poser(Expr.sourire)
-        ..regarder(0, 0.9);
+        ..montrer();
       await att(1600);
       px
         ..faire(Geste.aucun)
@@ -164,7 +161,9 @@ ScenePraxis sceneEntree(
         ..poser(Expr.etonne)
         ..regarder(0, 1);
       await att(600);
-      px.faire(Geste.pointe);
+      px
+        ..faire(Geste.pointe)
+        ..regarder(px.vise.dx, px.vise.dy);
       await th.parler(sansArobase ? dit.adresse : dit.adresseIncomplete, g);
       px.poser(Expr.reflexion);
     case SituationEntree.envoi:
@@ -308,9 +307,8 @@ ScenePraxis sceneEntree(
       await att(500);
       await th.parler(dit.serveur, g);
       px
-        ..faire(Geste.pointe)
         ..poser(Expr.sourire)
-        ..regarder(0, 0.9);
+        ..montrer();
       await att(1500);
       px
         ..faire(Geste.aucun)
@@ -336,9 +334,8 @@ ScenePraxis sceneEntree(
       await att(400);
       await th.parler(dit.googleRefuse, g);
       px
-        ..faire(Geste.pointe)
         ..poser(Expr.sourire)
-        ..regarder(0, 0.9);
+        ..montrer();
       await att(1500);
       px
         ..faire(Geste.aucun)

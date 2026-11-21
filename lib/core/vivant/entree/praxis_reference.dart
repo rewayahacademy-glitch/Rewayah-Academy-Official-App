@@ -74,6 +74,13 @@ class Corps {
   bool parle = false, reduit = false;
   Geste geste = Geste.aucun;
   Expr expr = Expr.neutre;
+
+  /// Où il pointe ([Geste.pointe]), donné par la scène : (0, 1), vers le bas, le geste d'origine
+  /// (formulaire sous lui) ; sinon un vecteur unité vers le côté du formulaire (droite ou gauche).
+  Offset vise = const Offset(0, 1);
+
+  /// L'allonge de la main qui montre de côté, du centre du corps au centre de la main.
+  double allonge = 112;
   final math.Random _h = math.Random(7);
 
   late final List<R> _tous = <R>[
@@ -233,6 +240,12 @@ class Corps {
     pendV += 2.5;
   }
 
+  /// Il montre le formulaire : la main pointe vers lui ([vise]) et les pupilles le regardent.
+  void montrer() {
+    faire(Geste.pointe);
+    regarder(vise.dx * 0.9, vise.dy * 0.9);
+  }
+
   void faire(Geste g) {
     geste = g;
     tGeste = 0;
@@ -341,9 +354,23 @@ class Corps {
         dx_ = t < 0.45 ? 58 : 80;
         dy_ = t < 0.45 ? -40 : -100;
       case Geste.pointe:
-        dx_ = 38;
-        dy_ = 100 + math.sin(t * 7).abs() * 5 * a;
-        dz_ = 90;
+        if (vise.dx == 0) {
+          dx_ = 38;
+          dy_ = 100 + math.sin(t * 7).abs() * 5 * a;
+          dz_ = 90;
+        } else {
+          // Le formulaire est à côté : la main de ce côté se tend vers lui, hors du corps.
+          final double portee = allonge + math.sin(t * 7).abs() * 5 * a;
+          if (vise.dx > 0) {
+            dx_ = vise.dx * portee;
+            dy_ = vise.dy * portee;
+            dz_ = 24;
+          } else {
+            gx_ = vise.dx * portee;
+            gy_ = vise.dy * portee;
+            gz_ = 24;
+          }
+        }
       case Geste.gene:
         dx_ = 68;
         dy_ = -58 + math.sin(t * 8) * 3 * a;
@@ -1044,7 +1071,11 @@ void peindrePraxis(Canvas c, Corps s, Offset pied, double largeur, Eclairage ec)
     case Geste.un:
       doigt(md, const Offset(0, -28));
     case Geste.pointe:
-      doigt(md, const Offset(-4, 26));
+      if (s.vise.dx == 0) {
+        doigt(md, const Offset(-4, 26));
+      } else {
+        doigt(s.vise.dx > 0 ? md : mg, s.vise * 27);
+      }
     case Geste.compte:
       doigt(md, const Offset(2, 24));
     case Geste.porte:
