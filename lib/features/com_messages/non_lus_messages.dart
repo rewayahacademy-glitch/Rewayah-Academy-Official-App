@@ -27,7 +27,14 @@ final FutureProvider<int> nonLusMessagesProvider =
         // (20/11/2026) : lu par la lecture legere des non-lus
         // (`com_non_lus_par_objet`), plus par toute la messagerie ; meme
         // compte (les fils metier qui ont au moins un non-lu).
-        return (await lireNonLus(ref.watch(portMessagesMetierProvider))).length;
+        final int n = (await lireNonLus(ref.watch(portMessagesMetierProvider)))
+            .length;
+        // Relecture du 21/11 (M3) : le serveur repond ; la veille peut
+        // rouvrir tout de suite un canal qu'elle avait ferme.
+        if (ref.mounted) {
+          ref.read(lecturesMessagesReussiesProvider.notifier).signaler();
+        }
+        return n;
       } on CapaciteIndisponible {
         return 0;
       } on Object catch (e) {

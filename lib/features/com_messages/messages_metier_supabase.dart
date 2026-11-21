@@ -53,8 +53,10 @@ class MessagesMetierSupabase
     AppelFonction? fonctions,
     http.Client? transport,
     this.sessionOuverte,
-    // ignore: prefer_initializing_formals
-  }) : _fonctions = fonctions,
+    DateTime Function()? horloge,
+  }) : _horloge = horloge ?? DateTime.now,
+       // ignore: prefer_initializing_formals
+       _fonctions = fonctions,
        _transport = transport ?? http.Client();
 
   /// PE-D1 (relecture adverse 2) : vrai tant que la personne a une session,
@@ -64,6 +66,9 @@ class MessagesMetierSupabase
   final bool Function()? sessionOuverte;
 
   final AppelRpc _appel;
+
+  /// L'heure des jonctions et du repli des non-lus (remplacee dans les tests).
+  final DateTime Function() _horloge;
 
   /// IMAGES-MESSAGERIE : les fonctions Edge ; `null` : aucune image.
   final AppelFonction? _fonctions;
@@ -99,12 +104,17 @@ class MessagesMetierSupabase
   /// une seconde lecture en parallele : il attend la fin de celle-ci, puis UNE
   /// lecture suivante, partagee par tous les appels arrives entre-temps. Une
   /// lecture partie avant un changement n'en sert donc jamais un appel arrive
-  /// apres lui, et le serveur ne lit jamais deux fois la messagerie en meme
-  /// temps pour le meme onglet.
+  /// apres lui, et cet adaptateur n'a jamais deux lectures de `com_lister_fils`
+  /// en meme temps (une par fonction de lecture : la liste et les non-lus ont
+  /// chacune leur file).
+  ///
+  /// Relecture du 21/11 (B1) : une lecture qui ne revient pas dans
+  /// [AppDelais.lectureMessagesMax] est abandonnee (erreur de delai) ; sa place
+  /// se libere et la demande suivante relance.
   Future<Object?>? _listeSuivante;
 
   Future<Object?> _listerFils() {
-    final DateTime maintenant = DateTime.now();
+    final DateTime maintenant = _horloge();
     final Future<Object?>? enCours = _listeEnCours;
     if (enCours == null) return _lancerListe();
     if (_listeGeneration == _generation &&
@@ -124,10 +134,10 @@ class MessagesMetierSupabase
     final Future<Object?> lecture = _appel(
       'com_lister_fils',
       const <String, dynamic>{},
-    );
+    ).timeout(AppDelais.lectureMessagesMax);
     _listeEnCours = lecture;
     _listeGeneration = generation;
-    _listeDepart = DateTime.now();
+    _listeDepart = _horloge();
     unawaited(
       lecture.then<void>((Object? _) {}, onError: (Object _) {}).whenComplete(
         () {
@@ -141,21 +151,31 @@ class MessagesMetierSupabase
   /// PERSONNES-PERF : vrai quand le serveur ne connait pas encore
   /// `com_non_lus_par_objet` (migration 20261130968000 pas installee) : les
   /// non-lus se tirent de `com_lister_fils`, comme avant, sans erreur visible.
+  ///
+  /// Relecture du 21/11 (M2) : ce repli n'est pas garde toute la session ;
+  /// apres [AppDelais.reessaiNonLus], la lecture legere est retentee.
   bool _sansNonLus = false;
+  DateTime _sansNonLusDepuis = DateTime.fromMillisecondsSinceEpoch(0);
   Future<List<NonLusFil>>? _nonLusEnCours;
   Future<List<NonLusFil>>? _nonLusSuivante;
+  int _nonLusGeneration = -1;
   DateTime _nonLusDepart = DateTime.fromMillisecondsSinceEpoch(0);
 
   /// Les non-lus seuls (quelques centaines d'octets au lieu de toute la
   /// messagerie), aux memes droits que [fils] ; les memes regles de jonction
-  /// que [_listerFils] : jamais deux lectures en meme temps.
+  /// que [_listerFils] (generation comprise : une demande qui suit un
+  /// « lu » ne rejoint jamais une lecture partie avant lui), et le meme delai.
   @override
   Future<List<NonLusFil>> nonLus() {
+    if (_sansNonLus &&
+        _horloge().difference(_sansNonLusDepuis) >= AppDelais.reessaiNonLus) {
+      _sansNonLus = false;
+    }
     if (_sansNonLus) return fils().then(nonLusDepuisFils);
     final Future<List<NonLusFil>>? enCours = _nonLusEnCours;
     if (enCours == null) return _lancerNonLus();
-    if (DateTime.now().difference(_nonLusDepart) <
-        AppDelais.jonctionListeFils) {
+    if (_nonLusGeneration == _generation &&
+        _horloge().difference(_nonLusDepart) < AppDelais.jonctionListeFils) {
       return enCours;
     }
     return _nonLusSuivante ??= enCours
@@ -167,8 +187,11 @@ class MessagesMetierSupabase
   }
 
   Future<List<NonLusFil>> _lancerNonLus() {
-    _nonLusDepart = DateTime.now();
-    final Future<List<NonLusFil>> lecture = _lireNonLus();
+    _nonLusDepart = _horloge();
+    _nonLusGeneration = _generation;
+    final Future<List<NonLusFil>> lecture = _lireNonLus().timeout(
+      AppDelais.lectureMessagesMax,
+    );
     _nonLusEnCours = lecture;
     unawaited(
       lecture
@@ -187,6 +210,7 @@ class MessagesMetierSupabase
     } on PostgrestException catch (e) {
       if (e.code == 'PGRST202' || e.code == '42883') {
         _sansNonLus = true;
+        _sansNonLusDepuis = _horloge();
         return nonLusDepuisFils(await fils());
       }
       if (estRefusOuAbsence(e)) throw _lecture;

@@ -99,6 +99,7 @@ class _MessagesLegers extends MessagesMetierIndisponibles
   @override
   Future<List<NonLusFil>> nonLus() async {
     legeres += 1;
+    if (_lecturesEchouent) throw StateError('serveur muet');
     return const <NonLusFil>[
       NonLusFil(
         filId: 'f1',
@@ -109,6 +110,10 @@ class _MessagesLegers extends MessagesMetierIndisponibles
     ];
   }
 }
+
+/// Vrai : chaque lecture des non-lus echoue (aucune lecture reussie ne
+/// rouvre le canal : on mesure l'espacement seul).
+bool _lecturesEchouent = false;
 
 class _Mesure {
   int completes = 0;
@@ -224,7 +229,9 @@ void main() {
   );
 
   test('trois echecs sans retour : le canal est ferme, puis rouvert apres '
-      '30 s, 60 s, 120 s...', () {
+      '30 s, 60 s, 120 s... (lectures en echec)', () {
+    _lecturesEchouent = true;
+    addTearDown(() => _lecturesEchouent = false);
     final _Mesure m = _mesurer((FakeAsync t, _Veille v, _Visibilite _) {
       // Le client temps reel retente seul : trois echecs de suite.
       for (int i = 0; i < 3; i++) {
@@ -267,5 +274,129 @@ void main() {
       t.elapse(const Duration(seconds: 1));
     });
     expect(m.legeres, 2);
+  });
+
+  // Relecture adverse du 21/11 : S1 et M3.
+  void monter(
+    void Function(
+      FakeAsync temps,
+      ProviderContainer c,
+      _Veille veille,
+      _Visibilite vue,
+      _MessagesLegers messages,
+    )
+    scenario,
+  ) {
+    fakeAsync((FakeAsync temps) {
+      final StreamController<SessionState> session =
+          StreamController<SessionState>.broadcast();
+      final _Veille veille = _Veille();
+      final _Visibilite vue = _Visibilite();
+      final _MessagesLegers messages = _MessagesLegers();
+      final ProviderContainer c = ProviderContainer(
+        overrides: <Override>[
+          sourceSessionProvider.overrideWithValue(_Source(session)),
+          portVeilleMessagesProvider.overrideWithValue(veille),
+          serviceReseauProvider.overrideWithValue(_Reseau()),
+          portVisibiliteProvider.overrideWithValue(vue),
+          portMessagesMetierProvider.overrideWithValue(messages),
+        ],
+      );
+      c
+        ..listen(sessionProvider, (_, _) {})
+        ..listen(veilleMessagesProvider, (_, _) {})
+        ..listen(nonLusMessagesProvider, (_, _) {});
+      temps.flushMicrotasks();
+      session.add(const SessionState(resolue: true, profileId: 'p1'));
+      temps.elapse(const Duration(seconds: 1));
+      veille.ecoutes.last.add(const CanalMessagesRejoint());
+      temps.elapse(const Duration(seconds: 5));
+      scenario(temps, c, veille, vue, messages);
+      c.dispose();
+      unawaited(session.close());
+    });
+  }
+
+  test('S1 : fil ouvert, le canal retombe et revient dans la minute : relu '
+      'tout de suite', () {
+    monter((
+      FakeAsync t,
+      ProviderContainer c,
+      _Veille v,
+      _Visibilite _,
+      _MessagesLegers m,
+    ) {
+      c.read(filAfficheProvider.notifier).ouvrir('f1');
+      v.ecoutes.last.addError(const ErreurCanalMessages('channelError'));
+      t.elapse(const Duration(seconds: 5));
+      final int avant = m.legeres;
+      v.ecoutes.last.add(const CanalMessagesRejoint());
+      t.elapse(const Duration(seconds: 1));
+      expect(m.legeres, avant + 1);
+    });
+  });
+
+  test('S1 (contre-epreuve) : sans fil ouvert, la relecture attend la fin de '
+      'la fenetre', () {
+    monter((
+      FakeAsync t,
+      ProviderContainer c,
+      _Veille v,
+      _Visibilite _,
+      _MessagesLegers m,
+    ) {
+      v.ecoutes.last.addError(const ErreurCanalMessages('channelError'));
+      t.elapse(const Duration(seconds: 5));
+      final int avant = m.legeres;
+      v.ecoutes.last.add(const CanalMessagesRejoint());
+      t.elapse(const Duration(seconds: 1));
+      expect(m.legeres, avant);
+      t.elapse(const Duration(minutes: 1));
+      expect(m.legeres, greaterThan(avant));
+    });
+  });
+
+  test('M3 : canal ferme par la veille, rouvert tout de suite au retour de '
+      'l\'onglet', () {
+    monter((
+      FakeAsync t,
+      ProviderContainer c,
+      _Veille v,
+      _Visibilite vue,
+      _MessagesLegers _,
+    ) {
+      for (int i = 0; i < 3; i++) {
+        v.ecoutes.last.addError(const ErreurCanalMessages('timedOut'));
+        t.flushMicrotasks();
+      }
+      final int ouvertures = v.ecoutes.length;
+      vue.changer(false);
+      t.elapse(const Duration(seconds: 5));
+      vue.changer(true);
+      t.flushMicrotasks();
+      expect(v.ecoutes.length, ouvertures + 1);
+    });
+  });
+
+  test('M3 : canal ferme par la veille, rouvert tout de suite apres une '
+      'lecture reussie', () {
+    monter((
+      FakeAsync t,
+      ProviderContainer c,
+      _Veille v,
+      _Visibilite _,
+      _MessagesLegers _,
+    ) {
+      for (int i = 0; i < 3; i++) {
+        v.ecoutes.last.addError(const ErreurCanalMessages('timedOut'));
+        t.flushMicrotasks();
+      }
+      final int ouvertures = v.ecoutes.length;
+      t.elapse(const Duration(seconds: 2));
+      expect(v.ecoutes.length, ouvertures);
+      c.read(lecturesMessagesReussiesProvider.notifier).signaler();
+      t.flushMicrotasks();
+      expect(v.ecoutes.length, ouvertures + 1);
+    });
   });
 }

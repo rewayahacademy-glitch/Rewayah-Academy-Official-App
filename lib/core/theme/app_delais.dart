@@ -133,4 +133,14 @@ abstract final class AppDelais {
   /// Le nombre d'echecs du canal des messages laisses au client temps reel
   /// (qui retente seul) avant que la veille espace elle-meme les tentatives.
   static const int echecsCanalAvantPause = 3;
+
+  /// Relecture adverse du 21/11 (B1) : une lecture de la liste des fils ou
+  /// des non-lus qui ne revient pas dans ce delai est abandonnee ; la demande
+  /// suivante relance (sinon la pastille et la liste restaient figees).
+  static const Duration lectureMessagesMax = Duration(seconds: 15);
+
+  /// Relecture adverse du 21/11 (M2) : apres ce delai, l'adaptateur retente la
+  /// lecture legere des non-lus meme s'il etait retombe sur la liste complete
+  /// (la fonction a pu etre installee entre-temps).
+  static const Duration reessaiNonLus = Duration(minutes: 10);
 }

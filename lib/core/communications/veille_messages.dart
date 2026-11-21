@@ -213,9 +213,10 @@ class EtatVeilleMessagesControleur extends Notifier<EtatVeilleMessages> {
   /// Le canal est tombe.
   ///
   /// PERSONNES-PERF (20/11/2026) : le rang ne monte pas. La chute du canal
-  /// n'apporte rien a relire (les ecrans disent seulement « pas en direct ») ;
-  /// les relectures viennent du repli et du retour du canal. Un canal qui
-  /// tombait en boucle faisait relire a chaque chute.
+  /// n'apporte aucun changement du serveur a relire : seul [EtatVeilleMessages.enDirect]
+  /// change, et les ecrans qui le lisent se redessinent (message K-59) ; les
+  /// relectures viennent du repli et du retour du canal. Un canal qui tombait
+  /// en boucle faisait relire a chaque chute.
   void horsDirect() {
     if (!state.enDirect) return;
     state = EtatVeilleMessages(
@@ -237,6 +238,24 @@ class EtatVeilleMessagesControleur extends Notifier<EtatVeilleMessages> {
       dernier: state.dernier,
     );
   }
+}
+
+/// Monte a chaque lecture des messages reussie (non-lus, liste) : la veille
+/// s'en sert pour rouvrir tout de suite un canal qu'elle avait ferme
+/// (relecture du 21/11, M3).
+final NotifierProvider<LecturesMessagesReussies, int>
+lecturesMessagesReussiesProvider =
+    NotifierProvider<LecturesMessagesReussies, int>(
+      LecturesMessagesReussies.new,
+    );
+
+/// Compte les lectures des messages reussies.
+class LecturesMessagesReussies extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  /// Une lecture vient de reussir.
+  void signaler() => state = state + 1;
 }
 
 /// La veille des messages. **Montee par `RewayahApp` seulement**, comme la
@@ -302,8 +321,13 @@ final Provider<void> veilleMessagesProvider = Provider<void>((Ref ref) {
     attente = AppDelais.reouvertureCanalMin;
     horsDirect = false;
     armerRepli();
-    if (fenetreRejointe == null) {
+    // Relecture du 21/11 (S1) : un fil ouvert relit TOUT DE SUITE au retour
+    // du canal (un message envoye pendant la coupure ne doit pas attendre la
+    // fin de la fenetre) ; la fenetre d'une minute ne vaut que sans fil ouvert.
+    final bool filOuvert = ref.read(filAfficheProvider) != null;
+    if (fenetreRejointe == null || filOuvert) {
       etat.enDirect();
+      rejointeEnAttente = false;
       // A la fin de la fenetre, les retours reunis font UNE relecture, qui
       // rouvre une fenetre : jamais plus d'une relecture par fenetre.
       void fermerFenetre() {
@@ -314,7 +338,7 @@ final Provider<void> veilleMessagesProvider = Provider<void>((Ref ref) {
         fenetreRejointe = Timer(AppDelais.rejointeMessagesMin, fermerFenetre);
       }
 
-      fenetreRejointe = Timer(AppDelais.rejointeMessagesMin, fermerFenetre);
+      fenetreRejointe ??= Timer(AppDelais.rejointeMessagesMin, fermerFenetre);
     } else {
       rejointeEnAttente = true;
       etat.enDirectSansRelire();
@@ -383,12 +407,24 @@ final Provider<void> veilleMessagesProvider = Provider<void>((Ref ref) {
       armerRepli();
       return;
     }
-    if (reouvrirAuRetour) {
+    // Relecture du 21/11 (M3) : au retour de l'onglet, un canal ferme par
+    // la veille se rouvre tout de suite, sans attendre la fin de sa pause.
+    if (reouvrirAuRetour || reouverture != null) {
       reouvrirAuRetour = false;
+      reouverture?.cancel();
+      reouverture = null;
       ouvrir();
     }
     if (horsDirect) etat.relire();
     armerRepli();
+  });
+  // Relecture du 21/11 (M3) : une lecture des messages reussie prouve que le
+  // serveur repond ; un canal ferme par la veille se rouvre alors tout de suite.
+  ref.listen<int>(lecturesMessagesReussiesProvider, (int? _, int _) {
+    if (reouverture == null || !visible) return;
+    reouverture?.cancel();
+    reouverture = null;
+    ouvrir();
   });
   ref.onDispose(() {
     repli?.cancel();

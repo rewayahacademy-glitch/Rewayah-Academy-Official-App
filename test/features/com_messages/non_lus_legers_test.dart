@@ -5,9 +5,13 @@
 
 import 'dart:async';
 
+// fake_async vient avec flutter_test (version fixee par le SDK).
+// ignore: depend_on_referenced_packages
+import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/communications/libelles_communication_slang.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/features/com_messages/messages_metier_supabase.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
@@ -138,4 +142,136 @@ void main() {
     expect(fin.last.single.attention.nonLus, 2);
     expect(auPlus, 1);
   });
+
+  test('B1 : une lecture qui ne revient jamais est abandonnee apres le delai ; '
+      'la demande suivante relance et revient', () {
+    fakeAsync((FakeAsync temps) {
+      int appels = 0;
+      final MessagesMetierSupabase p = adaptateur((String f, _) {
+        appels += 1;
+        if (appels == 1) return Completer<Object?>().future; // ne revient pas
+        return Future<Object?>.value(<Object?>[
+          <String, Object?>{
+            'fil': _fil,
+            'type': 'candidature',
+            'objet': _candidature,
+            'non_lus': 4,
+          },
+        ]);
+      });
+      Object? erreur;
+      p.nonLus().then(
+        (_) {},
+        onError: (Object e) {
+          erreur = e;
+        },
+      );
+      temps.elapse(AppDelais.lectureMessagesMax);
+      expect(erreur, isA<TimeoutException>());
+      List<NonLusFil>? seconde;
+      p.nonLus().then((List<NonLusFil> n) => seconde = n);
+      temps.flushMicrotasks();
+      expect(appels, 2);
+      expect(seconde!.single.nonLus, 4);
+    });
+  });
+
+  test('B1 : meme regle pour la liste des fils', () {
+    fakeAsync((FakeAsync temps) {
+      int appels = 0;
+      final MessagesMetierSupabase p = adaptateur((String f, _) {
+        appels += 1;
+        if (appels == 1) return Completer<Object?>().future;
+        return Future<Object?>.value(<Object?>[_filComplet(1)]);
+      });
+      Object? erreur;
+      p.fils().then(
+        (_) {},
+        onError: (Object e) {
+          erreur = e;
+        },
+      );
+      temps.elapse(AppDelais.lectureMessagesMax);
+      expect(erreur, isNotNull);
+      List<ResumeFil>? seconde;
+      p.fils().then((List<ResumeFil> f) => seconde = f);
+      temps.flushMicrotasks();
+      expect(seconde, hasLength(1));
+    });
+  });
+
+  test('M1 : une demande juste apres « lu » ne rejoint pas la lecture partie '
+      'avant lui', () async {
+    final List<String> appels = <String>[];
+    final List<Completer<Object?>> reponses = <Completer<Object?>>[];
+    final MessagesMetierSupabase p = adaptateur((String f, _) {
+      appels.add(f);
+      if (f == 'com_marquer_lu') return Future<Object?>.value(null);
+      final Completer<Object?> c = Completer<Object?>();
+      reponses.add(c);
+      return c.future;
+    });
+    final Future<List<NonLusFil>> avant = p.nonLus();
+    await p.marquerLu(_fil);
+    final Future<List<NonLusFil>> apres = p.nonLus();
+    // La seconde attend la fin de la premiere, puis relit (jamais en meme temps).
+    expect(
+      appels.where((String f) => f == 'com_non_lus_par_objet'),
+      hasLength(1),
+    );
+    reponses.first.complete(<Object?>[
+      <String, Object?>{
+        'fil': _fil,
+        'type': 'candidature',
+        'objet': _candidature,
+        'non_lus': 3,
+      },
+    ]);
+    await avant;
+    await pumpEventQueue();
+    expect(
+      appels.where((String f) => f == 'com_non_lus_par_objet'),
+      hasLength(2),
+    );
+    reponses.last.complete(<Object?>[]);
+    expect(await apres, isEmpty);
+  });
+
+  test(
+    'M2 : le repli sur la liste complete est retente apres 10 minutes',
+    () async {
+      DateTime maintenant = DateTime(2026, 11, 21, 10);
+      final List<String> appels = <String>[];
+      bool installee = false;
+      final MessagesMetierSupabase p = MessagesMetierSupabase(
+        (String f, _) async {
+          appels.add(f);
+          if (f == 'com_non_lus_par_objet' && !installee) {
+            throw const PostgrestException(
+              message: 'absente',
+              code: 'PGRST202',
+            );
+          }
+          if (f == 'com_non_lus_par_objet') return <Object?>[];
+          return <Object?>[_filComplet(2)];
+        },
+        libelles: const LibellesCommunicationSlang(),
+        horloge: () => maintenant,
+      );
+      await p.nonLus();
+      installee = true;
+      maintenant = maintenant.add(const Duration(minutes: 9));
+      await p.nonLus();
+      expect(
+        appels.where((String f) => f == 'com_non_lus_par_objet'),
+        hasLength(1),
+      );
+      maintenant = maintenant.add(const Duration(minutes: 2));
+      expect(await p.nonLus(), isEmpty);
+      expect(
+        appels.where((String f) => f == 'com_non_lus_par_objet'),
+        hasLength(2),
+      );
+    },
+  );
 }
