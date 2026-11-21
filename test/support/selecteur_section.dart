@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
@@ -118,7 +119,14 @@ Future<void> choisirSection(WidgetTester tester, String libelle) async {
     await tester.ensureVisible(autresPages);
     await tester.tap(autresPages);
     await tester.pumpAndSettle();
-    await tester.tap(find.text(libelle).last);
+    // PERSONNES-UNE-PAGE (e) : les anciennes listes s'y nomment
+    // « Liste d'avant : … ».
+    final Finder exact = find.text(libelle);
+    await tester.tap(
+      exact.evaluate().isNotEmpty
+          ? exact.last
+          : find.text(t.admin.personnesPage.listeDAvant(nom: libelle)).last,
+    );
     await tester.pumpAndSettle();
     return;
   }
