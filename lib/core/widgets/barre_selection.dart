@@ -28,10 +28,12 @@
 import 'package:flutter/material.dart';
 
 import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
+import 'bouton_icone.dart';
 
 /// La barre de selection : complete (titre, phrase, boutons, a coller en bas de
 /// page) ou, avec [BarreSelection.compacte], sur une seule ligne au-dessus
@@ -51,6 +53,7 @@ class BarreSelection extends StatelessWidget {
     this.avantActions,
     super.key,
   }) : operations = const <Widget>[],
+       uneLigne = false,
        compacte = false;
 
   /// La barre **compacte**, sur une ligne : [titre] (le compte : « 3
@@ -72,11 +75,17 @@ class BarreSelection extends StatelessWidget {
     this.operations = const <Widget>[],
     this.libelleRelacher = '',
     this.phrase = '',
+    this.uneLigne = false,
     super.key,
   }) : libelleAction = null,
        onAction = null,
        avantActions = null,
        compacte = true;
+
+  /// Barre compacte, a l'etroit : le compte, les operations et la croix qui
+  /// relache tout sur une seule rangee (une operation, par exemple un menu),
+  /// au lieu de deux rangees. Faux par defaut : rien ne change ailleurs.
+  final bool uneLigne;
 
   /// Vrai pour la barre sur une ligne ([BarreSelection.compacte]).
   final bool compacte;
@@ -260,13 +269,36 @@ class BarreSelection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: AppSpacing.md,
-                        runSpacing: AppSpacing.xs,
-                        children: <Widget>[compte, deselectionner],
-                      ),
-                      if (operations.isNotEmpty)
+                      if (uneLigne)
+                        // Une seule rangee : le compte, les operations, puis
+                        // la croix qui relache tout (le mot ne tient pas a
+                        // 390 points a cote d'un menu ; il reste dans la voix
+                        // du lecteur d'ecran).
+                        Row(
+                          children: <Widget>[
+                            // Le compte prend la place libre : la croix va
+                            // au bout, les operations restent a leur taille.
+                            Expanded(child: compte),
+                            for (final Widget o in operations) ...<Widget>[
+                              Ecart.hSm,
+                              o,
+                            ],
+                            BoutonIcone(
+                              key: cleRelacher,
+                              icone: AppIcons.fermer,
+                              libelle: relacher,
+                              onPress: onRelacher,
+                            ),
+                          ],
+                        )
+                      else
+                        Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: AppSpacing.md,
+                          runSpacing: AppSpacing.xs,
+                          children: <Widget>[compte, deselectionner],
+                        ),
+                      if (operations.isNotEmpty && !uneLigne)
                         Wrap(
                           crossAxisAlignment: WrapCrossAlignment.center,
                           spacing: AppSpacing.md,

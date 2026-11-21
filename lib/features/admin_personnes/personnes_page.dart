@@ -42,7 +42,9 @@ import 'package:go_router/go_router.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/port_fondateurs.dart';
 import '../../core/admin/service_comptes.dart';
+import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/modeles_lot_candidatures.dart';
 import '../../core/candidature/port_autres_competences.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/domain/enums.dart';
@@ -52,6 +54,8 @@ import '../../core/enseignants/port_enseignants.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/lieu/lieu_direction.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
@@ -61,7 +65,9 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
+import '../../core/widgets/barre_selection.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -71,18 +77,23 @@ import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pied_de_liste.dart';
+import '../../core/widgets/puce_filtre_actif.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../admin_candidature/references_dossiers.dart'
-    show referenceDossierValide;
+import '../admin_candidature/libelles_candidature.dart' show libelleGeste;
+import '../admin_candidature/references_dossiers.dart';
+import '../admin_candidatures/feuille_filtres.dart' show ouvrirFeuilleTri;
 import '../admin_candidatures/libelles_candidatures.dart'
     show etatAffiche, libelleSalle, nomAffiche;
+import '../admin_candidatures/menu_ligne_candidature.dart'
+    show gestesDuMenuLigne, iconeDuGeste;
+import '../admin_candidatures/selection_lot.dart';
 import '../admin_comptes/apercu_compte.dart';
 import '../admin_comptes/gestes_compte.dart';
 import '../admin_comptes/liste_comptes.dart';
 import '../admin_enseignants/enseignants_page.dart'
-    show libellePhase, motAttend;
+    show gestesDeLot, gestesDuMenuEnseignant, libellePhase, motAttend;
 import '../com_messages/apercu_profil_candidat.dart'
     show apercuCandidatureProvider;
 import '../foyer/photo_eleve.dart';
@@ -151,10 +162,13 @@ typedef ListeVue = ({
 
 /// La vue « Actifs » sans phase choisie : chaque phase de [phasesActives] est
 /// lue au serveur (`lister_enseignants` ne filtre qu'une phase a la fois), en
-/// entier, puis les lignes se suivent phase par phase. La cle : le texte
-/// cherche.
+/// entier, puis les lignes se suivent phase par phase (le tri vaut dans
+/// chaque phase). La cle : le texte cherche et le tri.
 final enseignantsActifsProvider = FutureProvider.autoDispose
-    .family<PageEnseignants, String>((Ref ref, String recherche) async {
+    .family<PageEnseignants, ({String recherche, TriEnseignants tri})>((
+      Ref ref,
+      ({String recherche, TriEnseignants tri}) demande,
+    ) async {
       // Une seule ligne par dossier : une personne qui change de phase entre
       // deux lectures serait rendue par deux phases. La derniere lue gagne,
       // a sa place la plus recente.
@@ -166,7 +180,11 @@ final enseignantsActifsProvider = FutureProvider.autoDispose
           final PageEnseignants lue = await ref.watch(
             pageEnseignantsProvider(
               RequeteEnseignants(
-                filtre: FiltreEnseignants(recherche: recherche, phase: phase),
+                filtre: FiltreEnseignants(
+                  recherche: demande.recherche,
+                  phase: phase,
+                ),
+                tri: demande.tri,
                 page: page,
               ),
             ).future,
@@ -299,12 +317,90 @@ class PersonnesPage extends ConsumerStatefulWidget {
   /// La cle de la liste.
   static const Key cleListe = ValueKey<String>('personnes-liste');
 
+  /// La cle du bouton « Trier par ».
+  static const Key cleTri = ValueKey<String>('personnes-tri');
+
+  /// La cle de la barre du lot (dossiers retenus).
+  static const Key cleBarreLot = ValueKey<String>('personnes-barre-lot');
+
+  /// La cle de l'operation d'un geste du lot.
+  static Key cleOperationLot(GesteLot geste) =>
+      ValueKey<String>('personnes-lot-${geste.name}');
+
+  /// La cle de la barre des comptes choisis.
+  static const Key cleBarreComptes = ValueKey<String>(
+    'personnes-barre-comptes',
+  );
+
+  /// La cle de « Supprimer » de la barre des comptes choisis.
+  static const Key cleSupprimerComptes = ValueKey<String>(
+    'personnes-supprimer-comptes',
+  );
+
+  /// La cle du menu « ... » d'une ligne.
+  static Key cleMenuLigne(String cle) =>
+      ValueKey<String>('personnes-menu-$cle');
+
   @override
   ConsumerState<PersonnesPage> createState() => _PersonnesPageEtat();
 }
 
-class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
+class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
+    with GesteDeLigneEtat<PersonnesPage> {
   Map<String, String> get requete => widget.requete;
+
+  /// Etape (f) point 2 : les dossiers retenus pour un lot (onglet des
+  /// enseignants), gardes d'une page a l'autre (`selection_lot.dart`).
+  final SelectionLot<LigneEnseignant> _lot = SelectionLot<LigneEnseignant>();
+
+  /// Les comptes choisis pour une suppression (les autres onglets).
+  final Map<String, CompteAdmin> _choisis = <String, CompteAdmin>{};
+
+  /// Les references des dossiers d'enseignant, par profil ; vide tant
+  /// qu'elles ne sont pas lues.
+  Map<String, String> _references = const <String, String>{};
+
+  /// Le compte de chaque dossier dont la reference est connue.
+  Map<String, CompteAdmin> _compteParReference = const <String, CompteAdmin>{};
+
+  /// Les villes des enseignants, par profil.
+  Map<String, LieuEnseignantDirection> _lieux =
+      const <String, LieuEnseignantDirection>{};
+
+  /// Ce qui designe la liste affichee : l'adresse sans la personne choisie ni
+  /// la page.
+  static String _cleDeListe(Map<String, String> requete) {
+    final List<String> cles = <String>[
+      for (final String k in requete.keys)
+        if (k != 'element' && k != 'page') k,
+    ]..sort();
+    return cles.map((String k) => '$k=${requete[k]}').join('&');
+  }
+
+  /// Un onglet, une vue, un filtre, une recherche ou un tri qui change retire
+  /// la selection, et le dit (DECISION-LISTES §6 : jamais en silence).
+  @override
+  void didUpdateWidget(PersonnesPage ancien) {
+    super.didUpdateWidget(ancien);
+    if (_cleDeListe(ancien.requete) == _cleDeListe(widget.requete)) return;
+    final bool memeOnglet =
+        OngletPersonnes.depuis(ancien.requete['onglet']) == _onglet;
+    if (!_lot.estVide) {
+      _lot.relacherTout();
+      retourLigne = memeOnglet && _onglet == OngletPersonnes.enseignants
+          ? t.admin.candidatures.lot.selectionRetiree
+          : null;
+    }
+    if (_choisis.isNotEmpty) {
+      _choisis.clear();
+      _bilan = memeOnglet
+          ? BilanSuppression.message(
+              t.admin.comptes.retrait.selectionRetiree,
+              alerte: false,
+            )
+          : null;
+    }
+  }
 
   void Function(String chemin, String identifiant)? get ouvrirDossier =>
       widget.ouvrirDossier;
@@ -329,13 +425,24 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
     });
   }
 
-  /// Supprime [c] apres sa confirmation (le geste de la page « Comptes »).
-  Future<void> _supprimer(CompteAdmin c) async {
-    if (_suppressionEnCours) return;
+  /// Marque la ville de [c] comme verifiee ; la phrase apres la reponse.
+  Future<void> _verifierVille(CompteAdmin c) async {
+    final String message = await verifierVilleDuCompte(ref, c);
+    if (!mounted) return;
+    setState(() => _retour = null);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) setState(() => _retour = message);
+    });
+  }
+
+  /// Supprime [comptes] apres sa confirmation (le geste de la page
+  /// « Comptes »).
+  Future<void> _supprimer(List<CompteAdmin> comptes) async {
+    if (_suppressionEnCours || comptes.isEmpty) return;
     final BilanSuppression? bilan = await supprimerComptes(
       context,
       ref,
-      <CompteAdmin>[c],
+      comptes,
       onDebut: () => setState(() {
         _suppressionEnCours = true;
         _bilan = null;
@@ -345,6 +452,8 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
     setState(() {
       _suppressionEnCours = false;
       _bilan = bilan;
+      // Rien n'est parti (hors connexion avant l'envoi) : la selection reste.
+      if (!bilan.avantEnvoi) _choisis.clear();
     });
   }
 
@@ -354,8 +463,9 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
   List<EntreeAction> _gestesCompte(
     BuildContext context,
     CompteAdmin c,
-    VueComptes vue,
-  ) {
+    VueComptes vue, {
+    bool dossier = true,
+  }) {
     final Set<String>? fondateurs = ref.watch(fondateursProvider).value;
     final bool suppressionOfferte =
         DataCollection.enTableau(context) ||
@@ -370,8 +480,17 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
           unawaited(_poserFondateur(c, fondateur: fondateur)),
       onSupprimer:
           suppressionOfferte && compteSupprimable(c) && !_suppressionEnCours
-          ? () => unawaited(_supprimer(c))
+          ? () => unawaited(_supprimer(<CompteAdmin>[c]))
           : null,
+      // « Ouvrir le dossier », « Verifier la ville » (ceux de « Comptes »).
+      propres: gestesDossierEtVille(
+        context,
+        c,
+        references: _references,
+        lieux: _lieux,
+        onVerifierVille: () => unawaited(_verifierVille(c)),
+        dossier: dossier,
+      ),
     );
   }
 
@@ -389,13 +508,19 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
     int? page,
     Map<String, String>? filtres,
     String? recherche,
+    String? tri,
     bool sansHistorique = false,
   }) {
     final OngletPersonnes o = onglet ?? _onglet;
     // Changer d'onglet, de vue, de filtre ou de recherche revient a la
     // premiere page.
     final bool autreListe = onglet != null || vue != null;
-    final bool neuf = autreListe || filtres != null || recherche != null;
+    final bool neuf =
+        autreListe || filtres != null || recherche != null || tri != null;
+    // Le tri pose reste, sauf sur une autre liste ; vide : l'ordre par defaut.
+    final String ordre = autreListe
+        ? ''
+        : tri ?? requete[cleTriPersonnes] ?? '';
     final int p = neuf ? 1 : (page ?? _page);
     // Un autre onglet ou une autre vue oublie filtres et recherche : ils ne
     // sont pas les siens.
@@ -415,6 +540,7 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
         if (p > 1) 'page': '$p',
         if (q.isNotEmpty) cleRecherchePersonnes: q,
         ...f,
+        if (ordre.isNotEmpty) cleTriPersonnes: ordre,
         'element': ?element,
       },
     ).toString();
@@ -447,6 +573,10 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
       dossier.reference,
       fileDeLaListe: <String, String>{
         ...fileDeLaVue(_vue, _filtresPoses, phaseDeLaLigne: phase),
+        // Le dossier suit la liste dans son ordre.
+        if (requete[cleTriPersonnes] case final String ordre
+            when ordre.isNotEmpty && _vue != VueEnseignants.pieces)
+          cleTriPersonnes: ordre,
         if (_page > 1) 'page': '$_page',
       },
     );
@@ -479,6 +609,7 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
       case VueEnseignants.candidats:
         final RequeteCandidatures r = RequeteCandidatures(
           filtre: filtreCandidatsDe(filtres, recherche),
+          tri: triCandidatsDe(requete[cleTriPersonnes]),
           page: _page,
         );
         return (
@@ -528,9 +659,19 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
           recherche,
         );
         final bool fusion = vue == VueEnseignants.actifs && f.phase == null;
-        final RequeteEnseignants r = RequeteEnseignants(filtre: f, page: _page);
+        final TriEnseignants ordre = triEnseignantsDe(requete[cleTriPersonnes]);
+        final RequeteEnseignants r = RequeteEnseignants(
+          filtre: f,
+          tri: ordre,
+          page: _page,
+        );
         final AsyncValue<PageEnseignants> lue = fusion
-            ? ref.watch(enseignantsActifsProvider(f.rechercheNette))
+            ? ref.watch(
+                enseignantsActifsProvider((
+                  recherche: f.rechercheNette,
+                  tri: ordre,
+                )),
+              )
             : ref.watch(pageEnseignantsProvider(r));
         return (
           valeur: lue.whenData(
@@ -560,6 +701,32 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
     final bool ens = onglet == OngletPersonnes.enseignants;
     final VueEnseignants vueEns = _vue;
     final bool candidats = ens && vueEns == VueEnseignants.candidats;
+    final CapacitesCandidatures caps =
+        ref.watch(capacitesCandidaturesProvider).value ??
+        CapacitesCandidatures.aucune;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Etape (f) point 2 : la reference du dossier de chaque compte qui peut
+    // porter une candidature d'enseignant (« Ouvrir le dossier »), et, pour
+    // l'onglet des enseignants, le compte de chaque dossier (ses gestes de
+    // compte) et sa ville.
+    _references = comptes.hasValue
+        ? ref
+                  .watch(
+                    referencesDossiersProvider(
+                      profilsAvecDossierPossible(comptes.requireValue),
+                    ),
+                  )
+                  .value ??
+              const <String, String>{}
+        : const <String, String>{};
+    _compteParReference = <String, CompteAdmin>{
+      for (final CompteAdmin c in comptes.value ?? const <CompteAdmin>[])
+        if (_references[c.profilId] case final String reference) reference: c,
+    };
+    _lieux = ens
+        ? ref.watch(lieuxEnseignantsProvider).value ??
+              const <String, LieuEnseignantDirection>{}
+        : const <String, LieuEnseignantDirection>{};
     final List<TypeFiltrePersonnes> types = typesDeFiltre(
       onglet,
       vue: vueEns,
@@ -735,6 +902,8 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
         : comptes.value
               ?.where((CompteAdmin c) => VueComptes.de(c).contains(vue))
               .toList(growable: false);
+    final String? ordreBrut = requete[cleTriPersonnes];
+    final TriComptes? triComptes = vue == null ? null : triComptesDe(ordreBrut);
     final List<CompteAdmin>? gardes = deLaVue == null
         ? null
         : filtrerComptes(
@@ -742,7 +911,91 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
             filtres: filtres,
             recherche: recherche,
             maintenant: DateTime.now(),
+            tri: triComptes,
           );
+    // Le tri : un seul bouton « Trier par », et l'ordre pose dit en puce,
+    // comme un filtre (jamais un ordre qu'on ne voit pas).
+    final rTri = t.admin.candidatures.tri;
+    final k = t.admin.comptes;
+    Widget? boutonTri;
+    String? ordrePose;
+    if (candidats) {
+      final TriCandidatures ordre = triCandidatsDe(ordreBrut);
+      boutonTri = BoutonIcone(
+        key: PersonnesPage.cleTri,
+        icone: AppIcons.triNeutre,
+        libelle: rTri.titre,
+        onPress: () => unawaited(
+          ouvrirFeuilleTri(
+            context,
+            lire: () => ordre,
+            poser: (TriCandidatures choisi) => _aller(
+              context,
+              tri: choisi == TriCandidatures.activite ? '' : choisi.name,
+            ),
+          ),
+        ),
+      );
+      ordrePose = switch (ordre) {
+        TriCandidatures.activite => null,
+        TriCandidatures.recente => rTri.reception,
+        TriCandidatures.ancienne => rTri.anciennete,
+        TriCandidatures.nom => k.colonnePersonne,
+      };
+    } else if (ens && vueEns != VueEnseignants.pieces) {
+      final TriEnseignants ordre = triEnseignantsDe(ordreBrut);
+      boutonTri = MenuActions(
+        key: PersonnesPage.cleTri,
+        libelle: rTri.titre,
+        icone: AppIcons.triNeutre,
+        actions: <EntreeAction>[
+          EntreeAction(
+            libelle: rTri.activite,
+            onChoix: () => _aller(context, tri: ''),
+          ),
+          EntreeAction(
+            libelle: rTri.reception,
+            onChoix: () => _aller(context, tri: TriEnseignants.recente.name),
+          ),
+        ],
+      );
+      ordrePose = switch (ordre) {
+        TriEnseignants.activite => null,
+        TriEnseignants.recente => rTri.reception,
+        TriEnseignants.nom => k.colonnePersonne,
+      };
+    } else if (vue != null) {
+      String colonne(ChampTriComptes c) => switch (c) {
+        ChampTriComptes.nom => k.colonnePersonne,
+        ChampTriComptes.etat => k.colonneEtat,
+        ChampTriComptes.inscrit => k.colonneAttente,
+      };
+      boutonTri = MenuActions(
+        key: PersonnesPage.cleTri,
+        libelle: rTri.titre,
+        icone: AppIcons.triNeutre,
+        actions: <EntreeAction>[
+          // Le cycle de la page « Comptes » : croissant, decroissant, plus
+          // de tri (`TriComptes.suivant`).
+          for (final ChampTriComptes c in ChampTriComptes.values)
+            EntreeAction(
+              libelle: colonne(c),
+              onChoix: () => _aller(
+                context,
+                tri:
+                    adresseDuTriComptes(TriComptes.suivant(triComptes, c)) ??
+                    '',
+              ),
+            ),
+        ],
+      );
+      ordrePose = triComptes == null
+          ? null
+          : triComptes.croissant
+          ? colonne(triComptes.champ)
+          : p.triInverse(colonne: colonne(triComptes.champ));
+    }
+
     final Widget barre = BarreFiltresPersonnes(
       types: types,
       filtres: filtres,
@@ -770,9 +1023,84 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
           _aller(context, recherche: texte, sansHistorique: true);
         }
       },
-      onToutEffacer: () =>
-          _aller(context, filtres: const <String, String>{}, recherche: ''),
+      onToutEffacer: () => _aller(
+        context,
+        filtres: const <String, String>{},
+        recherche: '',
+        tri: '',
+      ),
+      tri: boutonTri,
+      triActif: ordrePose == null
+          ? null
+          : FiltreActif(
+              libelle: p.puce(type: rTri.titre, valeur: ordrePose),
+              onRetirer: () => _aller(context, tri: ''),
+            ),
     );
+    // Etape (f) point 2 : la barre de ce qui est retenu (dossiers pour un
+    // lot, comptes pour une suppression). Celle des comptes : a partir de 640
+    // points elle tient sur une ligne et reste collee sous la liste ; au
+    // telephone elle vient dans le fil, en tete (comme dans « Comptes »).
+    final List<LignePersonne> lignesLues =
+        listeAffichee?.value?.lignes ?? const <LignePersonne>[];
+    Widget? barreSelection;
+    if (ens && !_lot.estVide) {
+      barreSelection = BarreLot(
+        cleBarre: PersonnesPage.cleBarreLot,
+        nombre: _lot.nombre,
+        surLaPage: lignesLues
+            .where(
+              (LignePersonne l) =>
+                  l.dossier != null && _lot.contient(l.dossier!.id),
+            )
+            .length,
+        capacites: caps,
+        horsLigne: horsLigne,
+        // Candidats : tous les gestes du lot que les capacites ouvrent ; les
+        // autres vues : ceux que toutes les lignes retenues permettent.
+        gestes: candidats ? GesteLot.values : gestesDeLot(_lot.lignes.values),
+        parTranches: candidats,
+        onRelacher: () => setState(_lot.relacherTout),
+        onLancer: (GesteLot g) => unawaited(
+          lancerLotDeLaSelection<LigneEnseignant>(
+            context,
+            selection: _lot,
+            geste: g,
+            capacites: caps,
+            onRapport: (RapportLot rapport) {
+              if (!mounted) return;
+              liste?.relire();
+              setState(() => retourLigne = _lot.apresRapport(rapport));
+            },
+            onAucunEligible: (List<String> ids) {
+              if (mounted) setState(() => _lot.reporterEnFin(ids));
+            },
+          ),
+        ),
+        cleOperation: PersonnesPage.cleOperationLot,
+      );
+    } else if (vue != null && _choisis.isNotEmpty) {
+      barreSelection = BarreSuppressionComptes(
+        cleBarre: PersonnesPage.cleBarreComptes,
+        cleSupprimer: PersonnesPage.cleSupprimerComptes,
+        nombre: _choisis.length,
+        surLaPage:
+            gardes
+                ?.where((CompteAdmin c) => _choisis.containsKey(c.profilId))
+                .length ??
+            _choisis.length,
+        enCours: _suppressionEnCours,
+        onRelacher: () => setState(_choisis.clear),
+        onSupprimer: () => unawaited(_supprimer(_choisis.values.toList())),
+      );
+    }
+    // La barre du lot reste collee en bas a toute largeur (comme dans la file
+    // des candidatures) : en tete, au telephone, elle cacherait la liste.
+    final bool barreCollee =
+        (ens && !_lot.estVide) ||
+        MediaQuery.sizeOf(context).width >= BarreSelection.largeurCoteACote;
+    final TextStyle discret = AppPalette.of(context).inkMuted
+        .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle());
     // Les onglets, les vues (enseignants), puis la recherche et le filtre :
     // toujours a la meme place, que la liste se lise, soit vide ou pleine.
     final Widget entete = Column(
@@ -791,17 +1119,72 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
           )
         else
           barre,
-        // Etape (f) : ce qu'un geste sur un compte vient de donner (coche
-        // « fondateur », suppression), dans le fil, au-dessus de la liste.
-        if (vue != null) LocalFeedback(message: _retour),
-        if (vue != null)
-          if (_bilan case final BilanSuppression bilan) ...<Widget>[
-            VueBilanSuppression(
-              bilan: bilan,
-              onFermer: () => setState(() => _bilan = null),
+        if (!barreCollee && barreSelection != null) ...<Widget>[
+          barreSelection,
+          Ecart.vSm,
+        ],
+        // « Selectionner la page », puis « Selectionner les N resultats »
+        // (candidats : le serveur rend tous les resultats du filtre).
+        if (ens && !_lot.estVide && listeAffichee?.value != null) ...<Widget>[
+          LigneSelectionTous<LigneEnseignant>(
+            selection: _lot,
+            idsDeLaPage: <String>[
+              for (final LignePersonne l in lignesLues)
+                if (_retenable(l)) l.dossier!.id,
+            ],
+            total: listeAffichee!.requireValue.total,
+            onRetenirPage: () => setState(() {
+              for (final LignePersonne l in lignesLues) {
+                if (_retenable(l)) _lot.retenir(l.dossier!.id, l.enseignant);
+              }
+              _lot.oublierTous();
+            }),
+            onRetenirTous: candidats
+                ? () => unawaited(_retenirTous(filtres, recherche))
+                : null,
+          ),
+          Ecart.vSm,
+        ],
+        // Le dossier qui se lit avant un geste du menu d'une ligne, son
+        // echec en mots, puis ce que le serveur a repondu.
+        if (ouvertureLigne case final String nom) ...<Widget>[
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.admin.candidatures.liste.ouverture(nom: nom),
+              style: discret,
             ),
-            Ecart.vSm,
-          ],
+          ),
+          Ecart.vSm,
+        ],
+        if (echecLigne case final String echec) ...<Widget>[
+          LocalFeedback(message: echec),
+          Ecart.vSm,
+        ],
+        if (retourLigne case final String retour) ...<Widget>[
+          LocalFeedback(message: retour),
+          Ecart.vSm,
+        ],
+        // Etape (f) : ce qu'un geste sur un compte vient de donner (coche
+        // « fondateur », ville, suppression), dans le fil, au-dessus de la
+        // liste.
+        LocalFeedback(message: _retour),
+        if (_bilan case final BilanSuppression bilan) ...<Widget>[
+          VueBilanSuppression(
+            bilan: bilan,
+            onFermer: () => setState(() => _bilan = null),
+          ),
+          Ecart.vSm,
+        ],
+        // Au-dela du plafond, « Supprimer » n'est pas propose : on dit
+        // pourquoi.
+        if (_choisis.length > plafondSuppressionComptes) ...<Widget>[
+          Text(
+            t.admin.comptes.retrait.tropGrand(n: '$plafondSuppressionComptes'),
+            style: discret,
+          ),
+          Ecart.vSm,
+        ],
       ],
     );
 
@@ -905,7 +1288,87 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
         ),
       ],
       defilante: false,
+      actions: barreCollee ? barreSelection : null,
       child: corps,
+    );
+  }
+
+  /// Vrai quand la ligne peut etre retenue pour un lot : un candidat, ou un
+  /// enseignant dont le serveur annonce au moins un geste groupable.
+  bool _retenable(LignePersonne l) =>
+      l.dossier != null &&
+      l.piece == null &&
+      (l.enseignant == null || l.enseignant!.gestesGroupables.isNotEmpty);
+
+  /// « Selectionner les N resultats » de la vue « Candidats ».
+  Future<void> _retenirTous(
+    Map<String, String> filtres,
+    String recherche,
+  ) async {
+    final PortCandidaturesDirection? port = ref.read(
+      portCandidaturesDirectionProvider,
+    );
+    if (port == null) return;
+    final String cle = _cleDeListe(requete);
+    await retenirTousLesResultats<LigneEnseignant>(
+      selection: _lot,
+      port: port,
+      filtre: filtreCandidatsDe(filtres, recherche),
+      tri: triCandidatsDe(requete[cleTriPersonnes]),
+      // La liste a change pendant la lecture : la reponse ne vaut plus.
+      encoreCourant: () => _cleDeListe(requete) == cle,
+      maj: setState,
+      monte: () => mounted,
+    );
+  }
+
+  /// Le menu « ... » d'un dossier (candidat ou enseignant) : « Ouvrir le
+  /// dossier », les gestes que le serveur permet (ceux des anciennes listes),
+  /// puis ceux de son compte quand il en a un (ville, coche « fondateur »,
+  /// suppression). Les gestes qui retirent en dernier.
+  Widget _menuDossier(
+    BuildContext contexte,
+    LignePersonne l, {
+    required CapacitesCandidatures capacites,
+    required bool horsLigne,
+    required VoidCallback relire,
+    required VoidCallback ouvrir,
+  }) {
+    final LigneCandidature d = l.dossier!;
+    // Hors ligne : seul le dossier s'ouvre, aucun geste n'est propose.
+    final List<GesteCandidature> gestes = horsLigne
+        ? const <GesteCandidature>[]
+        : l.enseignant != null
+        ? gestesDuMenuEnseignant(l.enseignant!)
+        : gestesDuMenuLigne(d, capacites);
+    final CompteAdmin? c = _compteParReference[d.reference];
+    final List<EntreeAction> duCompte = c == null || horsLigne
+        ? const <EntreeAction>[]
+        : _gestesCompte(contexte, c, VueComptes.enseignants, dossier: false);
+    EntreeAction entree(GesteCandidature g) => EntreeAction(
+      libelle: libelleGeste(g),
+      icone: iconeDuGeste(g),
+      destructif: g.destructif,
+      onChoix: () =>
+          unawaited(jouerGesteDeLigne(d, g, capacites, relire: relire)),
+    );
+    return MenuActions(
+      key: PersonnesPage.cleMenuLigne(l.cle),
+      points: true,
+      objet: l.nom,
+      actions: <EntreeAction>[
+        EntreeAction(
+          libelle: t.admin.candidatures.liste.ouvrirDossier,
+          icone: AppIcons.dossiers,
+          onChoix: ouvrir,
+        ),
+        for (final GesteCandidature g in gestes)
+          if (!g.destructif) entree(g),
+        ...duCompte.where((EntreeAction g) => !g.destructif),
+        for (final GesteCandidature g in gestes)
+          if (g.destructif) entree(g),
+        ...duCompte.where((EntreeAction g) => g.destructif),
+      ],
     );
   }
 
@@ -921,6 +1384,21 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
     int decalage = 0,
     int? total,
   }) {
+    final CapacitesCandidatures caps =
+        ref.watch(capacitesCandidaturesProvider).value ??
+        CapacitesCandidatures.aucune;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool suppressionOfferte =
+        DataCollection.enTableau(context) ||
+        !AppMetriques.of(context).estEnfant;
+    // La case n'existe que si une operation groupee peut aboutir (LISTES-1) :
+    // un lot que le serveur ouvre, ou une suppression.
+    final bool lot = caps.peutAgirEnLot && lignes.any(_retenable);
+    final bool suppression =
+        suppressionOfferte &&
+        lignes.any(
+          (LignePersonne l) => l.compte != null && compteSupprimable(l.compte!),
+        );
     final String? element = requete['element'];
     final int rang = lignes.indexWhere((LignePersonne l) => l.cle == element);
     final LignePersonne? choisie = rang < 0 ? null : lignes[rang];
@@ -982,20 +1460,77 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage> {
                 ? (LignePersonne l) => l.cle == element
                 : null,
             piedCollant: pied,
-            // Etape (f) : le menu d'actions d'un compte, en fin de ligne,
-            // hors de la cible de la ligne (la ligne entiere reste cliquable).
-            // Une seule colonne, jugee sur toute la liste.
+            // Etape (f) point 2 : la case de chaque ligne qu'une operation
+            // groupee peut prendre (jamais une case grisee).
+            selection: lot || suppression
+                ? SelectionCollection<LignePersonne>(
+                    estCochee: (LignePersonne l) => l.compte != null
+                        ? _choisis.containsKey(l.compte!.profilId)
+                        : l.dossier != null && _lot.contient(l.dossier!.id),
+                    estCochable: (LignePersonne l) => l.compte != null
+                        ? suppression && compteSupprimable(l.compte!)
+                        : lot && _retenable(l),
+                    onBasculer: (LignePersonne l) => setState(() {
+                      if (l.compte case final CompteAdmin c) {
+                        _bilan = null;
+                        if (_choisis.remove(c.profilId) == null) {
+                          _choisis[c.profilId] = c;
+                        }
+                      } else {
+                        retourLigne = null;
+                        _lot.basculer(l.dossier!.id, l.enseignant);
+                      }
+                    }),
+                    // « Cocher la page » : la page visible seulement.
+                    onBasculerPage: (bool cocher) => setState(() {
+                      for (final LignePersonne l in lignes) {
+                        if (l.compte case final CompteAdmin c) {
+                          if (!suppression || !compteSupprimable(c)) continue;
+                          _bilan = null;
+                          if (cocher) {
+                            _choisis[c.profilId] = c;
+                          } else {
+                            _choisis.remove(c.profilId);
+                          }
+                        } else if (lot && _retenable(l)) {
+                          if (cocher) {
+                            _lot.retenir(l.dossier!.id, l.enseignant);
+                          } else {
+                            _lot.relacher(l.dossier!.id);
+                          }
+                        }
+                      }
+                      _lot.oublierTous();
+                    }),
+                    libelleLigne: (LignePersonne l) => l.nom,
+                  )
+                : null,
+            // Etape (f) : le menu d'actions en fin de ligne, hors de la cible
+            // de la ligne (la ligne entiere reste cliquable). Une seule
+            // colonne, jugee sur toute la liste. Un dossier (candidat,
+            // enseignant) a toujours « Ouvrir le dossier ».
             actionsLigne:
                 lignes.any(
                   (LignePersonne l) =>
-                      l.compte != null &&
-                      _gestesCompte(
-                        context,
-                        l.compte!,
-                        _onglet.vue!,
-                      ).isNotEmpty,
+                      (l.dossier != null && l.piece == null) ||
+                      (l.compte != null &&
+                          _gestesCompte(
+                            context,
+                            l.compte!,
+                            _onglet.vue!,
+                          ).isNotEmpty),
                 )
                 ? (BuildContext contexte, LignePersonne l) {
+                    if (l.dossier != null && l.piece == null) {
+                      return _menuDossier(
+                        contexte,
+                        l,
+                        capacites: caps,
+                        horsLigne: horsLigne,
+                        relire: relire,
+                        ouvrir: () => toucherLigne(l),
+                      );
+                    }
                     final List<EntreeAction> gestes = l.compte == null
                         ? const <EntreeAction>[]
                         : _gestesCompte(contexte, l.compte!, _onglet.vue!);

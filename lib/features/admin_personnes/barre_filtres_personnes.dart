@@ -40,8 +40,17 @@ class BarreFiltresPersonnes extends StatefulWidget {
     required this.onToutEffacer,
     this.affiches,
     this.total,
+    this.tri,
+    this.triActif,
     super.key,
   });
+
+  /// Le bouton « Trier par » de la liste, ou `null`.
+  final Widget? tri;
+
+  /// Le tri pose, dit en puce comme un filtre (retirable), ou `null` :
+  /// l'ordre par defaut.
+  final FiltreActif? triActif;
 
   /// Les types de filtre de l'onglet ouvert.
   final List<TypeFiltrePersonnes> types;
@@ -196,6 +205,7 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
             libelle: p.puce(type: x.libelle, valeur: valeur),
             onRetirer: () => widget.onFiltre(x.cle, null),
           ),
+      ?widget.triActif,
     ];
     final int? n = widget.affiches;
     final int? total = widget.total;
@@ -233,11 +243,14 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
           // Une vue sans type de filtre n'a pas de bouton « Filtrer par ».
           if (widget.types.isNotEmpty)
             Align(alignment: AlignmentDirectional.centerStart, child: menu),
+          if (widget.tri case final Widget tri)
+            Align(alignment: AlignmentDirectional.centerStart, child: tri),
         ] else
           Row(
             children: <Widget>[
               Expanded(child: champ),
               if (widget.types.isNotEmpty) ...<Widget>[Ecart.hSm, menu],
+              if (widget.tri case final Widget tri) ...<Widget>[Ecart.hSm, tri],
             ],
           ),
         Ecart.vSm,

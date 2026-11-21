@@ -27,14 +27,17 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/lieu/lieu_direction.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bandeau_attention.dart';
+import '../../core/widgets/barre_selection.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/menu_actions.dart';
+import '../admin_candidature/references_dossiers.dart';
 import '../mfa_controleur/double_verification.dart';
 import 'liste_comptes.dart';
 
@@ -43,6 +46,151 @@ const Key cleBilanSuppression = ValueKey<String>('comptes-bilan-suppression');
 
 /// La cle de « Fermer » du bilan.
 const Key cleFermerBilanSuppression = ValueKey<String>('comptes-bilan-fermer');
+
+/// Une suppression porte sur ce nombre de comptes au plus.
+const int plafondSuppressionComptes = 200;
+
+/// Etape (f) point 2 : les profils dont on demande la reference de dossier
+/// (ceux qui peuvent porter une candidature d'enseignant).
+ProfilsDemandes profilsAvecDossierPossible(List<CompteAdmin> comptes) =>
+    ProfilsDemandes(<String>[
+      for (final CompteAdmin c in comptes)
+        if (c.role == AppRole.teacher || c.role == AppRole.guardian) c.profilId,
+    ]);
+
+/// Vrai quand la ligne ouvre un dossier : celui de la candidature
+/// d'enseignant quand sa reference est connue (PE-C1), sinon « Fichiers a
+/// valider » pour une piece a verifier.
+bool ouvreUnDossier(CompteAdmin c, Map<String, String> references) =>
+    references.containsKey(c.profilId) ||
+    (c.role == AppRole.teacher && c.piece == EtatPiece.aVerifier);
+
+/// Ouvre le dossier de [c] : l'ecran du dossier (sa reference), ou « Fichiers
+/// a valider » sans reference connue (l'identifiant du profil en `extra`,
+/// jamais dans l'adresse).
+void ouvrirDossierDuCompte(
+  BuildContext context,
+  CompteAdmin c,
+  Map<String, String> references,
+) {
+  final String? reference = references[c.profilId];
+  final String chemin = cheminDossierDuProfil(reference);
+  unawaited(
+    reference == null
+        ? GoRouter.of(context).push<void>(chemin, extra: c.profilId)
+        : GoRouter.of(context).push<void>(chemin),
+  );
+}
+
+/// Vrai quand la ville d'un enseignant attend la verification de la direction.
+bool villeAVerifier(
+  CompteAdmin c,
+  Map<String, LieuEnseignantDirection> lieux,
+) => c.role == AppRole.teacher && (lieux[c.profilId]?.verifie ?? true) == false;
+
+/// Marque la ville de [c] comme verifiee. Rend la phrase a dire, apres la
+/// reponse du serveur.
+Future<String> verifierVilleDuCompte(WidgetRef ref, CompteAdmin c) async {
+  try {
+    await ref.read(portLieuDirectionProvider).verifier(c.profilId);
+    ref
+      ..invalidate(lieuxEnseignantsProvider)
+      ..invalidate(incoherencesLieuProvider);
+    return t.lieu.villeVerifiee(deNom: deDevant(c.libelle));
+  } on Object {
+    return t.lieu.verifierEchec;
+  }
+}
+
+/// Les gestes propres a un compte qui a un dossier ou une ville a verifier :
+/// « Ouvrir le dossier », « Verifier la ville ».
+List<EntreeAction> gestesDossierEtVille(
+  BuildContext context,
+  CompteAdmin c, {
+  required Map<String, String> references,
+  required Map<String, LieuEnseignantDirection> lieux,
+  required VoidCallback onVerifierVille,
+  bool dossier = true,
+}) => <EntreeAction>[
+  if (dossier && ouvreUnDossier(c, references))
+    EntreeAction(
+      // PE-C1 : le dossier du candidat quand sa reference est connue ;
+      // sinon la piece a verifier, comme avant.
+      libelle: references.containsKey(c.profilId)
+          ? t.admin.candidatures.liste.ouvrirDossier
+          : t.admin.comptes.actionOuvrirDossier,
+      icone: AppIcons.dossiers,
+      onChoix: () => ouvrirDossierDuCompte(context, c, references),
+    ),
+  if (villeAVerifier(c, lieux))
+    EntreeAction(
+      libelle: t.lieu.verifier(deNom: deDevant(c.libelle)),
+      icone: AppIcons.controleQualite,
+      onChoix: onVerifierVille,
+    ),
+];
+
+/// La barre des comptes choisis : leur nombre (« dont N sur cette page »),
+/// « Supprimer », jamais au-dela du plafond.
+class BarreSuppressionComptes extends StatelessWidget {
+  /// Cree la barre.
+  const BarreSuppressionComptes({
+    required this.nombre,
+    required this.surLaPage,
+    required this.enCours,
+    required this.onRelacher,
+    required this.onSupprimer,
+    this.cleBarre,
+    this.cleSupprimer,
+    super.key,
+  });
+
+  /// Le nombre de comptes choisis.
+  final int nombre;
+
+  /// Ceux de la page affichee.
+  final int surLaPage;
+
+  /// Une suppression est partie.
+  final bool enCours;
+
+  /// Relache la selection.
+  final VoidCallback onRelacher;
+
+  /// Supprime les comptes choisis.
+  final VoidCallback onSupprimer;
+
+  /// La cle de la barre elle-meme.
+  final Key? cleBarre;
+
+  /// La cle de « Supprimer ».
+  final Key? cleSupprimer;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.admin.comptes.retrait;
+    return BarreSelection.compacte(
+      key: cleBarre,
+      titre: surLaPage == nombre
+          ? r.retenus(n: nombre)
+          : r.retenusPage(n: nombre, p: '$surLaPage'),
+      onRelacher: onRelacher,
+      operations: <Widget>[
+        if (nombre <= plafondSuppressionComptes)
+          ActionPrincipale(
+            key: cleSupprimer,
+            libelle: r.supprimerSelection(n: nombre),
+            niveau: NiveauAction.destructive,
+            compacte: true,
+            pleineLargeur: false,
+            enCours: enCours,
+            // Un envoi en cours ignore le second toucher.
+            onPress: onSupprimer,
+          ),
+      ],
+    );
+  }
+}
 
 /// L2 des listes (constat du directeur, 01/11/2026) : une ligne « En
 /// attente » d'une demande d'admission porte l'action qui la debloque.
