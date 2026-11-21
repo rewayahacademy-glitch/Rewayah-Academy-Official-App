@@ -2,7 +2,14 @@
 
 Statuts permis : `pas commencé`, `en cours` (branche), `PR ouverte` (numéro), `dans main` (numéro),
 `prouvé par le directeur` (date). Aucun autre mot. Une case n'est cochée que « prouvée par le
-directeur en production ». Compte du 20/11/2026 (22:30 UTC) : sur 61 lots, **1 prouvé par le directeur** (PE-A5, connexion par lien), 22 dans `main`, 14 en partie, 23 pas commencés, 1 arrêté, 1 écarté. **Attention : la colonne « Statut » des tables ci-dessous date de 11:40 UTC ; pour les lots livrés depuis (PE-A1, A5, A6, A8, B1, B4, B5, B8, C1, C2, C4, C10, D1, D3, D12, E3, F8 en partie), la section « État de reprise du 20/11/2026, 22 h UTC » en bas de ce fichier fait foi, et la page lisible est à jour.** Réserve connue de la PR 661 : la notification « pièce déposée » porte la référence du candidat à toute la direction sans filtre de genre ; à corriger avant d'ajouter une seconde personne à la direction.
+directeur en production ».
+
+**21/11/2026 : le pilote de ce parcours est arrêté par le directeur. L'état qui fait foi, et ce qui
+reste des maquettes (écrans de chargement et de mise à jour avec Praxis, écarts du tableau de bord,
+icônes, mouvement, interface de l'enseignant…), est dans `RESTE-A-FAIRE.md`, à lire avant tout. Les
+tables ci-dessous ne sont plus tenues à jour ; voir aussi la section « Arrêt du pilote » en bas.**
+
+Compte du 20/11/2026 (22:30 UTC) : sur 61 lots, **1 prouvé par le directeur** (PE-A5, connexion par lien), 22 dans `main`, 14 en partie, 23 pas commencés, 1 arrêté, 1 écarté. **Attention : la colonne « Statut » des tables ci-dessous date de 11:40 UTC ; pour les lots livrés depuis (PE-A1, A5, A6, A8, B1, B4, B5, B8, C1, C2, C4, C10, D1, D3, D12, E3, F8 en partie), la section « État de reprise du 20/11/2026, 22 h UTC » en bas de ce fichier fait foi, et la page lisible est à jour.** Réserve connue de la PR 661 : la notification « pièce déposée » porte la référence du candidat à toute la direction sans filtre de genre ; à corriger avant d'ajouter une seconde personne à la direction.
 La même check-liste, lisible par le directeur : https://claude.ai/artifact/BibtoazPWBr75CoQUyAXQv
 
 Détail de chaque lot : `PLAN.md` (le paragraphe entre parenthèses). Hors périmètre, sur ordre du
@@ -214,3 +221,23 @@ Rien de ce qui suit n'est prouvé par le directeur en production.
 **Message du directeur aux inscrits élèves (20/11)** : envoyé par courriel depuis la boîte de l'académie à 20 personnes (toutes les demandes d'inscription sauf la plus ancienne, déjà connue), en arabe et anglais pour les noms écrits en arabe, en anglais et français pour les autres. Deux adresses figurent dans la feuille des candidats enseignants et un nom correspond à une candidature d'enseignant : réponses à guetter. Aucun dossier transféré.
 
 **À retirer quand la lettre aux candidats (PR 665, autre session) sera fusionnée** : la ligne « La paie d'un enseignant : s'affichera ici… » de « À savoir », que la lettre contredit.
+
+## Arrêt du pilote, 21/11/2026 vers 08 h UTC
+
+Le directeur : « Il est temps d'arrêter. Tu consommes trop mais tu n'avances pas vite. » Tous les agents
+du pilote sont arrêtés, aucun rappel programmé.
+
+**Fusionné dans la nuit du 20 au 21/11 (rien n'est prouvé par le directeur)** : #666 (PE-B3), #667
+(PE-B10 première moitié, `kyc-confirme` redéployée), #670 à #682 (page unique « Personnes » : ligne
+entière, retours, une page à onglets, aperçu du candidat, filtre unique, vues de l'onglet Enseignants,
+gestes des comptes, sélection et lot, revue de la pièce), #671 (page d'entrée à l'ordinateur), #672 et
+#673 (vitesse de la base : trois migrations installées le 21/11 entre 02 h 44 et 02 h 51 UTC ; lecture
+des conversations 0,27 s en moyenne, 0 échec, contre 1,5 s et 407 échecs la veille), #675 (« Les chiffres
+de l'académie », migration `20261130969500_chiffres_academie` installée à 04 h 31 UTC, version
+enregistrée `20261121043144`, droits vérifiés : `authenticated` seul, cache sans droit client).
+
+**Confié à la session « Informations salaires enseignants »** : mettre en ligne la branche
+`claude/personnes-menu` (tête 81212522 : menu réduit, menu « Outils », retours vers Personnes, fil
+d'Ariane, notifications ; conflit à résoudre dans `test/capture/personnes_page_capture_test.dart`).
+
+**Tout le reste** : `RESTE-A-FAIRE.md`.
