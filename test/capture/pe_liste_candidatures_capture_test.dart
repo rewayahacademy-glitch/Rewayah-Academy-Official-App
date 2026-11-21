@@ -45,6 +45,7 @@ import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart
 import 'package:rewayah_academy/features/com_messages/non_lus_messages.dart';
 
 import '../fixtures/candidature/faux_candidatures_direction.dart';
+import '../support/barre_lot.dart';
 import '../support/demo/recrutement_demo.dart';
 import '../support/harnais.dart';
 import 'outil_capture.dart';
@@ -255,7 +256,11 @@ void main() {
         );
         debugPrint('PNG ${await capturer(tester, '2b_barre_${g.$1}')}');
         await tester.tap(
-          find.byKey(CandidaturesPage.cleOperationLot(GesteLot.admettre)),
+          await operationDeLot(
+            tester,
+            CandidaturesPage.cleOperationLot(GesteLot.admettre),
+            GesteLot.admettre,
+          ),
         );
         await stabiliser(tester);
         debugPrint(

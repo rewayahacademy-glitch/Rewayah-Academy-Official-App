@@ -266,7 +266,9 @@ void main() {
     expect(
       find.descendant(
         of: find.byKey(PersonnesPage.cleListe),
-        matching: find.byType(MenuActions),
+        matching: find.byWidgetPredicate(
+          (Widget w) => w is MenuActions && w.points,
+        ),
       ),
       findsOneWidget,
     );

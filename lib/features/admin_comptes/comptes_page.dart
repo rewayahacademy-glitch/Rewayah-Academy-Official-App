@@ -9,7 +9,6 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/port_fondateurs.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/domain/enums.dart';
-import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/pays_iso.dart' show nomDuPays;
 import '../../core/i18n/strings.g.dart';
@@ -19,7 +18,6 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/barre_selection.dart';
@@ -178,7 +176,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
 
   /// Le serveur supprime au plus 200 comptes par appel
   /// (`direction_supprimer_comptes`).
-  static const int _plafondSuppression = 200;
+  static const int _plafondSuppression = plafondSuppressionComptes;
 
   /// Une suppression est partie et n'a pas encore de reponse.
   bool _suppressionEnCours = false;
@@ -404,12 +402,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         ? ref
                   .watch(
                     referencesDossiersProvider(
-                      ProfilsDemandes(<String>[
-                        for (final CompteAdmin c in comptes.requireValue)
-                          if (c.role == AppRole.teacher ||
-                              c.role == AppRole.guardian)
-                            c.profilId,
-                      ]),
+                      profilsAvecDossierPossible(comptes.requireValue),
                     ),
                   )
                   .value ??
@@ -1297,23 +1290,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   }
 
   /// Vrai quand la ville d'un enseignant attend la verification de la
-  /// direction.
+  /// direction (`villeAVerifier`, partage avec la page « Personnes »).
   bool _villeAVerifier(CompteAdmin c) =>
-      _vue == VueComptes.enseignants &&
-      c.role == AppRole.teacher &&
-      (_lieux[c.profilId]?.verifie ?? true) == false;
+      _vue == VueComptes.enseignants && villeAVerifier(c, _lieux);
 
   Future<void> _verifierVille(CompteAdmin c) async {
-    String message;
-    try {
-      await ref.read(portLieuDirectionProvider).verifier(c.profilId);
-      ref
-        ..invalidate(lieuxEnseignantsProvider)
-        ..invalidate(incoherencesLieuProvider);
-      message = t.lieu.villeVerifiee(deNom: deDevant(c.libelle));
-    } on Object {
-      message = t.lieu.verifierEchec;
-    }
+    final String message = await verifierVilleDuCompte(ref, c);
     if (!mounted) return;
     setState(() => _retour = null);
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -1326,25 +1308,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// sert pas) : l'entree garde alors son ancienne destination.
   Map<String, String> _references = const <String, String>{};
 
-  /// Vrai quand la ligne ouvre un dossier : celui de la candidature
-  /// d'enseignant quand sa reference est connue (PE-C1), sinon « Fichiers a
-  /// valider » pour une piece a verifier (l'identifiant du profil en `extra`,
-  /// jamais dans l'adresse).
-  bool _ouvreUnDossier(CompteAdmin c) =>
-      _references.containsKey(c.profilId) ||
-      (c.role == AppRole.teacher && c.piece == EtatPiece.aVerifier);
+  /// Vrai quand la ligne ouvre un dossier (`ouvreUnDossier`).
+  bool _ouvreUnDossier(CompteAdmin c) => ouvreUnDossier(c, _references);
 
-  /// Ouvre le dossier de [c] : l'ecran du dossier (sa reference), ou
-  /// « Fichiers a valider » sans reference connue.
-  void _ouvrirDossier(BuildContext context, CompteAdmin c) {
-    final String? reference = _references[c.profilId];
-    final String chemin = cheminDossierDuProfil(reference);
-    unawaited(
-      reference == null
-          ? GoRouter.of(context).push<void>(chemin, extra: c.profilId)
-          : GoRouter.of(context).push<void>(chemin),
-    );
-  }
+  /// Ouvre le dossier de [c] (`ouvrirDossierDuCompte`).
+  void _ouvrirDossier(BuildContext context, CompteAdmin c) =>
+      ouvrirDossierDuCompte(context, c, _references);
 
   /// L2 des listes (constat du directeur, 01/11/2026) : une ligne « En
   /// attente » d'une demande d'admission porte l'action qui la debloque.
@@ -1388,29 +1357,17 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// (« tropGrand ») vont dans le fil, au-dessus de la liste
   /// ([_avisSuppression]).
   Widget? _zoneSuppression() {
-    final r = t.admin.comptes.retrait;
     final int n = _choisis.length;
     if (n == 0) return null;
     final List<CompteAdmin> choisis = _choisis.values.toList();
-    return BarreSelection.compacte(
-      key: ComptesPage.barreSuppressionKey,
-      titre: _choisisSurLaPage == n
-          ? r.retenus(n: n)
-          : r.retenusPage(n: n, p: '$_choisisSurLaPage'),
+    return BarreSuppressionComptes(
+      cleBarre: ComptesPage.barreSuppressionKey,
+      cleSupprimer: ComptesPage.supprimerSelectionKey,
+      nombre: n,
+      surLaPage: _choisisSurLaPage,
+      enCours: _suppressionEnCours,
       onRelacher: () => setState(_choisis.clear),
-      operations: <Widget>[
-        if (n <= _plafondSuppression)
-          ActionPrincipale(
-            key: ComptesPage.supprimerSelectionKey,
-            libelle: r.supprimerSelection(n: n),
-            niveau: NiveauAction.destructive,
-            compacte: true,
-            pleineLargeur: false,
-            enCours: _suppressionEnCours,
-            // Un envoi en cours ignore le second toucher (`_supprimer`).
-            onPress: () => unawaited(_supprimer(choisis)),
-          ),
-      ],
+      onSupprimer: () => unawaited(_supprimer(choisis)),
     );
   }
 
@@ -1539,24 +1496,16 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         onSupprimer: _supprimableIci(c) && !_suppressionEnCours
             ? () => unawaited(_supprimer(<CompteAdmin>[c]))
             : null,
-        propres: <EntreeAction>[
-          if (_ouvreUnDossier(c))
-            EntreeAction(
-              // PE-C1 : le dossier du candidat quand sa reference est connue ;
-              // sinon la piece a verifier, comme avant.
-              libelle: _references.containsKey(c.profilId)
-                  ? t.admin.candidatures.liste.ouvrirDossier
-                  : t.admin.comptes.actionOuvrirDossier,
-              icone: AppIcons.dossiers,
-              onChoix: () => _ouvrirDossier(context, c),
-            ),
-          if (_villeAVerifier(c))
-            EntreeAction(
-              libelle: t.lieu.verifier(deNom: deDevant(c.libelle)),
-              icone: AppIcons.controleQualite,
-              onChoix: () => unawaited(_verifierVille(c)),
-            ),
-        ],
+        propres: gestesDossierEtVille(
+          context,
+          c,
+          references: _references,
+          // La ville ne se verifie que dans la vue des enseignants.
+          lieux: _vue == VueComptes.enseignants
+              ? _lieux
+              : const <String, LieuEnseignantDirection>{},
+          onVerifierVille: () => unawaited(_verifierVille(c)),
+        ),
       );
 
   static String _texteIncoherence(TypeIncoherenceLieu type) => switch (type) {

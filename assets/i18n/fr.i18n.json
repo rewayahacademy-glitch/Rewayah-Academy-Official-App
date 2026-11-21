@@ -4356,6 +4356,7 @@
   },
   "admin": {
     "personnesPage": {
+      "triInverse": "{colonne}, ordre inverse",
       "typeAcces": "Accès",
       "vueCandidats": "Candidats",
       "vueAccueil": "En accueil",
@@ -4484,6 +4485,7 @@
         },
         "dontPage": "dont {n} sur cette page",
         "avecDont": "{selection}, {dont}",
+        "autresActions": "Autres actions",
         "autresGestes": "Les autres gestes se font un par un, depuis la ligne ou le dossier.",
         "refuser": "Refuser",
         "plafond": "Vous pouvez retenir au plus {n} candidatures à la fois.",
