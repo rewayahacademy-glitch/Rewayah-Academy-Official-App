@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/admin/port_bibliotheque_admin.dart';
+import '../../core/admin/port_chiffres_academie.dart';
 import '../../core/admin/port_classes_admin.dart';
 import '../../core/admin/port_fusion_classes.dart';
 import '../../core/admin/port_incidents_seances.dart';
@@ -81,6 +82,7 @@ import 'adulte_demo.dart';
 import 'alertes_demo.dart';
 import 'bibliotheque_admin_demo.dart';
 import 'cartes_classe_demo.dart';
+import 'chiffres_academie_demo.dart';
 import 'classe_demo.dart' show TravailAVenirDemo;
 import 'classe_form_demo.dart';
 import 'classes_admin_demo.dart';
@@ -449,6 +451,9 @@ List<Override> surchargesDemoAdmin({
     ),
     portIncidentsSeancesProvider.overrideWithValue(
       const IncidentsSeancesDemo(),
+    ),
+    portChiffresAcademieProvider.overrideWithValue(
+      ChiffresAcademieDemo(maintenant: () => e.maintenant),
     ),
     portPilotageProvider.overrideWithValue(
       PilotageDemo(

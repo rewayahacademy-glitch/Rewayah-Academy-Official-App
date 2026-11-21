@@ -16,6 +16,7 @@ library;
 import 'package:flutter/foundation.dart';
 
 import '../../core/admin/service_comptes.dart';
+<<<<<<< HEAD
 import '../../core/candidature/modeles_autres_competences.dart'
     show CatalogueCompetences;
 import '../../core/candidature/modeles_candidatures_direction.dart'
@@ -27,11 +28,19 @@ import '../admin_candidatures/adresse_candidatures.dart';
 import '../admin_comptes/liste_comptes.dart';
 import '../admin_enseignants/enseignants_page.dart' show libellePhase;
 import 'filtres_candidats.dart';
+=======
+import '../../core/domain/enums.dart';
+import '../../core/enseignants/modeles_enseignants.dart';
+import '../../core/i18n/strings.g.dart';
+import '../admin_comptes/liste_comptes.dart';
+import '../admin_enseignants/enseignants_page.dart' show libellePhase;
+>>>>>>> origin/main
 import 'personnes_page.dart';
 
 /// Le parametre d'adresse de la recherche.
 const String cleRecherchePersonnes = 'q';
 
+<<<<<<< HEAD
 /// PERSONNES-UNE-PAGE (d) : les vues de l'onglet des enseignants (directeur,
 /// 20/11/2026 : « dans "enseignant" tu sais qu'il y a des candidats, et
 /// ensuite les vrais enseignants, a toi de voir comment classer cela »).
@@ -74,6 +83,8 @@ const List<PhaseEnseignant> phasesActives = <PhaseEnseignant>[
   PhaseEnseignant.suspendu,
 ];
 
+=======
+>>>>>>> origin/main
 /// Une valeur d'un type de filtre.
 typedef ValeurFiltre = ({String code, String libelle});
 
@@ -85,6 +96,7 @@ class TypeFiltrePersonnes {
     required this.cle,
     required this.libelle,
     required this.valeurs,
+<<<<<<< HEAD
     this.famille,
     this.multiple = false,
   });
@@ -97,6 +109,10 @@ class TypeFiltrePersonnes {
   /// l'adresse (les jours disponibles).
   final bool multiple;
 
+=======
+  });
+
+>>>>>>> origin/main
   /// Le parametre de l'adresse (`etat`, `classe`, `age`, ...).
   final String cle;
 
@@ -108,6 +124,7 @@ class TypeFiltrePersonnes {
 
   /// Le libelle de [code], ou `null` si ce type ne le connait pas.
   String? libelleDe(String? code) {
+<<<<<<< HEAD
     if (code == null || code.isEmpty) return null;
     if (multiple) {
       final List<String> libelles = <String>[];
@@ -122,11 +139,14 @@ class TypeFiltrePersonnes {
   }
 
   String? _libelleSimple(String code) {
+=======
+>>>>>>> origin/main
     for (final ValeurFiltre v in valeurs) {
       if (v.code == code) return v.libelle;
     }
     return null;
   }
+<<<<<<< HEAD
 
   /// La valeur d'adresse apres le choix de [code] : pour un type [multiple],
   /// [code] s'ajoute a [courante] ou s'en retire (`null` quand il n'en reste
@@ -143,6 +163,8 @@ class TypeFiltrePersonnes {
     ];
     return ordonnes.isEmpty ? null : ordonnes.join(',');
   }
+=======
+>>>>>>> origin/main
 }
 
 /// Les etats de compte qu'on filtre (l'etat inconnu ne se choisit pas).
@@ -162,6 +184,7 @@ const List<AppRole> _rolesEquipe = <AppRole>[
   AppRole.associe,
 ];
 
+<<<<<<< HEAD
 /// Les types de filtre de [onglet], dans l'ordre du menu. Pour les
 /// enseignants, [vue] choisit : les 26 filtres de la file des candidatures
 /// (rangees en familles), la phase pour les actifs, rien pour les autres.
@@ -171,6 +194,10 @@ List<TypeFiltrePersonnes> typesDeFiltre(
   CatalogueCompetences? catalogue,
   bool garderPourSuivi = false,
 }) {
+=======
+/// Les types de filtre de [onglet], dans l'ordre du menu.
+List<TypeFiltrePersonnes> typesDeFiltre(OngletPersonnes onglet) {
+>>>>>>> origin/main
   final k = t.admin.comptes;
   final p = t.admin.personnesPage;
   final TypeFiltrePersonnes etat = TypeFiltrePersonnes(
@@ -222,6 +249,7 @@ List<TypeFiltrePersonnes> typesDeFiltre(
         ],
       ),
     ],
+<<<<<<< HEAD
     OngletPersonnes.enseignants => switch (vue) {
       VueEnseignants.candidats => typesFiltreCandidats(
         catalogue: catalogue,
@@ -241,6 +269,19 @@ List<TypeFiltrePersonnes> typesDeFiltre(
       VueEnseignants.partis ||
       VueEnseignants.pieces => const <TypeFiltrePersonnes>[],
     },
+=======
+    OngletPersonnes.enseignants => <TypeFiltrePersonnes>[
+      TypeFiltrePersonnes(
+        cle: 'phase',
+        libelle: t.admin.listeEnseignants.colonnes.phase,
+        valeurs: <ValeurFiltre>[
+          for (final PhaseEnseignant ph in PhaseEnseignant.values)
+            if (ph != PhaseEnseignant.parti)
+              (code: ph.valeurSql, libelle: libellePhase(ph)),
+        ],
+      ),
+    ],
+>>>>>>> origin/main
   };
 }
 
@@ -248,10 +289,17 @@ List<TypeFiltrePersonnes> typesDeFiltre(
 /// valeurs qu'ils connaissent sont gardes (une adresse ecrite a la main ne
 /// pose jamais un filtre invisible).
 Map<String, String> filtresDeLAdresse(
+<<<<<<< HEAD
   List<TypeFiltrePersonnes> types,
   Map<String, String> requete,
 ) => <String, String>{
   for (final TypeFiltrePersonnes type in types)
+=======
+  OngletPersonnes onglet,
+  Map<String, String> requete,
+) => <String, String>{
+  for (final TypeFiltrePersonnes type in typesDeFiltre(onglet))
+>>>>>>> origin/main
     if (type.libelleDe(requete[type.cle]) != null) type.cle: requete[type.cle]!,
 };
 
@@ -286,15 +334,21 @@ List<CompteAdmin> filtrerComptes(
       .toList(growable: false);
 }
 
+<<<<<<< HEAD
 /// Le filtre du serveur pour une vue des enseignants (hors candidats et
 /// pieces). Pour « Actifs » sans phase choisie, la phase reste `null` : la page
 /// lit alors chaque phase de [phasesActives].
 FiltreEnseignants filtreEnseignantsDe(
   VueEnseignants vue,
+=======
+/// Le filtre du serveur pour l'onglet des enseignants.
+FiltreEnseignants filtreEnseignantsDe(
+>>>>>>> origin/main
   Map<String, String> filtres,
   String recherche,
 ) => FiltreEnseignants(
   recherche: recherche,
+<<<<<<< HEAD
   phase: switch (vue) {
     VueEnseignants.accueil => PhaseEnseignant.accueil,
     VueEnseignants.partis => PhaseEnseignant.parti,
@@ -339,3 +393,9 @@ Map<String, String> fileDeLaVue(
     if (vue == VueEnseignants.partis) 'partis': 'oui',
   },
 };
+=======
+  phase: PhaseEnseignant.values
+      .where((PhaseEnseignant p) => p.valeurSql == filtres['phase'])
+      .firstOrNull,
+);
+>>>>>>> origin/main
