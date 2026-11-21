@@ -280,7 +280,7 @@ void main() {
     expect(find.text(titre), findsOneWidget);
     await taper(
       tester,
-      find.byKey(const ValueKey<String>('notification-demo-depart-forfait')),
+      find.byKey(const ValueKey<String>('cloche-ligne-n-demo-depart-forfait')),
     );
     expect(find.byType(FoyerPage), findsOneWidget);
     expect(

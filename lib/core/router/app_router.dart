@@ -3821,7 +3821,7 @@ class _CoquilleNavigation extends ConsumerWidget {
                   if (cheminCloche != null)
                     ClocheCoquille(
                       actif: surNotifications,
-                      onPress: () => GoRouter.of(contexte).go(cheminCloche),
+                      cheminPage: cheminCloche,
                     ),
                 ],
                 onRetour: ActionsEnteteCoquille.retourDe(contexte),
@@ -3853,7 +3853,7 @@ class _CoquilleNavigation extends ConsumerWidget {
           if (rechercheServie) const LoupeRecherche(),
           ClocheCoquille(
             actif: surNotifications,
-            onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
+            cheminPage: Routes.tuteurNotifications,
           ),
         ],
         // NAV-REFONTE 2b : un seul instant serveur pour toute la coquille du
@@ -3888,7 +3888,7 @@ class _ActionsStudio extends StatelessWidget {
           infobulle: t.nav.compte,
           onPress: () => aller(Routes.compte),
         ),
-        ClocheNotifications(onPress: () => aller(Routes.adminNotifications)),
+        const ClocheCoquille(cheminPage: Routes.adminNotifications),
       ],
       child: child,
     );
@@ -4064,6 +4064,13 @@ class _CoquilleAdmin extends ConsumerWidget {
               ? null
               : () => aller(Routes.adminNotifications),
           notificationsActives: notificationsOuvertes,
+          // CLOCHE-C (21/11/2026) : la cloche ouvre le panneau ou la feuille.
+          clocheNotifications: associe
+              ? null
+              : ClocheCoquille(
+                  actif: notificationsOuvertes,
+                  cheminPage: Routes.adminNotifications,
+                ),
           // PORTS-DIRECTION : le Studio n'est montre que s'il a un serveur.
           onStudio: !associe && ref.watch(studioOuvertProvider)
               ? () => aller(Routes.adminStudio)

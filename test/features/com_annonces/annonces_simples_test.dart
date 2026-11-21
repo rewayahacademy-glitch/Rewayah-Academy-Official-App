@@ -6,7 +6,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/notifications_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_notifications.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -16,6 +15,8 @@ import 'package:rewayah_academy/features/com_annonces/annonces_recues.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces_direction.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
 import 'package:rewayah_academy/features/com_messages/liens_message_staff.dart';
+import 'package:rewayah_academy/features/notifications/cloche/contenu_cloche.dart';
+import 'package:rewayah_academy/features/notifications/cloche/ligne_cloche.dart';
 import 'package:rewayah_academy/features/notifications/contenu_notification.dart';
 
 import '../../capture/outil_capture.dart';
@@ -117,7 +118,10 @@ void main() {
   });
 
   group('fil des annonces recues', () {
-    testWidgets('les annonces, « Nouvelle » sur celle pas vue, comptee vue', (
+    // CLOCHE-C (directeur, 21/11/2026 : « toutes les annonces s'empilent et
+    // ne se ferment jamais ») : plus de pile, la derniere non fermee en une
+    // ligne ; elle n'est comptee vue qu'une fois ouverte.
+    testWidgets('la derniere annonce non fermee, en une ligne', (
       WidgetTester tester,
     ) async {
       final _FilFaux fil = _FilFaux(
@@ -132,41 +136,39 @@ void main() {
             id: 'a2',
             titre: 'Bienvenue',
             texte: 'Texte.',
-            publieeLe: _le,
+            publieeLe: _le.subtract(const Duration(days: 1)),
             vue: true,
           ),
         ],
       );
       await _monterFil(tester, fil);
-      expect(find.text(t.com.annonces.fil.titre), findsOneWidget);
-      expect(find.text('Entretiens'), findsOneWidget);
-      expect(find.text('Bienvenue'), findsOneWidget);
-      expect(find.text(t.com.annonces.fil.nouvelle), findsOneWidget);
-      expect(fil.vues, <String>['a1']);
+      expect(find.byKey(AnnoncesRecues.cleAnnonce('a1')), findsOneWidget);
+      expect(find.byKey(AnnoncesRecues.cleAnnonce('a2')), findsNothing);
+      expect(find.byType(LigneCloche), findsOneWidget);
+      expect(fil.vues, isEmpty);
     });
 
-    // ANNONCE-LIENS (directeur, 21/11/2026 : « le lien n'a pas marche,
-    // c'est du simple texte ») : l'adresse du texte devient une ligne qui
-    // l'ouvre.
-    testWidgets('le lien du texte s ouvre d un toucher', (
-      WidgetTester tester,
-    ) async {
+    // ANNONCE-LIENS : l'adresse du texte devient une ligne qui l'ouvre, dans
+    // le detail de l'annonce, ouvert depuis la cloche.
+    testWidgets('la ligne ouvre la cloche ; le lien du texte s ouvre d un '
+        'toucher', (WidgetTester tester) async {
       final List<Uri> ouverts = <Uri>[];
+      final _FilFaux fil = _FilFaux(
+        recues: <AnnonceRecue>[
+          AnnonceRecue(
+            id: 'a1',
+            titre: 'Guide',
+            texte:
+                'Lisez-le ici : '
+                'https://app.rewayahacademy.com/#/lire/guide-enseignant\n'
+                'Rien a faire.',
+            publieeLe: _le,
+          ),
+        ],
+      );
       await _monterFil(
         tester,
-        _FilFaux(
-          recues: <AnnonceRecue>[
-            AnnonceRecue(
-              id: 'a1',
-              titre: 'Guide',
-              texte:
-                  'Lisez-le ici : '
-                  'https://app.rewayahacademy.com/#/lire/guide-enseignant\n'
-                  'Rien a faire.',
-              publieeLe: _le,
-            ),
-          ],
-        ),
+        fil,
         plus: <Override>[
           ouvreurOngletProvider.overrideWithValue((Uri u) {
             ouverts.add(u);
@@ -174,8 +176,22 @@ void main() {
           }),
         ],
       );
+      await tester.tap(find.byKey(AnnoncesRecues.cleAnnonce('a1')));
+      await tester.pumpAndSettle();
+      expect(find.byType(ContenuCloche), findsOneWidget);
+      await tester.tap(
+        find
+            .descendant(
+              of: find.byKey(ContenuCloche.cleLigne('a-a1')),
+              matching: find.byType(RichText),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+      expect(fil.vues, <String>['a1']);
       final Finder lien = find.byKey(LiensMessageStaff.cle(0));
       expect(lien, findsOneWidget);
+      await tester.ensureVisible(lien);
       await tester.tap(lien);
       await tester.pumpAndSettle();
       expect(ouverts, <Uri>[
@@ -200,11 +216,11 @@ void main() {
       expect(find.byKey(AnnoncesRecues.cle), findsNothing);
     });
 
-    testWidgets('echec : la phrase et Reessayer', (WidgetTester tester) async {
+    testWidgets('echec : rien sur la page, la cloche le dit', (
+      WidgetTester tester,
+    ) async {
       await _monterFil(tester, _FilFaux(erreur: Exception('reseau')));
-      expect(find.text(t.com.annonces.fil.echec), findsOneWidget);
-      expect(find.text(t.commun.etats.actions.reessayer), findsOneWidget);
-      expect(find.byType(CapaciteIndisponible), findsNothing);
+      expect(find.byKey(AnnoncesRecues.cle), findsNothing);
     });
   });
 

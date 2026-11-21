@@ -5,6 +5,7 @@ import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'badge_non_lu.dart' show PastilleNombre;
 import 'pressable.dart';
 
 /// Un segment de [ControleSegmente].
@@ -17,7 +18,33 @@ class Segment<T> {
     this.icone,
     this.apercu,
     this.libelleCourt,
+    this.compteur,
+    this.libelleLu,
   });
+
+  /// CLOCHE-C (pilote, 21/11/2026 : « Annonces (1) » passait sur deux
+  /// lignes) : un nombre pose en pastille compacte apres le libelle (ou sur
+  /// l'icone seule), jamais entre parentheses dans le texte. Nul ou zero :
+  /// aucune pastille.
+  final int? compteur;
+
+  /// Ce que lit le lecteur d'ecran a la place de [libelle] (« Annonces, 1
+  /// non lue ») ; nul : [libelle].
+  final String? libelleLu;
+
+  /// Le meme segment sans icone (le repli sur icones de `SelecteurSection`
+  /// ne les montre qu'a l'etroit).
+  Segment<T> sansIcone() => Segment<T>(
+    valeur: valeur,
+    libelle: libelle,
+    apercu: apercu,
+    libelleCourt: libelleCourt,
+    compteur: compteur,
+    libelleLu: libelleLu,
+  );
+
+  /// Vrai quand une pastille de nombre est posee.
+  bool get aUnCompteur => (compteur ?? 0) > 0;
 
   /// PERSONNES-UNE-PAGE (pilote, 21/11/2026) : un mot court (« Equipe » pour
   /// « Direction et equipe (3) ») pose sous l'icone quand le libelle entier
@@ -256,14 +283,29 @@ class _Segment<T> extends StatelessWidget {
                       Ecart.vXs,
                     ] else if (segment.icone != null) ...<Widget>[
                       ExcludeSemantics(
-                        child: Icon(
-                          selectionne
-                              ? segment.icone!.actif
-                              : segment.icone!.repos,
-                          size: AppSpacing.xl,
-                          color: selectionne
-                              ? palette.washAccent.applyTo(base).color
-                              : palette.inkMuted.applyTo(base).color,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Icon(
+                              selectionne
+                                  ? segment.icone!.actif
+                                  : segment.icone!.repos,
+                              size: AppSpacing.xl,
+                              color: selectionne
+                                  ? palette.washAccent.applyTo(base).color
+                                  : palette.inkMuted.applyTo(base).color,
+                            ),
+                            // CLOCHE-C : l'icone seule garde son nombre, a
+                            // cote d'elle (jamais par-dessus, meme a 200 %).
+                            if (iconeSeule && segment.aUnCompteur) ...<Widget>[
+                              Ecart.hXs,
+                              Flexible(
+                                child: PastilleNombre(
+                                  nombre: segment.compteur!,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                       if (!iconeSeule || motCourt != null) Ecart.vXs,
@@ -298,8 +340,39 @@ class _Segment<T> extends StatelessWidget {
                       Tooltip(
                         message: segment.libelle,
                         child: Semantics(
-                          label: segment.libelle,
+                          label: segment.libelleLu ?? segment.libelle,
                           child: const SizedBox.shrink(),
+                        ),
+                      )
+                    else if (segment.aUnCompteur)
+                      // CLOCHE-C : le libelle et sa pastille sur UNE ligne,
+                      // le libelle se reduit au besoin (jamais coupe).
+                      Semantics(
+                        label: segment.libelleLu ?? segment.libelle,
+                        child: ExcludeSemantics(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              // Une seule ligne : le libelle entier se reduit
+                              // (`SelecteurSection` ne choisit ce rendu que si
+                              // la reduction reste lisible), jamais coupe.
+                              Flexible(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    segment.libelle,
+                                    maxLines: 1,
+                                    softWrap: false,
+                                    style: selectionne
+                                        ? palette.washAccent.applyTo(base)
+                                        : palette.inkMuted.applyTo(base),
+                                  ),
+                                ),
+                              ),
+                              Ecart.hXs,
+                              PastilleNombre(nombre: segment.compteur!),
+                            ],
+                          ),
                         ),
                       )
                     else

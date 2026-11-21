@@ -147,7 +147,7 @@ void main() {
     await taper(
       tester,
       find.byKey(
-        const ValueKey<String>('notification-demo-invitation-forfait'),
+        const ValueKey<String>('cloche-ligne-n-demo-invitation-forfait'),
       ),
     );
     expect(find.byType(InvitationRecuePage), findsOneWidget);
@@ -688,7 +688,7 @@ void main() {
       await taper(tester, find.byType(ClocheNotifications).first);
       expect(
         find.byKey(
-          const ValueKey<String>('notification-demo-invitation-forfait'),
+          const ValueKey<String>('cloche-ligne-n-demo-invitation-forfait'),
         ),
         findsNothing,
       );

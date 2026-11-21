@@ -82,7 +82,13 @@ class AppBottomSheet extends StatefulWidget {
     this.actions,
     this.forme = FormeModale.feuille,
     this.libelleFermer,
+    this.actionTitre,
   });
+
+  /// CLOCHE-C (pilote, 21/11/2026) : une action courte posee sur la rangee
+  /// du titre, au bord de fin, avant la croix (« Tout marquer comme lu »).
+  /// Nulle : rien ne change.
+  final Widget? actionTitre;
 
   /// Le titre de la feuille, en une phrase.
   final String titre;
@@ -224,6 +230,7 @@ class AppBottomSheet extends StatefulWidget {
     Widget Function(BuildContext context)? actions,
     String? libelleFermer,
     bool panneauLateral = false,
+    Widget Function(BuildContext context)? actionTitre,
   }) {
     final AppPalette palette = AppPalette.of(context);
     // WEB-BUREAU (B9, P2 ; M3 bottom sheets : « Use bottom sheets in compact
@@ -345,6 +352,7 @@ class AppBottomSheet extends StatefulWidget {
               forme: forme,
               actions: actions?.call(contexte),
               libelleFermer: libelleFermer,
+              actionTitre: actionTitre?.call(contexte),
               child: constructeur(contexte),
             ),
           ),
@@ -353,6 +361,48 @@ class AppBottomSheet extends StatefulWidget {
     );
     if (rendreBarre == null) return resultat;
     return resultat.whenComplete(rendreBarre);
+  }
+
+  /// CLOCHE-C (directeur, 21/11/2026, decision ANNONCES-NOTIFS regle 1) : un
+  /// panneau FLOTTANT ancre sous un bouton de l'en-tete, sur ordinateur (840
+  /// et plus) : [largeur] (400 pour la cloche), son bord de fin aligne sur
+  /// celui de [ancre] (le debut en arabe), jamais hors de la fenetre ;
+  /// hauteur bornee a la fenetre, il defile seul (seule exception admise au
+  /// defilement de la page : un panneau flottant, comme un menu). Le voile,
+  /// `Echap` et un geste du contenu le ferment. Zoom leger et fondu du
+  /// catalogue (`AppTransitions.zoomDeFenetre`).
+  static Future<T?> ouvrirAncre<T>(
+    BuildContext context, {
+    required Rect ancre,
+    required Widget Function(BuildContext context) constructeur,
+    double largeur = AppPage.largeurVolet,
+    String? libelleFermer,
+    Key? cle,
+  }) {
+    final AppPalette palette = AppPalette.of(context);
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    return showDialog<T>(
+      context: context,
+      barrierLabel: libelleFermer ?? t.commun.fermer,
+      barrierColor: palette.voile,
+      useSafeArea: false,
+      animationStyle: const AnimationStyle(
+        curve: AppMouvement.entree,
+        duration: AppMouvement.feuilleOuverture,
+        reverseCurve: AppMouvement.sortie,
+        reverseDuration: AppMouvement.feuilleFermeture,
+      ),
+      builder: (BuildContext contexte) => _PanneauAncre(
+        cle: cle,
+        ancre: ancre,
+        largeur: largeur,
+        rtl: rtl,
+        child: AppTransitions.zoomDeFenetre(
+          contexte,
+          Builder(builder: constructeur),
+        ),
+      ),
+    );
   }
 
   /// Ouvre une surface de LECTURE modale (visionneuse de piece, AD-7).
@@ -510,14 +560,27 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
     final Widget? croix = _croix(context, palette, parDefaut: pleineFenetre);
     final bool croixEnBarre = croix != null && _deborde && !basse;
     final Widget titre = _titre(surface, textes);
-    final Widget tete = croix == null || croixEnBarre
+    final Widget? action = widget.actionTitre;
+    final Widget tete = (croix == null || croixEnBarre) && action == null
         ? titre
         : Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: action == null
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(child: titre),
-              Ecart.hMd,
-              croix,
+              if (action != null) ...<Widget>[
+                Ecart.hSm,
+                // L'action ne prend jamais plus de 40 % de la rangee : le titre
+                // garde sa place (aucun mot coupe a 200 %).
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                  ),
+                  child: action,
+                ),
+              ],
+              if (croix != null && !croixEnBarre) ...<Widget>[Ecart.hMd, croix],
             ],
           );
     _mesurerApres();
@@ -569,8 +632,37 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
               // La barre fine du haut : la poignee, et la croix quand le
               // contenu deborde (elle ne cache aucune ligne : le corps
               // commence dessous).
-              if (!dialogue || croixEnBarre) ...<Widget>[
-                _barreFine(palette, dialogue, croixEnBarre ? croix : null),
+              // CLOCHE-C : avec une action de titre, la rangee titre, action
+              // et croix reste fixe en haut (sous la poignee), le corps defile
+              // dessous : jamais de croix seule dans la barre fine.
+              if (!dialogue || (croixEnBarre && action == null)) ...<Widget>[
+                _barreFine(
+                  palette,
+                  dialogue,
+                  croixEnBarre && action == null ? croix : null,
+                ),
+                action == null ? Ecart.vLg : Ecart.vSm,
+              ],
+              if (action != null && !basse) ...<Widget>[
+                if (croixEnBarre)
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: titre),
+                      Ecart.hSm,
+                      // L'action ne prend jamais plus de 40 % de la rangee : le titre
+                      // garde sa place (aucun mot coupe a 200 %).
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.sizeOf(context).width * 0.4,
+                        ),
+                        child: action,
+                      ),
+                      Ecart.hMd,
+                      croix,
+                    ],
+                  )
+                else
+                  tete,
                 Ecart.vLg,
               ],
               if (basse) ...<Widget>[tete, Ecart.vLg, corps] else
@@ -585,7 +677,10 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[tete, Ecart.vLg, corps],
+                        children: <Widget>[
+                          if (action == null) ...<Widget>[tete, Ecart.vLg],
+                          corps,
+                        ],
                       ),
                     ),
                   ),
@@ -1140,6 +1235,78 @@ class _SurfaceLecture extends StatelessWidget {
         ombres: AppElevation.niveau3(palette.ombre),
       ),
       child: colonne,
+    );
+  }
+}
+
+/// Le panneau flottant de [AppBottomSheet.ouvrirAncre].
+class _PanneauAncre extends StatelessWidget {
+  const _PanneauAncre({
+    required this.ancre,
+    required this.largeur,
+    required this.rtl,
+    required this.child,
+    this.cle,
+  });
+
+  final Rect ancre;
+  final double largeur;
+  final bool rtl;
+  final Widget child;
+  final Key? cle;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final Size ecran = MediaQuery.sizeOf(context);
+    const double bord = AppSpacing.lg;
+    final double l = largeur < ecran.width - 2 * bord
+        ? largeur
+        : ecran.width - 2 * bord;
+    final double maxGauche = ecran.width - l - bord;
+    final double voulue = rtl ? ancre.left : ancre.right - l;
+    final double gauche = voulue < bord
+        ? bord
+        : (voulue > maxGauche ? maxGauche : voulue);
+    final double haut = ancre.bottom + AppSpacing.sm;
+    final double hauteurMax = ecran.height - haut - bord;
+    return Stack(
+      children: <Widget>[
+        PositionedDirectional(
+          start: rtl ? ecran.width - gauche - l : gauche,
+          top: haut,
+          width: l,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: hauteurMax < AppSpacing.respiration
+                  ? AppSpacing.respiration
+                  : hauteurMax,
+            ),
+            child: Material(
+              key: cle,
+              type: MaterialType.transparency,
+              child: DecoratedBox(
+                decoration: AppElevation.avecFilet(
+                  surface: palette.surfaceRaised,
+                  filet: palette.borderHairline,
+                  ombre: palette.ombre,
+                  arrondi: AppRadius.arrondiMd,
+                  ombres: AppElevation.niveau3(palette.ombre),
+                ),
+                child: ClipRRect(
+                  borderRadius: AppRadius.arrondiMd,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.lg,
+                    ),
+                    child: child,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

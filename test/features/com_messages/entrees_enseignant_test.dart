@@ -42,6 +42,7 @@ import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart' show FauxNotifications;
+import '../../support/cloche.dart';
 import '../../support/demo/enseignant_demo.dart';
 import '../../support/harnais.dart';
 import 'support_messages.dart';
@@ -434,6 +435,7 @@ void main() {
         find.bySemanticsLabel(t.commun.entete.notifications).first,
       );
       await tester.pumpAndSettle();
+      await toucherVoirTout(tester);
       expect(_chemin(routeur), Routes.enseignantNotifications);
       expect(find.byType(NotificationsPage), findsOneWidget);
 

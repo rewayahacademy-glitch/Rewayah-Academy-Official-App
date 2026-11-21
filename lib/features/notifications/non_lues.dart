@@ -9,12 +9,17 @@
 // pour de vrais non-lus : sans source (capacite indisponible), sans lecture
 // encore faite ou en echec, il n'y a pas de point.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/port_notifications.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/halo_compte.dart';
+import 'cloche/annonces_cloche.dart';
+import 'cloche/etat_annonces_cloche.dart';
+import 'cloche/ouvrir_cloche.dart';
 import 'notifications_page.dart';
 
 /// Le nombre de notifications non lues de la personne connectee, `null` tant
@@ -94,22 +99,52 @@ final NotifierProvider<NouveautesVues, Set<String>> nouveautesVuesProvider =
     NotifierProvider<NouveautesVues, Set<String>>(NouveautesVues.new);
 
 /// La cloche posee par une coquille de role : la `ClocheNotifications` du
-/// core, avec le point de [nonLuesProvider]. Un seul endroit decide du point ;
-/// aucune coquille ne le recalcule.
+/// core, avec le point de [nonLuesProvider] et les annonces de l'academie pas
+/// encore vues. Un seul endroit decide du point ; aucune coquille ne le
+/// recalcule.
+///
+/// CLOCHE-C (directeur, 21/11/2026, decision ANNONCES-NOTIFS regle 1) : la
+/// cloche ouvre le panneau ancre (ordinateur) ou la feuille du bas
+/// (telephone) ; « Voir tout » mene a [cheminPage]. Sur la page des
+/// notifications elle-meme ([actif]), elle ne rouvre rien par-dessus.
 class ClocheCoquille extends ConsumerWidget {
   /// Cree la cloche.
-  const ClocheCoquille({required this.onPress, super.key, this.actif = false});
+  const ClocheCoquille({
+    super.key,
+    this.cheminPage,
+    this.onPress,
+    this.actif = false,
+  });
 
-  /// L'ouverture du centre de notifications du role.
-  final VoidCallback onPress;
+  /// La page complete des notifications du role, ou nul (le candidat, qui
+  /// n'en a pas : tout se lit dans le panneau).
+  final String? cheminPage;
+
+  /// Le geste de la cloche sur sa propre page ([actif]) ; nul : aucun.
+  final VoidCallback? onPress;
 
   /// La page des notifications est celle qui est ouverte.
   final bool actif;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => ClocheNotifications(
-    onPress: onPress,
-    actif: actif,
-    nonLues: ref.watch(nonLuesProvider),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final int? notifs = ref.watch(nonLuesProvider);
+    final EtatAnnoncesCloche annonces = ref.watch(
+      annoncesClocheProvider(false),
+    );
+    final Map<String, bool> fermetures = ref.watch(fermeturesClocheProvider);
+    final int annoncesNonVues = annonces.lues
+        .where((AnnonceCloche a) => !a.vue && !(fermetures[a.id] ?? a.fermee))
+        .length;
+    final int? total = notifs == null && annoncesNonVues == 0
+        ? null
+        : (notifs ?? 0) + annoncesNonVues;
+    return ClocheNotifications(
+      onPress: actif
+          ? onPress
+          : () => unawaited(ouvrirCloche(context, cheminPage: cheminPage)),
+      actif: actif,
+      nonLues: total,
+    );
+  }
 }

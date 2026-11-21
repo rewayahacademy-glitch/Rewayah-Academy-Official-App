@@ -105,7 +105,7 @@ void main() {
     await _taper(
       tester,
       find.byKey(
-        const ValueKey<String>('notification-demo-invitation-forfait'),
+        const ValueKey<String>('cloche-ligne-n-demo-invitation-forfait'),
       ),
     );
     expect(find.byType(InvitationRecuePage), findsOneWidget);

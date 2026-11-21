@@ -50,6 +50,7 @@ import 'package:rewayah_academy/features/suivi_foyer/detail_seance_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/observations_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
+import '../support/cloche.dart';
 import '../support/destination_nav.dart';
 import '../support/harnais.dart';
 import 'support_routeur.dart';
@@ -470,6 +471,7 @@ void main() {
         find.bySemanticsLabel(t.commun.entete.notifications).first,
       );
       await _stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(_lieu(routeur), Routes.tuteurNotifications);
 
       routeur = await _monter(

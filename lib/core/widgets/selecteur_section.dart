@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart' show echelleMinimaleLisible;
 import '../theme/app_gabarit.dart';
 import '../theme/app_spacing.dart';
 import 'controle_segmente.dart';
@@ -62,8 +63,16 @@ class SelecteurSection<T> extends StatelessWidget {
     required this.valeur,
     required this.onChange,
     this.menuAuContenu = false,
+    this.iconesEnRepli = false,
     super.key,
   });
+
+  /// CLOCHE-C (pilote, 21/11/2026, apres « le directeur a rejete les filtres
+  /// en menus deroulants », RESTE-A-FAIRE §0 bis) : les icones des sections
+  /// ne se montrent qu'a l'etroit (320, texte agrandi), a la place du menu
+  /// deroulant ; ailleurs, les libelles seuls. Faux par defaut : rien ne
+  /// change ailleurs.
+  final bool iconesEnRepli;
 
   /// Mode opt-in (pilote, 01/11/2026, relecture de la PR 126) : en menu, le
   /// declencheur prend la largeur de son plus long libelle, et non toute la
@@ -105,24 +114,24 @@ class SelecteurSection<T> extends StatelessWidget {
     required double largeur,
     required double largeurLibelleMax,
     required double largeurMotMax,
+    double margeSegment = _margeSegment,
   }) {
     if (nombre > maxSectionsEnLigne) return ModeSelecteurSection.menu;
     final bool telephone = largeur < AppGabarit.seuilTablette;
-    final double largeurNaturelle =
-        nombre * (largeurLibelleMax + _margeSegment);
+    final double largeurNaturelle = nombre * (largeurLibelleMax + margeSegment);
     final bool enUneLigne = largeurNaturelle <= largeur;
 
     if (telephone) {
       if (nombre > maxSegmentsTelephone) return ModeSelecteurSection.menu;
       // Quatre au plus : tout est visible, un libelle peut passer a la ligne
       // a condition que le plus long mot tienne dans sa part de largeur.
-      return nombre * (largeurMotMax + _margeSegment) <= largeur
+      return nombre * (largeurMotMax + margeSegment) <= largeur
           ? ModeSelecteurSection.segmenteComplet
           : ModeSelecteurSection.menu;
     }
     if (enUneLigne) return ModeSelecteurSection.segmenteNaturel;
     if (nombre <= maxSegmentsTelephone &&
-        nombre * (largeurMotMax + _margeSegment) <= largeur) {
+        nombre * (largeurMotMax + margeSegment) <= largeur) {
       return ModeSelecteurSection.segmenteComplet;
     }
     return ModeSelecteurSection.menu;
@@ -169,13 +178,29 @@ class SelecteurSection<T> extends StatelessWidget {
     double libelleMax = 0;
     double motMax = 0;
     for (final Segment<T> section in sections) {
-      final double entier = mesurer(section.libelle);
+      // CLOCHE-C : la pastille du nombre tient sur la ligne du libelle, qui
+      // ne passe plus a la ligne : tout le libelle compte comme un mot.
+      final double pastille = section.aUnCompteur
+          ? mesurer('${section.compteur}') + AppSpacing.lg
+          : 0;
+      final double entier = mesurer(section.libelle) + pastille;
       if (entier > libelleMax) libelleMax = entier;
+      if (section.aUnCompteur) {
+        // Le libelle a pastille se reduit au besoin (jamais sous 0,85,
+        // `TexteSansCoupure`) pour tenir sur sa ligne.
+        final double reduit =
+            mesurer(section.libelle) * echelleMinimaleLisible + pastille;
+        if (reduit > motMax) motMax = reduit;
+        continue;
+      }
       for (final String mot in section.libelle.split(RegExp(r'\s+'))) {
         final double largeurMot = mesurer(mot);
         if (largeurMot > motMax) motMax = largeurMot;
       }
     }
+    final List<Segment<T>> visibles = iconesEnRepli
+        ? <Segment<T>>[for (final Segment<T> s in sections) s.sansIcone()]
+        : sections;
     // Une icone au-dessus du libelle ne change pas la largeur ; la marge de
     // `ControleSegmente` est comptee dans `_margeSegment`.
 
@@ -189,6 +214,12 @@ class SelecteurSection<T> extends StatelessWidget {
           largeur: disponible,
           largeurLibelleMax: libelleMax,
           largeurMotMax: motMax,
+          // CLOCHE-C : un libelle a pastille tient sur une ligne ; sa marge
+          // est celle que `ControleSegmente` peint vraiment (4 de piste et 8
+          // de marge interieure de chaque cote).
+          margeSegment: sections.any((Segment<T> s) => s.aUnCompteur)
+              ? 2 * (AppSpacing.xs + AppSpacing.sm)
+              : _margeSegment,
         );
 
         return Semantics(
@@ -227,12 +258,12 @@ class SelecteurSection<T> extends StatelessWidget {
                 },
               ),
             ),
-            ModeSelecteurSection.segmenteComplet => _segmente(),
+            ModeSelecteurSection.segmenteComplet => _segmente(visibles),
             ModeSelecteurSection.segmenteNaturel => Align(
               alignment: AlignmentDirectional.centerStart,
               child: SizedBox(
                 width: sections.length * (libelleMax + _margeSegment),
-                child: _segmente(),
+                child: _segmente(visibles),
               ),
             ),
           },
@@ -261,8 +292,8 @@ class SelecteurSection<T> extends StatelessWidget {
     return true;
   }
 
-  Widget _segmente() => ControleSegmente<T>(
-    segments: sections,
+  Widget _segmente(List<Segment<T>> segments) => ControleSegmente<T>(
+    segments: segments,
     valeur: valeur,
     onChange: onChange,
   );
