@@ -30,6 +30,7 @@ import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/retour_bureau.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
@@ -113,7 +114,7 @@ class _EtatPage extends ConsumerState<CreneauxEntretienPage> {
       onRetour: () {
         final GoRouter routeur = GoRouter.of(context);
         if (routeur.canPop()) {
-          routeur.pop();
+          retourBureau(context);
         } else {
           routeur.go(Routes.adminPersonnesCandidatures);
         }
