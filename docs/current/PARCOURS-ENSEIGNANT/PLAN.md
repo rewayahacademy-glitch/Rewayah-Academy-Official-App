@@ -101,7 +101,7 @@ document qui prépare l'inscription des élèves ; donner les standards ; arbitr
 ### 2.4 La page d'accueil du candidat (`/attente`)
 
 - Une seule page, **sans barre de navigation** (`app_router.dart:675-760`). Dans l'ordre : entretien
-  proche, **annonces (jusqu'à 5, jamais masquables)**, en-tête, état, prochaine action, relire,
+  proche, **annonces (jusqu'à 5, jamais masquables : **règle abrogée le 21/11/2026**, voir `docs/current/DECISION-ANNONCES-NOTIFS-2026-11-21.md`)**, en-tête, état, prochaine action, relire,
   actualiser, partage, autres talents, messages ; en pied : versement, **retrait**, déconnexion
   (`attente_page.dart:190-334`).
 - 20 personnes demandent « où en est mon dossier » ; 13 veulent **corriger une réponse après
@@ -239,7 +239,7 @@ lu** (`app_router.dart:3910-3911`).
 - Composition : un écran, neuf publics (tous, enseignants, candidats, candidats admis, familles,
   élèves, élèves adultes, femmes, hommes). **Ni personnes précises, ni date d'inscription, ni état
   du dossier.**
-- Lecture : cinq annonces au plus, marquées vues à l'affichage, **jamais masquables**, gardées 90
+- Lecture : cinq annonces au plus, marquées vues à l'affichage, **jamais masquables** (abrogé le 21/11/2026 : une annonce se ferme, `DECISION-ANNONCES-NOTIFS-2026-11-21.md`), gardées 90
   jours. 4 annonces existent en production.
 
 ### 4.3 Pages secondaires et navigation
