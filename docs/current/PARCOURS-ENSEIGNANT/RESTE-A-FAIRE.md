@@ -26,6 +26,30 @@ contredisent une règle écrite. Détail ligne par ligne : `docs/current/CANDIDA
 - Marche à suivre : le directeur tranche chaque ligne (le guide change, ou la règle et le code changent) ; la décision datée va dans la
   source nommée ; puis le code ; la ligne se ferme avec le numéro de PR, et sort de cette section.
 
+## 0 bis. PAGE « PERSONNES » À REFAIRE : le directeur la déteste (21/11/2026, captures en production, 1280 px, arabe)
+
+Directeur, 21/11/2026 : « regarde-moi cette page immonde […] c'est elle qui devait être la meilleure de tout ce que tu as fait
+jusqu'ici. je t'avais dit que c'est mon bureau » ; « j'ai tout détesté ». **Chaque point ci-dessous est un défaut constaté, pas une
+suggestion.** Aucun agent ne déclare cette page faite sans que le directeur l'ait vue et acceptée.
+
+1. **L'aperçu ne sert à rien** : il répète ce que la ligne montre déjà (nom, matricule, âge, classe, tuteur, ancienneté) et ajoute des
+   clics au lieu d'en retirer. Il doit montrer **la photo** (la ligne ne la montre pas, l'aperçu oui), **ce qui manque** au dossier,
+   un **badge vert « Dossier complet »** quand rien ne manque, et **toute la synthèse** nécessaire pour décider et agir **sans ouvrir
+   la page entière** du dossier.
+2. **Le layout est détesté** : liste et aperçu côte à côte avec une liste coupée au milieu de l'écran.
+3. **Liste cassée** : sur un écran d'ordinateur de 14 pouces, la liste ne commence qu'à la moitié de l'écran, sous le titre, deux
+   rangées d'onglets, la recherche, « Filtrer par », le tri, le compteur et l'en-tête de colonnes ; on ne voit que 4 à 5 lignes à la
+   fois. Avec 2 000 personnes, c'est inutilisable. La liste doit occuper l'écran (`DECISION-DEFILEMENT-2026-11-01.md` : la liste est
+   la page, rien de gros collé au-dessus).
+4. **Filtres en menus déroulants, sur la même ligne que les onglets** (ordre déjà donné, « j'avais bien dit drop down menu ») : pas
+   une seconde rangée de vues (Candidats, Accueil, Actifs, Partis, Pièces à vérifier) plus une rangée de recherche et de filtres. Les
+   vues et les filtres deviennent des menus déroulants à côté des onglets.
+5. **« Personnes » inatteignable d'un clic dans la barre réduite** (conséquence de la PR 683) : dans le rail replié, toucher
+   « Personnes » ouvre un menu (Importer, Suppressions) au lieu d'ouvrir la page ; il faut déplier le panneau. « Qui fait ça en
+   2026 ? » Toucher le domaine doit ouvrir la page Personnes ; Importer et Suppressions vont ailleurs (menu « Outils » de la page).
+6. Directeur : « tu n'as pas de connaissances en UX/UI ? » : avant de coder, l'agent cherche des références réelles de bureaux de
+   gestion (liste dense plein écran, panneau latéral riche à la demande), les montre au directeur, puis code.
+
 ## 1. Ce qui reste des MAQUETTES validées, pas encore dans l'application
 
 | Maquette | Ce qui manque | Lot |
