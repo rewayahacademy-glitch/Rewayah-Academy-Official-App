@@ -355,6 +355,48 @@ class AppBottomSheet extends StatefulWidget {
     return resultat.whenComplete(rendreBarre);
   }
 
+  /// CLOCHE-C (directeur, 21/11/2026, decision ANNONCES-NOTIFS regle 1) : un
+  /// panneau FLOTTANT ancre sous un bouton de l'en-tete, sur ordinateur (840
+  /// et plus) : [largeur] (400 pour la cloche), son bord de fin aligne sur
+  /// celui de [ancre] (le debut en arabe), jamais hors de la fenetre ;
+  /// hauteur bornee a la fenetre, il defile seul (seule exception admise au
+  /// defilement de la page : un panneau flottant, comme un menu). Le voile,
+  /// `Echap` et un geste du contenu le ferment. Zoom leger et fondu du
+  /// catalogue (`AppTransitions.zoomDeFenetre`).
+  static Future<T?> ouvrirAncre<T>(
+    BuildContext context, {
+    required Rect ancre,
+    required Widget Function(BuildContext context) constructeur,
+    double largeur = AppPage.largeurVolet,
+    String? libelleFermer,
+    Key? cle,
+  }) {
+    final AppPalette palette = AppPalette.of(context);
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    return showDialog<T>(
+      context: context,
+      barrierLabel: libelleFermer ?? t.commun.fermer,
+      barrierColor: palette.voile,
+      useSafeArea: false,
+      animationStyle: const AnimationStyle(
+        curve: AppMouvement.entree,
+        duration: AppMouvement.feuilleOuverture,
+        reverseCurve: AppMouvement.sortie,
+        reverseDuration: AppMouvement.feuilleFermeture,
+      ),
+      builder: (BuildContext contexte) => _PanneauAncre(
+        cle: cle,
+        ancre: ancre,
+        largeur: largeur,
+        rtl: rtl,
+        child: AppTransitions.zoomDeFenetre(
+          contexte,
+          Builder(builder: constructeur),
+        ),
+      ),
+    );
+  }
+
   /// Ouvre une surface de LECTURE modale (visionneuse de piece, AD-7).
   ///
   /// Sous [AppGabarit.seuilEtendu] (classes compacte et moyenne), c'est un
@@ -1140,6 +1182,78 @@ class _SurfaceLecture extends StatelessWidget {
         ombres: AppElevation.niveau3(palette.ombre),
       ),
       child: colonne,
+    );
+  }
+}
+
+/// Le panneau flottant de [AppBottomSheet.ouvrirAncre].
+class _PanneauAncre extends StatelessWidget {
+  const _PanneauAncre({
+    required this.ancre,
+    required this.largeur,
+    required this.rtl,
+    required this.child,
+    this.cle,
+  });
+
+  final Rect ancre;
+  final double largeur;
+  final bool rtl;
+  final Widget child;
+  final Key? cle;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final Size ecran = MediaQuery.sizeOf(context);
+    const double bord = AppSpacing.lg;
+    final double l = largeur < ecran.width - 2 * bord
+        ? largeur
+        : ecran.width - 2 * bord;
+    final double maxGauche = ecran.width - l - bord;
+    final double voulue = rtl ? ancre.left : ancre.right - l;
+    final double gauche = voulue < bord
+        ? bord
+        : (voulue > maxGauche ? maxGauche : voulue);
+    final double haut = ancre.bottom + AppSpacing.sm;
+    final double hauteurMax = ecran.height - haut - bord;
+    return Stack(
+      children: <Widget>[
+        PositionedDirectional(
+          start: rtl ? ecran.width - gauche - l : gauche,
+          top: haut,
+          width: l,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: hauteurMax < AppSpacing.respiration
+                  ? AppSpacing.respiration
+                  : hauteurMax,
+            ),
+            child: Material(
+              key: cle,
+              type: MaterialType.transparency,
+              child: DecoratedBox(
+                decoration: AppElevation.avecFilet(
+                  surface: palette.surfaceRaised,
+                  filet: palette.borderHairline,
+                  ombre: palette.ombre,
+                  arrondi: AppRadius.arrondiMd,
+                  ombres: AppElevation.niveau3(palette.ombre),
+                ),
+                child: ClipRRect(
+                  borderRadius: AppRadius.arrondiMd,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.lg,
+                    ),
+                    child: child,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -32,6 +32,7 @@ import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart' show FauxNotifications;
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/cloche.dart';
 import '../classe_tuteur/support_classe.dart';
 import 'support_messages.dart';
 
@@ -281,6 +282,7 @@ void main() {
         find.bySemanticsLabel(t.commun.entete.notifications).first,
       );
       await stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(find.byType(NotificationsPage), findsOneWidget);
       await _toucher(tester, find.text('Nouveau message de Sayyida Mariam'));
       expect(_chemin(routeur), Routes.tuteurFilPour('fil-mariam'));

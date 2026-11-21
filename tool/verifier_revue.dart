@@ -593,6 +593,11 @@ const Map<String, int> _cadresDefilantsSocle = <String, int>{
   'lib/features/admin_observations/observations_admin_page.dart': 1,
   // L'enregistrement vocal (apercu borne a une fraction de l'ecran).
   'lib/features/com_vocal/composer_vocal.dart': 1,
+  // CLOCHE-C (directeur, 21/11/2026, DECISION-ANNONCES-NOTIFS regle 1) : le
+  // panneau flottant de la cloche, ancre sous l'en-tete et borne a la
+  // fenetre, defile seul : « seule exception admise au defilement de la
+  // page : un panneau flottant, comme un menu ».
+  'lib/core/widgets/app_bottom_sheet.dart': 1,
   // La salle : tiroirs et panneaux bornes a une fraction de l'ecran.
   'lib/features/salle_seance/salle_seance.dart': 3,
   'lib/features/salle_seance/telephone_plein_ecran.dart': 1,

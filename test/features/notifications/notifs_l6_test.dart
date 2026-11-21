@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/notifications/contenu_notification.dart
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/cloche.dart';
 import '../historique/support_historique.dart';
 
 /// L'instant de reference des tests : une date et une heure fixes (14 h, heure
@@ -134,6 +135,7 @@ Future<void> _ouvrirCentre(
   );
   await tester.tap(find.byType(ClocheNotifications).first);
   await stabiliser(tester);
+  await toucherVoirTout(tester);
   expect(find.byType(NotificationsPage), findsOneWidget);
 }
 

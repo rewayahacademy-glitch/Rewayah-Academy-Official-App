@@ -254,6 +254,10 @@ abstract final class AppMouvement {
   /// lisible ce temps, puis s'efface.
   static const Duration rappelRecuMaintien = Duration(seconds: 5);
 
+  /// CLOCHE-C (directeur, 21/11/2026, decision ANNONCES-NOTIFS regle 9) : une
+  /// annonce fermee laisse « Annuler » ce temps, puis sa ligne s'efface.
+  static const Duration annulationFermeture = Duration(seconds: 5);
+
   /// ILE-SALLE (directeur, 11/11/2026 ; D-007, approuvee) : une ile (dans la
   /// salle ou hors de la salle) qui se deplie d'elle-meme pour dire une phrase
   /// (un mot d'etat qui change, une situation de reseau, les cinq dernieres

@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart';
 import '../../router/support_routeur.dart';
+import '../../support/cloche.dart';
 import '../../support/garde_interface.dart';
 import '../com_annonces/faux_annonces.dart';
 import '../com_annonces/support_annonces.dart';
@@ -120,6 +121,7 @@ _monter(
   // du 27/10 : on la touche par son type.
   await tester.tap(find.byType(ClocheNotifications).first);
   await stabiliser(tester);
+  await toucherVoirTout(tester);
   expect(lieu(routeur), Routes.tuteurNotifications);
   return (routeur: routeur, notifications: port, annonces: portAnnonces);
 }

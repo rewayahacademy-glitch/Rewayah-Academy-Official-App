@@ -37,6 +37,7 @@ import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../features/com_studio/support_studio.dart';
 import '../../router/support_routeur.dart';
+import '../../support/cloche.dart';
 import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
@@ -252,6 +253,7 @@ void main() {
       expect(cloche, findsWidgets);
       await tester.tap(cloche.first);
       await stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(lieu(routeur), Routes.enseignantNotifications);
       expect(find.byType(NotificationsPage), findsOneWidget);
 
@@ -275,6 +277,7 @@ void main() {
       expect(cloche, findsWidgets);
       await tester.tap(cloche.first);
       await stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(lieu(routeur), Routes.controleurNotifications);
       expect(find.byType(NotificationsPage), findsOneWidget);
       // COM-F-Q5 : la cloche est la seule entree active, aucun onglet.
@@ -329,6 +332,7 @@ void main() {
         find.bySemanticsLabel(t.commun.entete.notifications).first,
       );
       await stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(_chemin(routeur), Routes.adminNotifications);
       expect(find.byType(NotificationsPage), findsOneWidget);
       // Dans la coquille admin, aucun domaine allume.
@@ -571,6 +575,7 @@ void main() {
       );
       await tester.tap(cloche);
       await stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(_chemin(routeur), Routes.adminNotifications);
       expect(find.byType(NotificationsPage), findsOneWidget);
       expect(tester.takeException(), isNull);

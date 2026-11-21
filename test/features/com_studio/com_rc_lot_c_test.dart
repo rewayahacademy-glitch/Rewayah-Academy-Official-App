@@ -33,6 +33,7 @@ import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/cloche.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
 import 'support_focus.dart';
@@ -203,6 +204,7 @@ void main() {
       // La cloche mene aux notifications de l'admin.
       await tester.tap(find.byType(ClocheNotifications));
       await stabiliser(tester);
+      await toucherVoirTout(tester);
       expect(
         routeur.routerDelegate.currentConfiguration.uri.path,
         Routes.adminNotifications,

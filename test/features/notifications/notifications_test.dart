@@ -21,6 +21,7 @@ import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/cloche.dart';
 import '../historique/support_historique.dart';
 
 /// Des notifications en memoire, avec un compteur de lectures.
@@ -91,6 +92,7 @@ int _indexActif(WidgetTester tester) =>
 Future<void> _toucherCloche(WidgetTester tester) async {
   await tester.tap(find.bySemanticsLabel(t.commun.entete.notifications).first);
   await stabiliser(tester);
+  await toucherVoirTout(tester);
 }
 
 void main() {
@@ -245,8 +247,14 @@ void main() {
           delai: const Duration(seconds: 2),
         ),
       );
-      await _toucherCloche(tester);
+      // CLOCHE-C : la feuille de la cloche montre le squelette pendant la
+      // lecture ; la page s'ouvre ensuite par « Voir tout ».
+      await tester.tap(
+        find.bySemanticsLabel(t.commun.entete.notifications).first,
+      );
+      await tester.pump(const Duration(milliseconds: 400));
       expect(find.byType(Skeleton), findsWidgets);
+      await toucherVoirTout(tester);
       await tester.pump(const Duration(seconds: 3));
       await stabiliser(tester);
       expect(

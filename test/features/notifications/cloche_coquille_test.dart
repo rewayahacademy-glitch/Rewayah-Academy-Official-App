@@ -21,6 +21,7 @@ import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/cloche.dart';
 import '../../support/harnais.dart';
 
 /// Des notifications en memoire qui savent tout marquer lu.
@@ -176,6 +177,7 @@ void main() {
 
             await tester.tap(deuxNonLues.first);
             await stabiliser(tester);
+            await toucherVoirTout(tester);
 
             expect(lieu(routeur), Routes.notificationsPour(role));
             expect(find.byType(NotificationsPage), findsOneWidget);

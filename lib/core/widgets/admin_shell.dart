@@ -94,6 +94,7 @@ class AdminShell extends StatelessWidget {
     this.bandeau,
     this.onNotifications,
     this.notificationsActives = false,
+    this.clocheNotifications,
     this.onStudio,
     this.onRechercheMetier,
     this.onDeconnexion,
@@ -156,6 +157,11 @@ class AdminShell extends StatelessWidget {
   /// La page ouverte est celle des notifications : la cloche s'y montre
   /// active (icone pleine, etat selectionne), aucun domaine ne l'etant.
   final bool notificationsActives;
+
+  /// CLOCHE-C (directeur, 21/11/2026) : la cloche posee par la route, qui
+  /// ouvre le panneau des notifications (ordinateur) ou la feuille
+  /// (telephone). Nulle : la cloche de [onNotifications], qui ouvre la page.
+  final Widget? clocheNotifications;
 
   /// Ouvre la recherche metier (`/recherche`, RECH-D5) : la loupe d'en-tete
   /// garde sa recherche de navigation et y ajoute ce lien. Nul quand aucun
@@ -305,10 +311,11 @@ class AdminShell extends StatelessWidget {
         // 600 elle vit dans la barre du haut ([_BarreMobile]), joignable de
         // partout, jamais dans l'en-tete d'une page.
         if (notifications != null && avecActions)
-          ClocheNotifications(
-            onPress: notifications,
-            actif: notificationsActives,
-          ),
+          clocheNotifications ??
+              ClocheNotifications(
+                onPress: notifications,
+                actif: notificationsActives,
+              ),
       ];
       Widget pageAvec(List<Widget> enTete) => ActionsEnteteCoquille(
         actions: enTete,
@@ -425,10 +432,11 @@ class AdminShell extends StatelessWidget {
                 messages: messages,
                 notifications: notifications == null
                     ? null
-                    : ClocheNotifications(
-                        onPress: notifications,
-                        actif: notificationsActives,
-                      ),
+                    : clocheNotifications ??
+                          ClocheNotifications(
+                            onPress: notifications,
+                            actif: notificationsActives,
+                          ),
                 studio: studio != null,
                 onRechercheMetier: onRechercheMetier,
               ),

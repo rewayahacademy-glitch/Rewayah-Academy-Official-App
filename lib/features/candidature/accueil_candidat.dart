@@ -37,6 +37,7 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import '../notifications/non_lues.dart';
 import 'a_savoir_candidat.dart';
 import 'annonces_candidat.dart';
 import 'messages_candidat.dart';
@@ -293,7 +294,13 @@ class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
         ),
       ),
       onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
-      child: page,
+      // CLOCHE-C (directeur, 21/11/2026 : « n'oublie pas cote candidats ») :
+      // la meme cloche que les autres roles, dans l'en-tete de chaque page ;
+      // sans page complete, tout se lit dans le panneau ou la feuille.
+      child: ActionsEnteteCoquille(
+        actions: const <Widget>[ClocheCoquille()],
+        child: page,
+      ),
     );
   }
 }

@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart'
 
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/cloche.dart';
 import '../../support/demo/communications/com_studio_demo.dart';
 import '../../support/harnais.dart';
 import '../com_studio/support_studio.dart';
@@ -87,6 +88,7 @@ final DateTime _hier = DateTime.now().subtract(const Duration(days: 1));
 Future<void> _ouvrirNotifications(WidgetTester tester) async {
   await tester.tap(find.bySemanticsLabel(t.commun.entete.notifications).first);
   await stabiliser(tester);
+  await toucherVoirTout(tester);
 }
 
 Finder _vue(EtatCommunication etat) => find.byWidgetPredicate(
