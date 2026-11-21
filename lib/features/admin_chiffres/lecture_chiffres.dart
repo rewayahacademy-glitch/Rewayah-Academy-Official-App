@@ -11,6 +11,8 @@
 ///   tourne ;
 /// - **tout de suite au retour sur l'onglet**, si la minute est passee
 ///   pendant qu'il etait cache ; sinon la minuterie suit son cours ;
+/// - une lecture sans reponse apres 12 s est tenue pour perdue : elle ne
+///   fige ni le rythme ni l'ecran ;
 /// - un echec garde les chiffres deja lus : la page ne se vide pas, la minute
 ///   suivante retente.
 ///
@@ -22,19 +24,32 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/theme/app_delais.dart';
+
 /// Lit, garde et relit une valeur au rythme de la page.
 class LectureRythmee<T> extends ChangeNotifier {
   /// Cree la lecture. Rien n'est lu avant [demarrer].
   LectureRythmee({
     required this.lire,
     this.intervalle = const Duration(minutes: 1),
-  });
+    Duration? delai,
+  }) : delai = delai ?? delaiLecture;
 
   /// La lecture elle-meme : un appel.
   final Future<T> Function() lire;
 
   /// Le delai entre la fin d'une lecture et la suivante.
   final Duration intervalle;
+
+  /// Au-dela, une lecture est tenue pour perdue.
+  final Duration delai;
+
+  /// 12 s : plus court que le delai apres lequel `BlocAsynchrone` declare lui
+  /// meme la tentative perdue ([AppDelais.requeteMax], 20 s). L'echec arrive
+  /// ainsi par la lecture, et la relecture de la minute suivante s'affiche
+  /// sans que la personne ait a toucher « Reessayer ».
+  static final Duration delaiLecture =
+      AppDelais.requeteMax - AppDelais.chargementProlonge;
 
   AsyncValue<T> _etat = AsyncValue<T>.loading();
   Timer? _minuterie;
@@ -98,7 +113,9 @@ class LectureRythmee<T> extends ChangeNotifier {
     _minuterie = null;
     _lectures++;
     try {
-      final T valeur = await lire();
+      // Une lecture qui ne repond pas est tenue pour perdue : elle ne fige
+      // ni le rythme ni l'ecran.
+      final T valeur = await lire().timeout(delai);
       if (_ferme) return;
       // Une reconstruction par minute : l'heure « A jour a » avance ; les
       // dessins, eux, ne se repeignent que si leur donnee change.

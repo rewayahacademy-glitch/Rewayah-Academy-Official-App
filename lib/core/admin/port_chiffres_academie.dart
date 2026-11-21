@@ -18,10 +18,12 @@ class ChiffresAcademie {
   /// Cree un releve.
   const ChiffresAcademie({
     required this.genereLe,
+    this.memoriseLe,
     required this.candidatsRecus,
     required this.candidatsAujourdhui,
     required this.candidatsSeptJours,
-    required this.candidatsSeptJoursAvant,
+    required this.candidatsSeptPleins,
+    required this.candidatsSeptPleinsAvant,
     required this.candidatsParJour,
     required this.pays,
     required this.hommes,
@@ -41,11 +43,15 @@ class ChiffresAcademie {
     required this.seancesTenues,
     required this.seancesMinutes,
     required this.seancesSeptJours,
-    required this.seancesSeptJoursAvant,
+    required this.seancesSeptPleins,
+    required this.seancesSeptPleinsAvant,
   });
 
   /// L'heure du serveur a la lecture.
   final DateTime genereLe;
+
+  /// L'heure du dernier recalcul des chiffres memorises (10 minutes au plus).
+  final DateTime? memoriseLe;
 
   /// Candidatures d'enseignants recues, toutes issues.
   final int candidatsRecus;
@@ -56,8 +62,11 @@ class ChiffresAcademie {
   /// ... recues sur les 7 derniers jours, aujourd'hui compris.
   final int candidatsSeptJours;
 
-  /// ... recues sur les 7 jours d'avant.
-  final int candidatsSeptJoursAvant;
+  /// ... recues sur 7 jours pleins (d'il y a 7 jours a hier).
+  final int candidatsSeptPleins;
+
+  /// ... recues sur les 7 jours pleins d'avant.
+  final int candidatsSeptPleinsAvant;
 
   /// Les 7 derniers jours, du plus ancien a aujourd'hui.
   final List<int> candidatsParJour;
@@ -116,8 +125,11 @@ class ChiffresAcademie {
   /// Seances terminees sur les 7 derniers jours.
   final int seancesSeptJours;
 
-  /// Seances terminees sur les 7 jours d'avant.
-  final int seancesSeptJoursAvant;
+  /// Seances terminees sur 7 jours pleins (d'il y a 7 jours a hier).
+  final int seancesSeptPleins;
+
+  /// Seances terminees sur les 7 jours pleins d'avant.
+  final int seancesSeptPleinsAvant;
 
   /// Vrai quand la base ne sait encore rien : aucun chiffre a montrer.
   bool get estVide =>
@@ -135,7 +147,8 @@ class ChiffresAcademie {
     candidatsRecus,
     candidatsAujourdhui,
     candidatsSeptJours,
-    candidatsSeptJoursAvant,
+    candidatsSeptPleins,
+    candidatsSeptPleinsAvant,
     pays,
     hommes,
     femmes,
@@ -154,7 +167,8 @@ class ChiffresAcademie {
     seancesTenues,
     seancesMinutes,
     seancesSeptJours,
-    seancesSeptJoursAvant,
+    seancesSeptPleins,
+    seancesSeptPleinsAvant,
     ...candidatsParJour,
   ];
 
@@ -176,10 +190,12 @@ class ChiffresAcademie {
       genereLe:
           DateTime.tryParse('${m['genere_le']}') ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+      memoriseLe: DateTime.tryParse('${m['memorise_le']}'),
       candidatsRecus: _entier(c['recus']),
       candidatsAujourdhui: _entier(c['aujourd_hui']),
       candidatsSeptJours: _entier(c['sept_jours']),
-      candidatsSeptJoursAvant: _entier(c['sept_jours_avant']),
+      candidatsSeptPleins: _entier(c['sept_pleins']),
+      candidatsSeptPleinsAvant: _entier(c['sept_pleins_avant']),
       candidatsParJour: List<int>.unmodifiable(<int>[
         if (jours is List)
           for (final Object? j in jours) _entier(j),
@@ -202,7 +218,8 @@ class ChiffresAcademie {
       seancesTenues: _entier(s['tenues']),
       seancesMinutes: _entier(s['minutes']),
       seancesSeptJours: _entier(s['sept_jours']),
-      seancesSeptJoursAvant: _entier(s['sept_jours_avant']),
+      seancesSeptPleins: _entier(s['sept_pleins']),
+      seancesSeptPleinsAvant: _entier(s['sept_pleins_avant']),
     );
   }
 
@@ -219,6 +236,15 @@ class ChiffresAcademie {
 abstract interface class PortChiffresAcademie {
   /// Lit tous les chiffres.
   Future<ChiffresAcademie> lire();
+}
+
+/// Le serveur refuse : la page est reservee a la direction active.
+class ChiffresReserves implements Exception {
+  /// Cree le refus.
+  const ChiffresReserves();
+
+  @override
+  String toString() => 'ChiffresReserves';
 }
 
 /// Ce qui manque quand le port est absent.

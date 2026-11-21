@@ -7,11 +7,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/chiffres_academie_supabase.dart';
 import 'package:rewayah_academy/core/admin/port_chiffres_academie.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/vivant/nombre_rouleaux.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_chiffres/chiffres_academie_page.dart';
 import 'package:rewayah_academy/features/admin_chiffres/dessins_chiffres.dart';
@@ -22,15 +24,18 @@ ChiffresAcademie _chiffres({
   int recus = 608,
   int aujourdhui = 8,
   int septJours = 125,
-  int septJoursAvant = 483,
+  int septPleins = 125,
+  int septPleinsAvant = 483,
   int pays = 35,
   int familles = 24,
 }) => ChiffresAcademie(
   genereLe: DateTime(2026, 11, 21, 9, 42),
+  memoriseLe: DateTime(2026, 11, 21, 9, 36),
   candidatsRecus: recus,
   candidatsAujourdhui: aujourdhui,
   candidatsSeptJours: septJours,
-  candidatsSeptJoursAvant: septJoursAvant,
+  candidatsSeptPleins: septPleins,
+  candidatsSeptPleinsAvant: septPleinsAvant,
   candidatsParJour: const <int>[239, 191, 57, 19, 21, 8, 8],
   pays: pays,
   hommes: 493,
@@ -50,7 +55,8 @@ ChiffresAcademie _chiffres({
   seancesTenues: 21,
   seancesMinutes: 1590,
   seancesSeptJours: 3,
-  seancesSeptJoursAvant: 2,
+  seancesSeptPleins: 3,
+  seancesSeptPleinsAvant: 2,
 );
 
 class _Port implements PortChiffresAcademie {
@@ -67,6 +73,22 @@ class _Port implements PortChiffresAcademie {
     if (r is ChiffresAcademie) return r;
     // ignore: only_throw_errors, le test rejoue l'echec tel quel.
     throw r;
+  }
+}
+
+/// Ne repond jamais a la premiere lecture, puis rend [puis].
+class _PortMuet implements PortChiffresAcademie {
+  _PortMuet({required this.puis});
+
+  final ChiffresAcademie puis;
+  int lectures = 0;
+
+  @override
+  Future<ChiffresAcademie> lire() {
+    lectures++;
+    return lectures == 1
+        ? Completer<ChiffresAcademie>().future
+        : Future<ChiffresAcademie>.value(puis);
   }
 }
 
@@ -115,7 +137,8 @@ void main() {
           'recus': 608,
           'aujourd_hui': 8,
           'sept_jours': 125,
-          'sept_jours_avant': 483,
+          'sept_pleins': 117,
+          'sept_pleins_avant': 483,
           'par_jour': <int>[1, 2, 3, 4, 5, 6, 7],
           'pays': 35,
           'hommes': 493,
@@ -127,6 +150,9 @@ void main() {
       expect(c.candidatsRecus, 608);
       expect(c.candidatsParJour, <int>[1, 2, 3, 4, 5, 6, 7]);
       expect(c.juzMin, 11959);
+      expect(c.candidatsSeptPleins, 117);
+      expect(c.candidatsSeptPleinsAvant, 483);
+      expect(c.memoriseLe, DateTime.utc(2026, 11, 21, 6, 40));
       expect(c.coranEntier, 0);
       expect(c.seancesTenues, 0);
       expect(c.classes, 4);
@@ -162,10 +188,15 @@ void main() {
       );
     }
     expect(find.text('608'), findsOneWidget);
-    expect(find.text('11959'), findsOneWidget);
+    expect(find.text('11\u202f959'), findsOneWidget);
     expect(find.text(l.auMoins), findsOneWidget);
     expect(find.text(l.declarations), findsNWidgets(2));
-    expect(find.text(l.aJour(heure: '09:42')), findsOneWidget);
+    expect(
+      find.text(
+        '${l.aJour(heure: '09:42')} \u00b7 ${l.recalcul(heure: '09:36')}',
+      ),
+      findsOneWidget,
+    );
     // Aucune phrase ne repete le chiffre ecrit au-dessus d'elle.
     expect(l.candidats.contains('608'), isFalse);
     expect(l.pays.contains('35'), isFalse);
@@ -188,7 +219,12 @@ void main() {
     await _monter(
       tester,
       _Port(<Object>[
-        _chiffres(septJours: 608, septJoursAvant: 0, aujourdhui: 0),
+        _chiffres(
+          septJours: 608,
+          septPleins: 608,
+          septPleinsAvant: 0,
+          aujourdhui: 0,
+        ),
       ]),
     );
     final Finder carte = find.byKey(
@@ -331,6 +367,56 @@ void main() {
       find.byKey(const ValueKey<String>('chiffres-sans-donnees')),
       findsOneWidget,
     );
+  });
+
+  test('milliers : selon la langue, sans toucher aux petits nombres', () {
+    expect(avecMilliers(608, '\u202f'), '608');
+    expect(avecMilliers(11959, '\u202f'), '11\u202f959');
+    expect(avecMilliers(1234567, ','), '1,234,567');
+    expect(avecMilliers(1000, ','), '1,000');
+    expect(avecMilliers(0, ','), '0');
+  });
+
+  test('un code du serveur dit une phrase vraie', () {
+    expect(erreurChiffres('42501'), isA<ChiffresReserves>());
+    expect(erreurChiffres('PGRST202'), isA<CapaciteIndisponible>());
+    expect(erreurChiffres('42883'), isA<CapaciteIndisponible>());
+    expect(erreurChiffres('57014'), isNull);
+    expect(erreurChiffres(null), isNull);
+  });
+
+  testWidgets('refus du serveur : « reservee a la direction », sans '
+      '« Reessayer »', (WidgetTester tester) async {
+    await _monter(tester, _Port(<Object>[const ChiffresReserves()]));
+    expect(
+      find.byKey(const ValueKey<String>('chiffres-reserve')),
+      findsOneWidget,
+    );
+    expect(find.text(t.admin.chiffres.reserve), findsOneWidget);
+    expect(find.text(t.admin.chiffres.erreur), findsNothing);
+  });
+
+  testWidgets('une lecture qui ne repond pas : un echec se dit, puis la '
+      'minute suivante retente et les chiffres arrivent', (
+    WidgetTester tester,
+  ) async {
+    final _PortMuet port = _PortMuet(puis: _chiffres());
+    await _monter(tester, port);
+    // Seconde par seconde, comme un ecran : l'echec de la lecture (12 s)
+    // arrive avant que le bloc ne declare lui-meme la tentative perdue.
+    for (int i = 0; i < 25; i++) {
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(
+      find.byKey(const ValueKey<String>('chiffres-erreur')),
+      findsOneWidget,
+    );
+    expect(find.byType(Skeleton), findsNothing);
+    await tester.pump(const Duration(minutes: 1));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+    expect(port.lectures, 2);
+    expect(find.text('608'), findsOneWidget);
   });
 
   testWidgets('port absent : dit en clair, sans « Reessayer »', (

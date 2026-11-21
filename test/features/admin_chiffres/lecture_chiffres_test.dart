@@ -2,6 +2,8 @@
 // minute, aucune onglet cache, tout de suite au retour si la minute est
 // passee.
 
+import 'dart:async';
+
 // ignore: depend_on_referenced_packages, fourni par flutter_test.
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,6 +49,7 @@ void main() {
           enVol--;
           return appels;
         },
+        delai: const Duration(minutes: 10),
       )..demarrer(visible: true);
       temps.elapse(const Duration(seconds: 30));
       l
@@ -124,6 +127,28 @@ void main() {
       l.visible = true;
       temps.flushMicrotasks();
       expect(appels, 1);
+      l.dispose();
+    });
+  });
+
+  test('une lecture sans reponse est tenue pour perdue apres 12 s, et le '
+      'rythme continue', () {
+    fakeAsync((FakeAsync temps) {
+      int appels = 0;
+      final LectureRythmee<int> l = LectureRythmee<int>(
+        lire: () {
+          appels++;
+          // La premiere ne repond jamais ; les suivantes repondent.
+          return appels == 1 ? Completer<int>().future : Future<int>.value(7);
+        },
+      )..demarrer(visible: true);
+      temps.elapse(const Duration(seconds: 11));
+      expect(l.etat.isLoading, isTrue);
+      temps.elapse(const Duration(seconds: 2));
+      expect(l.etat.hasError, isTrue, reason: 'perdue a 12 s');
+      temps.elapse(minute);
+      expect(appels, 2);
+      expect(l.etat.requireValue, 7);
       l.dispose();
     });
   });

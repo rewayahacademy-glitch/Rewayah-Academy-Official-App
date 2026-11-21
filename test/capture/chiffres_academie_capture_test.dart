@@ -13,10 +13,12 @@ class _Port implements PortChiffresAcademie {
   @override
   Future<ChiffresAcademie> lire() async => ChiffresAcademie(
     genereLe: DateTime(2026, 11, 21, 9, 42),
+    memoriseLe: DateTime(2026, 11, 21, 9, 36),
     candidatsRecus: 608,
     candidatsAujourdhui: 8,
     candidatsSeptJours: 125,
-    candidatsSeptJoursAvant: 483,
+    candidatsSeptPleins: 117,
+    candidatsSeptPleinsAvant: 483,
     candidatsParJour: const <int>[239, 191, 57, 19, 21, 8, 8],
     pays: 35,
     hommes: 493,
@@ -36,7 +38,8 @@ class _Port implements PortChiffresAcademie {
     seancesTenues: 21,
     seancesMinutes: 1590,
     seancesSeptJours: 3,
-    seancesSeptJoursAvant: 2,
+    seancesSeptPleins: 3,
+    seancesSeptPleinsAvant: 2,
   );
 }
 

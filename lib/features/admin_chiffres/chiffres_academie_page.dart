@@ -56,6 +56,17 @@ const double opaciteJoursPasses = 0.32;
 /// Le nombre de riwayat des dix lectures : le plein de la barre des riwayat.
 const int riwayatDesDixLectures = 20;
 
+/// [valeur] avec [separateur] entre les milliers : 11959 donne « 11 959 ».
+String avecMilliers(int valeur, String separateur) {
+  final String chiffres = valeur.abs().toString();
+  final StringBuffer sortie = StringBuffer(valeur < 0 ? '-' : '');
+  for (int i = 0; i < chiffres.length; i++) {
+    if (i > 0 && (chiffres.length - i) % 3 == 0) sortie.write(separateur);
+    sortie.write(chiffres[i]);
+  }
+  return sortie.toString();
+}
+
 /// La tendance en pourcentage entre [courant] et [avant], ou nul quand elle
 /// n'a pas de sens : rien avant (pas de base de comparaison), ou aucun ecart.
 int? tendancePourcent(int courant, int avant) {
@@ -149,6 +160,14 @@ class _EtatPage extends ConsumerState<ChiffresAcademiePage>
           registre: RegistreVide.subi,
         ),
         erreurVersEtat: (Object erreur, VoidCallback? reessayer) {
+          if (erreur is ChiffresReserves) {
+            return EtatSysteme(
+              key: const ValueKey<String>('chiffres-reserve'),
+              nature: NatureEtat.accesRefuse,
+              titre: l.reserve,
+              phrase: l.reservePhrase,
+            );
+          }
           if (erreur is CapaciteIndisponible) {
             return EtatSysteme(
               key: const ValueKey<String>('chiffres-indisponible'),
@@ -204,20 +223,25 @@ class _Contenu extends StatelessWidget {
         ? l.hausseSeptJours(part: l.pourcent(n: v))
         : l.baisseSeptJours(part: l.pourcent(n: -v));
 
-    final DateTime heure = c.genereLe.toLocal();
-    final String aJour = l.aJour(
-      heure:
-          '${heure.hour.toString().padLeft(2, '0')}:'
-          '${heure.minute.toString().padLeft(2, '0')}',
-    );
+    String heure(DateTime quand) {
+      final DateTime h = quand.toLocal();
+      return '${h.hour.toString().padLeft(2, '0')}:'
+          '${h.minute.toString().padLeft(2, '0')}';
+    }
+
+    final DateTime? memorise = c.memoriseLe;
+    final String aJour = memorise == null
+        ? l.aJour(heure: heure(c.genereLe))
+        : '${l.aJour(heure: heure(c.genereLe))} \u00b7 '
+              '${l.recalcul(heure: heure(memorise))}';
 
     final int? tendanceCandidats = tendancePourcent(
-      c.candidatsSeptJours,
-      c.candidatsSeptJoursAvant,
+      c.candidatsSeptPleins,
+      c.candidatsSeptPleinsAvant,
     );
     final int? tendanceSeances = tendancePourcent(
-      c.seancesSeptJours,
-      c.seancesSeptJoursAvant,
+      c.seancesSeptPleins,
+      c.seancesSeptPleinsAvant,
     );
     final double partCoran = partDe(c.coranEntier, c.repondants);
     final double partJuz = partDe(c.juzMin, c.repondants * 30);
@@ -622,6 +646,8 @@ class _Carte extends StatelessWidget {
     final TextStyle corps = p.inkMuted.applyTo(styles.bodyMedium!);
     final TextStyle discret = p.inkMuted.applyTo(styles.bodySmall!);
     final int? seconde = valeurSeconde;
+    final String separateur = t.admin.chiffres.milliers;
+    String milliers(int v) => avecMilliers(v, separateur);
     final Widget Function(double largeur)? d = dessin;
     return AppCard(
       key: ValueKey<String>('chiffres-carte-$cle'),
@@ -639,16 +665,28 @@ class _Carte extends StatelessWidget {
                   fit: BoxFit.scaleDown,
                   alignment: AlignmentDirectional.centerStart,
                   child: seconde == null
-                      ? NombreRouleaux(valeur, style: chiffre)
+                      ? NombreRouleaux(
+                          valeur,
+                          style: chiffre,
+                          miseEnForme: milliers,
+                        )
                       : Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            NombreRouleaux(valeur, style: chiffre),
+                            NombreRouleaux(
+                              valeur,
+                              style: chiffre,
+                              miseEnForme: milliers,
+                            ),
                             Text(
                               ' · ',
                               style: AppTypography.tabulaire(chiffre),
                             ),
-                            NombreRouleaux(seconde, style: chiffre),
+                            NombreRouleaux(
+                              seconde,
+                              style: chiffre,
+                              miseEnForme: milliers,
+                            ),
                           ],
                         ),
                 ),

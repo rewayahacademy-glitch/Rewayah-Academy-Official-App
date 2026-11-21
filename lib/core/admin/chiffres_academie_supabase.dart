@@ -5,6 +5,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../capacites/capacite_indisponible.dart';
 import 'port_chiffres_academie.dart';
 
 /// Les chiffres servis par Supabase.
@@ -16,8 +17,24 @@ class ChiffresAcademieSupabase implements PortChiffresAcademie {
 
   @override
   Future<ChiffresAcademie> lire() async {
-    final Object? brut = await _client.rpc<Object?>('chiffres_academie');
+    final Object? brut;
+    try {
+      brut = await _client.rpc<Object?>('chiffres_academie');
+    } on PostgrestException catch (e) {
+      throw erreurChiffres(e.code) ?? e;
+    }
     if (brut is! Map) throw const FormatException('Objet attendu.');
     return ChiffresAcademie.json(Map<String, dynamic>.from(brut));
   }
 }
+
+/// L'erreur vraie derriere un code du serveur, ou nul : un refus (42501) dit
+/// que la page est reservee a la direction ; une fonction absente (PGRST202,
+/// 42883 : migration pas encore installee) dit que les chiffres ne sont pas
+/// encore disponibles. Tout autre code reste un echec de lecture.
+Exception? erreurChiffres(String? code) => switch (code) {
+  '42501' => const ChiffresReserves(),
+  'PGRST202' ||
+  '42883' => const CapaciteIndisponible(dependanceChiffresAcademie),
+  _ => null,
+};

@@ -17,7 +17,8 @@ class ChiffresAcademieDemo implements PortChiffresAcademie {
     candidatsRecus: 412,
     candidatsAujourdhui: 9,
     candidatsSeptJours: 64,
-    candidatsSeptJoursAvant: 51,
+    candidatsSeptPleins: 62,
+    candidatsSeptPleinsAvant: 51,
     candidatsParJour: const <int>[6, 11, 8, 12, 7, 11, 9],
     pays: 27,
     hommes: 301,
@@ -37,6 +38,7 @@ class ChiffresAcademieDemo implements PortChiffresAcademie {
     seancesTenues: 340,
     seancesMinutes: 19980,
     seancesSeptJours: 38,
-    seancesSeptJoursAvant: 34,
+    seancesSeptPleins: 37,
+    seancesSeptPleinsAvant: 34,
   );
 }

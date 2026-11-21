@@ -7,7 +7,7 @@
 --
 -- NE PAS DRAINER LA BASE (directeur, 20/11/2026). Deux etages :
 --   * EN DIRECT, a chaque appel : un seul passage sur public.candidatures (quelques blocs) pour ce qui bouge a la minute
---     (recus, aujourd'hui, sept jours, par jour).
+--     (recus, hommes, femmes, aujourd'hui, sept jours, par jour) : hommes + femmes = recus, toujours.
 --   * MEMORISE, recalcule au plus une fois toutes les 10 minutes : tout le reste, dont ce qui lit les reponses JSON
 --     (juz, riwayat, langues, ijaza) et les seances. Le resultat vit dans app_private.chiffres_cache (une ligne, RLS
 --     activee, aucune politique, aucun droit pour un client). La fonction le recalcule elle-meme quand il a plus de
@@ -18,15 +18,18 @@
 --
 -- LES JOURS se comptent a l'heure de La Mecque (l'horloge de l'academie) : « aujourd'hui » commence a
 -- minuit a La Mecque ; « cette semaine » = les 7 derniers jours, aujourd'hui compris ; la tendance compare
--- ces 7 jours aux 7 jours d'avant.
+-- 7 jours PLEINS (d'il y a 7 jours a hier, aujourd'hui exclu) aux 7 jours pleins d'avant : une journee a peine
+-- commencee ne fait pas pencher la comparaison vers la baisse.
 --
 -- LES SOURCES, chiffre par chiffre :
 --   candidats.recus            candidatures de type enseignant (toutes issues)                         [direct]
 --   candidats.aujourd_hui      ... recues depuis minuit a La Mecque                                    [direct]
---   candidats.sept_jours       ... recues sur les 7 derniers jours ; sept_jours_avant : les 7 d'avant  [direct]
+--   candidats.sept_jours       ... recues sur les 7 derniers jours, aujourd'hui compris                [direct]
+--   candidats.sept_pleins      ... recues sur 7 jours pleins (d'il y a 7 jours a hier)                 [direct]
+--   candidats.sept_pleins_avant ... recues sur les 7 jours pleins d'avant                              [direct]
 --   candidats.par_jour         7 nombres, du plus ancien jour a aujourd'hui                            [direct]
 --   candidats.pays             pays de residence distincts (candidatures.pays_residence)               [memorise]
---   candidats.hommes / femmes  candidatures.genre                                                      [memorise]
+--   candidats.hommes / femmes  candidatures.genre                                                      [direct]
 --   declarations.*             la derniere reponse ENVOYEE (pas un brouillon) de chaque candidature d'enseignant [memorise] :
 --     repondants               nombre de candidatures qui ont une reponse envoyee
 --     coran_entier             niveauMemorisationDeclare = coran_entier
@@ -45,7 +48,8 @@
 --   seances.* [memorise] :
 --     tenues                   seances de classe terminees (sessions.status = ended, rattachees a une classe)
 --     minutes                  somme des durees de ces seances, en minutes
---     sept_jours               ... terminees sur les 7 derniers jours ; sept_jours_avant : les 7 d'avant
+--     sept_jours               ... terminees sur les 7 derniers jours, aujourd'hui compris
+--     sept_pleins              ... terminees sur 7 jours pleins (d'il y a 7 jours a hier) ; sept_pleins_avant : les 7 d'avant
 
 DO $garde$
 BEGIN
@@ -85,7 +89,8 @@ DECLARE
   v_jour   date;         -- aujourd'hui a La Mecque
   v_debut0 timestamptz;  -- minuit a La Mecque, aujourd'hui
   v_debut7 timestamptz;  -- debut des 7 derniers jours
-  v_debut14 timestamptz; -- debut des 7 jours d'avant
+  v_pleins timestamptz;  -- debut des 7 jours pleins (il y a 7 jours)
+  v_pleins_avant timestamptz; -- debut des 7 jours pleins d'avant (il y a 14 jours)
   v_direct jsonb;
   v_cache jsonb;
   v_cache_le timestamptz;
@@ -102,14 +107,18 @@ BEGIN
   v_jour    := (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date;
   v_debut0  := (v_jour::timestamp) AT TIME ZONE 'Asia/Riyadh';
   v_debut7  := ((v_jour - 6)::timestamp) AT TIME ZONE 'Asia/Riyadh';
-  v_debut14 := ((v_jour - 13)::timestamp) AT TIME ZONE 'Asia/Riyadh';
+  v_pleins  := ((v_jour - 7)::timestamp) AT TIME ZONE 'Asia/Riyadh';
+  v_pleins_avant := ((v_jour - 14)::timestamp) AT TIME ZONE 'Asia/Riyadh';
 
   -- EN DIRECT : un seul passage sur les candidatures.
   SELECT pg_catalog.jsonb_build_object(
            'recus', pg_catalog.count(*),
            'aujourd_hui', pg_catalog.count(*) FILTER (WHERE c.recue_le >= v_debut0),
            'sept_jours', pg_catalog.count(*) FILTER (WHERE c.recue_le >= v_debut7),
-           'sept_jours_avant', pg_catalog.count(*) FILTER (WHERE c.recue_le >= v_debut14 AND c.recue_le < v_debut7),
+           'sept_pleins', pg_catalog.count(*) FILTER (WHERE c.recue_le >= v_pleins AND c.recue_le < v_debut0),
+           'sept_pleins_avant', pg_catalog.count(*) FILTER (WHERE c.recue_le >= v_pleins_avant AND c.recue_le < v_pleins),
+           'hommes', pg_catalog.count(*) FILTER (WHERE c.genre = 'male'),
+           'femmes', pg_catalog.count(*) FILTER (WHERE c.genre = 'female'),
            'par_jour', pg_catalog.jsonb_build_array(
               pg_catalog.count(*) FILTER (WHERE (c.recue_le AT TIME ZONE 'Asia/Riyadh')::date = v_jour - 6),
               pg_catalog.count(*) FILTER (WHERE (c.recue_le AT TIME ZONE 'Asia/Riyadh')::date = v_jour - 5),
@@ -135,9 +144,7 @@ BEGIN
   IF v_verrou OR v_cache IS NULL THEN
 
     SELECT pg_catalog.jsonb_build_object(
-             'pays', pg_catalog.count(DISTINCT c.pays_residence),
-             'hommes', pg_catalog.count(*) FILTER (WHERE c.genre = 'male'),
-             'femmes', pg_catalog.count(*) FILTER (WHERE c.genre = 'female'))
+             'pays', pg_catalog.count(DISTINCT c.pays_residence))
       INTO v_candidats
       FROM public.candidatures c
      WHERE c.type_code = 'enseignant';
@@ -196,7 +203,8 @@ BEGIN
                                THEN pg_catalog.floor(EXTRACT(EPOCH FROM (s.ended_at - s.started_at)) / 60)::bigint
                                ELSE 0 END), 0),
              'sept_jours', pg_catalog.count(*) FILTER (WHERE s.ended_at >= v_debut7),
-             'sept_jours_avant', pg_catalog.count(*) FILTER (WHERE s.ended_at >= v_debut14 AND s.ended_at < v_debut7))
+             'sept_pleins', pg_catalog.count(*) FILTER (WHERE s.ended_at >= v_pleins AND s.ended_at < v_debut0),
+             'sept_pleins_avant', pg_catalog.count(*) FILTER (WHERE s.ended_at >= v_pleins_avant AND s.ended_at < v_pleins))
       INTO v_seances
       FROM public.sessions s
      WHERE s.status = 'ended' AND s.deleted_at IS NULL AND s.groupe_id IS NOT NULL;
@@ -244,13 +252,14 @@ BEGIN
   IF pg_catalog.has_function_privilege('anon', v_oid, 'EXECUTE')
      OR pg_catalog.has_function_privilege('public', v_oid, 'EXECUTE')
      OR pg_catalog.has_function_privilege('agent_ro', v_oid, 'EXECUTE')
+     OR pg_catalog.has_function_privilege('service_role', v_oid, 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated', v_oid, 'EXECUTE') THEN
     RAISE EXCEPTION 'CHIFFRES-ACADEMIE : droits d''execution inattendus';
   END IF;
   IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'app_private.chiffres_cache'::regclass) THEN
     RAISE EXCEPTION 'CHIFFRES-ACADEMIE : RLS absente sur la table memorisee';
   END IF;
-  FOREACH v_role IN ARRAY ARRAY['anon', 'authenticated', 'agent_ro', 'public'] LOOP
+  FOREACH v_role IN ARRAY ARRAY['anon', 'authenticated', 'agent_ro', 'service_role', 'public'] LOOP
     IF pg_catalog.has_table_privilege(v_role, 'app_private.chiffres_cache', 'SELECT')
        OR pg_catalog.has_table_privilege(v_role, 'app_private.chiffres_cache', 'INSERT')
        OR pg_catalog.has_table_privilege(v_role, 'app_private.chiffres_cache', 'UPDATE') THEN

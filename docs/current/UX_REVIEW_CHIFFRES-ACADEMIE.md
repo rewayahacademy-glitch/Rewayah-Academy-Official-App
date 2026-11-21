@@ -25,6 +25,8 @@ pilote le 21/11 avec sept corrections, toutes appliquées.
 
 ## Écarts assumés
 
-- Le grand nombre s'écrit sans séparateur de milliers (`11959`) : le composant `NombreRouleaux` du core
-  rend un entier brut, et ce lot ne le modifie pas.
+- Fraîcheur dite telle qu'elle est (relecture adverse de la PR 675) : « Relu chaque minute ; certains chiffres
+  sont recalculés toutes les 10 minutes. », et l'heure du dernier recalcul à côté de l'heure de lecture.
+- La tendance compare 7 jours pleins aux 7 jours pleins d'avant (aujourd'hui exclu) et le dit : « par rapport
+  aux 7 jours d'avant ».
 - Pas de bouton sur la page : c'est une vitrine. « Réessayer » n'apparaît qu'en cas d'échec.

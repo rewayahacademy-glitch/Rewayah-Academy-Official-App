@@ -251,7 +251,7 @@ SELECT pg_temp.verif('2a cles de tete', $$
 SELECT pg_temp.verif('2b toute valeur est un nombre (ou les 7 nombres de par_jour)', $$
   SELECT pg_catalog.bool_and(pg_catalog.jsonb_typeof(v.value) = 'number'
                              OR (s.key = 'candidats' AND v.key = 'par_jour' AND pg_catalog.jsonb_typeof(v.value) = 'array'))
-         AND pg_catalog.count(*) = 24
+         AND pg_catalog.count(*) = 26
     FROM pg_catalog.jsonb_each((SELECT j FROM etat WHERE quand = 'apres') - 'genere_le' - 'memorise_le') s
    CROSS JOIN LATERAL pg_catalog.jsonb_each(s.value) v $$);
 SELECT pg_temp.verif('2c par_jour : 7 nombres', $$
@@ -267,7 +267,10 @@ SELECT pg_temp.verif('2e reponse de moins de 700 octets', $$ SELECT pg_catalog.l
 SELECT pg_temp.verif('3a candidats recus : 650 (les familles ne comptent pas)', $$ SELECT pg_temp.ecart('candidats', 'recus') = 650 $$);
 SELECT pg_temp.verif('3b arrives aujourd''hui : 5', $$ SELECT pg_temp.ecart('candidats', 'aujourd_hui') = 5 $$);
 SELECT pg_temp.verif('3c sept derniers jours : 40', $$ SELECT pg_temp.ecart('candidats', 'sept_jours') = 40 $$);
-SELECT pg_temp.verif('3d sept jours d''avant : 60', $$ SELECT pg_temp.ecart('candidats', 'sept_jours_avant') = 60 $$);
+SELECT pg_temp.verif('3d sept jours pleins (aujourd''hui exclu) : 35 ; les sept d''avant : 60', $$
+  SELECT pg_temp.ecart('candidats', 'sept_pleins') = 35 AND pg_temp.ecart('candidats', 'sept_pleins_avant') = 60 $$);
+SELECT pg_temp.verif('3d bis hommes + femmes = recus (meme passage, en direct)', $$
+  SELECT pg_temp.ecart('candidats', 'hommes') + pg_temp.ecart('candidats', 'femmes') = pg_temp.ecart('candidats', 'recus') $$);
 SELECT pg_temp.verif('3e hommes 520, femmes 130', $$ SELECT pg_temp.ecart('candidats', 'hommes') = 520 AND pg_temp.ecart('candidats', 'femmes') = 130 $$);
 -- Les pays : comptage direct independant (la base peut deja en contenir).
 SELECT pg_temp.verif('3f pays = comptage direct, au moins 12, BR (famille) hors compte', $$
@@ -305,8 +308,9 @@ SELECT pg_temp.verif('3t langues de cours = comptage direct', $$
 
 SELECT pg_temp.verif('3u seances tenues : 9', $$ SELECT pg_temp.ecart('seances', 'tenues') = 9 $$);
 SELECT pg_temp.verif('3v minutes : 525', $$ SELECT pg_temp.ecart('seances', 'minutes') = 525 $$);
-SELECT pg_temp.verif('3w seances sur sept jours : 4 ; les sept d''avant : 3', $$
-  SELECT pg_temp.ecart('seances', 'sept_jours') = 4 AND pg_temp.ecart('seances', 'sept_jours_avant') = 3 $$);
+SELECT pg_temp.verif('3w seances sur sept jours : 4 ; sept jours pleins : 4 ; les sept d''avant : 3', $$
+  SELECT pg_temp.ecart('seances', 'sept_jours') = 4 AND pg_temp.ecart('seances', 'sept_pleins') = 4
+     AND pg_temp.ecart('seances', 'sept_pleins_avant') = 3 $$);
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- 4. LE RESULTAT MEMORISE : servi tel quel pendant 10 minutes, recalcule ensuite, ferme a tout client.
@@ -348,8 +352,9 @@ SET LOCAL session_replication_role = origin;
 INSERT INTO etat VALUES ('plus_un', pg_temp.en(pg_temp.u(9001), 'admin', 'SELECT public.chiffres_academie()'));
 UPDATE app_private.chiffres_cache SET calcule_le = now() - interval '10 minutes 1 second';
 INSERT INTO etat VALUES ('plus_un_recalcule', pg_temp.en(pg_temp.u(9001), 'admin', 'SELECT public.chiffres_academie()'));
-SELECT pg_temp.verif('4j en direct : recus + 1 tout de suite ; pays inchange tant que la memoire est fraiche', $$
+SELECT pg_temp.verif('4j en direct : recus + 1 et hommes + 1 tout de suite ; pays inchange tant que la memoire est fraiche', $$
   SELECT (SELECT (j #>> '{candidats,recus}')::int FROM etat WHERE quand = 'plus_un') = pg_temp.apres('candidats', 'recus') + 1
+     AND (SELECT (j #>> '{candidats,hommes}')::int FROM etat WHERE quand = 'plus_un') = pg_temp.apres('candidats', 'hommes') + 1
      AND (SELECT (j #>> '{candidats,pays}')::int FROM etat WHERE quand = 'plus_un') = pg_temp.apres('candidats', 'pays') $$);
 SELECT pg_temp.verif('4k apres 10 minutes : le pays neuf est compte', $$
   SELECT (SELECT (j #>> '{candidats,pays}')::int FROM etat WHERE quand = 'plus_un_recalcule') = pg_temp.apres('candidats', 'pays') + 1 $$);
