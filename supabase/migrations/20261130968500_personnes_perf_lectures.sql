@@ -12,7 +12,7 @@
 --     comptes sur la base fictive, 40 % du temps).
 --
 -- CE QUI CHANGE :
---   1. private.cand_bloquee_salle3(c) : les deux controles lus par le compteur, et eux seuls, recopies a l'identique de
+--   1. private.perf_bloquee_salle3(c) : les deux controles lus par le compteur, et eux seuls, recopies a l'identique de
 --      private.candidature_controles_salle3 (corps ed849b42..., controle par empreinte) : paiement_compatible faux ou
 --      inconnu (private.paiement_etat <> 'compatible'), ou profil_unique en defaut (la meme cascade CASE). lister_candidatures
 --      l'appelle a la place de candidature_controles_salle3 dans ce seul compteur ; le reste du corps (celui de
@@ -48,14 +48,14 @@ BEGIN
       RAISE EXCEPTION 'PERSONNES-PERF : la definition de % n''est pas celle attendue ; rien n''est modifie', v.f;
     END IF;
   END LOOP;
-  IF pg_catalog.to_regprocedure('private.cand_bloquee_salle3(public.candidatures)') IS NOT NULL THEN
-    RAISE EXCEPTION 'PERSONNES-PERF : private.cand_bloquee_salle3 existe deja ; rien n''est modifie';
+  IF pg_catalog.to_regprocedure('private.perf_bloquee_salle3(public.candidatures)') IS NOT NULL THEN
+    RAISE EXCEPTION 'PERSONNES-PERF : private.perf_bloquee_salle3 existe deja ; rien n''est modifie';
   END IF;
 END
 $preflight$;
 
 -- 1. Les deux controles de salle 3 lus par le compteur « bloquees », recopies de candidature_controles_salle3.
-CREATE FUNCTION private.cand_bloquee_salle3(c public.candidatures)
+CREATE FUNCTION private.perf_bloquee_salle3(c public.candidatures)
  RETURNS boolean
  LANGUAGE plpgsql
  STABLE
@@ -88,7 +88,7 @@ BEGIN
 END;
 $function$;
 
-REVOKE ALL ON FUNCTION private.cand_bloquee_salle3(public.candidatures) FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION private.perf_bloquee_salle3(public.candidatures) FROM PUBLIC, anon, authenticated;
 
 -- 2. La liste des candidatures (corps de 20261130930000, ce seul compteur change).
 CREATE OR REPLACE FUNCTION public.lister_candidatures(p_filtre jsonb DEFAULT '{}'::jsonb, p_tri text DEFAULT 'activite'::text, p_page integer DEFAULT 1)
@@ -329,7 +329,7 @@ BEGIN
                     -- PERSONNES-PERF : les deux seuls controles de salle 3 lus ici,
                     -- sans calculer les sept autres (meme valeur, 20261130968500).
                     OR CASE WHEN c.etape = 'verifications'
-                            THEN private.cand_bloquee_salle3(c)
+                            THEN private.perf_bloquee_salle3(c)
                             ELSE false END))::integer)
     INTO v_etapes, v_alertes
   FROM public.candidatures c
@@ -472,7 +472,7 @@ DECLARE
   v_role text;
 BEGIN
   FOR v IN SELECT * FROM (VALUES
-      ('public.lister_candidatures(jsonb,text,integer)', 'v', 'cand_bloquee_salle3(c)'),
+      ('public.lister_candidatures(jsonb,text,integer)', 'v', 'perf_bloquee_salle3(c)'),
       ('public.comptes_admin_par_role()', 's', '(select public.agent_identite_masquee())')) AS t(f, vol, marque) LOOP
     IF NOT EXISTS (
          SELECT 1 FROM pg_catalog.pg_proc p
@@ -493,14 +493,14 @@ BEGIN
     RAISE EXCEPTION 'PERSONNES-PERF : lister_candidatures lit encore tous les controles de salle 3';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
-                  WHERE p.oid = pg_catalog.to_regprocedure('private.cand_bloquee_salle3(public.candidatures)')
+                  WHERE p.oid = pg_catalog.to_regprocedure('private.perf_bloquee_salle3(public.candidatures)')
                     AND p.provolatile = 's' AND NOT p.prosecdef AND p.proowner = 'postgres'::regrole
                     AND p.proconfig = ARRAY['search_path=""'] AND p.proacl::text = '{postgres=X/postgres}') THEN
-    RAISE EXCEPTION 'PERSONNES-PERF : private.cand_bloquee_salle3 inattendue';
+    RAISE EXCEPTION 'PERSONNES-PERF : private.perf_bloquee_salle3 inattendue';
   END IF;
   FOREACH v_role IN ARRAY ARRAY['anon', 'authenticated'] LOOP
-    IF has_function_privilege(v_role, 'private.cand_bloquee_salle3(public.candidatures)', 'EXECUTE') THEN
-      RAISE EXCEPTION 'PERSONNES-PERF : % peut executer private.cand_bloquee_salle3', v_role;
+    IF has_function_privilege(v_role, 'private.perf_bloquee_salle3(public.candidatures)', 'EXECUTE') THEN
+      RAISE EXCEPTION 'PERSONNES-PERF : % peut executer private.perf_bloquee_salle3', v_role;
     END IF;
   END LOOP;
   IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p

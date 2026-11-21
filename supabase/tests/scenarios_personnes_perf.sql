@@ -5,7 +5,7 @@
 --   1. com_non_lus_par_objet rend, pour chaque compte, exactement les fils a non-lus de com_lister_fils (memes fils,
 --      memes comptes, meme ordre) : memes droits, aucun compte d'un fil invisible.
 --   2. Sans appelant reconnu, refus 42501, comme com_lister_fils ; anon ne peut pas l'executer.
---   3. private.cand_bloquee_salle3(c) vaut, pour chaque candidature, ce que lisait l'ancien compteur dans
+--   3. private.perf_bloquee_salle3(c) vaut, pour chaque candidature, ce que lisait l'ancien compteur dans
 --      candidature_controles_salle3(c) ; le compteur « bloquees » de lister_candidatures egale l'ancien calcul.
 --   4. Les aides passees en plpgsql gardent leurs droits, et aucune n'est executable par anon.
 -- La preuve octet pour octet des reponses avant / apres (22 lectures x 6 comptes) est dans
@@ -122,10 +122,10 @@ SELECT pg_temp.vrai(NOT has_function_privilege('authenticated', 'private.com_fil
 
 -- 3. Le compteur « bloquees ».
 SELECT pg_temp.vrai(
-  (SELECT count(*) FROM public.candidatures c WHERE private.cand_bloquee_salle3(c) IS DISTINCT FROM pg_temp.bloquee_avant(c)) = 0,
-  'cand_bloquee_salle3 = ancien calcul, pour chaque candidature');
+  (SELECT count(*) FROM public.candidatures c WHERE private.perf_bloquee_salle3(c) IS DISTINCT FROM pg_temp.bloquee_avant(c)) = 0,
+  'perf_bloquee_salle3 = ancien calcul, pour chaque candidature');
 SELECT pg_temp.vrai(
-  (SELECT count(DISTINCT private.cand_bloquee_salle3(c)) FROM public.candidatures c WHERE c.etape = 'verifications') = 2,
+  (SELECT count(DISTINCT private.perf_bloquee_salle3(c)) FROM public.candidatures c WHERE c.etape = 'verifications') = 2,
   'des candidatures en verifications bloquees ET non bloquees (le controle porte)');
 -- L'ancien calcul (lu en super-utilisateur : candidature_controles_salle3 est privee), puis la liste en direction.
 SELECT count(*) AS bloquees_avant FROM public.candidatures c
@@ -146,7 +146,7 @@ SELECT pg_temp.vrai(NOT EXISTS (
     'private.entretien_cote_permis(uuid,public.gender)', 'private.praxis_est_officiel(uuid)',
     'private.com_profil_valide(uuid,text)', 'private.com_est_mineur(uuid)', 'private.com_foyer_valide(uuid)',
     'app_private.compte_candidat_hors_portee(uuid)', 'public.kyc_super_admin_exception_active()',
-    'private.cand_bloquee_salle3(public.candidatures)']) AS f
+    'private.perf_bloquee_salle3(public.candidatures)']) AS f
   WHERE has_function_privilege('anon', f, 'EXECUTE')), 'aucune aide executable par anon');
 
 \o
