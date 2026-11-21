@@ -143,6 +143,10 @@ const double largeurListeEtApercu = 1024;
 /// L'echelle du texte au-dela de laquelle la page reste en une colonne.
 const double echelleMaxCoteACote = 1.3;
 
+/// Le nombre de personnes d'une page, pour les listes tenues en memoire (les
+/// comptes, « Actifs » sans phase) : celui des pages du serveur.
+const int taillePagePersonnes = 50;
+
 /// La part de la liste dans la disposition cote a cote.
 const double _partListe = 0.4;
 
@@ -367,18 +371,19 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
   Map<String, LieuEnseignantDirection> _lieux =
       const <String, LieuEnseignantDirection>{};
 
-  /// Ce qui designe la liste affichee : l'adresse sans la personne choisie ni
-  /// la page.
+  /// Ce qui designe la liste affichee : l'adresse sans la personne choisie,
+  /// la page ni le tri (DECISION-LISTES §6 : changer de page ou de tri garde
+  /// la selection).
   static String _cleDeListe(Map<String, String> requete) {
     final List<String> cles = <String>[
       for (final String k in requete.keys)
-        if (k != 'element' && k != 'page') k,
+        if (k != 'element' && k != 'page' && k != cleTriPersonnes) k,
     ]..sort();
     return cles.map((String k) => '$k=${requete[k]}').join('&');
   }
 
-  /// Un onglet, une vue, un filtre, une recherche ou un tri qui change retire
-  /// la selection, et le dit (DECISION-LISTES §6 : jamais en silence).
+  /// Un onglet, une vue, un filtre ou une recherche qui change retire la
+  /// selection, et le dit (DECISION-LISTES §6 : jamais en silence).
   @override
   void didUpdateWidget(PersonnesPage ancien) {
     super.didUpdateWidget(ancien);
@@ -463,9 +468,8 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
   List<EntreeAction> _gestesCompte(
     BuildContext context,
     CompteAdmin c,
-    VueComptes vue, {
-    bool dossier = true,
-  }) {
+    VueComptes vue,
+  ) {
     final Set<String>? fondateurs = ref.watch(fondateursProvider).value;
     final bool suppressionOfferte =
         DataCollection.enTableau(context) ||
@@ -489,7 +493,6 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
         references: _references,
         lieux: _lieux,
         onVerifierVille: () => unawaited(_verifierVille(c)),
-        dossier: dossier,
       ),
     );
   }
@@ -499,6 +502,32 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
   int get _page => (int.tryParse(requete['page'] ?? '') ?? 1).clamp(1, 100000);
 
   VueEnseignants get _vue => VueEnseignants.depuis(requete['vue']);
+
+  /// La page de l'adresse, ramenee a la derniere page d'une liste de [n]
+  /// lignes tenue en memoire.
+  int _pageBornee(int n) {
+    final int pages = n == 0 ? 1 : ((n - 1) ~/ taillePagePersonnes) + 1;
+    return _page.clamp(1, pages);
+  }
+
+  /// Le pied d'une liste montree par pages, ou `null` quand tout tient.
+  Widget? _pied(
+    BuildContext context, {
+    required int page,
+    required int taillePage,
+    required int affichees,
+    required int total,
+  }) => total > affichees
+      ? PiedDeListe(
+          debut: (page - 1) * taillePage + 1,
+          fin: (page - 1) * taillePage + affichees,
+          total: total,
+          onPrecedent: page > 1 ? () => _aller(context, page: page - 1) : null,
+          onSuivant: page * taillePage < total
+              ? () => _aller(context, page: page + 1)
+              : null,
+        )
+      : null;
 
   void _aller(
     BuildContext context, {
@@ -674,16 +703,34 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
               )
             : ref.watch(pageEnseignantsProvider(r));
         return (
-          valeur: lue.whenData(
-            (PageEnseignants page) => (
+          valeur: lue.whenData((PageEnseignants page) {
+            if (fusion) {
+              // Les phases lues bout a bout se montrent par pages, comme les
+              // autres vues : « Cocher la page » ne retient jamais plus que
+              // la page affichee (DECISION-LISTES §6).
+              final int numero = _pageBornee(page.lignes.length);
+              return (
+                lignes: <LignePersonne>[
+                  for (final LigneEnseignant l
+                      in page.lignes
+                          .skip((numero - 1) * taillePagePersonnes)
+                          .take(taillePagePersonnes))
+                    _deEnseignant(l),
+                ],
+                total: page.lignes.length,
+                page: numero,
+                taillePage: taillePagePersonnes,
+              );
+            }
+            return (
               lignes: <LignePersonne>[
                 for (final LigneEnseignant l in page.lignes) _deEnseignant(l),
               ],
               total: page.total,
               page: page.page,
               taillePage: page.taillePage,
-            ),
-          ),
+            );
+          }),
           relire: () => ref
             ..invalidate(pageEnseignantsProvider)
             ..invalidate(enseignantsActifsProvider),
@@ -913,6 +960,12 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
             maintenant: DateTime.now(),
             tri: triComptes,
           );
+    // La page affichee des comptes filtres.
+    final int pageComptes = _pageBornee(gardes?.length ?? 0);
+    final List<CompteAdmin>? tranche = gardes
+        ?.skip((pageComptes - 1) * taillePagePersonnes)
+        .take(taillePagePersonnes)
+        .toList(growable: false);
     // Le tri : un seul bouton « Trier par », et l'ordre pose dit en puce,
     // comme un filtre (jamais un ordre qu'on ne voit pas).
     final rTri = t.admin.candidatures.tri;
@@ -1060,6 +1113,8 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
         // autres vues : ceux que toutes les lignes retenues permettent.
         gestes: candidats ? GesteLot.values : gestesDeLot(_lot.lignes.values),
         parTranches: candidats,
+        // « Ecrire » en lot : la file des candidats seulement, comme avant.
+        ecrire: candidats,
         onRelacher: () => setState(_lot.relacherTout),
         onLancer: (GesteLot g) => unawaited(
           lancerLotDeLaSelection<LigneEnseignant>(
@@ -1070,7 +1125,14 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
             onRapport: (RapportLot rapport) {
               if (!mounted) return;
               liste?.relire();
-              setState(() => retourLigne = _lot.apresRapport(rapport));
+              // Hors candidats, tout est relache apres un lot, comme dans
+              // l'ancienne liste des enseignants.
+              setState(
+                () => retourLigne = _lot.apresRapport(
+                  rapport,
+                  toutRelacher: !candidats,
+                ),
+              );
             },
             onAucunEligible: (List<String> ids) {
               if (mounted) setState(() => _lot.reporterEnFin(ids));
@@ -1085,7 +1147,7 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
         cleSupprimer: PersonnesPage.cleSupprimerComptes,
         nombre: _choisis.length,
         surLaPage:
-            gardes
+            tranche
                 ?.where((CompteAdmin c) => _choisis.containsKey(c.profilId))
                 .length ??
             _choisis.length,
@@ -1226,21 +1288,13 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
               relire: liste.relire,
               decalage: (page.page - 1) * page.taillePage,
               total: page.total,
-              pied: page.total > page.lignes.length
-                  ? PiedDeListe(
-                      debut: (page.page - 1) * page.taillePage + 1,
-                      fin:
-                          (page.page - 1) * page.taillePage +
-                          page.lignes.length,
-                      total: page.total,
-                      onPrecedent: page.page > 1
-                          ? () => _aller(context, page: page.page - 1)
-                          : null,
-                      onSuivant: page.page * page.taillePage < page.total
-                          ? () => _aller(context, page: page.page + 1)
-                          : null,
-                    )
-                  : null,
+              pied: _pied(
+                context,
+                page: page.page,
+                taillePage: page.taillePage,
+                affichees: page.lignes.length,
+                total: page.total,
+              ),
             ),
           )
         : BlocAsynchrone<List<CompteAdmin>>(
@@ -1253,9 +1307,20 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
               ref,
               onglets: entete,
               coteACote: coteACote,
+              // Par pages, comme « Comptes » : « Cocher la page » ne retient
+              // jamais tous les resultats du filtre (DECISION-LISTES §6).
               lignes: <LignePersonne>[
-                for (final CompteAdmin c in gardes ?? tous) _deCompte(c, vue),
+                for (final CompteAdmin c in tranche ?? tous) _deCompte(c, vue),
               ],
+              decalage: (pageComptes - 1) * taillePagePersonnes,
+              total: (gardes ?? tous).length,
+              pied: _pied(
+                context,
+                page: pageComptes,
+                taillePage: taillePagePersonnes,
+                affichees: (tranche ?? tous).length,
+                total: (gardes ?? tous).length,
+              ),
               relire: () => ref.invalidate(comptesProvider),
               vide: filtre
                   ? p.aucunResultat
@@ -1324,8 +1389,8 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
 
   /// Le menu « ... » d'un dossier (candidat ou enseignant) : « Ouvrir le
   /// dossier », les gestes que le serveur permet (ceux des anciennes listes),
-  /// puis ceux de son compte quand il en a un (ville, coche « fondateur »,
-  /// suppression). Les gestes qui retirent en dernier.
+  /// puis « Verifier la ville » quand la personne a un compte. Les gestes qui
+  /// retirent en dernier.
   Widget _menuDossier(
     BuildContext contexte,
     LignePersonne l, {
@@ -1341,10 +1406,20 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
         : l.enseignant != null
         ? gestesDuMenuEnseignant(l.enseignant!)
         : gestesDuMenuLigne(d, capacites);
+    // Du compte de la personne, seulement « Verifier la ville » : la
+    // suppression d'un compte reste dans Eleves, Familles et Equipe (pilote,
+    // 21/11/2026 ; un parent qui a postule a aussi un compte de tuteur).
     final CompteAdmin? c = _compteParReference[d.reference];
     final List<EntreeAction> duCompte = c == null || horsLigne
         ? const <EntreeAction>[]
-        : _gestesCompte(contexte, c, VueComptes.enseignants, dossier: false);
+        : gestesDossierEtVille(
+            contexte,
+            c,
+            references: _references,
+            lieux: _lieux,
+            onVerifierVille: () => unawaited(_verifierVille(c)),
+            dossier: false,
+          );
     EntreeAction entree(GesteCandidature g) => EntreeAction(
       libelle: libelleGeste(g),
       icone: iconeDuGeste(g),
@@ -1364,10 +1439,9 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
         ),
         for (final GesteCandidature g in gestes)
           if (!g.destructif) entree(g),
-        ...duCompte.where((EntreeAction g) => !g.destructif),
+        ...duCompte,
         for (final GesteCandidature g in gestes)
           if (g.destructif) entree(g),
-        ...duCompte.where((EntreeAction g) => g.destructif),
       ],
     );
   }
