@@ -4386,6 +4386,7 @@
   },
   "admin": {
     "personnesPage": {
+      "typeAcces": "Accès",
       "vueCandidats": "Candidats",
       "vueAccueil": "En accueil",
       "vueActifs": "Actifs",
