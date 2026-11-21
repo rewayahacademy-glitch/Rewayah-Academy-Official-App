@@ -192,3 +192,19 @@ plutôt qu'un second circuit ?
 défiler toute la tête avec une page défilante, et il disparaissait en haut. La page garde maintenant sa
 tête fixe et fait défiler le corps seul (`REGLES-NOUVELLES.md`, I4) ; un test vérifie qu'il reste en
 haut après le défilement.
+
+## Décisions du directeur du 21/11/2026
+
+1. **Tête fixe : oui.** À la question « Tu gardes Praxis collé en haut malgré la règle du 01/11
+   (`DECISION-DEFILEMENT-2026-11-01.md`) ? », le directeur a répondu le 21/11/2026 : « Oui, tête
+   fixe ». Le titre court et la bande de Praxis restent fixes et seul le corps défile. C'est une
+   exception à la règle du 01/11, valable **pour cette page seulement** ; la règle reste en vigueur
+   partout ailleurs.
+2. **Commentaires : pas dans la messagerie.** Réponse du directeur du 21/11/2026 : « En tout cas on
+   ne doit pas surcharger la messagerie ». L'agent recommande un **circuit à part**, accepté dans le
+   cadre posé par le directeur : les commentaires restent attachés à leur partie du guide (contrat
+   JSON ci-dessus : `commenter_guide`, `commentaires_guide_direction`,
+   `repondre_commentaire_guide`). La direction les lit sur une liste à elle, qui reste à faire
+   (pilote, lot 2). Aucun fil de la messagerie n'est ouvert et la matrice `MESSAGERIE-MATRICE.md`
+   ne change pas. Il reste une seule question ouverte, à poser au directeur au moment du lot 2 : où
+   la direction voit qu'un commentaire attend une réponse (pastille dans son menu, ou rien).
