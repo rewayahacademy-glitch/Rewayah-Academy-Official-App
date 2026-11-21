@@ -57,9 +57,12 @@ class _Comptes implements ServiceComptes {
 final List<FiltreEnseignants> _filtresDemandes = <FiltreEnseignants>[];
 
 class _Enseignants implements PortEnseignants {
-  const _Enseignants(this._lignes);
+  const _Enseignants(this._lignes, {this.taille = 50});
 
   final List<LigneEnseignant> _lignes;
+
+  /// La taille des pages du serveur.
+  final int taille;
 
   @override
   Future<PageEnseignants> lister({
@@ -76,11 +79,14 @@ class _Enseignants implements PortEnseignants {
             : l.phase == filtre.phase)
           l,
     ];
+    final int debut = (page - 1) * taille;
     return PageEnseignants(
-      lignes: lignes,
+      lignes: debut >= lignes.length
+          ? const <LigneEnseignant>[]
+          : lignes.sublist(debut, (debut + taille).clamp(0, lignes.length)),
       total: lignes.length,
-      page: 1,
-      taillePage: 50,
+      page: page,
+      taillePage: taille,
       compteurs: CompteursEnseignants(
         parPhase: <PhaseEnseignant, int>{
           for (final PhaseEnseignant p in PhaseEnseignant.values)
@@ -206,6 +212,7 @@ Future<void> _monter(
   bool echec = false,
   CapacitesCandidatures capacites = capacitesQuiLit,
   List<LigneCandidature>? candidatures,
+  List<LigneEnseignant>? enseignants,
   int taillePage = 50,
 }) async {
   tester.view.devicePixelRatio = 1;
@@ -233,7 +240,9 @@ Future<void> _monter(
           _Comptes(comptes ?? _comptes, echec: echec),
         ),
         serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
-        portEnseignantsProvider.overrideWithValue(_Enseignants(_enseignants)),
+        portEnseignantsProvider.overrideWithValue(
+          _Enseignants(enseignants ?? _enseignants, taille: taillePage),
+        ),
         serviceValidationProvider.overrideWithValue(_Pieces(_pieces)),
         portCandidaturesDirectionProvider.overrideWithValue(
           _port = FauxCandidaturesDirection(
@@ -831,6 +840,83 @@ void main() {
       expect(_adresse, isNot(contains('etat=')));
       expect(compteur(tester), '7 sur 7');
       expect(find.text('Candidat1 Essai'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+
+    /// Les references des lignes affichees, dans l'ordre.
+    List<String> references(WidgetTester tester) => <String>[
+      for (final Element e in find.byType(Text).evaluate())
+        if ((e.widget as Text).data case final String d
+            when d.startsWith('Personne') && d.endsWith('Essai'))
+          d,
+    ];
+
+    testWidgets('aucune personne deux fois : la page suivante des candidats '
+        'remplace la precedente', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants',
+        taille: const Size(390, 2400),
+        taillePage: 3,
+        candidatures: <LigneCandidature>[
+          for (int i = 1; i <= 7; i++)
+            ligneTest(
+              id: 'k$i',
+              reference: 'CAND-0010$i',
+              nom: 'Personne$i Essai',
+              derniereActivite: DateTime(2026, 11, 20 - i),
+            ),
+        ],
+      );
+      final List<String> premiere = references(tester);
+      expect(premiere, hasLength(3));
+      expect(premiere.toSet(), hasLength(3));
+
+      _routeur.go('/admin/personnes?onglet=enseignants&vue=candidats&page=2');
+      await tester.pumpAndSettle();
+      final List<String> seconde = references(tester);
+      expect(seconde, hasLength(3));
+      expect(seconde.toSet(), hasLength(3));
+      // Aucune ligne de la premiere page ne reste ni ne revient.
+      expect(seconde.toSet().intersection(premiere.toSet()), isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('aucune personne deux fois : « Actifs » lit chaque phase page '
+        'apres page et les met bout a bout', (WidgetTester tester) async {
+      const List<PhaseEnseignant> phases = <PhaseEnseignant>[
+        PhaseEnseignant.enPoste,
+        PhaseEnseignant.enPoste,
+        PhaseEnseignant.enPoste,
+        PhaseEnseignant.disponible,
+        PhaseEnseignant.disponible,
+        PhaseEnseignant.absent,
+        PhaseEnseignant.candidat,
+      ];
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&vue=actifs',
+        taille: const Size(390, 2400),
+        // Le serveur rend des pages de deux : trois en poste = deux pages.
+        taillePage: 2,
+        enseignants: <LigneEnseignant>[
+          for (final (int i, PhaseEnseignant p) in phases.indexed)
+            LigneEnseignant(
+              dossier: ligneTest(
+                id: 'a$i',
+                reference: 'CAND-0020$i',
+                nom: 'Personne$i Essai',
+              ),
+              phase: p,
+            ),
+        ],
+      );
+      final List<String> lues = references(tester);
+      // Les six actifs, chacun une fois ; le candidat n'y est pas.
+      expect(lues, hasLength(6));
+      expect(lues.toSet(), hasLength(6));
+      expect(lues, isNot(contains('Personne6 Essai')));
+      expect(compteur(tester), '6 sur 6');
       expect(tester.takeException(), isNull);
     });
 

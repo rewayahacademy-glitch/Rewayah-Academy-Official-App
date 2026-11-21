@@ -92,6 +92,8 @@ PhaseEnseignant _phase(int i) => switch (i % 6) {
   _ => PhaseEnseignant.candidat,
 };
 
+// Dix-huit dossiers fictifs, chacun a son nom : deux personnes de meme nom
+// se liraient comme un doublon sur la planche.
 final List<LigneEnseignant> _enseignants = <LigneEnseignant>[
   for (int i = 0; i < 18; i++)
     LigneEnseignant(
@@ -99,7 +101,8 @@ final List<LigneEnseignant> _enseignants = <LigneEnseignant>[
         id: 'c$i',
         reference: 'CAND-${10000 + i}',
         nom:
-            '${_prenoms[(i + 2) % _prenoms.length]} ${_noms[i % _noms.length]}',
+            '${_prenoms[(i + 2) % _prenoms.length]} '
+            '${_noms[(i + i ~/ 12) % _noms.length]}',
         etape: _phase(i) == PhaseEnseignant.candidat
             ? EtapeCandidature.prequalification
             : EtapeCandidature.confirmee,
@@ -212,7 +215,7 @@ Future<void> _monter(
                     reference: l.dossier.reference,
                     nom:
                         '${_prenoms[(i + 2) % _prenoms.length]} '
-                        '${_noms[i % _noms.length]}',
+                        '${_noms[(i + i ~/ 12) % _noms.length]}',
                     recueLe: DateTime.now().subtract(const Duration(days: 12)),
                   ),
                 ),
