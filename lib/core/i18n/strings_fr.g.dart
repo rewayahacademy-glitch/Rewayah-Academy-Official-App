@@ -11189,10 +11189,10 @@ class Traductions$admin$personnesPage$fr {
 	// Translations
 
 	/// fr: 'Cette personne a un compte de famille : il se supprime depuis l'onglet Familles.'
-	String get compteFamille => 'Cette personne a un compte de famille : il se supprime depuis l\'onglet Familles.';
+	String get compteFamille => 'Cette personne a un compte de famille : il se supprime depuis l\'onglet Familles.';
 
 	/// fr: 'Liste d'avant : {nom}'
-	String listeDAvant({required Object nom}) => 'Liste d\'avant : ${nom}';
+	String listeDAvant({required Object nom}) => 'Liste d\'avant : ${nom}';
 
 	/// fr: '{colonne}, ordre inverse'
 	String triInverse({required Object colonne}) => '${colonne}, ordre inverse';
@@ -61221,8 +61221,8 @@ extension on Traductions {
 			'dossiers.accesKyc.refus.genreDifferent' => 'Cette pièce est réservée à un administrateur du même genre que le candidat.',
 			'dossiers.accesKyc.refus.adminSansGenre' => 'Votre genre n\'est pas renseigné : aucune pièce ne peut s\'ouvrir. Demandez à la direction de le renseigner.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Votre profil ne peut pas consulter les pièces d\'identité.',
-			'admin.personnesPage.compteFamille' => 'Cette personne a un compte de famille : il se supprime depuis l\'onglet Familles.',
-			'admin.personnesPage.listeDAvant' => ({required Object nom}) => 'Liste d\'avant : ${nom}',
+			'admin.personnesPage.compteFamille' => 'Cette personne a un compte de famille : il se supprime depuis l\'onglet Familles.',
+			'admin.personnesPage.listeDAvant' => ({required Object nom}) => 'Liste d\'avant : ${nom}',
 			'admin.personnesPage.triInverse' => ({required Object colonne}) => '${colonne}, ordre inverse',
 			'admin.personnesPage.typeAcces' => 'Accès',
 			'admin.personnesPage.vueCandidats' => 'Candidats',

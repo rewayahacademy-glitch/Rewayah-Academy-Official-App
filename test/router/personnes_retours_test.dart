@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/admin_dossiers/revue_dossier.dart';
 import 'package:rewayah_academy/features/admin_personnes/personnes_page.dart';
@@ -162,23 +163,40 @@ void main() {
       ];
       expect(entrees.length, greaterThanOrEqualTo(10));
       final List<String> tableau = <String>[];
+      // Deux fois chaque page : le retour du systeme, puis la fleche a
+      // l'ecran.
       for (final String entree in entrees) {
-        await tester.tap(find.byKey(PersonnesPage.cleAutresPages));
-        await _laisser(tester);
-        await tester.tap(find.text(entree).last);
-        await _laisser(tester);
-        await _laisser(tester);
-        final bool ailleurs = !_surPersonnes;
-        await tester.binding.handlePopRoute();
-        await _laisser(tester);
-        await _laisser(tester);
-        final bool revenu = _surPersonnes && _adresse == depart;
-        tableau.add(
-          'RETOUR $largeur | $entree | attendu $depart | obtenu $_adresse | '
-          '${ailleurs ? 'page' : 'feuille'} | ${revenu ? 'OK' : 'ECHEC'}',
-        );
-        expect(revenu, isTrue, reason: tableau.last);
-        expect(tester.takeException(), isNull, reason: entree);
+        for (final bool fleche in <bool>[false, true]) {
+          await tester.tap(find.byKey(PersonnesPage.cleAutresPages));
+          await _laisser(tester);
+          await tester.tap(find.text(entree).last);
+          await _laisser(tester);
+          await _laisser(tester);
+          final bool ailleurs = !_surPersonnes;
+          String moyen = 'retour du systeme';
+          if (fleche) {
+            final Finder disque = find.byType(DisqueRetour).hitTestable();
+            if (disque.evaluate().isEmpty) {
+              moyen = 'PAS DE FLECHE (retour du systeme)';
+              await tester.binding.handlePopRoute();
+            } else {
+              moyen = 'fleche';
+              await tester.tap(disque.first);
+            }
+          } else {
+            await tester.binding.handlePopRoute();
+          }
+          await _laisser(tester);
+          await _laisser(tester);
+          final bool revenu = _surPersonnes && _adresse == depart;
+          tableau.add(
+            'RETOUR $largeur | $entree | $moyen | attendu $depart | '
+            'obtenu $_adresse | ${ailleurs ? 'page' : 'feuille'} | '
+            '${revenu ? 'OK' : 'ECHEC'}',
+          );
+          expect(revenu, isTrue, reason: tableau.last);
+          expect(tester.takeException(), isNull, reason: entree);
+        }
       }
       tableau.forEach(debugPrint);
     });
@@ -210,8 +228,34 @@ void main() {
       await _laisser(tester);
       await _laisser(tester);
       debugPrint(
-        'RETOUR $largeur | Dossier d\'un candidat | attendu $candidats | '
+        'RETOUR $largeur | Dossier d\'un candidat | retour du systeme | '
+        'attendu $candidats | '
         'obtenu $_adresse | page | '
+        '${_surPersonnes && _adresse == candidats ? 'OK' : 'ECHEC'}',
+      );
+      expect(_surPersonnes, isTrue);
+      expect(_adresse, candidats);
+      // La meme chose par la fleche a l'ecran.
+      await tester.tap(menus.first);
+      await _laisser(tester);
+      await tester.tap(
+        find.text(t.admin.candidatures.liste.ouvrirDossier).last,
+      );
+      await _laisser(tester);
+      await _laisser(tester);
+      final Finder flecheDossier = find.byType(DisqueRetour).hitTestable();
+      final bool aFlecheDossier = flecheDossier.evaluate().isNotEmpty;
+      if (aFlecheDossier) {
+        await tester.tap(flecheDossier.first);
+      } else {
+        await tester.binding.handlePopRoute();
+      }
+      await _laisser(tester);
+      await _laisser(tester);
+      debugPrint(
+        'RETOUR $largeur | Dossier d\'un candidat | '
+        '${aFlecheDossier ? 'fleche' : 'PAS DE FLECHE (retour du systeme)'} | '
+        'attendu $candidats | obtenu $_adresse | page | '
         '${_surPersonnes && _adresse == candidats ? 'OK' : 'ECHEC'}',
       );
       expect(_surPersonnes, isTrue);
@@ -240,11 +284,19 @@ void main() {
           findsNothing,
         );
       }
-      await tester.binding.handlePopRoute();
+      final Finder flechePiece = find.byType(DisqueRetour).hitTestable();
+      final bool aFlechePiece = flechePiece.evaluate().isNotEmpty;
+      if (aFlechePiece) {
+        await tester.tap(flechePiece.first);
+      } else {
+        await tester.binding.handlePopRoute();
+      }
       await _laisser(tester);
       await _laisser(tester);
       debugPrint(
-        'RETOUR $largeur | Revue d\'une piece | attendu vue=pieces | '
+        'RETOUR $largeur | Revue d\'une piece | '
+        '${aFlechePiece ? 'fleche' : 'PAS DE FLECHE (retour du systeme)'} | '
+        'attendu vue=pieces | '
         'obtenu $_adresse | page | '
         '${_surPersonnes && _adresse.contains('vue=pieces') ? 'OK' : 'ECHEC'}',
       );
