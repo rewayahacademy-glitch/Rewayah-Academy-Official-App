@@ -368,6 +368,33 @@ void main() {
       },
     );
 
+    // GUIDE-AVIS (21/11/2026) : tant que la direction ne lit pas les
+    // commentaires, ni « Commenter » ni le fil ; les avis se donnent.
+    testWidgets('commentaires fermes : pas de Commenter, Pas clair compte '
+        'sans ouvrir de fil', (WidgetTester tester) async {
+      final FauxPortInteractions port = FauxPortInteractions(
+        commentairesOuverts: false,
+      );
+      await _monter(tester, interactions: port);
+      await versPartie(tester, 'guide-pas-clair-p1');
+      expect(find.byKey(InteractionsPartie.cleCommenter('p1')), findsNothing);
+      await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(FilCommentaires.cleQuestion), findsNothing);
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.pasClairLecteur(n: 1)),
+        findsWidgets,
+      );
+      // Apres l'avis, « Commenter » ne revient pas.
+      expect(find.byKey(InteractionsPartie.cleCommenter('p1')), findsNothing);
+      await tester.tap(find.byKey(InteractionsPartie.cleJaime('p1')));
+      await tester.pumpAndSettle();
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.jaimeLecteur(n: 4)),
+        findsWidgets,
+      );
+    });
+
     testWidgets('commenter : le fil prive s\'ouvre, le commentaire y entre', (
       WidgetTester tester,
     ) async {

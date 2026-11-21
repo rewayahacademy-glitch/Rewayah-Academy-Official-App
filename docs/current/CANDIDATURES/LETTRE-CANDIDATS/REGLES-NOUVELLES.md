@@ -62,8 +62,8 @@ l'application) ; **non vérifié** (peut exister, personne ne l'a lu dans le cod
 
 | # | Règle du directeur (20/11) | État |
 | --- | --- | --- |
-| D1 | **Seulement les enseignants, et les candidats enseignants qui ont accepté leurs accords** | écran et routeur : fait sur la branche du lot (`/lire` ouvert au seul rôle enseignant ; le candidat sans accords voit ce qui manque) |
-| D2 | **Le serveur doit décider aussi** | en cours : le texte est retiré de l'application et la page lit un port serveur (`port_lettre.dart`) ; la fonction serveur et son adaptateur sont pris par le pilote (branche `claude/lettre-serveur`). Tant qu'ils ne sont pas fusionnés et installés, la page n'affiche rien |
+| D1 | **Seulement les enseignants, et les candidats enseignants qui ont accepté leurs accords** | dans `main` (PR 665), non prouvé par le directeur |
+| D2 | **Le serveur doit décider aussi** | dans `main` (PR 665) ; `lire_lettre_candidats` installée en production le 21/11/2026 et vérifiée par empreinte ; non prouvé par le directeur |
 
 ## Interactions du guide (directeur, 20/11/2026, 23 h)
 
@@ -71,5 +71,5 @@ l'application) ; **non vérifié** (peut exister, personne ne l'a lu dans le cod
 | --- | --- | --- |
 | I1 | La page ne s'appelle plus « lettre » | en cours : « Guide de l'enseignant » (choix de l'agent, à confirmer) |
 | I2 | Les lecteurs commentent ; la direction et Praxis lisent et répondent ; les autres lecteurs ne voient pas les commentaires | absent : tables, fonctions, écran de la direction et outils de Praxis à faire (pilote) ; page du lecteur sur `claude/guide-interactions`. **Circuit à part, hors de la messagerie** (directeur, 21/11 : « on ne doit pas surcharger la messagerie ») |
-| I3 | « J'aime » et « Pas clair » par partie, nombres visibles de tous | absent : même partage |
+| I3 | « J'aime » et « Pas clair » par partie, nombres visibles de tous | serveur écrit le 21/11/2026 (GUIDE-AVIS, migration `20261130971000`, `lire_interactions_guide`, `donner_avis_guide`) ; « Commenter » masqué tant que I2 n'existe pas |
 | I4 | Praxis reste en haut et suit la lecture | fait sur la branche : la tête de page (titre court « Guide de l'enseignant » et bande de Praxis) reste fixe, le corps défile seul. **Écart daté à `DECISION-DEFILEMENT-2026-11-01.md`** (« rien de gros collé au-dessus du contenu »), **confirmé par le directeur le 21/11/2026 (« Oui, tête fixe »)**, pour cette page seulement ; la tête reste sous les 160 points de WEB-BUREAU B6 (garde verte) |

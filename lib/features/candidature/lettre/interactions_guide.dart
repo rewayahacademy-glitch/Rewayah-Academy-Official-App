@@ -66,6 +66,7 @@ class InteractionsGuideNotifier extends AsyncNotifier<InteractionsGuide> {
           InteractionsGuide(
             avis: courant.avis,
             commentaires: <CommentaireGuide>[...courant.commentaires, c],
+            commentairesOuverts: courant.commentairesOuverts,
           ),
         );
       }
@@ -79,6 +80,7 @@ class InteractionsGuideNotifier extends AsyncNotifier<InteractionsGuide> {
       InteractionsGuide(
         avis: <String, AvisPartie>{...g.avis, l.code: l},
         commentaires: g.commentaires,
+        commentairesOuverts: g.commentairesOuverts,
       );
 }
 
@@ -126,9 +128,15 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
 
   // Directeur, 21/11/2026 : un « Pas clair » doit servir. Le donner ouvre
   // aussi le fil de la partie, avec la question ; ecrire reste facultatif.
-  void _toucherAvis(AvisPartie ligne, AvisGuide choisi) {
+  void _toucherAvis(
+    AvisPartie ligne,
+    AvisGuide choisi, {
+    required bool commentaires,
+  }) {
     final bool ouvrir =
-        choisi == AvisGuide.pasClair && ligne.monAvis != AvisGuide.pasClair;
+        commentaires &&
+        choisi == AvisGuide.pasClair &&
+        ligne.monAvis != AvisGuide.pasClair;
     unawaited(_avis(ligne, choisi));
     if (ouvrir) _ouvrirFil(pasClair: true);
   }
@@ -168,8 +176,9 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
           cleJaime: InteractionsPartie.cleJaime(widget.code),
           clePasClair: InteractionsPartie.clePasClair(widget.code),
           cleCommenter: InteractionsPartie.cleCommenter(widget.code),
-          onAvis: (AvisGuide a) => _toucherAvis(ligne, a),
-          onCommenter: _ouvrirFil,
+          onAvis: (AvisGuide a) =>
+              _toucherAvis(ligne, a, commentaires: lu.commentairesOuverts),
+          onCommenter: lu.commentairesOuverts ? _ouvrirFil : null,
         ),
         if (_echec)
           Padding(

@@ -14,6 +14,18 @@ connexion par courriel, PR 656) ; tout le reste de ce qui est dans `main` attend
 Le détail de chaque lot est dans `PLAN.md` ; la check-liste et le journal dans `SUIVI.md` ; les maquettes
 validées dans `maquettes/` (et les adresses des pages remises au directeur dans `SUIVI.md`).
 
+## 0. À TRAITER DANS LES JOURS QUI VIENNENT : le guide contredit l'application (directeur, 21/11/2026)
+
+Le guide de l'enseignant est en ligne (PR 665) et lu par les candidats. Il promet des choses que l'application ne fait pas, ou qui
+contredisent une règle écrite. Détail ligne par ligne : `docs/current/CANDIDATURES/LETTRE-CANDIDATS/REGLES-NOUVELLES.md`.
+
+- **Contraires** : P1 (45 % enfants contre 47 % pour tous), P2 (absent payé à moitié contre jamais payé), P3 (montants en dollars
+  contre pourcentages seulement), L1 (arabe langue de cours contre refusé le 22/10), C2 (format du matricule).
+- **Absents** : A2 (avertissements avant perte de la classe), A5 (enseigner ailleurs permis), A6 (sortie de plus de 30 s signalée),
+  P5 (montant minimum versé au remplaçant), et les lignes « non vérifié » (P4, P6, P7, A3, A4, A7, C1).
+- Marche à suivre : le directeur tranche chaque ligne (le guide change, ou la règle et le code changent) ; la décision datée va dans la
+  source nommée ; puis le code ; la ligne se ferme avec le numéro de PR, et sort de cette section.
+
 ## 1. Ce qui reste des MAQUETTES validées, pas encore dans l'application
 
 | Maquette | Ce qui manque | Lot |
@@ -33,7 +45,7 @@ validées dans `maquettes/` (et les adresses des pages remises au directeur dans
 
 - Vague P (fluidité) : PE-P1 mesure sur les trois appareils du directeur, PE-P3, PE-P4 ; PE-P2 éclair coloré non corrigé.
 - Vague A : PE-A2 (adresse préremplie et marque dans le lien : serveur), PE-A4 (geste « ce compte est un candidat enseignant »), PE-A7 (PR 655 : **ne pas fusionner** sans décision ; sa migration 942000 est à renuméroter après 966000), PE-A9 (rôle associé côté serveur).
-- Vague B : PE-B2 (un seul nom par élément), PE-B6 (partage), PE-B7 (modifier après envoi), PE-B9 (réponses toutes prêtes : le guide de l'enseignant est dans `main` depuis le 21/11, PR 665 ; **reste** la partie serveur des avis « J'aime » / « Pas clair » et des commentaires (`commenter_guide`, `commentaires_guide_direction` avec les « Pas clair » par partie, `repondre_commentaire_guide`), sans laquelle la barre d'avis ne s'affiche pas ; la liste de la direction, triée par « Pas clair » ; Praxis qui clarifie seulement depuis le texte validé ; les trois promesses du guide que l'application ne tient pas (45 % enfants, absent payé à moitié, arabe langue de cours), `docs/current/CANDIDATURES/LETTRE-CANDIDATS/REGLES-NOUVELLES.md`), PE-B10 seconde moitié (ranger une image du chat comme pièce). Côté direction : la ville et la langue du candidat ne sont pas encore lues par le serveur ; le téléphone n'est pas relu par le candidat.
+- Vague B : PE-B2 (un seul nom par élément), PE-B6 (partage), PE-B7 (modifier après envoi), PE-B9 (réponses toutes prêtes : le guide de l'enseignant est dans `main` depuis le 21/11, PR 665 ; les « J'aime » et « Pas clair » ont leur serveur (GUIDE-AVIS, migration `20261130971000`) ; **reste** la partie serveur des commentaires (`commenter_guide`, `commentaires_guide_direction`, `repondre_commentaire_guide`) et l'écran de la direction qui les lit : d'ici là, « Commenter » est masqué ; la liste de la direction, triée par « Pas clair » ; Praxis qui clarifie seulement depuis le texte validé ; les trois promesses du guide que l'application ne tient pas (45 % enfants, absent payé à moitié, arabe langue de cours), `docs/current/CANDIDATURES/LETTRE-CANDIDATS/REGLES-NOUVELLES.md`), PE-B10 seconde moitié (ranger une image du chat comme pièce). Côté direction : la ville et la langue du candidat ne sont pas encore lues par le serveur ; le téléphone n'est pas relu par le candidat.
 - Vague C : PE-C3 (pièce toujours affichée de la même façon), PE-C5 (épingler), PE-C9 en partie.
 - Vague D : PE-D2 (supprimer un message), PE-D5 (profil dans la conversation), PE-D6 (annoncer à ces N personnes), PE-D7 (aperçu de lien, PDF), PE-D12 en partie.
 - Vague G (Praxis) : PE-G3 (valider par pile) ; PE-G4 **arrêté** depuis le 20/11 à 10 h 32 UTC, ne pas rallumer sans ordre.

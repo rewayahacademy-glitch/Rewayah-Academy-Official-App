@@ -59,6 +59,7 @@ import 'core/candidature/entretiens_direction_supabase.dart';
 import 'core/candidature/entretiens_temps_reel.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
+import 'core/candidature/interactions_guide_supabase.dart';
 import 'core/candidature/invitations_personnelles_supabase.dart';
 import 'core/candidature/lettre_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
@@ -261,6 +262,7 @@ import 'features/accueil_adulte/port_espace_adulte.dart';
 import 'features/admin_invitations/familles_importees.dart';
 import 'features/admin_invitations/familles_importees_supabase.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
+import 'features/candidature/lettre/port_interactions_guide.dart';
 import 'features/candidature/lettre/port_lettre.dart';
 import 'features/com_annonces/annonces_direction_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
@@ -591,6 +593,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // serveur a qui a le droit de la lire (`lire_lettre_candidats`).
   portLettreProvider.overrideWithValue(
     LettreSupabase(Supabase.instance.client),
+  ),
+  // GUIDE-AVIS (21/11/2026) : les « J'aime » et « Pas clair » du guide, servis
+  // par le serveur (`lire_interactions_guide`, `donner_avis_guide`).
+  portInteractionsProvider.overrideWithValue(
+    InteractionsGuideSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),

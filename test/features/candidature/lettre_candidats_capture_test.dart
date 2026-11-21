@@ -35,6 +35,7 @@ Future<void> _monter(
   WidgetTester tester,
   Size taille, {
   required bool accordsFaits,
+  bool commentairesOuverts = true,
   TextDirection? direction,
 }) async {
   tester.view.physicalSize = taille;
@@ -61,6 +62,7 @@ Future<void> _monter(
         portInteractionsProvider.overrideWithValue(
           FauxPortInteractions(
             jaime: 12,
+            commentairesOuverts: commentairesOuverts,
             fil: <CommentaireGuide>[
               CommentaireGuide(
                 id: 'c1',
@@ -144,6 +146,31 @@ void main() {
           await tester.tap(find.byKey(InteractionsPartie.cleCommenter('p4')));
           await stabiliser(tester);
           await capturerVue(tester, 'lettre-candidats/commentaire-$nom');
+        });
+        // GUIDE-AVIS (21/11/2026) : les avis servis par le serveur, sans
+        // « Commenter » tant que la direction ne lit pas les commentaires.
+        testWidgets('avis-$nom', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _monter(
+            tester,
+            taille,
+            accordsFaits: true,
+            commentairesOuverts: false,
+            direction: sens,
+          );
+          await tester.scrollUntilVisible(
+            find.byKey(InteractionsPartie.cleJaime('p4')),
+            300,
+            scrollable: find
+                .descendant(
+                  of: find.byKey(LettreCandidatsPage.cleDefilement),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
+          );
+          await tester.tap(find.byKey(InteractionsPartie.clePasClair('p4')));
+          await stabiliser(tester);
+          await capturerVue(tester, 'GUIDE-AVIS/avis-$nom');
         });
         testWidgets('verrou-$nom', (WidgetTester tester) async {
           await tester.runAsync(() => LocaleSettings.setLocale(langue));

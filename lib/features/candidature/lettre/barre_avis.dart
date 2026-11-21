@@ -33,7 +33,7 @@ class BarreAvis extends StatelessWidget {
     required this.ligne,
     required this.mesCommentaires,
     required this.onAvis,
-    required this.onCommenter,
+    this.onCommenter,
     this.cleJaime,
     this.clePasClair,
     this.cleCommenter,
@@ -49,8 +49,9 @@ class BarreAvis extends StatelessWidget {
   /// Le lecteur touche un avis.
   final ValueChanged<AvisGuide> onAvis;
 
-  /// Le lecteur ouvre son fil.
-  final VoidCallback onCommenter;
+  /// Le lecteur ouvre son fil ; nul tant que la direction ne lit pas encore
+  /// les commentaires (le serveur le dit) : pas de touche « Commenter ».
+  final VoidCallback? onCommenter;
 
   /// Les cles des trois touches, pour les tests.
   final Key? cleJaime, clePasClair, cleCommenter;
@@ -83,17 +84,18 @@ class BarreAvis extends StatelessWidget {
           semantique: l.pasClairLecteur(n: ligne.pasClair),
           onPress: () => onAvis(AvisGuide.pasClair),
         ),
-        _Reaction(
-          key: cleCommenter,
-          icone: AppIcons.discussion,
-          mot: l.commenter,
-          nombre: mesCommentaires,
-          donnee: false,
-          semantique: mesCommentaires > 0
-              ? '${l.commenter}. ${l.commentaires(n: mesCommentaires)}'
-              : l.commenter,
-          onPress: onCommenter,
-        ),
+        if (onCommenter case final VoidCallback commenter)
+          _Reaction(
+            key: cleCommenter,
+            icone: AppIcons.discussion,
+            mot: l.commenter,
+            nombre: mesCommentaires,
+            donnee: false,
+            semantique: mesCommentaires > 0
+                ? '${l.commenter}. ${l.commentaires(n: mesCommentaires)}'
+                : l.commenter,
+            onPress: commenter,
+          ),
       ],
     );
   }
