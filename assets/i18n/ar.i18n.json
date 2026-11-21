@@ -5276,6 +5276,15 @@
     "augmenter": "زيادة بواحد"
   },
   "admin": {
+    "personnesPage": {
+      "autresPages": "صفحات الأشخاص الأخرى",
+      "ongletEquipe": "الإدارة والفريق",
+      "ongletEquipeCourt": "الفريق",
+      "ongletAvecNombre": "⁨{nom}⁩ (⁨{n}⁩)",
+      "choix": "الأشخاص المعروضون",
+      "apercuVide": "اختر شخصًا من القائمة لعرض ملخّصه.",
+      "demandeATraiter": "لهذا الشخص طلب تسجيل ينتظر قرارًا."
+    },
     "listeEnseignants": {
       "titre": "المعلّمون",
       "phase": "المرحلة",
