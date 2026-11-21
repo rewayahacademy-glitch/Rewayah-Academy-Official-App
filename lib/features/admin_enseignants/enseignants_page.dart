@@ -22,7 +22,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/candidature/gestes_candidature.dart';
-import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/modeles_lot_candidatures.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
@@ -59,8 +58,7 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
-import '../admin_candidature/feuille_geste.dart';
-import '../admin_candidature/gestes_proposes.dart';
+import '../admin_candidature/geste_de_ligne.dart';
 import '../admin_candidature/libelles_candidature.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import '../admin_candidatures/lot_candidatures.dart';
@@ -387,75 +385,31 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
   ) async {
     if (_ouverture != null) return;
     final LigneCandidature dossier = ligne.dossier;
-    final DemandeDossier demande = DemandeDossier(
-      dossier.reference,
-      id: dossier.id,
-    );
     setState(() {
       _ouverture = nomAffiche(dossier);
       _echecLigne = null;
       _retour = null;
     });
-    ref.invalidate(detailCandidatureProvider(demande));
-    final ProviderSubscription<AsyncValue<DetailCandidature>> garde = ref
-        .listenManual(
-          detailCandidatureProvider(demande),
-          (
-            AsyncValue<DetailCandidature>? _,
-            AsyncValue<DetailCandidature> _,
-          ) {},
-        );
-    DetailCandidature? detail;
-    try {
-      detail = await ref.read(detailCandidatureProvider(demande).future);
-    } on Object {
-      detail = null;
-    } finally {
-      garde.close();
-    }
-    if (!mounted) return;
-    final r = t.admin.candidatures.liste;
-    if (detail == null) {
-      setState(() {
-        _ouverture = null;
-        _echecLigne = r.dossierIllisible;
-      });
-      return;
-    }
-    setState(() => _ouverture = null);
-    if (!gestePermis(geste, detail)) {
-      final LigneCandidature lu = detail.ligne;
-      setState(
-        () => _echecLigne = r.gestePlusPossible(
-          etat: libelleEtatCourant(
-            issue: lu.issue,
-            enPause: lu.enPause,
-            etape: lu.etape,
-            etat: lu.etat,
-          ),
-        ),
-      );
-      _relire();
-      return;
-    }
-    final SortieFeuille? sortie = await ouvrirFeuilleGeste(
+    final ResultatGesteDeLigne resultat = await lancerGesteDeLigne(
       context,
+      ref,
+      ligne: dossier,
       geste: geste,
-      detail: detail,
       capacites: capacites,
+      onLu: () {
+        if (mounted) setState(() => _ouverture = null);
+      },
     );
-    if (!mounted || sortie == null) return;
-    _relire();
-    setState(
-      () => _retour = sortie.issue == IssueFeuille.fait
-          ? r.retourLigne(
-              nom: nomAffiche(dossier),
-              retour: sortie.rejoue
-                  ? t.admin.candidatures.retours.rejoue
-                  : libelleRetour(geste),
-            )
-          : null,
-    );
+    if (!mounted) return;
+    if (resultat.aRelire) _relire();
+    setState(() {
+      _ouverture = null;
+      if (resultat.echec) {
+        _echecLigne = resultat.message;
+      } else if (resultat.issue != IssueGesteDeLigne.renonce) {
+        _retour = resultat.message;
+      }
+    });
   }
 
   // --- Le traitement groupe -----------------------------------------------

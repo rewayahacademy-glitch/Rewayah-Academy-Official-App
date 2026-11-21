@@ -5280,6 +5280,8 @@
       "autresPages": "صفحات الأشخاص الأخرى",
       "ongletEquipe": "الإدارة والفريق",
       "ongletEquipeCourt": "الفريق",
+      "precedente": "الشخص السابق",
+      "suivante": "الشخص التالي",
       "ongletAvecNombre": "⁨{nom}⁩ (⁨{n}⁩)",
       "choix": "الأشخاص المعروضون",
       "apercuVide": "اختر شخصًا من القائمة لعرض ملخّصه.",

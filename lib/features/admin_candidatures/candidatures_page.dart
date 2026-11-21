@@ -39,7 +39,6 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/candidature/attentes_recrutement.dart';
 import '../../core/candidature/creneaux_direction.dart';
 import '../../core/candidature/gestes_candidature.dart';
-import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/modeles_lot_candidatures.dart';
@@ -80,9 +79,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_candidature/entretiens_du_jour.dart';
-import '../admin_candidature/feuille_geste.dart';
-import '../admin_candidature/gestes_proposes.dart';
-import '../admin_candidature/libelles_candidature.dart';
+import '../admin_candidature/geste_de_ligne.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
 import 'adresse_candidatures.dart';
 import 'feuille_filtres.dart';
@@ -462,80 +459,33 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     CapacitesCandidatures capacites,
   ) async {
     if (_ouverture != null) return;
-    final DemandeDossier demande = DemandeDossier(
-      ligne.reference,
-      id: ligne.id,
-    );
     setState(() {
       _ouverture = nomAffiche(ligne);
       _echecLigne = null;
       _retour = null;
     });
-    // Une lecture neuve : la version lue est celle d'aujourd'hui, jamais celle
-    // d'un dossier garde en memoire.
-    ref.invalidate(detailCandidatureProvider(demande));
-    final ProviderSubscription<AsyncValue<DetailCandidature>> garde = ref
-        .listenManual(
-          detailCandidatureProvider(demande),
-          (
-            AsyncValue<DetailCandidature>? _,
-            AsyncValue<DetailCandidature> _,
-          ) {},
-        );
-    DetailCandidature? detail;
-    try {
-      detail = await ref.read(detailCandidatureProvider(demande).future);
-    } on Object {
-      detail = null;
-    } finally {
-      garde.close();
-    }
-    if (!mounted) return;
-    final r = t.admin.candidatures.liste;
-    if (detail == null) {
-      setState(() {
-        _ouverture = null;
-        _echecLigne = r.dossierIllisible;
-      });
-      return;
-    }
-    setState(() => _ouverture = null);
-    if (!gestePermis(geste, detail)) {
-      final LigneCandidature lu = detail.ligne;
-      setState(
-        () => _echecLigne = r.gestePlusPossible(
-          etat: libelleEtatCourant(
-            issue: lu.issue,
-            enPause: lu.enPause,
-            etape: lu.etape,
-            etat: lu.etat,
-          ),
-        ),
-      );
-      // La ligne a change depuis la derniere lecture : la liste se relit.
-      _relire();
-      return;
-    }
-    final SortieFeuille? sortie = await ouvrirFeuilleGeste(
+    final ResultatGesteDeLigne resultat = await lancerGesteDeLigne(
       context,
+      ref,
+      ligne: ligne,
       geste: geste,
-      detail: detail,
       capacites: capacites,
+      onLu: () {
+        if (mounted) setState(() => _ouverture = null);
+      },
     );
-    if (!mounted || sortie == null) return;
+    if (!mounted) return;
     // Recherche, filtres, tri et page sont dans l'etat de cette page : la
     // relecture les garde.
-    _relire();
-    setState(
-      () => _retour = sortie.issue == IssueFeuille.fait
-          ? r.retourLigne(
-              nom: nomAffiche(ligne),
-              retour: sortie.rejoue
-                  ? t.admin.candidatures.retours.rejoue
-                  : libelleRetour(geste),
-            )
-          : null,
-    );
+    if (resultat.aRelire) _relire();
+    setState(() {
+      _ouverture = null;
+      if (resultat.echec) {
+        _echecLigne = resultat.message;
+      } else if (resultat.issue != IssueGesteDeLigne.renonce) {
+        _retour = resultat.message;
+      }
+    });
   }
 
   // --- Le traitement groupe ----------------------------------------------
