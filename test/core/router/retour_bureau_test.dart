@@ -50,10 +50,84 @@ void main() {
       );
     });
 
+    // PERSONNES-UNE-PAGE (e).
+    test('un dossier ouvert depuis Personnes : Personnes, l onglet, la vue, '
+        'les filtres, la personne', () {
+      final String depuisPersonnes = Routes.adminPersonnesCandidaturePour(
+        'CAND-00012',
+        fileDeLaListe: const <String, String>{
+          'file': 'enseignants',
+          'vue': 'actifs',
+          'phase': 'en_poste',
+          'phase_file': 'en_poste',
+          'tri': 'recente',
+          'page': '2',
+        },
+      );
+      final Uri retour = Uri.parse(
+        retourLogiqueBureau(adresse: Uri.parse(depuisPersonnes), plan: plan)!,
+      );
+      expect(retour.path, Routes.adminPersonnes);
+      expect(retour.queryParameters, <String, String>{
+        'onglet': 'enseignants',
+        'vue': 'actifs',
+        'phase': 'en_poste',
+        'tri': 'recente',
+        'page': '2',
+        'element': 'CAND-00012',
+      });
+      // Le fil d'Ariane : sous « Personnes », plus sous « Candidatures ».
+      final List<SegmentFil> fil = ancetresFil(
+        plan: plan,
+        chemin: depuisPersonnes,
+      );
+      expect(fil.last.chemin, retour.toString());
+      expect(
+        fil.any(
+          (SegmentFil s) => s.chemin == Routes.adminPersonnesCandidatures,
+        ),
+        isFalse,
+      );
+    });
+
+    test('un dossier de l ancienne liste (sans vue) : la liste des '
+        'candidatures, celle que l associe peut lire', () {
+      expect(
+        adressePersonnesDeLaFile(const <String, String>{}, 'CAND-1'),
+        null,
+      );
+      expect(
+        adressePersonnesDeLaFile(const <String, String>{
+          'etape': 'entretien',
+        }, 'CAND-1'),
+        isNull,
+      );
+    });
+
+    test('une page secondaire de Personnes rechargee : Personnes, pas '
+        'l Accueil', () {
+      for (final String page in <String>[
+        Routes.adminPersonnesDossiers,
+        Routes.adminPersonnesComptes,
+        Routes.adminPersonnesEnseignants,
+        Routes.adminPersonnesReprises,
+        Routes.adminPersonnesImport,
+        Routes.adminPersonnesSuppressions,
+        Routes.adminPersonnesInvitations,
+        Routes.adminPersonnesEquipe,
+        Routes.adminPersonnesAdmissions,
+      ]) {
+        expect(
+          retourLogiqueBureau(adresse: Uri.parse(page), plan: plan),
+          Routes.adminPersonnes,
+          reason: page,
+        );
+      }
+    });
+
     test('un onglet de rubrique ou une rubrique : l Accueil', () {
       for (final String page in <String>[
         Routes.adminPersonnesCandidatures,
-        Routes.adminPersonnesDossiers,
         Routes.adminPersonnes,
       ]) {
         expect(

@@ -187,6 +187,11 @@ final List<LigneEnseignant> _enseignants = <LigneEnseignant>[
     dossier: ligneTest(id: 'c7', reference: 'CAND-00007', nom: 'Omar Essai'),
     phase: PhaseEnseignant.accueil,
   ),
+  // Un parent qui a postule : son compte est un compte de famille (profil 4).
+  LigneEnseignant(
+    dossier: ligneTest(id: 'c9', reference: 'CAND-00009', nom: 'Driss Essai'),
+    phase: PhaseEnseignant.accueil,
+  ),
 ];
 
 /// Une direction qui decide et agit en lot.
@@ -445,7 +450,7 @@ void main() {
       await tester.tap(find.text(t.admin.candidatures.selection.page));
       await tester.pumpAndSettle();
       expect(
-        find.text(t.admin.candidatures.lot.selectionnees(n: 4)),
+        find.text(t.admin.candidatures.lot.selectionnees(n: 5)),
         findsOneWidget,
       );
       expect(
@@ -634,15 +639,67 @@ void main() {
         find.text(t.lieu.verifier(deNom: deDevant('Karim Essai'))).last,
       );
       await tester.pumpAndSettle();
-      // La suppression du compte n'est pas dans ce menu (elle reste dans
-      // Eleves, Familles et Equipe).
-      expect(find.text(t.admin.comptes.retrait.actionLigne), findsNothing);
       expect(_lieux.verifies, <String>['6']);
       expect(
         find.text(t.lieu.villeVerifiee(deNom: deDevant('Karim Essai'))),
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('le compte derriere un dossier', () {
+    testWidgets('un compte d\'enseignant se supprime depuis le menu de sa '
+        'ligne : confirmation nominative, le serveur recoit ce compte, la '
+        'page dit le bilan', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&vue=accueil',
+      );
+      await tester.tap(find.byKey(PersonnesPage.cleMenuLigne('CAND-00003')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.admin.comptes.retrait.actionLigne).last);
+      await tester.pumpAndSettle();
+      // Rien n'est parti avant la confirmation, qui nomme la personne.
+      expect(_retraits.envois, isEmpty);
+      expect(find.textContaining('Karim Essai'), findsWidgets);
+      await tester.tap(find.text(t.admin.comptes.retrait.confirmerUn).last);
+      await tester.pumpAndSettle();
+      expect(_retraits.envois.single, <String>['6']);
+      expect(find.byKey(cleBilanSuppression), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('un dossier dont le compte est un compte de famille : aucun '
+        'geste de suppression ; l\'apercu dit ou il se supprime', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse:
+            '/admin/personnes?onglet=enseignants&vue=accueil'
+            '&element=CAND-00009',
+      );
+      expect(find.byKey(PersonnesPage.cleCompteFamille), findsOneWidget);
+      expect(find.text(t.admin.personnesPage.compteFamille), findsOneWidget);
+      await tester.tap(find.byKey(PersonnesPage.cleMenuLigne('CAND-00009')));
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.comptes.retrait.actionLigne), findsNothing);
+      expect(_retraits.envois, isEmpty);
+    });
+
+    testWidgets('un dossier sans compte connu : ni geste de suppression, ni '
+        'phrase', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse:
+            '/admin/personnes?onglet=enseignants&vue=accueil'
+            '&element=CAND-00006',
+      );
+      expect(find.byKey(PersonnesPage.cleCompteFamille), findsNothing);
+      await tester.tap(find.byKey(PersonnesPage.cleMenuLigne('CAND-00006')));
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.comptes.retrait.actionLigne), findsNothing);
     });
   });
 

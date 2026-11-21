@@ -4073,9 +4073,38 @@ class _CoquilleAdmin extends ConsumerWidget {
                   chemins: const <String>{Routes.adminPersonnesCandidatures},
                   child: child,
                 )
-              : child,
+              // PERSONNES-UNE-PAGE (e) : la barre laterale ne montre plus que
+              // deux outils sous « Personnes » ; les pages secondaires ne
+              // repetent pas pour autant leurs sections sur ordinateur (on y
+              // vient par le menu « Outils » de la page, on en revient par le
+              // retour).
+              : _SectionsPersonnesCouvertes(child: child),
         ),
       ),
+    );
+  }
+}
+
+/// Ajoute les anciennes sections de « Personnes » aux adresses que le
+/// panneau annonce deja ([SousLiensCoquille]) : sur tablette et ordinateur,
+/// leurs pages ne montrent pas de selecteur de section. Au telephone (aucune
+/// annonce du panneau), rien ne change.
+class _SectionsPersonnesCouvertes extends StatelessWidget {
+  const _SectionsPersonnesCouvertes({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final Set<String>? panneau = SousLiensCoquille.de(context);
+    if (panneau == null) return child;
+    return SousLiensCoquille(
+      chemins: <String>{
+        ...panneau,
+        for (final ({String libelle, String chemin}) o in ongletsPersonnes())
+          o.chemin,
+      },
+      child: child,
     );
   }
 }
