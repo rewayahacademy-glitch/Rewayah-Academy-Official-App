@@ -25,6 +25,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/halo_lumiere.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../alertes/section_alertes.dart';
@@ -52,6 +53,9 @@ class TableauDeBordPage extends ConsumerWidget {
 
   /// La date du jour, dans la case de Praxis (tablette et ordinateur).
   static const Key cleDate = BentoVivant.cleDate;
+
+  /// Le lien « Les chiffres de l'academie », sous la grille (21/11/2026).
+  static const Key cleChiffres = ValueKey<String>('tableau-chiffres');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -363,6 +367,23 @@ class TableauDeBordPage extends ConsumerWidget {
           // ALERTE-1 : une alerte urgente va en tete, avant tout.
           if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
           vivant,
+          // CHIFFRES-ACADEMIE (directeur, 21/11/2026 : il ne trouvait pas la
+          // page) : une entree visible a toutes les largeurs, en plus du
+          // dernier sous-lien d'Operations, qui ne se voit que dans ce
+          // domaine, et de la recherche.
+          Ecart.vLg,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: TableauDeBordPage.cleChiffres,
+              alignerEnDebut: true,
+              icone: AppIcons.tableauDeBord,
+              libelle: t.admin.chiffres.lien,
+              onPress: () => unawaited(
+                GoRouter.of(context).push<void>(Routes.adminOperationsChiffres),
+              ),
+            ),
+          ),
         ],
       ),
     );
