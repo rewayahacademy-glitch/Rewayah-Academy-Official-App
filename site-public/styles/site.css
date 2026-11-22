@@ -3187,7 +3187,10 @@ html[lang="ar"] .porte__texte h1 { max-width: none; font-size: clamp(40px, 4.6vw
 /* En-tetes de page : l'illustration est composee pour un texte pose dans son espace vide ; elle ne se retourne pas,
    donc la grille garde la place des blocs du francais (sinon le texte arabe passe sur la scene). Seul le texte est rtl. */
 [dir="rtl"] .entete-page { direction: ltr; }
-[dir="rtl"] .entete-page__texte, [dir="rtl"] .entete-page__texte > * { direction: rtl; }
+[dir="rtl"] .entete-page__texte, [dir="rtl"] .entete-page__texte > *, [dir="rtl"] .entete-page__suite, [dir="rtl"] .entete-page__suite > * { direction: rtl; text-align: start; }
+/* Titres, descriptions, signatures et cartes des articles : toujours de droite à gauche, la meta (date, durée, nom) isolée pour que les chiffres ne la retournent pas. */
+[dir="rtl"] :is(.articles__tete, .article-carte__texte, .article-signature, .article-carte h3, .article-carte p) { direction: rtl; text-align: start; }
+[dir="rtl"] :is(.article-carte__meta, .article-signature__meta) { unicode-bidi: plaintext; }
 @media (min-width: 840px) {
   [dir="rtl"] :is(.entete-page--libre, .entete-page--haut-texte, .entete-page--haut-parcours) .entete-page__texte { direction: ltr; }
 }
