@@ -1,0 +1,35 @@
+ADMISSIONS-REPONSES (directeur, 22/11/2026 : « ouvrir une page pour lire le resultat
+d'onboarding pour l'admin, actuellement on ne peut rien voir, seulement un nom et une
+adresse mail »). Branche claude/admin-reponses-onboarding, aucune migration.
+
+Ce qui change (lib/features/admin_admissions/) :
+- reponses_admission.dart (nouveau) : dans la feuille d'une demande, une carte du titulaire
+  (nom, e-mail, etat, date de reception, reference) puis une carte par apprenant (AvatarNom,
+  age ou « Adulte », genre en mots, niveau, objectif, moments, langue, titulaire oui/non).
+  Une reponse absente dit « Non renseigne ». Libelles reutilises : t.parcours.* (niveau,
+  objectif, moments), libelleLangue ; cles nouvelles admissions.reponses.* en fr, en, ar.
+- admissions_page.dart : le resume de la feuille appelle ReponsesAdmission ; la liste ne change
+  pas (une ligne ouvre le detail).
+- Composants : CarteLignes, LigneCleValeur, AvatarNom ; rien de recompose. La feuille est
+  bornee par AppBottomSheet (feuille au telephone, dialogue de 560 au bureau) : aucune carte
+  de telephone etiree sur la largeur d'un ordinateur.
+
+Ce qui n'a PAS ete fait ni verifie :
+- Aucun SDK Dart ou Flutter dans cette session (which flutter dart : vide) : ni dart analyze,
+  ni flutter test, ni tool/verifier_*, ni capture a 1280 et 1440 n'ont tourne. A prouver par la CI.
+- Les fichiers generes de slang (strings*.g.dart) ont ete ecrits A LA MAIN, au format du
+  generateur ; la CI relance `dart run slang` et refuse tout diff : a corriger si elle en trouve.
+- Tests ecrits : test/features/admin_admissions/reponses_admission_test.dart (titulaire,
+  adulte, enfant, « Non renseigne », aucun apprenant, aucun code brut, 320 et 1440 px, texte x1
+  et x2, clair et sombre). Non executes.
+
+Manque cote serveur (non modifie dans ce lot) : lister_demandes_admission ne rend ni le
+telephone, ni le pays, ni l'usage « pour moi / pour la famille » du titulaire. Suite a decider.
+Non prouve par le directeur en production.
+
+== Vérifié par le pilote le 22/11/2026, Flutter 3.47.9 (même version que la CI)
+- dart run slang : fichiers générés régénérés par l'outil (ils avaient été écrits à la main).
+- dart analyze --fatal-infos : aucun problème (après retrait d'un import inutile et de deux const).
+- flutter test test/features/admin_admissions : 45 tests réussis.
+- dart run tool/verifier_jetons.dart : aucune violation ; tool/verifier_branchement.dart : aucun nouveau fichier non atteint.
+Non fait : captures d'écran à 1280 et 1440. Rien n'est prouvé en production.

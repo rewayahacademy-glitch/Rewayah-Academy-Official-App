@@ -1999,6 +1999,7 @@ class _Traductions$admissions$ar extends Traductions$admissions$fr {
 	@override String feuilleTitre({required Object deNom}) => 'طلب ⁨${deNom}⁩';
 	@override String ouvrir({required Object deNom}) => 'فتح طلب ⁨${deNom}⁩';
 	@override String get recueLe => 'تاريخ الاستلام';
+	@override late final _Traductions$admissions$reponses$ar reponses = _Traductions$admissions$reponses$ar._(_root);
 	@override String get reference => 'المرجع';
 	@override String get courriel => 'عنوان البريد الإلكتروني';
 	@override String get etatLibelle => 'الحالة';
@@ -12388,6 +12389,37 @@ class _Traductions$courriels$admin$ar extends Traductions$courriels$admin$fr {
 	@override late final _Traductions$courriels$admin$ecrire$ar ecrire = _Traductions$courriels$admin$ecrire$ar._(_root);
 	@override late final _Traductions$courriels$admin$file$ar file = _Traductions$courriels$admin$file$ar._(_root);
 	@override late final _Traductions$courriels$admin$adresses$ar adresses = _Traductions$courriels$admin$adresses$ar._(_root);
+}
+
+// Path: admissions.reponses
+class _Traductions$admissions$reponses$ar extends Traductions$admissions$reponses$fr {
+	_Traductions$admissions$reponses$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaireTitre => 'صاحب الطلب';
+	@override String get nom => 'الاسم';
+	@override String apprenantsTitre({required Object n}) => 'المتعلمون (⁨${n}⁩)';
+	@override String get aucunApprenant => 'لا يوجد متعلم مرتبط بهذا الطلب.';
+	@override String get titulaireRole => 'صاحب الطلب';
+	@override String get enfantRole => 'ابن أو ابنة من العائلة';
+	@override String get age => 'العمر';
+	@override String ageValeur({required Object age}) => '⁨${age}⁩ سنوات';
+	@override String get adulte => 'بالغ';
+	@override String get genre => 'الجنس';
+	@override String get garcon => 'ولد';
+	@override String get fille => 'بنت';
+	@override String get homme => 'رجل';
+	@override String get femme => 'امرأة';
+	@override String get niveau => 'المستوى المصرّح به';
+	@override String get objectif => 'الهدف';
+	@override String get moments => 'أوقات اليوم';
+	@override String get langue => 'لغة الدرس';
+	@override String get titulaireLigne => 'صاحب الطلب';
+	@override String get oui => 'نعم';
+	@override String get non => 'لا';
+	@override String get nonRenseigne => 'غير مذكور';
 }
 
 // Path: admissions.etat
@@ -44252,6 +44284,28 @@ extension on TraductionsAr {
 			'admissions.feuilleTitre' => ({required Object deNom}) => 'طلب ⁨${deNom}⁩',
 			'admissions.ouvrir' => ({required Object deNom}) => 'فتح طلب ⁨${deNom}⁩',
 			'admissions.recueLe' => 'تاريخ الاستلام',
+			'admissions.reponses.titulaireTitre' => 'صاحب الطلب',
+			'admissions.reponses.nom' => 'الاسم',
+			'admissions.reponses.apprenantsTitre' => ({required Object n}) => 'المتعلمون (⁨${n}⁩)',
+			'admissions.reponses.aucunApprenant' => 'لا يوجد متعلم مرتبط بهذا الطلب.',
+			'admissions.reponses.titulaireRole' => 'صاحب الطلب',
+			'admissions.reponses.enfantRole' => 'ابن أو ابنة من العائلة',
+			'admissions.reponses.age' => 'العمر',
+			'admissions.reponses.ageValeur' => ({required Object age}) => '⁨${age}⁩ سنوات',
+			'admissions.reponses.adulte' => 'بالغ',
+			'admissions.reponses.genre' => 'الجنس',
+			'admissions.reponses.garcon' => 'ولد',
+			'admissions.reponses.fille' => 'بنت',
+			'admissions.reponses.homme' => 'رجل',
+			'admissions.reponses.femme' => 'امرأة',
+			'admissions.reponses.niveau' => 'المستوى المصرّح به',
+			'admissions.reponses.objectif' => 'الهدف',
+			'admissions.reponses.moments' => 'أوقات اليوم',
+			'admissions.reponses.langue' => 'لغة الدرس',
+			'admissions.reponses.titulaireLigne' => 'صاحب الطلب',
+			'admissions.reponses.oui' => 'نعم',
+			'admissions.reponses.non' => 'لا',
+			'admissions.reponses.nonRenseigne' => 'غير مذكور',
 			'admissions.reference' => 'المرجع',
 			'admissions.courriel' => 'عنوان البريد الإلكتروني',
 			'admissions.etatLibelle' => 'الحالة',
@@ -44434,6 +44488,8 @@ extension on TraductionsAr {
 			'i1.familles.toutesConsequence' => 'تتلقى كل أسرة بريدًا فورًا. والبريد المرسَل لا يُسترجَع.',
 			'i1.familles.toutesConfirmer' => ({required Object n}) => 'نعم، الإرسال إلى كل الأسر (⁨${n}⁩)',
 			'i1.familles.enFile' => ({required Object email}) => 'تُرسَل الدعوة إلى ⁨${email}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.dejaEnFile' => ({required Object email}) => 'أُرسلت دعوة إلى ⁨${email}⁩ أو هي قيد الإرسال: لا يُرسَل شيء إضافي.',
 			'i1.familles.compteCree' => 'فتحت هذه الأسرة مساحتها من قبل: لا يُرسَل شيء.',
 			'i1.familles.introuvable' => 'لم تعد هذه الأسرة في انتظار الدعوة. حدّث القائمة.',
@@ -44456,8 +44512,6 @@ extension on TraductionsAr {
 			'i1.lien.autreNavigateurTitre' => 'افتح هذا الرابط في المتصفح نفسه',
 			'i1.lien.refuseTitre' => 'لم ينجح الدخول',
 			'i1.lien.refuseDetail' => 'تعذّر على هذا الرابط فتح جلستك. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول. وإن تكرر ذلك فاكتب إلى الأكاديمية.',
-			_ => null,
-		} ?? switch (path) {
 			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
 			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
@@ -44948,6 +45002,8 @@ extension on TraductionsAr {
 			'push1.reglages.lien' => 'الإشعارات على هذا الجهاز',
 			'push1.reglages.titre' => 'الإشعارات على هذا الجهاز',
 			'push1.reglages.contexte' => 'استقبلوا تنبيهًا على هذا الهاتف أو الحاسوب، حتى والتطبيق مغلق. لا يذكر التنبيه أي اسم: التفاصيل تُقرأ في التطبيق.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.categoriesTitre' => 'ما تستقبلونه',
 			'push1.reglages.categoriesContexte' => 'أوقفوا فئة كي لا تصلكم على أجهزتكم. تبقى في صفحة الإشعارات.',
 			'push1.reglages.classes' => 'الفصول والحصص',
@@ -44970,8 +45026,6 @@ extension on TraductionsAr {
 			'push1.reglages.iosEcranAccueil' => 'على iPhone وiPad، أضيفوا رواية أولًا إلى الشاشة الرئيسية (مشاركة، ثم إضافة إلى الشاشة الرئيسية)، وافتحوا التطبيق من تلك الأيقونة، ثم عودوا إلى هنا.',
 			'push1.reglages.refuse' => 'متصفحكم يحجب إشعارات رواية. اسمحوا بها في إعدادات المتصفح لهذا الموقع، ثم عودوا إلى هنا.',
 			'push1.reglages.ignore' => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.echecActivation' => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'push1.reglages.compteNonAutoriseTitre' => 'لا إشعارات على الجهاز لهذا الحساب',
 			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
@@ -45462,6 +45516,8 @@ extension on TraductionsAr {
 			'motifs.cloreException.classe' => 'الطالب في فصل مناسب',
 			'motifs.cloreException.inutile' => 'لم يعد الاستثناء لازمًا',
 			'motifs.cloreException.parErreur' => 'استثناء وُضع بالخطأ',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.placement.debutant' => 'مبتدئ: المسار الأساسي',
 			'motifs.placement.lecture' => 'مستوى لوحظ عند القراءة',
 			'motifs.placement.declaratif' => 'تشخيص أولي بالتصريح، مؤكَّد',
@@ -45484,8 +45540,6 @@ extension on TraductionsAr {
 			'motifs.signalement.pedagogique.renforcement' => 'يُنصح بتعزيز الدرس الجاري.',
 			'motifs.signalement.pedagogique.revision' => 'قليل من المراجعة في البيت سيفيد قبل الدرس القادم.',
 			'motifs.signalement.pedagogique.regularite' => 'سيصنع انتظام العمل في البيت الفارق.',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.pedagogique.echange' => 'يُقترح تواصل مع الأكاديمية.',
 			'motifs.signalement.presence.absences' => 'عدة غيابات حديثة: الانتظام يساعد على التقدم.',
 			'motifs.signalement.presence.retards' => 'تأخر في الحضور في الحصص الأخيرة.',
