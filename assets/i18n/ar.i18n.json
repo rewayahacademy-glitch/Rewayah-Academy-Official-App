@@ -8646,7 +8646,7 @@
         "langueCours": "لغة الدرس",
         "langueCompte": "لغة الحساب",
         "masquee": "الهوية مخفية: يظهر رقم التسجيل فقط.",
-        "ageEnfant": "طفل، {age} سنوات"
+        "ageEnfant": "طفل، ⁨{age}⁩ سنوات"
       },
       "famille": {
         "titre": "العائلة",

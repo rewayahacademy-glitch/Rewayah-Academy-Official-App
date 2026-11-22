@@ -20707,7 +20707,7 @@ class _Traductions$admin$ficheEleve$identite$ar extends Traductions$admin$ficheE
 	@override String get langueCours => 'لغة الدرس';
 	@override String get langueCompte => 'لغة الحساب';
 	@override String get masquee => 'الهوية مخفية: يظهر رقم التسجيل فقط.';
-	@override String ageEnfant({required Object age}) => 'طفل، ${age} سنوات';
+	@override String ageEnfant({required Object age}) => 'طفل، ⁨${age}⁩ سنوات';
 }
 
 // Path: admin.ficheEleve.famille
@@ -38114,7 +38114,7 @@ extension on TraductionsAr {
 			'admin.ficheEleve.identite.langueCours' => 'لغة الدرس',
 			'admin.ficheEleve.identite.langueCompte' => 'لغة الحساب',
 			'admin.ficheEleve.identite.masquee' => 'الهوية مخفية: يظهر رقم التسجيل فقط.',
-			'admin.ficheEleve.identite.ageEnfant' => ({required Object age}) => 'طفل، ${age} سنوات',
+			'admin.ficheEleve.identite.ageEnfant' => ({required Object age}) => 'طفل، ⁨${age}⁩ سنوات',
 			'admin.ficheEleve.famille.titre' => 'العائلة',
 			'admin.ficheEleve.famille.tuteur' => 'وليّ الأمر',
 			'admin.ficheEleve.famille.courriel' => 'البريد الإلكتروني',
