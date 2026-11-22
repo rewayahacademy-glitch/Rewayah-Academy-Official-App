@@ -26,3 +26,10 @@ Ce qui n'a PAS ete fait ni verifie :
 Manque cote serveur (non modifie dans ce lot) : lister_demandes_admission ne rend ni le
 telephone, ni le pays, ni l'usage « pour moi / pour la famille » du titulaire. Suite a decider.
 Non prouve par le directeur en production.
+
+== Vérifié par le pilote le 22/11/2026, Flutter 3.47.9 (même version que la CI)
+- dart run slang : fichiers générés régénérés par l'outil (ils avaient été écrits à la main).
+- dart analyze --fatal-infos : aucun problème (après retrait d'un import inutile et de deux const).
+- flutter test test/features/admin_admissions : 45 tests réussis.
+- dart run tool/verifier_jetons.dart : aucune violation ; tool/verifier_branchement.dart : aucun nouveau fichier non atteint.
+Non fait : captures d'écran à 1280 et 1440. Rien n'est prouvé en production.

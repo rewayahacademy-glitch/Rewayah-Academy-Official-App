@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/admission/port_admissions_direction.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/admin_admissions/reponses_admission.dart';
 
-import '../../support/garde_interface.dart';
 import '../../support/hote_theme.dart';
 
 final DemandeAdmission _demande = DemandeAdmission(
@@ -25,7 +24,7 @@ final DemandeAdmission _demande = DemandeAdmission(
   etat: EtatDemandeAdmission.aTraiter,
   version: 1,
   apprenants: <ApprenantAdmission>[
-    ApprenantAdmission(
+    const ApprenantAdmission(
       prenom: 'Awa',
       titulaire: true,
       genre: 'female',
@@ -34,7 +33,7 @@ final DemandeAdmission _demande = DemandeAdmission(
       moments: <String>['matin', 'soir'],
       langue: 'fr',
     ),
-    ApprenantAdmission(
+    const ApprenantAdmission(
       prenom: 'Yasmine',
       titulaire: false,
       age: 9,

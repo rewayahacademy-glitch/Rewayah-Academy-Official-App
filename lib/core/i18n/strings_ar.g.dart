@@ -43784,6 +43784,8 @@ extension on TraductionsAr {
 			'i1.familles.toutesConsequence' => 'تتلقى كل أسرة بريدًا فورًا. والبريد المرسَل لا يُسترجَع.',
 			'i1.familles.toutesConfirmer' => ({required Object n}) => 'نعم، الإرسال إلى كل الأسر (⁨${n}⁩)',
 			'i1.familles.enFile' => ({required Object email}) => 'تُرسَل الدعوة إلى ⁨${email}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.dejaEnFile' => ({required Object email}) => 'أُرسلت دعوة إلى ⁨${email}⁩ أو هي قيد الإرسال: لا يُرسَل شيء إضافي.',
 			'i1.familles.compteCree' => 'فتحت هذه الأسرة مساحتها من قبل: لا يُرسَل شيء.',
 			'i1.familles.introuvable' => 'لم تعد هذه الأسرة في انتظار الدعوة. حدّث القائمة.',
@@ -43806,8 +43808,6 @@ extension on TraductionsAr {
 			'i1.lien.autreNavigateurTitre' => 'افتح هذا الرابط في المتصفح نفسه',
 			'i1.lien.refuseTitre' => 'لم ينجح الدخول',
 			'i1.lien.refuseDetail' => 'تعذّر على هذا الرابط فتح جلستك. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول. وإن تكرر ذلك فاكتب إلى الأكاديمية.',
-			_ => null,
-		} ?? switch (path) {
 			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
 			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
@@ -44298,6 +44298,8 @@ extension on TraductionsAr {
 			'push1.reglages.lien' => 'الإشعارات على هذا الجهاز',
 			'push1.reglages.titre' => 'الإشعارات على هذا الجهاز',
 			'push1.reglages.contexte' => 'استقبلوا تنبيهًا على هذا الهاتف أو الحاسوب، حتى والتطبيق مغلق. لا يذكر التنبيه أي اسم: التفاصيل تُقرأ في التطبيق.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.categoriesTitre' => 'ما تستقبلونه',
 			'push1.reglages.categoriesContexte' => 'أوقفوا فئة كي لا تصلكم على أجهزتكم. تبقى في صفحة الإشعارات.',
 			'push1.reglages.classes' => 'الفصول والحصص',
@@ -44320,8 +44322,6 @@ extension on TraductionsAr {
 			'push1.reglages.iosEcranAccueil' => 'على iPhone وiPad، أضيفوا رواية أولًا إلى الشاشة الرئيسية (مشاركة، ثم إضافة إلى الشاشة الرئيسية)، وافتحوا التطبيق من تلك الأيقونة، ثم عودوا إلى هنا.',
 			'push1.reglages.refuse' => 'متصفحكم يحجب إشعارات رواية. اسمحوا بها في إعدادات المتصفح لهذا الموقع، ثم عودوا إلى هنا.',
 			'push1.reglages.ignore' => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.echecActivation' => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'push1.reglages.compteNonAutoriseTitre' => 'لا إشعارات على الجهاز لهذا الحساب',
 			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
@@ -44812,6 +44812,8 @@ extension on TraductionsAr {
 			'motifs.cloreException.classe' => 'الطالب في فصل مناسب',
 			'motifs.cloreException.inutile' => 'لم يعد الاستثناء لازمًا',
 			'motifs.cloreException.parErreur' => 'استثناء وُضع بالخطأ',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.placement.debutant' => 'مبتدئ: المسار الأساسي',
 			'motifs.placement.lecture' => 'مستوى لوحظ عند القراءة',
 			'motifs.placement.declaratif' => 'تشخيص أولي بالتصريح، مؤكَّد',
@@ -44834,8 +44836,6 @@ extension on TraductionsAr {
 			'motifs.signalement.pedagogique.renforcement' => 'يُنصح بتعزيز الدرس الجاري.',
 			'motifs.signalement.pedagogique.revision' => 'قليل من المراجعة في البيت سيفيد قبل الدرس القادم.',
 			'motifs.signalement.pedagogique.regularite' => 'سيصنع انتظام العمل في البيت الفارق.',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.pedagogique.echange' => 'يُقترح تواصل مع الأكاديمية.',
 			'motifs.signalement.presence.absences' => 'عدة غيابات حديثة: الانتظام يساعد على التقدم.',
 			'motifs.signalement.presence.retards' => 'تأخر في الحضور في الحصص الأخيرة.',

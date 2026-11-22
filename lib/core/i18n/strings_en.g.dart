@@ -42764,6 +42764,8 @@ extension on TraductionsEn {
 			'admissions.reponses.genre' => 'Gender',
 			'admissions.reponses.garcon' => 'Boy',
 			'admissions.reponses.fille' => 'Girl',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.reponses.homme' => 'Man',
 			'admissions.reponses.femme' => 'Woman',
 			'admissions.reponses.niveau' => 'Stated level',
@@ -42786,8 +42788,6 @@ extension on TraductionsEn {
 			'admissions.etat.retiree' => 'Withdrawn',
 			'admissions.accepter' => ({required Object deNom}) => 'Accept ${deNom}\'s request',
 			'admissions.accepterConsequence' => 'Their account opens and a "Your request is accepted" email goes out straight away. The children\'s profiles are created on their first sign-in, with the answers of the request.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.demanderPrecisions' => 'Ask for clarification',
 			'admissions.contacter' => ({required Object nom}) => 'Write to ${nom}',
 			'admissions.refuser' => 'Refuse the request',
@@ -43278,6 +43278,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'Import another file',
 			'candidatsFlux.prevenir.lien' => 'Notify by email',
 			'candidatsFlux.prevenir.titre' => 'Notify by email',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.prevenir.contexte' => 'The sign-up link is sent by email to the people in the imported forms who left an address and do not have an account yet. The same address never receives the message twice.',
 			'candidatsFlux.prevenir.lecture' => 'Counting the people to notify.',
 			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person to notify', other: '${n} people to notify', ), 
@@ -43300,8 +43302,6 @@ extension on TraductionsEn {
 			'candidatsFlux.prevenir.resultat.pasDeuxFois' => 'The same address never receives the message twice, even if you send again.',
 			'candidatsFlux.prevenir.erreurs.titre' => 'Sending not confirmed',
 			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'The sending may not have reached Rewayah. Try again: no address will receive the message twice.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.erreurs.generique' => 'The sending did not go through and nothing is confirmed. Try again: no address will receive the message twice.',
 			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'No form answer is imported yet. Import the forms first: without them, the codes would find no answer, and no sending is possible.',
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'including ${n} person who received the end-of-October waiting email', other: 'including ${n} people who received the end-of-October waiting email', ), 
@@ -43792,6 +43792,8 @@ extension on TraductionsEn {
 			'calendrier.pauses.decisionsRecentes' => 'Recent decisions',
 			'calendrier.pauses.decisionsVide' => 'No decision for now.',
 			'calendrier.pauses.statut.demandee' => 'Pending',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.statut.acceptee' => 'Accepted',
 			'calendrier.pauses.statut.refusee' => 'Refused',
 			'calendrier.pauses.statut.annulee' => 'Cancelled',
@@ -43814,8 +43816,6 @@ extension on TraductionsEn {
 			'calendrier.pauses.exceptionFin' => 'Last day of the break',
 			'calendrier.pauses.exceptionEnregistrer' => 'Grant the break',
 			'calendrier.pauses.terminerAction' => 'End the break',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.terminerTitre' => 'End the exceptional break',
 			'calendrier.pauses.terminerPhrase' => 'The student resumes classes after the last day chosen. The original end and your action are kept; days already past stay counted in the deadline.',
 			'calendrier.pauses.terminerChamp' => 'Last day of the break',
