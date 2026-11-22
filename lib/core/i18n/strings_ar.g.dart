@@ -14018,7 +14018,7 @@ class _Traductions$onboarding$niveau$ar extends Traductions$onboarding$niveau$fr
 	@override late final _Traductions$onboarding$niveau$elle$ar elle = _Traductions$onboarding$niveau$elle$ar._(_root);
 	@override late final _Traductions$onboarding$niveau$desc$ar desc = _Traductions$onboarding$niveau$desc$ar._(_root);
 	@override String get reponseDebut => 'نقطة بداية جيدة جدًا: كل شيء مخطّط له.';
-	@override String get reponseMemo => 'حسنًا. سأسأل عمّا حُفظ.';
+	@override String get reponseMemo => 'حسنًا. سأسأل عن مقدار المحفوظ من القرآن.';
 	@override String get reponseLecture => 'حسنًا. سؤال عن الرواية، ثم نكمل.';
 	@override String get reponse => 'سُجّل.';
 }
@@ -14055,7 +14055,7 @@ class _Traductions$onboarding$memorise$ar extends Traductions$onboarding$memoris
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get dit => 'كم حُفظ تقريبًا؟';
+	@override String get dit => 'ما مقدار المحفوظ من القرآن تقريبًا؟';
 	@override String get titreMoi => 'كم حفظت؟';
 	@override String titreIl({required Object prenom}) => 'كم حفظ ⁨${prenom}⁩؟';
 	@override String titreElle({required Object prenom}) => 'كم حفظت ⁨${prenom}⁩؟';
@@ -14255,7 +14255,7 @@ class _Traductions$onboarding$recap$ar extends Traductions$onboarding$recap$fr {
 	@override String get titre => 'هذا ما فهمناه';
 	@override String langue({required Object langue}) => 'اللغة: ⁨${langue}⁩';
 	@override String sinon({required Object langue, required Object secours}) => '⁨${langue}⁩، وإلا ⁨${secours}⁩';
-	@override String heure({required Object ville}) => 'توقيت ⁨${ville}⁩ (مكتشف تلقائيًا)';
+	@override String heure({required Object ville}) => 'المنطقة الزمنية: ⁨${ville}⁩ (مكتشفة تلقائيًا)';
 	@override String vous({required Object prenom}) => '⁨${prenom}⁩ (أنت)';
 	@override String get adulte => 'بالغ';
 	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
@@ -45633,7 +45633,7 @@ extension on TraductionsAr {
 			'onboarding.niveau.desc.courante' => 'بطلاقة، في المصحف',
 			'onboarding.niveau.desc.memo' => 'سور أو أجزاء',
 			'onboarding.niveau.reponseDebut' => 'نقطة بداية جيدة جدًا: كل شيء مخطّط له.',
-			'onboarding.niveau.reponseMemo' => 'حسنًا. سأسأل عمّا حُفظ.',
+			'onboarding.niveau.reponseMemo' => 'حسنًا. سأسأل عن مقدار المحفوظ من القرآن.',
 			'onboarding.niveau.reponseLecture' => 'حسنًا. سؤال عن الرواية، ثم نكمل.',
 			'onboarding.niveau.reponse' => 'سُجّل.',
 			'onboarding.lecture.dit' => 'سؤال: بأيّ رواية تقرأ القرآن؟',
@@ -45652,7 +45652,7 @@ extension on TraductionsAr {
 			'onboarding.lecture.reponseHafs' => 'حفص، سُجّلت.',
 			'onboarding.lecture.reponseWarsh' => 'سُجّلت. ستخبرك الإدارة بالفصول المتاحة.',
 			'onboarding.lecture.reponseAutre' => 'أيّ رواية؟ اكتبها، وستقرؤها الإدارة.',
-			'onboarding.memorise.dit' => 'كم حُفظ تقريبًا؟',
+			'onboarding.memorise.dit' => 'ما مقدار المحفوظ من القرآن تقريبًا؟',
 			'onboarding.memorise.titreMoi' => 'كم حفظت؟',
 			'onboarding.memorise.titreIl' => ({required Object prenom}) => 'كم حفظ ⁨${prenom}⁩؟',
 			'onboarding.memorise.titreElle' => ({required Object prenom}) => 'كم حفظت ⁨${prenom}⁩؟',
@@ -45791,7 +45791,7 @@ extension on TraductionsAr {
 			'onboarding.recap.titre' => 'هذا ما فهمناه',
 			'onboarding.recap.langue' => ({required Object langue}) => 'اللغة: ⁨${langue}⁩',
 			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '⁨${langue}⁩، وإلا ⁨${secours}⁩',
-			'onboarding.recap.heure' => ({required Object ville}) => 'توقيت ⁨${ville}⁩ (مكتشف تلقائيًا)',
+			'onboarding.recap.heure' => ({required Object ville}) => 'المنطقة الزمنية: ⁨${ville}⁩ (مكتشفة تلقائيًا)',
 			'onboarding.recap.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
 			'onboarding.recap.adulte' => 'بالغ',
 			'onboarding.recap.ans' => ({required Object n}) => '⁨${n}⁩ سنة',

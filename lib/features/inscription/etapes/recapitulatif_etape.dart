@@ -724,11 +724,15 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                         cle: const Key('inscription-genre-homme'),
                         valeur: Genre.homme.name,
                         libelle: o.genre.homme,
+                        // K-58 : le choix s'explique (a quoi sert la reponse).
+                        description: t.inscription.genreHommeExplication,
                       ),
                       OptionChoix(
                         cle: const Key('inscription-genre-femme'),
                         valeur: Genre.femme.name,
                         libelle: o.genre.femme,
+                        // K-58 : le choix s'explique (a quoi sert la reponse).
+                        description: t.inscription.genreFemmeExplication,
                       ),
                     ],
                     onChange: (ReponseChoix r) {

@@ -9,6 +9,7 @@ import '../../../core/offres/offre_horaire.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
@@ -601,7 +602,10 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
               onChoix: (String v) {
                 final int n = int.parse(v);
                 _c.modifier(_i, (ApprenantQuestionnaire x) => x.copier(age: n));
-                _reagir(o.age.reponse(n: n), ExpressionPraxis.sourire);
+                _reagir(
+                  LibellesGroupe.insecable(o.age.reponse(n: n)),
+                  ExpressionPraxis.sourire,
+                );
               },
             ),
           ],

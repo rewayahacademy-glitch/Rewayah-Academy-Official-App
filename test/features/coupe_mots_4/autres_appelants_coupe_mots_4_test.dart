@@ -22,6 +22,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
@@ -32,7 +33,10 @@ import 'package:rewayah_academy/core/tc_parcours/port_feedback.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
+import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/tc_dock/feuille_choix.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_flux_academique/carte_feedback_seance.dart';
@@ -147,6 +151,27 @@ void main() {
         );
         await _toucher(tester, find.text(t.commun.continuer));
         expect(find.byType(GenreEtape), findsOneWidget);
+        verifierCartesDeChoixEntieres(tester);
+      });
+
+      testWidgets('$cas : inscription, genre du tuteur (Vous, le tuteur du '
+          'compte)', (WidgetTester tester) async {
+        await monterCoupeMots4(
+          tester,
+          () => const RecapitulatifEtape(),
+          langue: langue,
+          interface: interface,
+          surcharges: <Override>[
+            ..._inscription(),
+            brouillonInscriptionProvider.overrideWith(_BrouillonTuteur.new),
+            questionnaireInscriptionProvider.overrideWith(
+              _QuestionnaireTuteur.new,
+            ),
+          ],
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(RecapitulatifEtape.cleVous), findsOneWidget);
+        expect(find.byKey(const Key('inscription-genre')), findsOneWidget);
         verifierCartesDeChoixEntieres(tester);
       });
 
@@ -288,8 +313,38 @@ void main() {
 }
 
 /// Admission, lot B : le brouillon d'un titulaire arrive a l'identite.
+/// ONBOARDING-PRAXIS (22/11/2026) : le titulaire n'a plus l'etape du genre
+/// (il l'a dite dans le questionnaire, ou la dit sur l'ecran « Vous, le
+/// tuteur du compte ») ; l'etape du genre reste celle du candidat enseignant.
 class _BrouillonTitulaire extends BrouillonInscriptionControleur {
   @override
   BrouillonInscription build() =>
-      const BrouillonInscription(usage: UsageInscription.moi);
+      const BrouillonInscription(usage: UsageInscription.enseignant);
+}
+
+/// Un tuteur dont le questionnaire est complet : l'ecran « Vous, le tuteur du
+/// compte », ou il dit son genre.
+class _BrouillonTuteur extends BrouillonInscriptionControleur {
+  @override
+  BrouillonInscription build() =>
+      const BrouillonInscription(usage: UsageInscription.famille);
+}
+
+class _QuestionnaireTuteur extends QuestionnaireControleur {
+  @override
+  QuestionnaireInscription build() => const QuestionnaireInscription(
+    commence: true,
+    apprendre: true,
+    pourQui: PourQui.unEnfant,
+    apprenants: <ApprenantQuestionnaire>[
+      ApprenantQuestionnaire(
+        prenom: 'Yasmine',
+        age: 9,
+        genre: Genre.femme,
+        niveau: NiveauDeclare.debutLettres,
+        objectif: ObjectifOnboarding.lire,
+      ),
+    ],
+    langue: 'francais',
+  );
 }

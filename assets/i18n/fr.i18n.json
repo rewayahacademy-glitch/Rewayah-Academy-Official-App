@@ -18301,7 +18301,7 @@
       "titre": "Voici ce que nous avons compris",
       "langue": "Langue\u00a0: {langue}",
       "sinon": "{langue}, sinon {secours}",
-      "heure": "Heure de {ville} (détectée)",
+      "heure": "Fuseau horaire\u00a0: {ville} (détecté)",
       "vous": "{prenom} (vous)",
       "adulte": "Adulte",
       "ans": "{n} ans",

@@ -28620,8 +28620,8 @@ class Traductions$onboarding$recap$fr {
 	/// fr: '{langue}, sinon {secours}'
 	String sinon({required Object langue, required Object secours}) => '${langue}, sinon ${secours}';
 
-	/// fr: 'Heure de {ville} (détectée)'
-	String heure({required Object ville}) => 'Heure de ${ville} (détectée)';
+	/// fr: 'Fuseau horaire : {ville} (détecté)'
+	String heure({required Object ville}) => 'Fuseau horaire : ${ville} (détecté)';
 
 	/// fr: '{prenom} (vous)'
 	String vous({required Object prenom}) => '${prenom} (vous)';
@@ -74230,7 +74230,7 @@ extension on Traductions {
 			'onboarding.recap.titre' => 'Voici ce que nous avons compris',
 			'onboarding.recap.langue' => ({required Object langue}) => 'Langue : ${langue}',
 			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '${langue}, sinon ${secours}',
-			'onboarding.recap.heure' => ({required Object ville}) => 'Heure de ${ville} (détectée)',
+			'onboarding.recap.heure' => ({required Object ville}) => 'Fuseau horaire : ${ville} (détecté)',
 			'onboarding.recap.vous' => ({required Object prenom}) => '${prenom} (vous)',
 			'onboarding.recap.adulte' => 'Adulte',
 			'onboarding.recap.ans' => ({required Object n}) => '${n} ans',

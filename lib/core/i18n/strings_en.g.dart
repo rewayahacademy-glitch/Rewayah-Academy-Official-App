@@ -13722,7 +13722,7 @@ class _Traductions$onboarding$recap$en extends Traductions$onboarding$recap$fr {
 	@override String get titre => 'Here is what we understood';
 	@override String langue({required Object langue}) => 'Language: ${langue}';
 	@override String sinon({required Object langue, required Object secours}) => '${langue}, otherwise ${secours}';
-	@override String heure({required Object ville}) => '${ville} time (detected)';
+	@override String heure({required Object ville}) => 'Time zone: ${ville} (detected)';
 	@override String vous({required Object prenom}) => '${prenom} (you)';
 	@override String get adulte => 'Adult';
 	@override String ans({required Object n}) => '${n} years';
@@ -44771,7 +44771,7 @@ extension on TraductionsEn {
 			'onboarding.recap.titre' => 'Here is what we understood',
 			'onboarding.recap.langue' => ({required Object langue}) => 'Language: ${langue}',
 			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '${langue}, otherwise ${secours}',
-			'onboarding.recap.heure' => ({required Object ville}) => '${ville} time (detected)',
+			'onboarding.recap.heure' => ({required Object ville}) => 'Time zone: ${ville} (detected)',
 			'onboarding.recap.vous' => ({required Object prenom}) => '${prenom} (you)',
 			'onboarding.recap.adulte' => 'Adult',
 			'onboarding.recap.ans' => ({required Object n}) => '${n} years',

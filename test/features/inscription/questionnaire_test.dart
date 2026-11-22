@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart'
     show sourceSessionProvider;
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
@@ -486,7 +487,10 @@ void main() {
 
       expect(_etape(r), 'chemin');
       // La courbe du debutant adulte : 15 semaines prevues.
-      expect(find.text(t.onboarding.chemin.prevues(n: 15)), findsOneWidget);
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.chemin.prevues(n: 15))),
+        findsOneWidget,
+      );
       expect(
         find.textContaining(
           t.onboarding.chemin.rigueurTitre,

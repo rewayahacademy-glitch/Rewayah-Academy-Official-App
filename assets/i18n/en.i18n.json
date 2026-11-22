@@ -18313,7 +18313,7 @@
       "titre": "Here is what we understood",
       "langue": "Language: {langue}",
       "sinon": "{langue}, otherwise {secours}",
-      "heure": "{ville} time (detected)",
+      "heure": "Time zone: {ville} (detected)",
       "vous": "{prenom} (you)",
       "adulte": "Adult",
       "ans": "{n} years",

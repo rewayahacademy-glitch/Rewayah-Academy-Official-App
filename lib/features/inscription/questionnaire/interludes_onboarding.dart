@@ -13,6 +13,7 @@ import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/i18n/villes_fuseau.dart';
 import '../../../core/offres/offre_horaire.dart';
+import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_mouvement.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -470,7 +471,9 @@ CoquilleOnboarding interludeChemin(
                       ),
                       if (a.debutant)
                         StatusPill(
-                          libelle: ch.prevues(n: a.tranche.semainesPrevues),
+                          libelle: LibellesGroupe.insecable(
+                            ch.prevues(n: a.tranche.semainesPrevues),
+                          ),
                           ton: TonEtat.accent,
                         ),
                     ],
@@ -531,9 +534,11 @@ class CourbeChemin extends StatelessWidget {
     final ch = t.onboarding.chemin;
     final bool reduit = EffetsReduits.de(context);
     return Semantics(
-      label: ch.courbeLue(
-        prevu: tranche.semainesPrevues,
-        limite: tranche.semainesLimite,
+      label: LibellesGroupe.insecable(
+        ch.courbeLue(
+          prevu: tranche.semainesPrevues,
+          limite: tranche.semainesLimite,
+        ),
       ),
       excludeSemantics: true,
       child: Align(
@@ -561,8 +566,12 @@ class CourbeChemin extends StatelessWidget {
                         textes.labelSmall ?? const TextStyle(),
                       ),
                       debut: ch.debut,
-                      fin: ch.finBases(n: tranche.semainesPrevues),
-                      borne: ch.limite(n: tranche.semainesLimite),
+                      fin: LibellesGroupe.insecable(
+                        ch.finBases(n: tranche.semainesPrevues),
+                      ),
+                      borne: LibellesGroupe.insecable(
+                        ch.limite(n: tranche.semainesLimite),
+                      ),
                       rtl: Directionality.of(context) == TextDirection.rtl,
                     ),
                   ),
@@ -840,7 +849,9 @@ class _FicheRecap extends StatelessWidget {
           ),
           Ecart.vSm,
           _LigneRecap(
-            gauche: a.titulaire ? r.adulte : r.ans(n: a.age ?? 0),
+            gauche: a.titulaire
+                ? r.adulte
+                : LibellesGroupe.insecable(r.ans(n: a.age ?? 0)),
             droite: a.titulaire
                 ? (femme ? r.femme : r.homme)
                 : (femme ? r.fille : r.garcon),

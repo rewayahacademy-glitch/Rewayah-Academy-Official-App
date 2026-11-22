@@ -386,7 +386,22 @@ class _ScenePraxis extends StatelessWidget {
       taille: taille,
     );
     final Widget bulle = BullePraxis(phrase: phrase, centree: grand);
-    if (grand) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints c) {
+        // A texte agrandi sur un petit ecran, la bulle a cote de Praxis
+        // couperait des mots : Praxis passe au-dessus d'elle.
+        final double facteur = MediaQuery.textScalerOf(context).scale(1);
+        final bool empile = grand || c.maxWidth / facteur < largeurBulleACote;
+        return _disposer(praxis, bulle, empile: empile);
+      },
+    );
+  }
+
+  /// La largeur utile sous laquelle la bulle passe sous Praxis.
+  static const double largeurBulleACote = 300;
+
+  Widget _disposer(Widget praxis, Widget bulle, {required bool empile}) {
+    if (empile) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
