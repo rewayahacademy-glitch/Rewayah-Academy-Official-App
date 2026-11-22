@@ -18014,5 +18014,405 @@
       "nonAutorise": "Vous ne pouvez pas demander de pause depuis ce compte.",
       "inconnu": "La demande n'est pas confirmée\u00a0: il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
     }
+  },
+  "onboarding": {
+    "chapitres": {
+      "quiApprend": "Qui apprend",
+      "niveau": "Où en est le niveau",
+      "cours": "Vos cours",
+      "demande": "Votre demande",
+      "lu": "{n}/4 · {nom}",
+      "luLong": "Chapitre {n} sur 4\u00a0: {nom}"
+    },
+    "retour": "Retour",
+    "praxisIa": "Praxis est une intelligence artificielle. Chaque demande est lue par la direction.",
+    "accueil": {
+      "dit": "Bonjour, je suis Praxis, l'assistant de la direction. Quelques questions, environ deux minutes, pour préparer votre arrivée.",
+      "titre": "Bienvenue chez Rewayah Academy",
+      "sous": "Cours de Coran en direct, en classe stable, avec le même enseignant.",
+      "commencer": "Commencer",
+      "dejaCompte": "J'ai déjà un compte"
+    },
+    "garde": {
+      "dit": "D'abord, une question pour bien vous orienter. Que venez-vous faire\u00a0?",
+      "titre": "Vous venez pour apprendre, ou pour enseigner\u00a0?",
+      "apprendre": "Apprendre",
+      "apprendreDesc": "Pour moi ou pour mon enfant",
+      "enseigner": "Enseigner",
+      "enseignerDesc": "Je veux rejoindre l'équipe",
+      "reponse": "Très bien. Je vous guide."
+    },
+    "enseigner": {
+      "dit": "Bienvenue. Votre candidature commence ici, sans invitation. Je vous guide pas à pas.",
+      "titre": "Votre candidature d'enseignant",
+      "sous": "Ce chemin crée une candidature, jamais un compte élève\u00a0: aucun doublon possible.",
+      "commencer": "Commencer ma candidature",
+      "trompe": "Je me suis trompé\u00a0: je veux apprendre"
+    },
+    "pourQui": {
+      "dit": "Dites-moi qui va suivre les cours, je m'occupe du reste.",
+      "titre": "Qui va suivre les cours\u00a0?",
+      "moi": "Pour moi",
+      "moiDesc": "Je suis adulte (18 ans ou plus)",
+      "unEnfant": "Pour mon enfant",
+      "unEnfantDesc": "De 6 à 17 ans",
+      "plusieurs": "Pour plusieurs enfants",
+      "plusieursDesc": "Je poserai les mêmes questions pour chacun",
+      "reponseMoi": "Parfait, on commence par vous.",
+      "reponseUn": "Très bien. Parlons de votre enfant.",
+      "reponsePlusieurs": "Très bien. Nous irons enfant par enfant, c'est rapide.",
+      "mineur": "J'ai moins de 18 ans et je m'inscris moi-même",
+      "mineurReponse": "Un parent ou tuteur crée le compte et vous y ajoute. Choisissez «\u00a0Pour mon enfant\u00a0»."
+    },
+    "prenom": {
+      "ditMoi": "Comment dois-je vous appeler\u00a0?",
+      "ditEnfant": "Comment s'appelle votre enfant\u00a0?",
+      "ditSuivant": "Et comment s'appelle l'élève suivant\u00a0?",
+      "titreMoi": "Votre prénom",
+      "titreEnfant": "Le prénom de votre enfant",
+      "titreSuivant": "Le prénom de l'élève suivant",
+      "sousMoi": "Seulement le prénom pour l'instant.",
+      "sousEnfant": "Le prénom suffit.",
+      "etiquette": "Prénom",
+      "indiceMoi": "Votre prénom",
+      "indice": "Prénom",
+      "refus": "Seulement des lettres, s'il vous plaît\u00a0: un vrai prénom, sans chiffres ni émojis."
+    },
+    "age": {
+      "titre": "Quel âge a {prenom}\u00a0?",
+      "sous": "De 6 à 17 ans. Cela fixe la durée prévue de son parcours.",
+      "ans": "{n} ans",
+      "reponse": "{n} ans\u00a0: noté.",
+      "adulte": "Il a 18 ans ou plus",
+      "adulteReponse": "Une personne de 18 ans ou plus crée son propre compte. Vous pouvez l'y aider."
+    },
+    "genre": {
+      "dit": "Cela sert à former des classes adaptées\u00a0: elles ne sont pas mixtes par défaut.",
+      "titreMoi": "Vous êtes…",
+      "titre": "{prenom} est…",
+      "homme": "Un homme",
+      "femme": "Une femme",
+      "garcon": "Un garçon",
+      "fille": "Une fille",
+      "reponse": "Merci. Les classes sont formées par genre."
+    },
+    "famille": {
+      "ditEncore": "Voici {prenom}. Passons à l’enfant suivant.",
+      "ditSeul": "Enchanté, {prenom}. Parlons maintenant de votre niveau.",
+      "dit": "Voici votre famille. Parlons maintenant du niveau de chacun.",
+      "titreSeul": "Enchanté",
+      "titre": "Voici votre famille",
+      "suivant": "Ajouter l’enfant suivant",
+      "ajouter": "Ajouter un autre élève",
+      "aussi": "Je suivrai aussi des cours"
+    },
+    "niveau": {
+      "dit": "Répondez au plus juste\u00a0: un enseignant vérifiera lors de la première séance.",
+      "titreMoi": "Où en êtes-vous aujourd'hui\u00a0?",
+      "titre": "Où en est {prenom} aujourd'hui\u00a0?",
+      "moi": {
+        "debut": "Je débute avec les lettres",
+        "aide": "Je reconnais les lettres",
+        "lente": "Je lis lentement",
+        "courante": "Je lis déjà le Coran",
+        "memo": "J'ai déjà mémorisé une partie"
+      },
+      "il": {
+        "debut": "Il débute avec les lettres",
+        "aide": "Il reconnaît les lettres",
+        "lente": "Il lit lentement",
+        "courante": "Il lit déjà le Coran",
+        "memo": "Il a déjà mémorisé une partie"
+      },
+      "elle": {
+        "debut": "Elle débute avec les lettres",
+        "aide": "Elle reconnaît les lettres",
+        "lente": "Elle lit lentement",
+        "courante": "Elle lit déjà le Coran",
+        "memo": "Elle a déjà mémorisé une partie"
+      },
+      "desc": {
+        "debut": "Les lettres arabes sont à découvrir",
+        "aide": "Mais il faut de l'aide pour lire",
+        "lente": "Avec les voyelles",
+        "courante": "Couramment, dans le Mushaf",
+        "memo": "Des sourates ou des juz"
+      },
+      "reponseDebut": "Un très bon point de départ\u00a0: tout est prévu.",
+      "reponseMemo": "Très bien. Je vais demander ce qui est déjà mémorisé.",
+      "reponseLecture": "Très bien. Une précision sur la lecture, et nous continuons.",
+      "reponse": "Noté."
+    },
+    "lecture": {
+      "dit": "Une précision\u00a0: dans quelle lecture du Coran\u00a0?",
+      "titreMoi": "Quelle lecture lisez-vous\u00a0?",
+      "titreIl": "Quelle lecture {prenom} lit-il\u00a0?",
+      "titreElle": "Quelle lecture {prenom} lit-elle\u00a0?",
+      "sous": "Hafs est présélectionnée.",
+      "hafs": "Lecture de Hafs",
+      "hafsDesc": "La plus répandue, choisie par défaut",
+      "warsh": "Lecture de Warsh",
+      "warshDesc": "Nous la notons pour la direction",
+      "autre": "Une autre lecture",
+      "autreDesc": "À préciser",
+      "autreEtiquette": "Laquelle\u00a0?",
+      "autreIndice": "Par exemple\u00a0: Qalun",
+      "reponseHafs": "Hafs, c'est noté.",
+      "reponseWarsh": "Noté. La direction vous dira quelles classes existent.",
+      "reponseAutre": "Laquelle\u00a0? Écrivez-la, la direction la lira."
+    },
+    "memorise": {
+      "dit": "Combien est déjà mémorisé, à peu près\u00a0?",
+      "titreMoi": "Combien avez-vous mémorisé\u00a0?",
+      "titreIl": "Combien {prenom} a-t-il mémorisé\u00a0?",
+      "titreElle": "Combien {prenom} a-t-elle mémorisé\u00a0?",
+      "quelques": "Quelques sourates",
+      "unACinq": "Un à cinq juz",
+      "plusDeCinq": "Plus de cinq juz",
+      "tout": "Tout le Coran",
+      "reponseTout": "Mâ châ’ Allah. La direction vous recevra pour une vérification.",
+      "reponse": "Mâ châ’ Allah. Quelques détails, si vous les connaissez."
+    },
+    "detail": {
+      "ditJuz": "Quels juz, si vous les connaissez\u00a0? Vous pouvez passer.",
+      "ditSourates": "Lesquelles\u00a0? Touchez celles que vous connaissez. Vous pouvez passer.",
+      "titreJuz": "Quels juz\u00a0?",
+      "titreSourates": "Quelles sourates\u00a0?",
+      "sous": "Facultatif\u00a0: l'enseignant vérifiera de toute façon.",
+      "aucun": "Aucun pour l'instant.",
+      "un": "1 choisi.",
+      "plusieurs": "{n} choisis.",
+      "juz": "Juz {n}"
+    },
+    "sourates": {
+      "fatiha": "Al-Fatiha",
+      "nas": "An-Nâs",
+      "falaq": "Al-Falaq",
+      "ikhlas": "Al-Ikhlâs",
+      "masad": "Al-Masad",
+      "nasr": "An-Nasr",
+      "kafirun": "Al-Kâfirûn",
+      "kawthar": "Al-Kawthar",
+      "maun": "Al-Mâ'ûn",
+      "quraysh": "Quraysh",
+      "fil": "Al-Fîl",
+      "humaza": "Al-Humaza",
+      "asr": "Al-'Asr",
+      "takathur": "At-Takâthur",
+      "qaria": "Al-Qâri'a",
+      "adiyat": "Al-'Âdiyât",
+      "zalzala": "Az-Zalzalah"
+    },
+    "objectif": {
+      "dit": "Qu'aimeriez-vous atteindre en premier\u00a0?",
+      "titreMoi": "Que souhaitez-vous d'abord\u00a0?",
+      "titre": "Que souhaitez-vous pour {prenom}\u00a0?",
+      "sousMemo": "Mémoriser est présélectionné.",
+      "lireBases": "Apprendre à lire le Coran",
+      "lireBasesDesc": "Commencer par les bases",
+      "lireCourant": "Lire tout le Coran couramment",
+      "lireCourantDesc": "Devenir fluide",
+      "memoriser": "Mémoriser le Coran",
+      "memoriserApresBases": "Après les bases",
+      "memoriserAvec": "Avec un enseignant",
+      "priere": "La prière et les invocations",
+      "priereDesc": "Pour que l'enfant prie seul",
+      "indecis": "Je ne sais pas encore",
+      "indecisDesc": "L'enseignant me conseillera",
+      "reponseIndecis": "Aucun souci\u00a0: vous pourrez décider en cours de route.",
+      "reponse": "Bon choix."
+    },
+    "depart": {
+      "dit": "Voici par où je vous conseille de commencer. L'enseignant le confirmera à la première séance.",
+      "titre": "Votre point de départ",
+      "titrePlusieurs": "Le point de départ de chacun",
+      "pourVous": "Pour vous",
+      "probable": "départ probable",
+      "etapes": {
+        "lettres": "Les lettres",
+        "lettresDetail": "Les 28 lettres",
+        "voyelles": "Lire avec les voyelles",
+        "voyellesDetail": "Jusqu'à la chadda",
+        "coran": "Lire dans le Coran",
+        "coranDetail": "Fin du livre, puis le Mushaf",
+        "sourates": "Les sourates courtes",
+        "souratesDetail": "D'Al-Masad à Az-Zalzalah",
+        "examen": "Examen de fin des bases"
+      },
+      "suiteMemoriser": "Après l'examen de fin des bases\u00a0: mémoriser le Coran.",
+      "suitePriere": "Les paroles de la prière arrivent en matière secondaire, très tôt.",
+      "suite": "Après l'examen de fin des bases\u00a0: lire tout le Coran ou le mémoriser.",
+      "reco": {
+        "debut": "Étape 1 · Les lettres",
+        "debutSuite": "Vous commencez au début, c'est le chemin prévu.",
+        "aide": "Étape 1 · Les lettres, en révision rapide",
+        "aideSuite": "Puis l'étape 2.",
+        "lente": "Étape 2 ou 3 · Lire avec les voyelles",
+        "lenteSuite": "Selon la première séance.",
+        "courante": "Étape 3 ou 4 · Lire dans le Coran",
+        "couranteSuite": "Puis l'examen de fin des bases.",
+        "memo": "Étape 4 · Les sourates courtes",
+        "memoSuite": "Puis l'examen de fin des bases\u00a0: la mémorisation commence ensuite."
+      },
+      "indice": "Un point de départ probable, jamais une promesse\u00a0: la première séance le vérifie."
+    },
+    "langue": {
+      "dit": "Nos enseignants parlent plus de vingt langues. Dans laquelle voulez-vous les explications\u00a0?",
+      "titre": "La langue des explications",
+      "sous": "Votre premier choix. Nous orientons vers une classe dans cette langue dès qu'un enseignant est disponible.",
+      "reponse": "{langue}\u00a0: c'est noté.",
+      "groupes": {
+        "plusDemandees": "Les plus demandées",
+        "afrique": "Langues d’Afrique",
+        "asie": "Langues d’Asie",
+        "europe": "Langues d’Europe"
+      }
+    },
+    "langueSecours": {
+      "dit": "Et si aucun enseignant n'est libre dans votre langue, laquelle comprenez-vous aussi\u00a0?",
+      "titre": "Une deuxième langue\u00a0?",
+      "sous": "Facultatif. Elle sert seulement si la première n'a pas d'enseignant disponible.",
+      "aucune": "Aucune autre",
+      "reponseAucune": "Très bien.",
+      "reponse": "Noté\u00a0: ce sera notre solution de rechange.",
+      "autreEtiquette": "Une langue absente de la liste\u00a0? (facultatif)",
+      "autreIndice": "Par exemple\u00a0: tamoul"
+    },
+    "langues": {
+      "francais": "Français",
+      "english": "English",
+      "ar": "العربية (arabe)",
+      "ha": "Hausa",
+      "poular": "Poular (peul)",
+      "yo": "Yoruba",
+      "man": "Malinké",
+      "snk": "Soninké",
+      "wo": "Wolof",
+      "bm": "Bambara",
+      "sw": "Swahili",
+      "so": "Somali",
+      "am": "Amharique",
+      "om": "Oromo",
+      "ur": "Ourdou",
+      "hi": "Hindi",
+      "bn": "Bengali",
+      "ps": "Pachto",
+      "fa": "Persan",
+      "tr": "Turc",
+      "id": "Indonésien",
+      "uz": "Ouzbek",
+      "pt": "Português",
+      "ru": "Русский (russe)",
+      "de": "Deutsch"
+    },
+    "chemin": {
+      "dit": "Voici le chemin. Une durée prévue, une date limite, et la régularité de chacun.",
+      "titre": "Votre chemin",
+      "pourVous": "Pour vous",
+      "prevues": "{n} semaines prévues",
+      "precise": "La durée de votre parcours sera précisée après la vérification de niveau, à la première séance.",
+      "debut": "Début",
+      "finBases": "Fin des bases\u00a0: {n} sem.",
+      "limite": "Date limite\u00a0: {n} sem.",
+      "courbeLue": "Durée prévue {prevu} semaines, date limite {limite} semaines",
+      "trois": "Durée prévue avec 3 séances par semaine. La date limite est ferme.",
+      "rigueurTitre": "La rigueur fait partie du cours.",
+      "rigueur": "Trois séances par semaine, toujours avec le même enseignant. Une absence se rattrape seul, avant la séance suivante, avec les outils que l'académie met à disposition\u00a0: la lecture enregistrée du programme et les documents de la Bibliothèque.",
+      "horaires": "Vos jours et vos horaires, nous les choisirons ensemble après l'acceptation."
+    },
+    "recap": {
+      "dit": "Voici ce que j'ai compris. Rien n'est engagé\u00a0: la direction lit chaque demande.",
+      "titre": "Voici ce que nous avons compris",
+      "langue": "Langue\u00a0: {langue}",
+      "sinon": "{langue}, sinon {secours}",
+      "heure": "Fuseau horaire\u00a0: {ville} (détecté)",
+      "heureChoisie": "Fuseau horaire\u00a0: {ville}",
+      "heures": "Il est {ici} chez vous, {mecque} à La Mecque.",
+      "pasMonFuseau": "Ce n'est pas mon fuseau",
+      "fuseauInconnu": "Votre fuseau horaire n'a pas pu être lu sur cet appareil. Choisissez-le\u00a0: les horaires des cours vous seront montrés à votre heure.",
+      "fuseauChoix": "Où vivez-vous\u00a0?",
+      "vous": "{prenom} (vous)",
+      "adulte": "Adulte",
+      "ans": "{n} ans",
+      "homme": "Homme",
+      "femme": "Femme",
+      "garcon": "Garçon",
+      "fille": "Fille",
+      "niveau": "Niveau",
+      "lecture": "Lecture",
+      "objectif": "Objectif choisi",
+      "niveauQuantite": "{niveau} ({quantite})",
+      "niveaux": {
+        "debut": "Débute avec les lettres",
+        "aide": "Reconnaît les lettres",
+        "lente": "Lit lentement",
+        "courante": "Lit déjà le Coran",
+        "memo": "A mémorisé une partie"
+      },
+      "quantites": {
+        "quelques": "quelques sourates",
+        "unACinq": "1 à 5 juz",
+        "plusDeCinq": "plus de 5 juz",
+        "tout": "tout le Coran"
+      },
+      "objectifs": {
+        "lire": "Lire",
+        "memoriser": "Mémoriser",
+        "priere": "Prière et invocations",
+        "indecis": "Pas encore décidé"
+      },
+      "lectures": {
+        "hafs": "Hafs",
+        "warsh": "Warsh",
+        "autre": "Autre"
+      },
+      "sourceTitre": "Comment avez-vous connu Rewayah\u00a0?",
+      "facultatif": "(facultatif)",
+      "sources": {
+        "mosquee": "Mosquée ou association",
+        "proche": "Famille ou ami",
+        "reseaux": "Réseaux sociaux",
+        "recherche": "Recherche en ligne",
+        "autre": "Autre"
+      },
+      "direction": "La direction lit chaque demande avant de former la classe.",
+      "rembourse": "Si l'élève n'est pas satisfait, il est remboursé dans les 14 jours, moins les séances déjà suivies.",
+      "corriger": "Vous pourrez corriger ces réponses après l'acceptation.",
+      "cta": "C'est exact, créer mon compte"
+    },
+    "acces": {
+      "dit": "Dernière étape\u00a0: où puis-je envoyer votre lien de connexion\u00a0?",
+      "titre": "Votre adresse e-mail",
+      "sous": "Vos réponses sont gardées sur cet appareil jusqu'à l'envoi.",
+      "indice": "Ouvrez le lien sur cet appareil, avec le même navigateur\u00a0: vos réponses vous y attendent."
+    },
+    "envoye": {
+      "dit": "Le lien est parti. Regardez votre boîte de réception.",
+      "titre": "Regardez votre boîte",
+      "ecrit": "Nous avons écrit à {courriel}.",
+      "ailleurs": "Si vous lisez le message sur un autre appareil, le lien vous le dira, et vous pourrez reprendre ici."
+    },
+    "vous": {
+      "ditMoi": "Vous êtes connecté, {prenom}. Il me manque seulement votre nom de famille.",
+      "dit": "Vous êtes connecté. Maintenant, vous\u00a0: c'est vous qui gérerez le compte de vos enfants.",
+      "titreMoi": "Votre nom de famille",
+      "titre": "Vous, le tuteur du compte",
+      "sous": "Vos enfants sont déjà notés. Ce nom est le vôtre\u00a0: vous gérez leur compte et recevez les messages de l'académie.",
+      "prenom": "Votre prénom",
+      "nom": "Votre nom de famille",
+      "vousEtes": "Vous êtes…",
+      "envoyer": "Envoyer ma demande"
+    },
+    "fin": {
+      "dit": "C'est envoyé. Merci de votre confiance, la direction va lire votre demande.",
+      "titre": "Votre demande est en cours",
+      "maintenant": "Et maintenant\u00a0?",
+      "un": "1. La direction lit votre demande.",
+      "deux": "2. Si elle est acceptée, le profil est créé sans rien ressaisir.",
+      "deuxPlusieurs": "2. Si elle est acceptée, les profils des élèves sont créés sans rien ressaisir.",
+      "trois": "3. Il ne reste que vos jours et vos horaires. Tout le reste est déjà noté.",
+      "fratrie": "Chaque enfant aura sa propre classe et son propre enseignant\u00a0: si un enseignant est absent, les autres continuent, et une seule tablette suffit à tour de rôle.",
+      "suivre": "Suivre ma demande"
+    }
   }
 }

@@ -3,41 +3,41 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/accessibilite/texte_sans_coupure.dart';
+import '../../../core/candidature/fuseau_appareil.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/offres/offre_horaire.dart';
-import '../../../core/offres/service_offres.dart' show languesCoursProvider;
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/session/session_state.dart';
 import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/vivant/entree/gestes_praxis.dart' show Geste;
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/bandeau_attention.dart';
+import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/choice_card_group.dart';
-import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/filter_pill.dart';
-import '../../../core/widgets/page_etape.dart';
-import '../../../core/widgets/skeleton.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../../connexion/connexion_page.dart' show parametreModeCreation;
-import '../../connexion/coquille_entree.dart';
 import '../../connexion/ordre_entree.dart' show adresseConnexionDemandee;
-import '../../parcours_offres/libelles_parcours.dart';
-import '../brouillon_inscription.dart' show UsageInscription;
 import '../invitation_en_cours.dart';
 import 'acces_questionnaire.dart';
+import 'coquille_onboarding.dart';
+import 'interludes_onboarding.dart';
+import 'onboarding_donnees.dart';
 import 'questionnaire_inscription.dart';
 
-/// `/commencer` : le questionnaire d'inscription, une question par ecran,
-/// avant le compte (admission, lot B ; fiche du 29/10/2026, §3).
+/// `/commencer` : le questionnaire avant le compte, guide par Praxis
+/// (ONBOARDING-PRAXIS, directeur, 22/11/2026 ; maquette validee
+/// `docs/current/maquettes/onboarding-praxis/prototype.html`).
 ///
 /// L'ecran courant se lit dans l'adresse (`?etape=age-0`) : le retour du
 /// navigateur et un rechargement le gardent. Un ecran ouvert trop tot renvoie
-/// au premier ecran sans reponse. A la fin, un visiteur sans compte va a la
-/// creation du compte ; un compte deja cree (« Ajouter un autre profil
-/// eleve » depuis le recapitulatif) revient a l'inscription.
+/// au premier ecran sans reponse. Apres le recapitulatif, l'acces (adresse
+/// e-mail ou Google, `?etape=acces`) ; un compte deja cree revient a
+/// l'inscription.
 class QuestionnairePage extends ConsumerWidget {
   /// Cree la page sur l'ecran [code] (`null` : le premier sans reponse).
   const QuestionnairePage({this.code, super.key});
@@ -45,7 +45,7 @@ class QuestionnairePage extends ConsumerWidget {
   /// Le code de l'ecran, lu dans l'adresse.
   final String? code;
 
-  /// L'adresse du dernier ecran, l'acces (QUESTIONNAIRE-FIN).
+  /// L'adresse de l'acces, apres le recapitulatif.
   static String get adresseAcces => Uri(
     path: Routes.commencer,
     queryParameters: <String, String>{'etape': codeEtapeAcces},
@@ -63,21 +63,14 @@ class QuestionnairePage extends ConsumerWidget {
       questionnaireInscriptionProvider,
     );
     final List<EtapeQuestionnaire> etapes = q.etapes;
-    // QUESTIONNAIRE-FIN (directeur, 04/11/2026) : sans compte, le dernier
-    // ecran est l'acces, DANS le questionnaire ; un compte deja cree (porte
-    // inscription) revient a l'inscription, comme avant.
     final bool compteCree =
         ref.watch(sessionProvider).porte == PorteAcces.inscription;
-    final int ecransEnPlus = compteCree ? 0 : 1;
     if (code == codeEtapeAcces) {
       if (!compteCree && q.complet) {
         return EcranAccesQuestionnaire(
-          numero: etapes.length + 1,
-          total: etapes.length + 1,
           onRetour: () => context.go(adresse(etapes.last)),
         );
       }
-      // Ouvert trop tot (ou avec un compte) : la suite normale.
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
         if (context.mounted) {
           context.go(
@@ -90,671 +83,959 @@ class QuestionnairePage extends ConsumerWidget {
       return const SizedBox.shrink();
     }
     final EtapeQuestionnaire? demandee = EtapeQuestionnaire.depuisCode(code);
+    // La branche « Enseigner » : jamais d'apprenant, jamais de compte eleve.
+    if (demandee?.sorte == SorteEtape.enseigner && !compteCree) {
+      return _EcranQuestion(
+        key: const ValueKey<String>('questionnaire-enseigner'),
+        etape: demandee!,
+        questionnaire: q,
+        rang: -1,
+      );
+    }
     final EtapeQuestionnaire? manquante = q.premiereManquante;
     int rang = demandee == null ? -1 : etapes.indexOf(demandee);
-    // Un ecran inconnu, ou ouvert avant ceux qui le precedent : le premier
-    // sans reponse (jamais d'ecran sans ses prealables).
     final int rangManquant = manquante == null
         ? etapes.length - 1
         : etapes.indexOf(manquante);
     if (rang == -1 || rang > rangManquant) {
       rang = rangManquant;
-      if (demandee != null) {
-        WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-          if (context.mounted) {
-            context.go(adresse(etapes[rang]));
-          }
-        });
-      }
-    }
-    if (demandee == null) {
-      // INSCRIPTION-3 (constat du directeur, 01/11) : sans `?etape=`, l'ecran
-      // montre « le premier sans reponse » ; une reponse le deplacait, et un
-      // toucher sur « Pour qui » passait aussitot au prenom, sans etat choisi
-      // ni « Continuer ». L'ecran affiche fixe donc son adresse des
-      // l'ouverture, comme tous les autres : un toucher choisit, « Continuer »
-      // avance. Sans entree d'historique de plus (`Router.neglect`) : le
-      // retour du navigateur ne revient pas sur `/commencer` nu, qui
-      // redirigerait aussitot.
       final String fixe = adresse(etapes[rang]);
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-        if (context.mounted) {
+        if (!context.mounted) return;
+        // Sans `?etape=`, l'adresse se fixe sans entree d'historique de plus.
+        if (demandee == null) {
           Router.neglect(context, () => context.go(fixe));
+        } else {
+          context.go(fixe);
         }
       });
     }
     final EtapeQuestionnaire etape = etapes[rang];
-    final QuestionnaireControleur controleur = ref.read(
-      questionnaireInscriptionProvider.notifier,
-    );
-
-    void avancer() {
-      final QuestionnaireInscription apres = ref.read(
-        questionnaireInscriptionProvider,
-      );
-      final List<EtapeQuestionnaire> suite = apres.etapes;
-      final int ici = suite.indexOf(etape);
-      // Les ecrans d'un meme enfant se suivent toujours (« Modifier » depuis
-      // le recapitulatif atteint son age et son niveau) ; ensuite, l'ecran
-      // suivant sans reponse : apres « Ajouter un autre profil eleve », les
-      // ecrans deja repondus ne se reposent pas.
-      final EtapeQuestionnaire? memeEnfant =
-          etape.parEnfant && ici + 1 < suite.length ? suite[ici + 1] : null;
-      final EtapeQuestionnaire? suivante =
-          memeEnfant != null &&
-              memeEnfant.parEnfant &&
-              memeEnfant.rang == etape.rang
-          ? memeEnfant
-          : suite
-                .skip(ici + 1)
-                .where((EtapeQuestionnaire e) => !apres.repondue(e))
-                .firstOrNull;
-      if (suivante != null) {
-        context.go(adresse(suivante));
-        return;
-      }
-      context.go(
-        ref.read(sessionProvider).porte == PorteAcces.inscription
-            ? Routes.inscription
-            : adresseAcces,
-      );
-    }
-
-    VoidCallback? retour;
-    if (rang > 0) {
-      retour = () {
-        // Revenir du prenom d'un enfant ajoute, sans l'avoir saisi, le retire.
-        if (etape.sorte == SorteEtape.prenom &&
-            !q.repondue(etape) &&
-            etape.rang > 0) {
-          controleur.retirerEnfant(etape.rang);
-        }
-        context.go(adresse(etapes[rang - 1]));
-      };
-    }
-
     return _EcranQuestion(
-      // Une cle par ecran : le champ du prenom ne garde pas la saisie d'un
-      // autre enfant.
+      // Une cle par ecran : un champ ne garde pas la saisie d'un autre.
       key: ValueKey<String>('questionnaire-${etape.code}'),
-      numero: rang + 1,
-      // Le total au plus : il ne grandit jamais d'un ecran a l'autre, il
-      // baisse quand une reponse retire des questions (FINITION 22 b).
-      total: q.etapesAuPlus + ecransEnPlus,
       etape: etape,
       questionnaire: q,
-      controleur: controleur,
-      onAvancer: avancer,
-      onRetour: retour,
+      rang: rang,
     );
   }
 }
 
+/// Le remplissage des quatre segments pour l'ecran de rang [rang] du plan
+/// (la maquette : un chapitre fait est plein, un chapitre a venir vide, le
+/// chapitre courant a la part de ses ecrans deja passes). Le chapitre
+/// « Votre demande » compte aussi l'acces, le lien envoye, l'identite et la
+/// fin : [rangDemande] est le rang de l'ecran dans ce chapitre.
+List<double> remplissageOnboarding(
+  List<EtapeQuestionnaire> plan,
+  int rang, {
+  int? rangDemande,
+}) {
+  const int ecransDemande = 5;
+  final Chapitre courant = rangDemande != null
+      ? Chapitre.demande
+      : plan[rang].chapitre ?? Chapitre.quiApprend;
+  return <double>[
+    for (final Chapitre c in Chapitre.values)
+      if (c.index < courant.index)
+        1
+      else if (c.index > courant.index)
+        0
+      else if (c == Chapitre.demande)
+        (rangDemande ?? 0) / ecransDemande
+      else
+        _part(plan, rang, c),
+  ];
+}
+
+double _part(List<EtapeQuestionnaire> plan, int rang, Chapitre c) {
+  final List<int> rangs = <int>[
+    for (final (int i, EtapeQuestionnaire e) in plan.indexed)
+      if (e.chapitre == c) i,
+  ];
+  if (rangs.isEmpty) return 0;
+  return rangs.where((int i) => i < rang).length / rangs.length;
+}
+
 class _EcranQuestion extends ConsumerStatefulWidget {
   const _EcranQuestion({
-    required this.numero,
-    required this.total,
     required this.etape,
     required this.questionnaire,
-    required this.controleur,
-    required this.onAvancer,
-    required this.onRetour,
+    required this.rang,
     super.key,
   });
 
-  final int numero;
-  final int total;
   final EtapeQuestionnaire etape;
   final QuestionnaireInscription questionnaire;
-  final QuestionnaireControleur controleur;
-  final VoidCallback onAvancer;
-  final VoidCallback? onRetour;
+  final int rang;
 
   @override
   ConsumerState<_EcranQuestion> createState() => _EcranQuestionState();
 }
 
 class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
-  late final TextEditingController _prenom = TextEditingController(
-    text: _enfant.prenom,
-  );
-  bool _adulte = false;
+  /// La reaction de Praxis au dernier choix ; `null` : la phrase de l'ecran.
+  String? _reaction;
+  ExpressionPraxis? _expressionReaction;
+
+  /// Le geste de la reaction ; `null` : celui de l'ecran.
+  Geste? _gesteReaction;
+
+  /// Vrai apres un « Continuer » sans reponse : la phrase le dit.
   bool _tente = false;
 
-  EnfantQuestionnaire get _enfant =>
-      widget.etape.rang < widget.questionnaire.enfants.length
-      ? widget.questionnaire.enfants[widget.etape.rang]
-      : const EnfantQuestionnaire();
+  late final TextEditingController _prenom = TextEditingController(
+    text: _apprenant?.prenom ?? '',
+  );
+  late final TextEditingController _lectureAutre = TextEditingController(
+    text: _apprenant?.lectureAutre ?? '',
+  );
+  late final TextEditingController _langueAutre = TextEditingController(
+    text: widget.questionnaire.langueAutre,
+  );
 
-  String get _prenomEnfant => _enfant.prenom.trim();
+  QuestionnaireControleur get _c =>
+      ref.read(questionnaireInscriptionProvider.notifier);
 
-  @override
-  void dispose() {
-    HardwareKeyboard.instance.removeHandler(_lettre);
-    _prenom.dispose();
-    super.dispose();
-  }
+  QuestionnaireInscription get _q => widget.questionnaire;
 
-  void _modifierEnfant(
-    EnfantQuestionnaire Function(EnfantQuestionnaire e) modifier,
-  ) => widget.controleur.modifierEnfant(widget.etape.rang, modifier);
+  ApprenantQuestionnaire? get _apprenant =>
+      widget.etape.parApprenant &&
+          widget.etape.rang < widget.questionnaire.apprenants.length
+      ? widget.questionnaire.apprenants[widget.etape.rang]
+      : null;
 
-  /// « Continuer » n'est jamais grise (BOUTONS-GRISES-1) : sans reponse, il
-  /// le dit sous la question ; a 18 ans ou plus, la phrase de l'age suffit.
-  void _continuer({required bool repondue}) {
-    if (!repondue) {
-      setState(() => _tente = true);
-      return;
-    }
-    if (widget.etape.sorte == SorteEtape.prenom) {
-      _modifierEnfant(
-        (EnfantQuestionnaire e) => e.copier(prenom: _prenom.text),
-      );
-    }
-    widget.onAvancer();
-  }
-
-  /// Les reponses de l'ecran au dernier dessin, pour les lettres du clavier ;
-  /// `null` : l'ecran n'a pas de choix (prenom) ou pas encore (langues).
-  List<_Reponse>? _reponsesAffichees;
-
-  /// Vrai quand le dernier dessin etait celui de l'ordinateur : les lettres
-  /// n'y sont dessinees, et donc tenues, que la.
-  bool _bureau = false;
-
-  /// Monte a chaque choix fait au clavier : les cartes (qui gardent leur
-  /// propre selection) se redessinent depuis la reponse retenue. Un toucher
-  /// ne le change pas : la carte touchee garde le focus.
-  int _versionClavier = 0;
+  int get _i => widget.etape.rang;
 
   @override
   void initState() {
     super.initState();
-    HardwareKeyboard.instance.addHandler(_lettre);
+    _detecterFuseau();
+    // « Deduit > choisi > saisi » : la langue de l'appareil est proposee.
+    if (widget.etape.sorte == SorteEtape.langue &&
+        widget.questionnaire.langue == null) {
+      final String? deduite = langueDeLAppareil(
+        WidgetsBinding.instance.platformDispatcher.locale.languageCode,
+      );
+      if (deduite != null) {
+        WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+          if (mounted) _c.choisirLangue(deduite);
+        });
+      }
+    }
   }
 
-  /// A, B, C... choisit la reponse de ce rang (fiche ONBOARDING §2), sur
-  /// ordinateur, hors saisie et sans touche de commande.
-  bool _lettre(KeyEvent evenement) {
-    final List<_Reponse>? reponses = _reponsesAffichees;
-    if (!_bureau ||
-        reponses == null ||
-        evenement is! KeyDownEvent ||
-        HardwareKeyboard.instance.isControlPressed ||
-        HardwareKeyboard.instance.isMetaPressed ||
-        HardwareKeyboard.instance.isAltPressed ||
-        FocusManager.instance.primaryFocus?.context?.widget is EditableText) {
-      return false;
+  /// Le fuseau lu sur l'appareil, au recapitulatif (« deduit > choisi »).
+  void _detecterFuseau() {
+    if (widget.etape.sorte != SorteEtape.recap ||
+        widget.questionnaire.fuseau != null) {
+      return;
     }
-    final String? caractere = evenement.character?.toUpperCase();
-    if (caractere == null || caractere.length != 1) {
-      return false;
+    final String? lu = fuseauIanaAppareil();
+    if (lu == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) _c.detecterFuseau(lu);
+    });
+  }
+
+  @override
+  void dispose() {
+    _prenom.dispose();
+    _lectureAutre.dispose();
+    _langueAutre.dispose();
+    super.dispose();
+  }
+
+  /// La reaction de Praxis a un choix. Comme la maquette, une reaction qui
+  /// change son visage pose ses mains (sauf geste donne) ; une phrase seule
+  /// garde le geste de l'ecran.
+  void _reagir(String phrase, [ExpressionPraxis? expression, Geste? geste]) =>
+      setState(() {
+        _reaction = phrase;
+        _expressionReaction = expression;
+        _gesteReaction = geste ?? (expression == null ? null : Geste.aucun);
+        _tente = false;
+      });
+
+  bool get _compteCree =>
+      ref.read(sessionProvider).porte == PorteAcces.inscription;
+
+  /// L'ecran suivant du plan, une fois la reponse retenue.
+  void _avancer() {
+    final QuestionnaireInscription apres = ref.read(
+      questionnaireInscriptionProvider,
+    );
+    final List<EtapeQuestionnaire> plan = apres.etapes;
+    final int ici = plan.indexOf(widget.etape);
+    if (ici >= 0 && ici + 1 < plan.length) {
+      context.go(QuestionnairePage.adresse(plan[ici + 1]));
+      return;
     }
-    final int rang = caractere.codeUnitAt(0) - 0x41;
-    if (rang < 0 || rang >= reponses.length) {
-      return false;
+    context.go(
+      _compteCree ? Routes.inscription : QuestionnairePage.adresseAcces,
+    );
+  }
+
+  void _aller(EtapeQuestionnaire etape) =>
+      context.go(QuestionnairePage.adresse(etape));
+
+  /// Le retour : l'ecran precedent du plan. Revenir du prenom d'un apprenant
+  /// ajoute, sans l'avoir saisi, le retire et ramene a la famille.
+  VoidCallback? get _retour {
+    if (widget.etape.sorte == SorteEtape.enseigner) {
+      return () => _aller(const EtapeQuestionnaire(SorteEtape.garde));
     }
-    setState(() => _versionClavier++);
-    reponses[rang].choisir();
-    return true;
+    if (widget.rang <= 0) return null;
+    return () {
+      final EtapeQuestionnaire e = widget.etape;
+      if (e.sorte == SorteEtape.prenom && e.rang > 0 && !_q.repondue(e)) {
+        _c.retirer(e.rang);
+        _aller(const EtapeQuestionnaire(SorteEtape.famille));
+        return;
+      }
+      _aller(_q.etapes[widget.rang - 1]);
+    };
+  }
+
+  /// « Continuer » n'est jamais grise (BOUTONS-GRISES-1) : sans reponse, il le
+  /// dit sous la question.
+  void _continuer({required bool pret, VoidCallback? avant}) {
+    if (!pret) {
+      setState(() => _tente = true);
+      return;
+    }
+    avant?.call();
+    _avancer();
+  }
+
+  ActionPrincipale _bouton(String libelle, VoidCallback onPress) =>
+      ActionPrincipale(
+        key: const Key('questionnaire-continuer'),
+        libelle: libelle,
+        onPress: onPress,
+        affirmee: true,
+      );
+
+  Widget _requis() => Semantics(
+    liveRegion: true,
+    child: Text(
+      t.inscription.champRequis,
+      key: const Key('questionnaire-reponse-requise'),
+      style: AppPalette.of(context).inkAlert
+          .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
+    ),
+  );
+
+  LienFleche _lienDejaCompte() => LienFleche(
+    key: const Key('questionnaire-deja-un-compte'),
+    libelle: t.onboarding.accueil.dejaCompte,
+    onPress: () => context.go(adresseConnexionDemandee),
+  );
+
+  /// Un groupe de cartes a choix unique.
+  Widget _cartes({
+    required String cle,
+    required List<(String, String, String?)> options,
+    required String? retenue,
+    required void Function(String valeur) onChoix,
+  }) => ChoiceCardGroup(
+    key: ValueKey<String>('questionnaire-$cle'),
+    autoriserSaisieLibre: false,
+    // La maquette : des cartes empilees, a toutes les largeurs (jamais le
+    // bento du grand ecran).
+    compacte: true,
+    valeurInitiale: retenue == null
+        ? null
+        : ReponseChoix(valeurs: <String>{retenue}),
+    options: <OptionChoix>[
+      for (final (String v, String libelle, String? description) in options)
+        OptionChoix(
+          cle: ValueKey<String>('questionnaire-$cle-$v'),
+          valeur: v,
+          libelle: libelle,
+          description: description,
+        ),
+    ],
+    onChange: (ReponseChoix r) {
+      if (r.valeurs.isNotEmpty) onChoix(r.valeurs.first);
+    },
+  );
+
+  /// Des puces (choix courts), dans un `Wrap`.
+  Widget _puces({
+    required String cle,
+    required List<(String, String)> options,
+    required bool Function(String valeur) retenue,
+    required void Function(String valeur) onChoix,
+  }) =>
+      // Choix de formulaire, pas un filtre : une reponse au questionnaire.
+      Wrap(
+        key: ValueKey<String>('questionnaire-$cle'),
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          for (final (String v, String libelle) in options)
+            FilterPill(
+              key: ValueKey<String>('questionnaire-$cle-$v'),
+              libelle: libelle,
+              retenue: retenue(v),
+              onPress: () => onChoix(v),
+            ),
+        ],
+      );
+
+  CoquilleOnboarding _ecran({
+    required String phrase,
+    required List<Widget> corps,
+    ExpressionPraxis expression = ExpressionPraxis.attente,
+    bool grand = false,
+    String? titre,
+    String? sousTitre,
+    Widget? action,
+    List<Widget> liens = const <Widget>[],
+    String? indice,
+  }) {
+    final List<EtapeQuestionnaire> plan = _q.etapes;
+    final Chapitre? chapitre = widget.etape.chapitre;
+    return CoquilleOnboarding(
+      chapitre: chapitre,
+      remplissage: chapitre == null || widget.rang < 0
+          ? const <double>[0, 0, 0, 0]
+          : remplissageOnboarding(plan, widget.rang),
+      onRetour: _retour,
+      phrase: _reaction ?? phrase,
+      expression: _expressionReaction ?? expression,
+      geste: _gesteReaction ?? gesteDeLEcran(widget.etape.sorte),
+      grand: grand,
+      titre: titre,
+      sousTitre: sousTitre,
+      corps: <Widget>[
+        // ONBOARDING-BOUCLE (14/11/2026) : la session est arrivee ici sans
+        // les reponses (autre navigateur) : on le dit.
+        if (ref.watch(reponsesResteesAilleursProvider) &&
+            !_q.complet &&
+            widget.etape.sorte == SorteEtape.accueil) ...<Widget>[
+          BandeauAttention(
+            key: const ValueKey<String>('questionnaire-absentes'),
+            titre: t.inscription.questionnaire.acces.absentesTitre,
+            message: t.inscription.questionnaire.acces.absentesPhrase,
+          ),
+          Ecart.vLg,
+        ],
+        ...corps,
+        if (_tente) ...<Widget>[Ecart.vMd, _requis()],
+      ],
+      action: action,
+      liens: liens,
+      indice: indice,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final QuestionnaireInscription q = widget.questionnaire;
-    final bool repondue = widget.etape.sorte == SorteEtape.prenom
-        ? _prenom.text.trim().isNotEmpty
-        : q.repondue(widget.etape);
-    final (String question, String? explication) = _question();
-    final bool choix = widget.etape.sorte == SorteEtape.pourQui;
-
-    // UX-046 (pilote, 02/11/2026) : l'habillage de la connexion. Sur
-    // ordinateur, des 840 points, deux volets : l'etape et la question sur la
-    // marque au debut de ligne, les reponses et « Continuer » sur le
-    // parchemin a cote ; sur telephone, une page sur la marque.
-    return CoquilleEntree(
-      // Un `Builder` : le theme lu est celui de la surface ou le contenu est
-      // pose (marque ou parchemin), pas celui de la page.
-      volet: (bool bureau) => Builder(
-        builder: (BuildContext context) {
-          final TextTheme textes = Theme.of(context).textTheme;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              RangeeEtape(
-                numero: widget.numero,
-                total: widget.total,
-                onRetour: widget.onRetour,
-              ),
-              Ecart.vXxl,
-              Semantics(
-                header: true,
-                child: TexteSansCoupure(
-                  question,
-                  style:
-                      (bureau ? textes.headlineMedium : textes.headlineSmall) ??
-                      const TextStyle(),
-                ),
-              ),
-              if (explication != null) ...<Widget>[
-                Ecart.vSm,
-                TexteSansCoupure(
-                  explication,
-                  style: textes.bodyMedium ?? const TextStyle(),
-                ),
-              ],
-              if (bureau &&
-                  widget.etape.sorte != SorteEtape.prenom) ...<Widget>[
-                Ecart.vXl,
-                Text(
-                  t.inscription.questionnaire.clavierLettres,
-                  key: const Key('questionnaire-clavier'),
-                  style: textes.bodySmall,
-                ),
-              ],
-            ],
-          );
-        },
-      ),
-      formulaire: (bool bureau) => Builder(
-        builder: (BuildContext context) {
-          _bureau = bureau;
-          final AppPalette palette = AppPalette.of(context);
-          final TextTheme textes = Theme.of(context).textTheme;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              // ONBOARDING-BOUCLE (14/11/2026) : la session est arrivee ici
-              // sans les reponses (autre navigateur) : on le dit.
-              if (ref.watch(reponsesResteesAilleursProvider) &&
-                  !q.complet) ...<Widget>[
-                BandeauAttention(
-                  key: const ValueKey<String>('questionnaire-absentes'),
-                  titre: t.inscription.questionnaire.acces.absentesTitre,
-                  message: t.inscription.questionnaire.acces.absentesPhrase,
-                ),
-                Ecart.vLg,
-              ],
-              _corps(context, bureau: bureau),
-              Ecart.vXl,
-              if (_tente && !repondue && !_adulte) ...<Widget>[
-                Semantics(
-                  liveRegion: true,
-                  child: Text(
-                    t.inscription.champRequis,
-                    key: const Key('questionnaire-reponse-requise'),
-                    style: palette.inkAlert.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
-                  ),
-                ),
-                Ecart.vMd,
-              ],
-              // Un bouton plein, comme « Recevoir le lien » : le « Continuer »
-              // en pilule lilas se lisait comme eteint (UX-046).
-              BoutonEntree(
-                bureau: bureau,
-                child: ActionPrincipale(
-                  key: const Key('questionnaire-continuer'),
-                  libelle: t.commun.continuer,
-                  onPress: () => _continuer(repondue: repondue),
-                  pleineLargeur: !bureau,
-                  fleche: true,
-                  // Sur la marque, l'aplat blanc a encre violette ; sur le
-                  // parchemin, le violet a encre blanche (comme la connexion).
-                  affirmee: true,
-                ),
-              ),
-              if (choix) ...<Widget>[
-                Ecart.vXl,
-                LienEntree(
-                  cle: const Key('questionnaire-deja-un-compte'),
-                  libelle: t.inscription.questionnaire.dejaUnCompte,
-                  onPress: () => context.go(adresseConnexionDemandee),
-                ),
-                Ecart.vSm,
-                LienEntree(
-                  cle: const Key('questionnaire-invitation'),
-                  libelle: t.inscription.usage.enseignant,
-                  // Les codes d'invitation (enseignant, comptable) ne passent
-                  // pas par le questionnaire : le compte d'abord, puis le code.
-                  onPress: () {
-                    // I1 (UX-013) : l'invitation en cours survit au lien de
-                    // connexion, ouvert souvent dans un autre onglet.
-                    retenirInvitationEnCours();
-                    context.go(
-                      Uri(
-                        path: Routes.connexion,
-                        queryParameters: <String, String>{
-                          'mode': parametreModeCreation,
-                          parametreInvitation: '1',
-                        },
-                      ).toString(),
-                    );
-                  },
-                ),
-              ],
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  (String, String?) _question() => switch (widget.etape.sorte) {
-    SorteEtape.pourQui => (t.inscription.usage.question, null),
-    SorteEtape.prenom => (
-      t.inscription.questionnaire.prenomQuestion,
-      widget.etape.rang == 0 ? t.inscription.questionnaire.prenomRaison : null,
-    ),
-    SorteEtape.age => (
-      t.inscription.questionnaire.ageQuestion(prenom: _prenomEnfant),
-      // UX-032 : la regle se dit au moment du choix (K-58).
-      t.inscription.questionnaire.ageMinimum(min: ageMinimum),
-    ),
-    SorteEtape.genre => (
-      t.inscription.questionnaire.genreQuestion(prenom: _prenomEnfant),
-      t.inscription.questionnaire.genreRaison,
-    ),
-    SorteEtape.parent => (t.inscription.usage.coursQuestion, null),
-    SorteEtape.langue => (t.parcours.langueQuestion, t.parcours.langueRaison),
-    SorteEtape.niveau => (
-      t.parcours.niveauQuestion(prenom: _prenomEnfant),
-      t.parcours.niveauRaison,
-    ),
-    SorteEtape.niveauTitulaire => (
-      t.inscription.questionnaire.niveauQuestionMoi,
-      t.parcours.niveauRaison,
-    ),
-    SorteEtape.objectif => (
-      t.parcours.objectifQuestion,
-      t.parcours.objectifRaison,
-    ),
-    SorteEtape.moments => (t.parcours.momentsQuestion, null),
-  };
-
-  /// Les reponses de l'ecran, dans l'ordre des lettres ; `null` sans choix.
-  List<_Reponse>? _reponses(List<LangueCours>? langues) {
-    final QuestionnaireInscription q = widget.questionnaire;
-    final QuestionnaireControleur c = widget.controleur;
-    return switch (widget.etape.sorte) {
-      SorteEtape.prenom => null,
-      SorteEtape.pourQui => <_Reponse>[
-        for (final (UsageInscription u, String libelle, String explication)
-            in <(UsageInscription, String, String)>[
-              (
-                UsageInscription.moi,
-                t.inscription.usage.moiTitre,
-                t.inscription.usage.moiDescription,
-              ),
-              (
-                UsageInscription.famille,
-                t.inscription.usage.familleTitre,
-                t.inscription.usage.familleDescription,
-              ),
-            ])
-          (
-            valeur: u.name,
-            libelle: libelle,
-            explication: explication,
-            retenue: q.usage == u,
-            choisir: () => c.choisirUsage(u),
-          ),
-      ],
-      SorteEtape.age => <_Reponse>[
-        for (int a = ageMinimum; a <= ageMaximum; a++)
-          (
-            valeur: '$a',
-            libelle: LibellesGroupe.insecable(
-              t.inscription.questionnaire.ans(n: a),
-            ),
-            explication: null,
-            retenue: !_adulte && _enfant.age == a,
-            choisir: () {
-              setState(() => _adulte = false);
-              _modifierEnfant((EnfantQuestionnaire e) => e.copier(age: a));
-            },
-          ),
-        (
-          valeur: 'adulte',
-          libelle: t.inscription.questionnaire.adulte,
-          explication: null,
-          retenue: _adulte,
-          choisir: () => setState(() => _adulte = true),
-        ),
-      ],
-      SorteEtape.genre => <_Reponse>[
-        for (final (Genre g, String libelle) in <(Genre, String)>[
-          (Genre.homme, t.inscription.questionnaire.garcon),
-          (Genre.femme, t.inscription.questionnaire.fille),
-        ])
-          (
-            valeur: g.name,
-            libelle: libelle,
-            explication: null,
-            retenue: _enfant.genre == g,
-            choisir: () =>
-                _modifierEnfant((EnfantQuestionnaire e) => e.copier(genre: g)),
-          ),
-      ],
-      SorteEtape.parent => <_Reponse>[
-        for (final (bool suit, String libelle) in <(bool, String)>[
-          (true, t.inscription.usage.coursOui),
-          (false, t.inscription.usage.coursNon),
-        ])
-          (
-            valeur: suit ? 'oui' : 'non',
-            libelle: libelle,
-            explication: null,
-            retenue: q.parentSuitDesCours == suit,
-            choisir: () => c.choisirParent(suit: suit),
-          ),
-      ],
-      // La langue du cours, avant le compte (directeur, 29/10/2026) : la liste
-      // des langues actives se lit sans compte (`langues_cours_publiques`).
-      SorteEtape.langue =>
-        langues == null
-            ? null
-            : <_Reponse>[
-                // Le nom vient du serveur et ne se traduit pas.
-                for (final LangueCours l in langues)
-                  (
-                    valeur: l.code,
-                    libelle: l.nom,
-                    explication: null,
-                    retenue: q.langue == l.code,
-                    choisir: () => c.choisirLangue(l.code),
-                  ),
-              ],
-      SorteEtape.niveau || SorteEtape.niveauTitulaire => <_Reponse>[
-        for (final NiveauDeclare n in NiveauDeclare.values)
-          (
-            valeur: n.valeurSql,
-            libelle: libelleNiveau(n),
-            explication: null,
-            retenue: _niveau == n,
-            choisir: () => widget.etape.sorte == SorteEtape.niveau
-                ? _modifierEnfant(
-                    (EnfantQuestionnaire e) => e.copier(niveau: n),
-                  )
-                : c.choisirNiveauTitulaire(n),
-          ),
-      ],
-      SorteEtape.objectif => <_Reponse>[
-        for (final ObjectifApprentissage o in ObjectifApprentissage.values)
-          (
-            valeur: o.valeurSql,
-            libelle: libelleObjectif(o),
-            explication: null,
-            retenue: q.objectif == o,
-            choisir: () => c.choisirObjectif(o),
-          ),
-      ],
-      SorteEtape.moments => <_Reponse>[
-        for (final MomentJournee m in MomentJournee.values)
-          (
-            valeur: m.name,
-            libelle: m.libelle,
-            explication: null,
-            retenue: q.moments.contains(m),
-            choisir: () => c.basculerMoment(m),
-          ),
-      ],
-    };
-  }
-
-  /// Les reponses : des puces pour les choix courts, des cartes legeres
-  /// seulement la ou une explication aide (pour qui, niveau, objectif),
-  /// fiche ONBOARDING §2.
-  Widget _corps(BuildContext context, {required bool bureau}) {
-    final SorteEtape sorte = widget.etape.sorte;
-    if (sorte == SorteEtape.prenom) {
-      _reponsesAffichees = null;
-      return ChampEntree(
-        cle: 'questionnaire-prenom',
-        // Directeur, 08/11/2026 : la marque des champs obligatoires.
-        obligatoire: true,
-        etiquette: t.inscription.prenom,
-        // QUESTIONNAIRE-FIN : une indication dans le champ (5,4:1 sur le
-        // blanc du champ), jamais un rectangle vide.
-        indice: t.inscription.questionnaire.prenomIndice,
-        controleur: _prenom,
-        erreur: null,
-        onChanged: () => setState(() {}),
-        onSoumettre: () => _continuer(repondue: _prenom.text.trim().isNotEmpty),
-        clavier: TextInputType.name,
-        autofill: const <String>[AutofillHints.givenName],
-      );
-    }
-    List<LangueCours>? langues;
-    if (sorte == SorteEtape.langue) {
-      final AsyncValue<List<LangueCours>> lues = ref.watch(
-        languesCoursProvider,
-      );
-      if (lues.hasError && !lues.hasValue) {
-        _reponsesAffichees = null;
-        return EtatSysteme(
-          nature: NatureEtat.echecServeur,
-          libelleAction: t.commun.etats.actions.reessayer,
-          onAction: () => ref.invalidate(languesCoursProvider),
+    final o = t.onboarding;
+    final ApprenantQuestionnaire? a = _apprenant;
+    final bool moi = a?.titulaire ?? false;
+    final String prenom = a?.prenom ?? '';
+    final bool elle = a?.genre == Genre.femme;
+    switch (widget.etape.sorte) {
+      case SorteEtape.accueil:
+        return _ecran(
+          grand: true,
+          expression: ExpressionPraxis.joie,
+          phrase: o.accueil.dit,
+          titre: o.accueil.titre,
+          sousTitre: o.accueil.sous,
+          corps: const <Widget>[],
+          action: _bouton(o.accueil.commencer, () {
+            _c.commencer();
+            _avancer();
+          }),
+          liens: <Widget>[_lienDejaCompte()],
+          indice: o.praxisIa,
         );
-      }
-      if (!lues.hasValue) {
-        _reponsesAffichees = null;
-        return const Skeleton.liste(lignes: 3);
-      }
-      langues = lues.requireValue;
-    }
-    final List<_Reponse> reponses = _reponses(langues)!;
-    _reponsesAffichees = reponses;
-    if (sorte == SorteEtape.pourQui ||
-        sorte == SorteEtape.niveau ||
-        sorte == SorteEtape.niveauTitulaire ||
-        sorte == SorteEtape.objectif) {
-      final Set<String> retenues = <String>{
-        for (final _Reponse r in reponses)
-          if (r.retenue) r.valeur,
-      };
-      return ChoiceCardGroup(
-        key: ValueKey<String>(
-          'questionnaire-${switch (sorte) {
-            SorteEtape.pourQui => 'pour-qui',
-            SorteEtape.objectif => 'objectif',
-            _ => 'niveau',
-          }}-$_versionClavier',
-        ),
-        autoriserSaisieLibre: false,
-        lettres: bureau,
-        valeurInitiale: retenues.isEmpty
-            ? null
-            : ReponseChoix(valeurs: retenues),
-        options: <OptionChoix>[
-          for (final _Reponse r in reponses)
-            OptionChoix(
-              valeur: r.valeur,
-              libelle: r.libelle,
-              explication: r.explication,
+      case SorteEtape.garde:
+        return _ecran(
+          phrase: o.garde.dit,
+          titre: o.garde.titre,
+          corps: <Widget>[
+            _cartes(
+              cle: 'garde',
+              retenue: _q.apprendre ? 'apprendre' : null,
+              options: <(String, String, String?)>[
+                ('apprendre', o.garde.apprendre, o.garde.apprendreDesc),
+                ('enseigner', o.garde.enseigner, o.garde.enseignerDesc),
+              ],
+              onChoix: (String v) {
+                if (v == 'enseigner') {
+                  _aller(const EtapeQuestionnaire(SorteEtape.enseigner));
+                  return;
+                }
+                _c.apprendre();
+                _reagir(
+                  o.garde.reponse,
+                  ExpressionPraxis.sourire,
+                  Geste.pointe,
+                );
+              },
             ),
-        ],
-        onChange: (ReponseChoix choisie) {
-          for (final _Reponse r in reponses) {
-            if (choisie.valeurs.contains(r.valeur) && !r.retenue) {
-              r.choisir();
-            }
-          }
-        },
-      );
-    }
-    final bool plusieurs = sorte == SorteEtape.moments;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (plusieurs) ...<Widget>[
-          TexteSansCoupure(
-            t.choix.selectionMultiple,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          Ecart.vMd,
-        ],
-        // Des puces, un geste par reponse.
-        // Choix de formulaire, pas un filtre : une reponse au questionnaire.
-        Wrap(
-          key: ValueKey<String>('questionnaire-${widget.etape.sorte.name}'),
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            for (final (int i, _Reponse r) in reponses.indexed)
-              FilterPill(
-                key: ValueKey<String>(
-                  'questionnaire-${_cle(sorte)}-${r.valeur}',
-                ),
-                libelle: r.libelle,
-                retenue: r.retenue,
-                apercu: bureau ? LettreChoix(lettre: lettreChoix(i)) : null,
-                onPress: r.choisir,
-              ),
           ],
-        ),
-        if (sorte == SorteEtape.age && _adulte) ...<Widget>[
-          Ecart.vLg,
-          Semantics(
-            liveRegion: true,
-            child: Text(
-              t.inscription.questionnaire.adulteDetail,
-              key: const Key('questionnaire-age-adulte-detail'),
-              style: Theme.of(context).textTheme.bodyMedium,
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(
+              pret: ref.read(questionnaireInscriptionProvider).apprendre,
             ),
           ),
-        ],
-      ],
-    );
+          liens: <Widget>[_lienDejaCompte()],
+        );
+      case SorteEtape.enseigner:
+        return _ecran(
+          grand: true,
+          expression: ExpressionPraxis.sourire,
+          phrase: o.enseigner.dit,
+          titre: o.enseigner.titre,
+          sousTitre: o.enseigner.sous,
+          corps: const <Widget>[],
+          action: _bouton(o.enseigner.commencer, () {
+            // POSTULER-ICI : la candidature sans invitation (CAND-04), par le
+            // chemin existant du lien direct du candidat (`candidature=1`) :
+            // la creation du compte, puis l'ecran de la candidature. Aucune
+            // demande d'eleve n'est creee.
+            retenirInvitationEnCours(candidature: true);
+            context.go(
+              Uri(
+                path: Routes.connexion,
+                queryParameters: <String, String>{
+                  'mode': parametreModeCreation,
+                  parametreCandidature: '1',
+                },
+              ).toString(),
+            );
+          }),
+          liens: <Widget>[
+            LienFleche(
+              key: const Key('questionnaire-enseigner-trompe'),
+              libelle: o.enseigner.trompe,
+              fleche: false,
+              onPress: () => _aller(const EtapeQuestionnaire(SorteEtape.garde)),
+            ),
+          ],
+        );
+      case SorteEtape.pourQui:
+        return _ecran(
+          phrase: o.pourQui.dit,
+          titre: o.pourQui.titre,
+          corps: <Widget>[
+            _cartes(
+              cle: 'pour-qui',
+              retenue: _q.pourQui?.name,
+              options: <(String, String, String?)>[
+                (PourQui.moi.name, o.pourQui.moi, o.pourQui.moiDesc),
+                (
+                  PourQui.unEnfant.name,
+                  o.pourQui.unEnfant,
+                  o.pourQui.unEnfantDesc,
+                ),
+                (
+                  PourQui.plusieurs.name,
+                  o.pourQui.plusieurs,
+                  o.pourQui.plusieursDesc,
+                ),
+              ],
+              onChoix: (String v) {
+                final PourQui p = PourQui.values.byName(v);
+                _c.choisirPourQui(p);
+                _reagir(switch (p) {
+                  PourQui.moi => o.pourQui.reponseMoi,
+                  PourQui.unEnfant => o.pourQui.reponseUn,
+                  PourQui.plusieurs => o.pourQui.reponsePlusieurs,
+                }, ExpressionPraxis.joie);
+              },
+            ),
+          ],
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(
+              pret: ref.read(questionnaireInscriptionProvider).pourQui != null,
+              avant: _c.validerPourQui,
+            ),
+          ),
+          liens: <Widget>[
+            LienFleche(
+              key: const Key('questionnaire-mineur'),
+              libelle: o.pourQui.mineur,
+              fleche: false,
+              onPress: () => _reagir(o.pourQui.mineurReponse),
+            ),
+          ],
+        );
+      case SorteEtape.prenom:
+        final bool premier = _i == 0;
+        final bool valide = prenomValide(_prenom.text);
+        return _ecran(
+          phrase: moi
+              ? o.prenom.ditMoi
+              : premier
+              ? o.prenom.ditEnfant
+              : o.prenom.ditSuivant,
+          titre: moi
+              ? o.prenom.titreMoi
+              : premier
+              ? o.prenom.titreEnfant
+              : o.prenom.titreSuivant,
+          sousTitre: moi ? o.prenom.sousMoi : o.prenom.sousEnfant,
+          corps: <Widget>[
+            ChampEtiquete(
+              cleChamp: const Key('questionnaire-prenom'),
+              libelle: o.prenom.etiquette,
+              obligatoire: true,
+              indice: moi ? o.prenom.indiceMoi : o.prenom.indice,
+              controller: _prenom,
+              textCapitalization: TextCapitalization.words,
+              remplissage: const <String>[AutofillHints.givenName],
+              actionClavier: TextInputAction.done,
+              inputFormatters: <TextInputFormatter>[
+                LengthLimitingTextInputFormatter(30),
+              ],
+              erreur: _tente && !valide ? o.prenom.refus : null,
+              onChanged: (String v) {
+                final bool bon = prenomValide(v);
+                setState(() {
+                  _tente = false;
+                  if (v.trim().isNotEmpty && !bon) {
+                    _reaction = o.prenom.refus;
+                    _expressionReaction = ExpressionPraxis.reflexion;
+                  } else {
+                    _reaction = null;
+                    _expressionReaction = null;
+                  }
+                });
+              },
+              onSubmitted: (String _) => _validerPrenom(),
+            ),
+          ],
+          action: _bouton(t.commun.continuer, _validerPrenom),
+        );
+      case SorteEtape.age:
+        return _ecran(
+          phrase: o.age.titre(prenom: prenom),
+          titre: o.age.titre(prenom: prenom),
+          sousTitre: o.age.sous,
+          corps: <Widget>[
+            _puces(
+              cle: 'age',
+              options: <(String, String)>[
+                for (int n = ageMinimum; n <= ageMaximum; n++) ('$n', '$n'),
+              ],
+              retenue: (String v) => a?.age == int.parse(v),
+              onChoix: (String v) {
+                final int n = int.parse(v);
+                _c.modifier(_i, (ApprenantQuestionnaire x) => x.copier(age: n));
+                _reagir(
+                  LibellesGroupe.insecable(o.age.reponse(n: n)),
+                  ExpressionPraxis.sourire,
+                );
+              },
+            ),
+          ],
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(pret: _apprenantLu?.age != null),
+          ),
+          liens: <Widget>[
+            LienFleche(
+              key: const Key('questionnaire-age-adulte'),
+              libelle: o.age.adulte,
+              fleche: false,
+              onPress: () => _reagir(o.age.adulteReponse),
+            ),
+          ],
+        );
+      case SorteEtape.genre:
+        return _ecran(
+          phrase: o.genre.dit,
+          titre: moi ? o.genre.titreMoi : o.genre.titre(prenom: prenom),
+          corps: <Widget>[
+            _cartes(
+              cle: 'genre',
+              retenue: a?.genre?.name,
+              options: <(String, String, String?)>[
+                (Genre.homme.name, moi ? o.genre.homme : o.genre.garcon, null),
+                (Genre.femme.name, moi ? o.genre.femme : o.genre.fille, null),
+              ],
+              onChoix: (String v) {
+                final Genre g = Genre.values.byName(v);
+                _c.modifier(
+                  _i,
+                  (ApprenantQuestionnaire x) => x.copier(genre: g),
+                );
+                _reagir(o.genre.reponse, ExpressionPraxis.sourire);
+              },
+            ),
+          ],
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(pret: _apprenantLu?.genre != null),
+          ),
+        );
+      case SorteEtape.famille:
+        return interludeFamille(context, ref, _ecran, _aller, _avancer);
+      case SorteEtape.niveau:
+        final String sujet = moi ? 'moi' : (elle ? 'elle' : 'il');
+        String lib(NiveauDeclare n) => libelleNiveauSujet(n, sujet);
+        return _ecran(
+          phrase: o.niveau.dit,
+          titre: moi ? o.niveau.titreMoi : o.niveau.titre(prenom: prenom),
+          corps: <Widget>[
+            _cartes(
+              cle: 'niveau',
+              retenue: a?.niveau?.valeurSql,
+              options: <(String, String, String?)>[
+                for (final NiveauDeclare n in NiveauDeclare.values)
+                  (n.valeurSql, lib(n), descriptionNiveau(n)),
+              ],
+              onChoix: (String v) {
+                final NiveauDeclare n = NiveauDeclare.depuisSql(v)!;
+                _c.choisirNiveau(_i, n);
+                _reagir(switch (n) {
+                  NiveauDeclare.debutLettres => o.niveau.reponseDebut,
+                  NiveauDeclare.memorisationPartielle => o.niveau.reponseMemo,
+                  NiveauDeclare.lectureCourante => o.niveau.reponseLecture,
+                  _ => o.niveau.reponse,
+                }, ExpressionPraxis.reflexion);
+              },
+            ),
+          ],
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(pret: _apprenantLu?.niveau != null),
+          ),
+        );
+      case SorteEtape.lecture:
+        final LectureCoran lecture = a?.lecture ?? LectureCoran.hafs;
+        return _ecran(
+          expression: ExpressionPraxis.reflexion,
+          phrase: o.lecture.dit,
+          titre: moi
+              ? o.lecture.titreMoi
+              : elle
+              ? o.lecture.titreElle(prenom: prenom)
+              : o.lecture.titreIl(prenom: prenom),
+          sousTitre: o.lecture.sous,
+          corps: <Widget>[
+            _cartes(
+              cle: 'lecture',
+              retenue: lecture.name,
+              options: <(String, String, String?)>[
+                (LectureCoran.hafs.name, o.lecture.hafs, o.lecture.hafsDesc),
+                (LectureCoran.warsh.name, o.lecture.warsh, o.lecture.warshDesc),
+                (LectureCoran.autre.name, o.lecture.autre, o.lecture.autreDesc),
+              ],
+              onChoix: (String v) {
+                final LectureCoran l = LectureCoran.values.byName(v);
+                _c.modifier(
+                  _i,
+                  (ApprenantQuestionnaire x) => x.copier(lecture: l),
+                );
+                _reagir(switch (l) {
+                  LectureCoran.hafs => o.lecture.reponseHafs,
+                  LectureCoran.warsh => o.lecture.reponseWarsh,
+                  LectureCoran.autre => o.lecture.reponseAutre,
+                }, ExpressionPraxis.reflexion);
+              },
+            ),
+            if (lecture == LectureCoran.autre) ...<Widget>[
+              Ecart.vLg,
+              ChampEtiquete(
+                cleChamp: const Key('questionnaire-lecture-autre'),
+                libelle: o.lecture.autreEtiquette,
+                indice: o.lecture.autreIndice,
+                controller: _lectureAutre,
+                inputFormatters: <TextInputFormatter>[
+                  LengthLimitingTextInputFormatter(40),
+                ],
+                onChanged: (String v) => _c.modifier(
+                  _i,
+                  (ApprenantQuestionnaire x) =>
+                      x.copier(lectureAutre: v.trim()),
+                ),
+              ),
+            ],
+          ],
+          action: _bouton(t.commun.continuer, _avancer),
+        );
+      case SorteEtape.memorise:
+        return _ecran(
+          phrase: o.memorise.dit,
+          titre: moi
+              ? o.memorise.titreMoi
+              : elle
+              ? o.memorise.titreElle(prenom: prenom)
+              : o.memorise.titreIl(prenom: prenom),
+          corps: <Widget>[
+            _cartes(
+              cle: 'memorise',
+              retenue: a?.quantite?.valeurSql,
+              options: <(String, String, String?)>[
+                for (final QuantiteMemorisee m in QuantiteMemorisee.values)
+                  (m.valeurSql, libelleQuantite(m), null),
+              ],
+              onChoix: (String v) {
+                final QuantiteMemorisee m = QuantiteMemorisee.depuisSql(v)!;
+                _c.modifier(
+                  _i,
+                  (ApprenantQuestionnaire x) => x.copier(quantite: m),
+                );
+                _reagir(
+                  m == QuantiteMemorisee.coranEntier
+                      ? o.memorise.reponseTout
+                      : o.memorise.reponse,
+                  ExpressionPraxis.etonne,
+                );
+              },
+            ),
+          ],
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(pret: _apprenantLu?.quantite != null),
+          ),
+        );
+      case SorteEtape.detail:
+        final bool enJuz = a?.detailEnJuz ?? true;
+        return _ecran(
+          expression: ExpressionPraxis.concentre,
+          phrase: enJuz ? o.detail.ditJuz : o.detail.ditSourates,
+          titre: enJuz ? o.detail.titreJuz : o.detail.titreSourates,
+          sousTitre: o.detail.sous,
+          corps: <Widget>[
+            _puces(
+              cle: enJuz ? 'juz' : 'sourates',
+              options: enJuz
+                  ? <(String, String)>[
+                      for (int j = 1; j <= 30; j++) ('$j', '$j'),
+                    ]
+                  : <(String, String)>[
+                      for (final String s in souratesDesBases)
+                        (s, nomSourate(s)),
+                    ],
+              retenue: (String v) => enJuz
+                  ? (_apprenantLu?.juz.contains(int.parse(v)) ?? false)
+                  : (_apprenantLu?.sourates.contains(v) ?? false),
+              onChoix: (String v) {
+                if (enJuz) {
+                  _c.basculerDetail(_i, juz: int.parse(v));
+                } else {
+                  _c.basculerDetail(_i, sourate: v);
+                }
+                final ApprenantQuestionnaire? apres = _apprenantLu;
+                final int n = enJuz
+                    ? apres?.juz.length ?? 0
+                    : apres?.sourates.length ?? 0;
+                _reagir(
+                  n == 0
+                      ? o.detail.aucun
+                      : n == 1
+                      ? o.detail.un
+                      : o.detail.plusieurs(n: n),
+                  ExpressionPraxis.reflexion,
+                );
+              },
+            ),
+          ],
+          action: _bouton(t.commun.continuer, _avancer),
+        );
+      case SorteEtape.objectif:
+        final bool bases =
+            a?.niveau == NiveauDeclare.debutLettres ||
+            a?.niveau == NiveauDeclare.lettresAvecAide;
+        return _ecran(
+          phrase: o.objectif.dit,
+          titre: moi ? o.objectif.titreMoi : o.objectif.titre(prenom: prenom),
+          sousTitre: a?.niveau == NiveauDeclare.memorisationPartielle
+              ? o.objectif.sousMemo
+              : null,
+          corps: <Widget>[
+            _cartes(
+              cle: 'objectif',
+              retenue: a?.objectif?.name,
+              options: <(String, String, String?)>[
+                (
+                  ObjectifOnboarding.lire.name,
+                  bases ? o.objectif.lireBases : o.objectif.lireCourant,
+                  bases ? o.objectif.lireBasesDesc : o.objectif.lireCourantDesc,
+                ),
+                (
+                  ObjectifOnboarding.memoriser.name,
+                  o.objectif.memoriser,
+                  bases
+                      ? o.objectif.memoriserApresBases
+                      : o.objectif.memoriserAvec,
+                ),
+                if (!moi)
+                  (
+                    ObjectifOnboarding.priere.name,
+                    o.objectif.priere,
+                    o.objectif.priereDesc,
+                  ),
+                (
+                  ObjectifOnboarding.indecis.name,
+                  o.objectif.indecis,
+                  o.objectif.indecisDesc,
+                ),
+              ],
+              onChoix: (String v) {
+                final ObjectifOnboarding ob = ObjectifOnboarding.values.byName(
+                  v,
+                );
+                _c.modifier(
+                  _i,
+                  (ApprenantQuestionnaire x) => x.copier(objectif: ob),
+                );
+                _reagir(
+                  ob == ObjectifOnboarding.indecis
+                      ? o.objectif.reponseIndecis
+                      : o.objectif.reponse,
+                  ExpressionPraxis.joie,
+                );
+              },
+            ),
+          ],
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(pret: _apprenantLu?.objectif != null),
+          ),
+        );
+      case SorteEtape.depart:
+        return interludeDepart(context, _q, _ecran, _avancer);
+      case SorteEtape.langue:
+        return _ecran(
+          phrase: o.langue.dit,
+          titre: o.langue.titre,
+          sousTitre: o.langue.sous,
+          corps: <Widget>[
+            for (final MapEntry<GroupeLangues, List<String>> g
+                in languesDesExplications.entries) ...<Widget>[
+              Text(
+                nomGroupeLangues(g.key),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              Ecart.vSm,
+              _puces(
+                cle: 'langue-${g.key.name}',
+                options: <(String, String)>[
+                  for (final String code in g.value) (code, nomLangue(code)),
+                ],
+                retenue: (String v) =>
+                    ref.read(questionnaireInscriptionProvider).langue == v,
+                onChoix: (String v) {
+                  _c.choisirLangue(v);
+                  _reagir(
+                    o.langue.reponse(langue: nomLangue(v)),
+                    ExpressionPraxis.sourire,
+                  );
+                },
+              ),
+              Ecart.vLg,
+            ],
+          ],
+          action: _bouton(
+            t.commun.continuer,
+            () => _continuer(
+              pret: ref.read(questionnaireInscriptionProvider).langue != null,
+            ),
+          ),
+        );
+      case SorteEtape.langueSecours:
+        return _ecran(
+          expression: ExpressionPraxis.reflexion,
+          phrase: o.langueSecours.dit,
+          titre: o.langueSecours.titre,
+          sousTitre: o.langueSecours.sous,
+          corps: <Widget>[
+            _puces(
+              cle: 'langue-secours',
+              options: <(String, String)>[
+                ('aucune', o.langueSecours.aucune),
+                for (final String code in codesDesExplications)
+                  if (code != _q.langue) (code, nomLangue(code)),
+              ],
+              retenue: (String v) {
+                final String? s = ref
+                    .read(questionnaireInscriptionProvider)
+                    .langueSecours;
+                return v == 'aucune' ? (_secoursTouche && s == null) : s == v;
+              },
+              onChoix: (String v) {
+                _secoursTouche = true;
+                _c.choisirLangueSecours(v == 'aucune' ? null : v);
+                _reagir(
+                  v == 'aucune'
+                      ? o.langueSecours.reponseAucune
+                      : o.langueSecours.reponse,
+                  ExpressionPraxis.sourire,
+                );
+              },
+            ),
+            Ecart.vLg,
+            ChampEtiquete(
+              cleChamp: const Key('questionnaire-langue-autre'),
+              libelle: o.langueSecours.autreEtiquette,
+              indice: o.langueSecours.autreIndice,
+              controller: _langueAutre,
+              inputFormatters: <TextInputFormatter>[
+                LengthLimitingTextInputFormatter(40),
+              ],
+              onChanged: _c.saisirLangueAutre,
+            ),
+          ],
+          action: _bouton(t.commun.continuer, _avancer),
+        );
+      case SorteEtape.chemin:
+        return interludeChemin(context, _q, _ecran, _avancer);
+      case SorteEtape.recap:
+        return interludeRecap(
+          context,
+          ref,
+          _q,
+          _ecran,
+          // Sans fuseau, la demande ne part pas : jamais une valeur par
+          // defaut (directeur, 22/11/2026).
+          () => _continuer(
+            pret: ref.read(questionnaireInscriptionProvider).fuseau != null,
+          ),
+        );
+    }
   }
 
-  static String _cle(SorteEtape sorte) => switch (sorte) {
-    SorteEtape.age => 'age',
-    SorteEtape.genre => 'genre',
-    SorteEtape.parent => 'parent',
-    SorteEtape.langue => 'langue',
-    _ => 'moment',
-  };
+  /// Vrai des que « Aucune autre » a ete touche (sinon rien n'est retenu).
+  bool _secoursTouche = false;
 
-  NiveauDeclare? get _niveau => widget.etape.sorte == SorteEtape.niveau
-      ? _enfant.niveau
-      : widget.questionnaire.niveauTitulaire;
+  /// L'apprenant tel qu'il est maintenant (apres un choix fait sur l'ecran).
+  ApprenantQuestionnaire? get _apprenantLu {
+    final List<ApprenantQuestionnaire> l = ref
+        .read(questionnaireInscriptionProvider)
+        .apprenants;
+    return _i < l.length ? l[_i] : null;
+  }
+
+  void _validerPrenom() {
+    if (!prenomValide(_prenom.text)) {
+      setState(() {
+        _tente = true;
+        _reaction = t.onboarding.prenom.refus;
+        _expressionReaction = ExpressionPraxis.reflexion;
+      });
+      return;
+    }
+    _c.modifier(
+      _i,
+      (ApprenantQuestionnaire x) => x.copier(prenom: _prenom.text.trim()),
+    );
+    _avancer();
+  }
 }
 
-/// Une reponse proposee : sa valeur, son libelle, si elle est retenue, et le
-/// geste qui la choisit (toucher ou lettre du clavier).
-typedef _Reponse = ({
-  String valeur,
-  String libelle,
-  String? explication,
-  bool retenue,
-  VoidCallback choisir,
-});
-
-/// Le code du dernier ecran du questionnaire, l'acces (`?etape=acces`).
+/// Le code de l'acces, apres le recapitulatif (`?etape=acces`).
 const String codeEtapeAcces = 'acces';
 
 /// Le parametre de la connexion qui dit « j'ai un code d'invitation » : la
@@ -762,16 +1043,15 @@ const String codeEtapeAcces = 'acces';
 const String parametreInvitation = 'invitation';
 
 /// Le parametre de la connexion qui porte l'invitation d'un second adulte a
-/// rejoindre un foyer (INVITATION-SECOND-ADULTE, 07/11/2026) : la personne
-/// invitee cree son compte sans le questionnaire des familles.
+/// rejoindre un foyer (INVITATION-SECOND-ADULTE, 07/11/2026).
 const String parametreFoyer = 'foyer';
 
 /// Ou mene la creation d'un compte (`/connexion?mode=creer`) : au
 /// questionnaire tant qu'il n'est pas repondu, sauf avec un code
-/// d'invitation ([parametreInvitation]), pour le candidat enseignant venu
-/// par le lien direct de son courriel ([parametreCandidature], CAND-04 : le
-/// questionnaire des familles ne le concerne pas) ou pour l'adulte invite a
-/// rejoindre un foyer ([parametreFoyer]). Fonction pure.
+/// d'invitation ([parametreInvitation]), pour le candidat enseignant
+/// ([parametreCandidature], CAND-04, et la branche « Enseigner » de
+/// l'onboarding) ou pour l'adulte invite a rejoindre un foyer
+/// ([parametreFoyer]). Fonction pure.
 String? redirectionCreationCompte(
   Uri adresse, {
   required bool questionnaireComplet,
@@ -783,3 +1063,26 @@ String? redirectionCreationCompte(
         !questionnaireComplet
     ? Routes.commencer
     : null;
+
+/// Le geste de Praxis sur chaque ecran, comme la maquette (`pose(e, g)`) :
+/// salut a l'accueil, il montre les choix, main sur le coeur a la famille et
+/// au recapitulatif, il reflechit sur le chemin.
+Geste gesteDeLEcran(SorteEtape sorte) => switch (sorte) {
+  SorteEtape.accueil => Geste.salut,
+  SorteEtape.garde ||
+  SorteEtape.enseigner ||
+  SorteEtape.pourQui ||
+  SorteEtape.niveau ||
+  SorteEtape.objectif ||
+  SorteEtape.depart ||
+  SorteEtape.langue => Geste.pointe,
+  SorteEtape.famille || SorteEtape.recap => Geste.coeur,
+  SorteEtape.chemin => Geste.reflexion,
+  SorteEtape.prenom ||
+  SorteEtape.age ||
+  SorteEtape.genre ||
+  SorteEtape.lecture ||
+  SorteEtape.memorise ||
+  SorteEtape.detail ||
+  SorteEtape.langueSecours => Geste.aucun,
+};

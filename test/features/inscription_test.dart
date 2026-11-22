@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/equipe/port_inscription_associe.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart'
     show languesCoursProvider;
@@ -21,11 +20,8 @@ import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
-import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
-import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
-    show UsageInscription;
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
@@ -34,9 +30,9 @@ import 'package:rewayah_academy/features/inscription/etapes/telephone_etape.dart
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
-import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 
 import '../fixtures/candidature/faux_inscription_candidat.dart';
 import '../support/demo/recrutement_demo.dart';
@@ -53,30 +49,51 @@ class _QuestionnaireRepondu extends QuestionnaireControleur {
 
 /// « Pour moi », toutes les questions repondues.
 const QuestionnaireInscription _qMoi = QuestionnaireInscription(
-  usage: UsageInscription.moi,
-  niveauTitulaire: NiveauDeclare.lectureLente,
-  objectif: ObjectifApprentissage.memoriser,
-  moments: <MomentJournee>{MomentJournee.soir},
+  commence: true,
+  apprendre: true,
+  pourQui: PourQui.moi,
+  apprenants: <ApprenantQuestionnaire>[
+    ApprenantQuestionnaire(
+      prenom: 'Amina',
+      genre: Genre.femme,
+      niveau: NiveauDeclare.lectureLente,
+      objectif: ObjectifOnboarding.memoriser,
+      titulaire: true,
+    ),
+  ],
   langue: 'francais',
+  fuseau: 'Europe/Paris',
 );
 
-/// « Mon enfant », un enfant, et le parent qui suit ou non des cours.
+/// « Pour mon enfant », un enfant, et le parent qui suit ou non des cours.
 QuestionnaireInscription _qFamille({required bool parent}) =>
     QuestionnaireInscription(
-      usage: UsageInscription.famille,
-      enfants: const <EnfantQuestionnaire>[
-        EnfantQuestionnaire(
+      commence: true,
+      apprendre: true,
+      pourQui: PourQui.unEnfant,
+      apprenants: <ApprenantQuestionnaire>[
+        const ApprenantQuestionnaire(
           prenom: 'Yasmine',
           age: 9,
           genre: Genre.femme,
           niveau: NiveauDeclare.debutLettres,
+          objectif: ObjectifOnboarding.priere,
         ),
+        if (parent)
+          const ApprenantQuestionnaire(
+            prenom: 'Fatou',
+            genre: Genre.femme,
+            niveau: NiveauDeclare.memorisationPartielle,
+            lecture: LectureCoran.warsh,
+            quantite: QuantiteMemorisee.quelquesSourates,
+            objectif: ObjectifOnboarding.memoriser,
+            titulaire: true,
+          ),
       ],
-      parentSuitDesCours: parent,
-      niveauTitulaire: parent ? NiveauDeclare.lectureCourante : null,
-      objectif: ObjectifApprentissage.apprendreALire,
-      moments: const <MomentJournee>{MomentJournee.matin},
       langue: 'francais',
+      fuseau: 'Europe/Paris',
+      langueSecours: 'poular',
+      source: SourceConnaissance.mosquee,
     );
 
 /// Une source dont le rafraichissement echoue tant qu'on le demande.
@@ -124,6 +141,8 @@ class _DossierLent extends FauxServiceDossier {
     UsageTitulaire? usage,
     bool suitDesCours = false,
     List<Map<String, Object?>>? apprenants,
+    String? source,
+    String? fuseau,
   }) async {
     await _porte.future;
     await super.creerProfil(
@@ -134,6 +153,9 @@ class _DossierLent extends FauxServiceDossier {
       codeInvitation: codeInvitation,
       usage: usage,
       suitDesCours: suitDesCours,
+      apprenants: apprenants,
+      source: source,
+      fuseau: fuseau,
     );
   }
 }
@@ -363,22 +385,6 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 Future<void> _continuer(WidgetTester tester) =>
     _taper(tester, find.text(t.commun.continuer));
 
-/// Le titulaire, questionnaire repondu (langue comprise), de l'identite au
-/// recapitulatif.
-Future<void> _jusquAuRecap(WidgetTester tester) async {
-  expect(find.text('1 sur 3'), findsOneWidget);
-  await tester.enterText(find.byKey(const Key('inscription-prenom')), 'Amina');
-  await tester.enterText(find.byKey(const Key('inscription-nom')), 'Diallo');
-  await _continuer(tester);
-  // Demande du directeur (25/09) : symbole femme et symbole homme, plus la
-  // silhouette neutre du profil.
-  expect(find.byIcon(AppIcons.femme.repos), findsOneWidget);
-  expect(find.byIcon(AppIcons.homme.repos), findsOneWidget);
-  expect(find.byIcon(AppIcons.profil.repos), findsNothing);
-  await _taper(tester, find.text(t.inscription.genreFemme));
-  await _continuer(tester);
-}
-
 void main() {
   // L'appareil de test est en en-US : depuis LANGUES-1, « Systeme » y ouvre
   // l'anglais, et la remise a zero de la langue a la deconnexion y renverrait
@@ -540,37 +546,44 @@ void main() {
       expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
     });
 
-    testWidgets('le parcours complet cree le profil et part vers /attente', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('ONBOARDING-PRAXIS : « Pour moi » : le nom de famille seul, '
+        'puis la fin, puis /attente', (WidgetTester tester) async {
       final (FauxServiceDossier dossier, FausseSourceSession source) =
           await _monter(tester, questionnaire: _qMoi);
-      await _jusquAuRecap(tester);
-
-      expect(find.text('3 sur 3'), findsOneWidget);
-      expect(find.text('Amina Diallo'), findsOneWidget);
-      expect(find.text(t.inscription.questionnaire.recapTitre), findsOneWidget);
-      // Usage, vous, langue, identite, genre.
-      expect(find.text(t.inscription.modifier), findsNWidgets(5));
-
-      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
+      expect(find.byKey(RecapitulatifEtape.cleVous), findsOneWidget);
+      expect(find.text(t.onboarding.vous.titreMoi), findsWidgets);
+      // Le prenom et le genre sont deja dits : jamais redemandes.
+      expect(find.byKey(const Key('inscription-prenom')), findsNothing);
+      expect(find.byKey(const Key('inscription-genre')), findsNothing);
+      await tester.enterText(
+        find.byKey(const Key('inscription-nom')),
+        'Diallo',
+      );
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
 
       expect(dossier.profilsCrees, hasLength(1));
       expect(dossier.profilsCrees.single.role, AppRole.guardian);
       expect(dossier.profilsCrees.single.genre, Genre.femme);
-      // L5-01 : « Moi » part avec le profil, et ouvre la fiche d'eleve.
       expect(dossier.usages.single.usage, UsageTitulaire.moi);
       expect(dossier.usages.single.suitDesCours, isTrue);
-      // Admission, lot B : l'apprenant du questionnaire part avec la demande.
       expect(dossier.apprenantsEnvoyes.single, <Map<String, Object?>>[
         <String, Object?>{
           'est_titulaire': true,
           'niveau': 'lecture_lente',
           'objectif': 'memoriser',
-          'moments': <String>['soir'],
+          'moments': <String>[],
           'langue': 'francais',
         },
       ]);
+      expect(dossier.sourcesEnvoyees.single, isNull);
+      // Le fuseau de la personne part avec la demande (jamais Paris par
+      // defaut : ici, celui du questionnaire).
+      expect(dossier.fuseauxEnvoyes.single, 'Europe/Paris');
+      // La fin, avant le depart : rien n'est redemande.
+      expect(find.byKey(RecapitulatifEtape.cleFin), findsOneWidget);
+      expect(find.text(t.onboarding.fin.trois), findsOneWidget);
+      expect(source.rafraichissements, 0);
+      await _taper(tester, find.byKey(const Key('inscription-suivre')));
       expect(source.rafraichissements, 1);
       expect(find.text('ATTENTE'), findsOneWidget);
     });
@@ -758,59 +771,58 @@ void main() {
     });
 
     testWidgets('« J\'inscris mon enfant » apres la connexion, sans '
-        'questionnaire : les questions s ouvrent', (WidgetTester tester) async {
+        'questionnaire : les questions s ouvrent sur « Pour qui »', (
+      WidgetTester tester,
+    ) async {
       await _monter(tester);
       await passerApprendre(tester);
       await _taper(tester, find.text(t.inscription.usage.familleTitre));
       await _continuer(tester);
       expect(find.byType(QuestionnairePage), findsOneWidget);
-      expect(
-        find.text(t.inscription.questionnaire.prenomQuestion),
-        findsOneWidget,
-      );
+      expect(find.text(t.onboarding.pourQui.titre), findsOneWidget);
     });
 
+    // ONBOARDING-PRAXIS : le parent qui ne suit pas de cours dit son prenom,
+    // son nom et son genre (« Vous, le tuteur du compte ») ; le parent qui
+    // suit des cours a deja dit son prenom et son genre : seulement le nom.
     for (final bool suit in <bool>[true, false]) {
-      testWidgets('L5-01 : « Famille », cours $suit : la reponse et l enfant '
-          'sont montres au recapitulatif et partent avec la demande', (
+      testWidgets('ONBOARDING-PRAXIS : « Famille », cours $suit : rien n est '
+          'redemande, et tout part avec la demande', (
         WidgetTester tester,
       ) async {
         final (FauxServiceDossier dossier, _) = await _monter(
           tester,
           questionnaire: _qFamille(parent: suit),
         );
-        await tester.enterText(
+        expect(find.byKey(RecapitulatifEtape.cleVous), findsOneWidget);
+        expect(
+          find.text(
+            suit ? t.onboarding.vous.titreMoi : t.onboarding.vous.titre,
+          ),
+          findsWidgets,
+        );
+        expect(
           find.byKey(const Key('inscription-prenom')),
-          'Karim',
+          suit ? findsNothing : findsOneWidget,
         );
+        if (!suit) {
+          await tester.enterText(
+            find.byKey(const Key('inscription-prenom')),
+            'Karim',
+          );
+          await _taper(
+            tester,
+            find.byKey(const Key('inscription-genre-homme')),
+          );
+        }
         await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
-        await _continuer(tester);
-        await _taper(tester, find.text(t.inscription.genreHomme));
-        await _continuer(tester);
-        expect(
-          find.text(
-            suit ? t.inscription.recap.coursOui : t.inscription.recap.coursNon,
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.text(
-            LibellesGroupe.insecable(
-              t.inscription.questionnaire.ligneEnfant(
-                prenom: 'Yasmine',
-                age: 9,
-              ),
-            ),
-          ),
-          findsOneWidget,
-        );
-        expect(
-          find.byKey(const Key('inscription-ajouter-profil')),
-          findsOneWidget,
-        );
-        await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
+        await _taper(tester, find.byKey(const Key('inscription-envoyer')));
         expect(dossier.usages.single.usage, UsageTitulaire.famille);
         expect(dossier.usages.single.suitDesCours, suit);
+        expect(
+          dossier.profilsCrees.single.genre,
+          suit ? Genre.femme : Genre.homme,
+        );
         final List<Map<String, Object?>> apprenants =
             dossier.apprenantsEnvoyes.single!;
         expect(apprenants, hasLength(suit ? 2 : 1));
@@ -819,114 +831,71 @@ void main() {
           'age': 9,
           'genre': 'female',
           'niveau': 'debut_lettres',
-          'objectif': 'apprendre_a_lire',
-          'moments': <String>['matin'],
+          'objectif': 'priere_invocations',
+          'moments': <String>[],
           'langue': 'francais',
+          'langue_secours': 'poular',
         });
         if (suit) {
           expect(apprenants.last['est_titulaire'], isTrue);
+          expect(apprenants.last['riwaya'], 'warsh');
         }
+        expect(dossier.sourcesEnvoyees.single, 'mosquee');
+        // La fin : jamais de question deja posee ; la fratrie n'est dite
+        // qu'avec plusieurs enfants.
+        expect(find.byKey(RecapitulatifEtape.cleFin), findsOneWidget);
+        expect(find.byKey(const Key('inscription-fin-fratrie')), findsNothing);
       });
     }
 
-    // ENTREE-ORDRE (garde-cap, 05/11/2026) : « Ajouter un autre profil
-    // eleve » reste au recapitulatif, jusqu'a 6 apprenants
-    // (recapitulatif_etape.dart, `apprenantsMaximum`).
-    testWidgets('ENTREE-ORDRE : « Ajouter un autre profil eleve » ouvre le '
-        'prenom du deuxieme enfant', (WidgetTester tester) async {
-      await _monter(tester, questionnaire: _qFamille(parent: false));
-      await tester.enterText(
-        find.byKey(const Key('inscription-prenom')),
-        'Karim',
-      );
-      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
-      await _continuer(tester);
-      await _taper(tester, find.text(t.inscription.genreHomme));
-      await _continuer(tester);
-      await _taper(tester, find.byKey(const Key('inscription-ajouter-profil')));
-      expect(find.byType(QuestionnairePage), findsOneWidget);
-      expect(
-        find.text(t.inscription.questionnaire.prenomQuestion),
-        findsOneWidget,
-      );
-    });
-
-    for (final bool parent in <bool>[false, true]) {
-      testWidgets('ENTREE-ORDRE : a 6 apprenants (parent $parent), plus '
-          'd ajout', (WidgetTester tester) async {
-        final QuestionnaireInscription base = _qFamille(parent: parent);
-        final int enfants = apprenantsMaximum - (parent ? 1 : 0);
-        await _monter(
-          tester,
-          questionnaire: base.copier(
-            enfants: List<EnfantQuestionnaire>.filled(
-              enfants,
-              base.enfants.single,
-            ),
-          ),
-        );
-        await tester.enterText(
-          find.byKey(const Key('inscription-prenom')),
-          'Karim',
-        );
-        await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
-        await _continuer(tester);
-        await _taper(tester, find.text(t.inscription.genreHomme));
-        await _continuer(tester);
-        expect(find.text(t.inscription.questionnaire.envoyer), findsOneWidget);
-        expect(
-          find.byKey(const Key('inscription-ajouter-profil')),
-          findsNothing,
-        );
-      });
-    }
-
-    testWidgets('INSCRIPTION-3 : entre la demande envoyee et le depart, le '
-        'recapitulatif reste tel quel', (WidgetTester tester) async {
-      final _SourceRetenue source = _SourceRetenue();
+    testWidgets('ONBOARDING-PRAXIS : la fin dit que les freres et soeurs ont '
+        'chacun leur classe, avec plusieurs enfants', (
+      WidgetTester tester,
+    ) async {
+      final QuestionnaireInscription base = _qFamille(parent: false);
       await _monter(
         tester,
-        source: source,
-        questionnaire: _qFamille(parent: false),
+        questionnaire: base.copier(
+          apprenants: <ApprenantQuestionnaire>[
+            base.apprenants.single,
+            base.apprenants.single.copier(prenom: 'Bilal', age: 12),
+          ],
+        ),
       );
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),
         'Karim',
       );
+      await _taper(tester, find.byKey(const Key('inscription-genre-homme')));
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
-      await _continuer(tester);
-      await _taper(tester, find.text(t.inscription.genreHomme));
-      await _continuer(tester);
-      final Finder enfant = find.text(
-        LibellesGroupe.insecable(
-          t.inscription.questionnaire.ligneEnfant(prenom: 'Yasmine', age: 9),
-        ),
-      );
-      expect(enfant, findsOneWidget);
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      expect(find.byKey(const Key('inscription-fin-fratrie')), findsOneWidget);
+      expect(find.text(t.onboarding.fin.deuxPlusieurs), findsOneWidget);
+    });
 
-      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
-      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
-      await tester.ensureVisible(
-        find.text(t.inscription.questionnaire.envoyer),
-      );
+    testWidgets('INSCRIPTION-3 : entre « Suivre ma demande » et le depart, la '
+        'fin reste telle quelle', (WidgetTester tester) async {
+      final _SourceRetenue source = _SourceRetenue();
+      await _monter(tester, source: source, questionnaire: _qMoi);
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      expect(find.byKey(RecapitulatifEtape.cleFin), findsOneWidget);
+      expect(source.rafraichissements, 0);
+
+      final Finder suivre = find.byKey(const Key('inscription-suivre'));
+      await tester.ensureVisible(suivre);
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.inscription.questionnaire.envoyer));
+      await tester.tap(suivre);
       for (int i = 0; i < 5; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }
-      // Le profil est cree, la session s'actualise encore. Avant : le
-      // bouton disait « Reessayer » et les lignes de l'enfant disparaissaient
-      // (questionnaire efface avant le depart).
       expect(source.rafraichissements, 1);
-      expect(find.text(t.inscription.reessayer), findsNothing);
       expect(find.text(t.inscription.erreurActualisation), findsNothing);
-      expect(enfant, findsOneWidget);
+      expect(find.byKey(RecapitulatifEtape.cleFin), findsOneWidget);
 
       source.libere();
       await tester.pumpAndSettle();
       expect(find.text('ATTENTE'), findsOneWidget);
-      // La demande est partie ; les reponses quittent l'appareil a
-      // l'arrivee sur la vraie page d'attente (attente_test.dart).
       expect(
         ProviderScope.containerOf(tester.element(find.text('ATTENTE')))
             .read(departDemandeProvider),
@@ -934,65 +903,31 @@ void main() {
       );
     });
 
-    testWidgets('identite : les erreurs se disent sous les champs', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('identite : l adulte n a que son nom a dire, l erreur se dit '
+        'sous le champ', (WidgetTester tester) async {
       await _monter(tester, questionnaire: _qMoi);
-      await _continuer(tester);
-      expect(find.text(t.inscription.champRequis), findsNWidgets(2));
-      expect(find.text('1 sur 3'), findsOneWidget);
+      expect(find.byKey(const Key('inscription-prenom')), findsNothing);
+      expect(
+        find.text(t.onboarding.vous.ditMoi(prenom: 'Amina')),
+        findsOneWidget,
+      );
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      expect(find.text(t.inscription.champRequis), findsOneWidget);
     });
 
-    // NOM-PROPRE (INCIDENT-CANDIDATS, 14/11/2026) : « ٠ » ou un chiffre ne
-    // passent pas ; la phrase dit d'ecrire en lettres, et rien n'avance.
+    // NOM-PROPRE (INCIDENT-CANDIDATS, 14/11/2026) : un chiffre ne passe pas ;
+    // la phrase dit d'ecrire en lettres, et rien ne part.
     testWidgets('identite : un nom en chiffres est refuse, en mots', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, questionnaire: _qMoi);
-      await tester.enterText(find.byKey(const Key('inscription-prenom')), '٠');
-      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah2');
-      await _continuer(tester);
-      expect(find.text(t.inscription.nomEnLettresPrenom), findsOneWidget);
-      expect(find.text(t.inscription.nomEnLettresNom), findsOneWidget);
-      expect(find.text('1 sur 3'), findsOneWidget);
-    });
-
-    testWidgets('UX-005 : la langue du cours se dit par son nom, meme sans '
-        'referentiel charge', (WidgetTester tester) async {
-      await _monter(tester, questionnaire: _qMoi, languesChargees: false);
-      await _jusquAuRecap(tester);
-      expect(
-        find.text(t.recrutement.parcours.langues.francais),
-        findsOneWidget,
-      );
-      expect(find.text('francais'), findsNothing);
-    });
-
-    testWidgets('retour 48 dp et « Modifier » ramenent au bon endroit', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, questionnaire: _qMoi);
-      await _jusquAuRecap(tester);
-
-      await _taper(
+      final (FauxServiceDossier dossier, _) = await _monter(
         tester,
-        find.byKey(const Key('inscription-modifier-identite')),
+        questionnaire: _qMoi,
       );
-      expect(find.text('1 sur 3'), findsOneWidget);
-      await tester.enterText(
-        find.byKey(const Key('inscription-prenom')),
-        'Awa',
-      );
-      await _continuer(tester);
-      expect(find.text('3 sur 3'), findsOneWidget);
-      expect(find.text('Awa Diallo'), findsOneWidget);
-
-      await _taper(tester, find.byType(DisqueRetour));
-      expect(find.text('2 sur 3'), findsOneWidget);
-      expect(
-        tester.getSize(find.byType(DisqueRetour)).width,
-        greaterThanOrEqualTo(48),
-      );
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah2');
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      expect(find.text(t.inscription.nomEnLettresNom), findsOneWidget);
+      expect(dossier.profilsCrees, isEmpty);
     });
 
     testWidgets('actualisation en echec : aucune impasse, aucun doublon', (
@@ -1004,14 +939,15 @@ void main() {
         source: source,
         questionnaire: _qMoi,
       );
-      await _jusquAuRecap(tester);
-      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      await _taper(tester, find.byKey(const Key('inscription-suivre')));
 
       expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
-      expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
+      expect(find.byKey(const Key('inscription-deconnexion')), findsNothing);
 
       source.echoue = false;
-      await _taper(tester, find.text(t.inscription.reessayer));
+      await _taper(tester, find.byKey(const Key('inscription-suivre')));
       expect(dossier.profilsCrees, hasLength(1));
       expect(source.rafraichissements, 2);
       expect(find.text('ATTENTE'), findsOneWidget);
@@ -1025,32 +961,24 @@ void main() {
         questionnaire: _qMoi,
       );
       dossier.erreurAJeter = StateError('reseau');
-      await _jusquAuRecap(tester);
-      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
       expect(find.text(t.inscription.erreur), findsOneWidget);
-      expect(find.text('3 sur 3'), findsOneWidget);
+      expect(find.byKey(RecapitulatifEtape.cleVous), findsOneWidget);
     });
 
     testWidgets('double soumission bloquee : un second appui pendant '
         'l-envoi ne cree pas de second profil', (WidgetTester tester) async {
       final _DossierLent dossier = _DossierLent();
-      final (_, FausseSourceSession source) = await _monter(
-        tester,
-        dossierFourni: dossier,
-        questionnaire: _qMoi,
-      );
-      await _jusquAuRecap(tester);
+      await _monter(tester, dossierFourni: dossier, questionnaire: _qMoi);
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
 
-      final Finder cta = find.text(t.inscription.questionnaire.envoyer);
-      // SANS-BARRE-FIXE : l'action suit le contenu, dans le fil de la page
-      // (PLAN-TROIS-SALLES §2.2) ; on la fait venir dans la vue.
+      final Finder cta = find.byKey(const Key('inscription-envoyer'));
       await tester.ensureVisible(cta);
       await tester.pumpAndSettle();
       await tester.tap(cta);
       await tester.pump();
-      // Le premier envoi est toujours en vol (la porte n'est pas liberee) :
-      // le CTA doit deja etre desactive, et un second appui ne rien faire.
-      expect(_cta(tester).onPress, isNull);
+      expect(tester.widget<ActionPrincipale>(cta).onPress, isNull);
       await tester.tap(cta, warnIfMissed: false);
       await tester.pump();
 
@@ -1058,53 +986,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(dossier.profilsCrees, hasLength(1));
-      expect(source.rafraichissements, 1);
-      expect(find.text('ATTENTE'), findsOneWidget);
+      expect(find.byKey(RecapitulatifEtape.cleFin), findsOneWidget);
     });
 
-    testWidgets('le « Modifier » de l-usage et du genre ramenent au bon '
-        'endroit', (WidgetTester tester) async {
-      await _monter(tester, questionnaire: _qMoi);
-      await _jusquAuRecap(tester);
-
-      await _taper(tester, find.byKey(const Key('inscription-modifier-genre')));
-      expect(find.text('2 sur 3'), findsOneWidget);
-      await _taper(tester, find.text(t.inscription.genreHomme));
-      await _continuer(tester);
-      expect(find.text('3 sur 3'), findsOneWidget);
-
-      // Admission, lot B : « Pour qui » se modifie dans le questionnaire.
-      await _taper(tester, find.byKey(const Key('inscription-modifier-usage')));
-      expect(find.byType(QuestionnairePage), findsOneWidget);
-      expect(find.text(t.inscription.usage.question), findsOneWidget);
-    });
-
-    testWidgets('une fois le profil cree, « Modifier » et le retour '
-        'disparaissent : aucune impasse mais aucun doublon', (
+    testWidgets('« Se deconnecter » reste possible sur l ecran de la demande', (
       WidgetTester tester,
     ) async {
-      final _SourceCapricieuse source = _SourceCapricieuse();
       final FauxServiceAuth auth = FauxServiceAuth();
-      await _monter(tester, source: source, auth: auth, questionnaire: _qMoi);
-      await _jusquAuRecap(tester);
-      await _taper(tester, find.text(t.inscription.questionnaire.envoyer));
-
-      expect(find.text(t.inscription.erreurActualisation), findsOneWidget);
-      // Jamais grise (BOUTONS-GRISES-1) : « Modifier » n'est plus rendu.
-      for (final String cle in <String>[
-        'inscription-modifier-usage',
-        'inscription-modifier-identite',
-        'inscription-modifier-genre',
-      ]) {
-        expect(find.byKey(Key(cle)), findsNothing);
-      }
-      expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
-      // Plus d'etape precedente : la rangee reste, sans disque (demande
-      // A-5.1) ; la seule sortie est « Se deconnecter », sans doublon.
-      expect(find.byType(DisqueRetour), findsNothing);
+      await _monter(tester, auth: auth, questionnaire: _qMoi);
       await _taper(tester, find.byKey(const Key('inscription-deconnexion')));
       expect(auth.deconnexions, 1);
-      expect(find.text('2 sur 3'), findsNothing);
     });
 
     testWidgets('la premiere etape n a pas de disque retour, la rangee reste '

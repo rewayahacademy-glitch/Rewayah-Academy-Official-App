@@ -13,9 +13,11 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
@@ -23,8 +25,11 @@ import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
+import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 
 import '../../features/inscription/portes_aide.dart';
 import '../../support/harnais.dart';
@@ -236,6 +241,7 @@ void main() {
       WidgetTester tester, {
       String depart = Routes.inscription,
       BrouillonInscription? brouillon,
+      QuestionnaireInscription? questionnaire,
     }) async {
       tester.view.physicalSize = const Size(1440, 900);
       tester.view.devicePixelRatio = 1;
@@ -262,6 +268,11 @@ void main() {
               path: Routes.inscriptionGenre,
               builder: (BuildContext _, GoRouterState _) => const GenreEtape(),
             ),
+            GoRoute(
+              path: Routes.inscriptionRecapitulatif,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const RecapitulatifEtape(),
+            ),
           ],
           surcharges: <Override>[
             serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
@@ -270,6 +281,10 @@ void main() {
             if (brouillon != null)
               brouillonInscriptionProvider.overrideWith(
                 () => _Brouillon(brouillon),
+              ),
+            if (questionnaire != null)
+              questionnaireInscriptionProvider.overrideWith(
+                () => _Questionnaire(questionnaire),
               ),
           ],
         ),
@@ -361,15 +376,19 @@ void main() {
       expect(find.text(t.inscription.usage.coursQuestion), findsNothing);
     });
 
-    testWidgets('genre : tailles differentes, explication pour le tuteur', (
+    // ONBOARDING-PRAXIS (22/11/2026) : l'etape du genre (cartes en bento a
+    // 1440) reste celle du candidat enseignant ; le tuteur dit son genre sur
+    // l'ecran « Vous, le tuteur du compte ». Meme exigence sur les deux :
+    // chaque choix s'explique (K-58), toute la carte se touche.
+    testWidgets('genre : tailles differentes, explication pour le candidat', (
       WidgetTester tester,
     ) async {
-      // Admission, lot B : le titulaire a repondu au questionnaire et choisi
-      // la langue ; l'identite est la suivante.
       await monterInscription(
         tester,
         depart: Routes.inscriptionIdentite,
-        brouillon: const BrouillonInscription(usage: UsageInscription.moi),
+        brouillon: const BrouillonInscription(
+          usage: UsageInscription.enseignant,
+        ),
       );
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),
@@ -383,31 +402,72 @@ void main() {
       final List<Size> tailles = cartes(tester, const Key('inscription-genre'));
       expect(tailles, hasLength(2));
       expect(tailles.first, isNot(tailles.last));
-      expect(find.text(t.inscription.genreFemmeExplication), findsOneWidget);
-      final Rect femme = tester.getRect(
-        find
-            .ancestor(
-              of: find.text(t.inscription.genreFemme),
-              matching: find.byType(AnimatedContainer),
-            )
-            .first,
-      );
-      await tester.tapAt(femme.topRight + const Offset(-6, 6));
-      await tester.pumpAndSettle();
-      final RadioChoix radio = tester.widget<RadioChoix>(
-        find.descendant(
-          of: find
-              .ancestor(
-                of: find.text(t.inscription.genreFemme),
-                matching: find.byType(AnimatedContainer),
-              )
-              .first,
-          matching: find.byType(RadioChoix),
+      expect(find.text(t.inscription.genreFemmeEnseignant), findsOneWidget);
+      await toucherCoinFemme(tester, t.inscription.genreFemme);
+    });
+
+    testWidgets('genre du tuteur : explication, toute la carte se touche', (
+      WidgetTester tester,
+    ) async {
+      await monterInscription(
+        tester,
+        depart: Routes.inscriptionRecapitulatif,
+        brouillon: const BrouillonInscription(usage: UsageInscription.famille),
+        questionnaire: const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+          pourQui: PourQui.unEnfant,
+          apprenants: <ApprenantQuestionnaire>[
+            ApprenantQuestionnaire(
+              prenom: 'Yasmine',
+              age: 9,
+              genre: Genre.femme,
+              niveau: NiveauDeclare.debutLettres,
+              objectif: ObjectifOnboarding.lire,
+            ),
+          ],
+          langue: 'francais',
+          fuseau: 'Europe/Paris',
         ),
       );
-      expect(radio.retenue, isTrue);
+      expect(find.byKey(RecapitulatifEtape.cleVous), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('inscription-genre')),
+          matching: find.byType(RadioChoix),
+        ),
+        findsNWidgets(2),
+      );
+      expect(find.text(t.inscription.genreFemmeExplication), findsOneWidget);
+      expect(find.text(t.inscription.genreHommeExplication), findsOneWidget);
+      await toucherCoinFemme(tester, t.onboarding.genre.femme);
     });
   });
+}
+
+/// Touche le coin de la carte : toute la carte choisit (K-58).
+Future<void> toucherCoinFemme(WidgetTester tester, String libelle) async {
+  Finder carte() => find
+      .ancestor(
+        of: find.text(libelle),
+        matching: find.byType(AnimatedContainer),
+      )
+      .first;
+  await tester.ensureVisible(carte());
+  await tester.pumpAndSettle();
+  await tester.tapAt(tester.getRect(carte()).topRight + const Offset(-6, 6));
+  await tester.pumpAndSettle();
+  final RadioChoix radio = tester.widget<RadioChoix>(
+    find.descendant(of: carte(), matching: find.byType(RadioChoix)),
+  );
+  expect(radio.retenue, isTrue);
+}
+
+class _Questionnaire extends QuestionnaireControleur {
+  _Questionnaire(this._q);
+  final QuestionnaireInscription _q;
+  @override
+  QuestionnaireInscription build() => _q;
 }
 
 /// Un brouillon d'inscription deja commence.

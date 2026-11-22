@@ -18,10 +18,9 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/connexion/saisie_code_courriel.dart';
-import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
-import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 
 import '../router/support_routeur.dart' hide stabiliser;
 import '../support/harnais.dart';
@@ -30,11 +29,20 @@ import 'outil_capture.dart';
 class _Repondu extends QuestionnaireControleur {
   @override
   QuestionnaireInscription build() => const QuestionnaireInscription(
-    usage: UsageInscription.moi,
-    niveauTitulaire: NiveauDeclare.lectureLente,
-    objectif: ObjectifApprentissage.memoriser,
-    moments: <MomentJournee>{MomentJournee.soir},
+    commence: true,
+    apprendre: true,
+    pourQui: PourQui.moi,
+    apprenants: <ApprenantQuestionnaire>[
+      ApprenantQuestionnaire(
+        prenom: 'Amina',
+        genre: Genre.femme,
+        niveau: NiveauDeclare.lectureLente,
+        objectif: ObjectifOnboarding.memoriser,
+        titulaire: true,
+      ),
+    ],
     langue: 'francais',
+    fuseau: 'Europe/Paris',
   );
 }
 

@@ -80,6 +80,8 @@ class FauxServiceDossier implements ServiceDossier {
     UsageTitulaire? usage,
     bool suitDesCours = false,
     List<Map<String, Object?>>? apprenants,
+    String? source,
+    String? fuseau,
   }) async {
     _peutEchouer();
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));

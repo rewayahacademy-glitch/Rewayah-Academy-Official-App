@@ -23,10 +23,10 @@ import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/apprenants_demande.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/juridique/juridique_pages.dart';
 import 'package:rewayah_academy/features/juridique/textes_juridiques.dart';
-import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/partage_offre/tuile_partage.dart';
 import 'package:rewayah_academy/features/talents/tuile_talents.dart';
 
@@ -82,11 +82,20 @@ class _DepartEnCours extends DepartDemande {
 class _Repondu extends QuestionnaireControleur {
   @override
   QuestionnaireInscription build() => const QuestionnaireInscription(
-    usage: UsageInscription.moi,
-    niveauTitulaire: NiveauDeclare.lectureLente,
-    objectif: ObjectifApprentissage.memoriser,
-    moments: <MomentJournee>{MomentJournee.soir},
+    commence: true,
+    apprendre: true,
+    pourQui: PourQui.moi,
+    apprenants: <ApprenantQuestionnaire>[
+      ApprenantQuestionnaire(
+        prenom: 'Amina',
+        genre: Genre.femme,
+        niveau: NiveauDeclare.lectureLente,
+        objectif: ObjectifOnboarding.memoriser,
+        titulaire: true,
+      ),
+    ],
     langue: 'francais',
+    fuseau: 'Europe/Paris',
   );
 }
 

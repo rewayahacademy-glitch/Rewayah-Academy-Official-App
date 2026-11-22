@@ -1,9 +1,9 @@
-// Admission, lot B (fiche onboarding du 29/10/2026, validee le 29/10) : le
-// questionnaire avant le compte, une question par ecran. L'ordre et le
-// nombre des ecrans (Q5 : neuf au plus pour une famille d'un enfant, cinq
-// pour « pour moi », langue du cours comprise, 29/10), le parcours
-// complet jusqu'a la creation du compte, la limite de 18 ans, le retour, et
-// une adresse ouverte trop tot.
+// ONBOARDING-PRAXIS (directeur, 22/11/2026 ; maquette validee
+// docs/current/maquettes/onboarding-praxis/prototype.html) : le questionnaire
+// avant le compte, guide par Praxis. Le plan des ecrans et ses branches
+// (lecture, memorise, detail), les prenoms en lettres, ce qui part au
+// serveur, la garde « Enseigner » (la candidature sans invitation, sans
+// compte eleve), « Pour plusieurs enfants », l'acces, et les captures R3.
 
 import 'dart:async';
 
@@ -11,17 +11,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/mode_accessibilite.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart'
     show serviceAuthProvider;
 import 'package:rewayah_academy/core/domain/enums.dart';
-import 'package:rewayah_academy/core/foyer/profil_eleve_brouillon.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
-import 'package:rewayah_academy/core/offres/service_offres.dart'
-    show languesCoursProvider;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart'
     show sourceSessionProvider;
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/vivant/entree/gestes_praxis.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
@@ -30,25 +31,34 @@ import 'package:rewayah_academy/features/connexion/connexion_page.dart'
     show parametreModeCreation;
 import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
     show parametreModeConnexion;
-import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
-    show UsageInscription;
 import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/acces_questionnaire.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/coquille_onboarding.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/interludes_onboarding.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
-import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 
-import '../../capture/outil_capture.dart'
-    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
-const EnfantQuestionnaire _yasmine = EnfantQuestionnaire(
-  prenom: 'Yasmine',
-  age: 9,
-  genre: Genre.femme,
-  niveau: NiveauDeclare.debutLettres,
+/// Un adulte debutant, tout repondu.
+const QuestionnaireInscription _moiComplet = QuestionnaireInscription(
+  commence: true,
+  apprendre: true,
+  pourQui: PourQui.moi,
+  apprenants: <ApprenantQuestionnaire>[
+    ApprenantQuestionnaire(
+      prenom: 'Amina',
+      genre: Genre.femme,
+      niveau: NiveauDeclare.debutLettres,
+      objectif: ObjectifOnboarding.lire,
+      titulaire: true,
+    ),
+  ],
+  langue: 'francais',
+  fuseau: 'Europe/Paris',
 );
 
 Future<GoRouter> _monter(
@@ -69,13 +79,6 @@ Future<GoRouter> _monter(
         sourceSessionProvider.overrideWithValue(FausseSourceSession()),
         serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
         ...enPlus,
-        // La liste publique des langues (lue sans compte).
-        languesCoursProvider.overrideWith(
-          (_) async => const <LangueCours>[
-            LangueCours(code: 'francais', nom: 'Français'),
-            LangueCours(code: 'poular', nom: 'Poular'),
-          ],
-        ),
       ],
       routes: <RouteBase>[
         GoRoute(
@@ -109,13 +112,793 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 Future<void> _continuer(WidgetTester tester) =>
     _taper(tester, find.byKey(const Key('questionnaire-continuer')));
 
+Future<void> _carte(WidgetTester tester, String cle, String valeur) =>
+    _taper(tester, find.byKey(ValueKey<String>('questionnaire-$cle-$valeur')));
+
+String? _etape(GoRouter r) => r.state.uri.queryParameters['etape'];
+
+/// Le titre de l'ecran courant.
+String _titre(WidgetTester tester) => tester
+    .widget<Text>(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('onboarding-titre')),
+        matching: find.byType(Text),
+      ),
+    )
+    .data!;
+
+/// La phrase que Praxis dit.
+String _bulle(WidgetTester tester) => tester
+    .widget<Semantics>(
+      find
+          .descendant(
+            of: find.byKey(CoquilleOnboarding.cleBulle),
+            matching: find.byType(Semantics),
+          )
+          .first,
+    )
+    .properties
+    .label!;
+
 void main() {
   setUp(() => effacerMemoireAppareil(clefQuestionnaire));
+  tearDown(oublierInvitationEnCours);
 
-  group('ONBOARDING-BOUCLE : reponses restees ailleurs', () {
-    testWidgets('session arrivee sans reponses : le bandeau le dit', (
+  group('le plan des ecrans et ses branches', () {
+    test('un adulte debutant : ni age, ni lecture, ni memorise', () {
+      expect(_moiComplet.etapes.map((EtapeQuestionnaire e) => e.code), <String>[
+        'accueil',
+        'garde',
+        'pourQui',
+        'prenom-0',
+        'genre-0',
+        'famille',
+        'niveau-0',
+        'objectif-0',
+        'depart',
+        'langue',
+        'langueSecours',
+        'chemin',
+        'recap',
+      ]);
+      expect(_moiComplet.complet, isTrue);
+      // Aucune question « enseignante obligatoire » (directeur, 22/11).
+      expect(
+        SorteEtape.values.map((SorteEtape s) => s.name),
+        isNot(contains('enseignante')),
+      );
+    });
+
+    test('« lit deja le Coran » ouvre la lecture ; « a memorise » ouvre la '
+        'lecture, la quantite et le detail ; « tout le Coran » n a pas de '
+        'detail', () {
+      QuestionnaireInscription avec(ApprenantQuestionnaire a) =>
+          _moiComplet.copier(apprenants: <ApprenantQuestionnaire>[a]);
+      final ApprenantQuestionnaire base = _moiComplet.apprenants.single;
+      List<String> codes(QuestionnaireInscription q) => <String>[
+        for (final EtapeQuestionnaire e in q.etapes)
+          if (e.chapitre == Chapitre.niveau) e.code,
+      ];
+      expect(
+        codes(avec(base.copier(niveau: NiveauDeclare.lectureCourante))),
+        <String>['niveau-0', 'lecture-0', 'objectif-0', 'depart'],
+      );
+      expect(
+        codes(avec(base.copier(niveau: NiveauDeclare.lectureLente))),
+        <String>['niveau-0', 'objectif-0', 'depart'],
+      );
+      final ApprenantQuestionnaire memo = base.copier(
+        niveau: NiveauDeclare.memorisationPartielle,
+        quantite: QuantiteMemorisee.unACinqJuz,
+      );
+      expect(codes(avec(memo)), <String>[
+        'niveau-0',
+        'lecture-0',
+        'memorise-0',
+        'detail-0',
+        'objectif-0',
+        'depart',
+      ]);
+      expect(
+        codes(avec(memo.copier(quantite: QuantiteMemorisee.coranEntier))),
+        <String>['niveau-0', 'lecture-0', 'memorise-0', 'objectif-0', 'depart'],
+      );
+    });
+
+    test('un enfant a son age ; le parent ajoute n en a pas', () {
+      const QuestionnaireInscription q = QuestionnaireInscription(
+        commence: true,
+        apprendre: true,
+        pourQui: PourQui.unEnfant,
+        apprenants: <ApprenantQuestionnaire>[
+          ApprenantQuestionnaire(prenom: 'Yasmine'),
+          ApprenantQuestionnaire(prenom: 'Fatou', titulaire: true),
+        ],
+      );
+      final List<String> codes = <String>[
+        for (final EtapeQuestionnaire e in q.etapes)
+          if (e.chapitre == Chapitre.quiApprend) e.code,
+      ];
+      expect(codes, <String>[
+        'garde',
+        'pourQui',
+        'prenom-0',
+        'age-0',
+        'genre-0',
+        'prenom-1',
+        'genre-1',
+        'famille',
+      ]);
+    });
+
+    test('« Pour plusieurs enfants » : l interlude famille attend le '
+        'deuxieme enfant', () {
+      const QuestionnaireInscription un = QuestionnaireInscription(
+        pourQui: PourQui.plusieurs,
+        apprenants: <ApprenantQuestionnaire>[ApprenantQuestionnaire()],
+      );
+      expect(un.encoreUnEnfant, isTrue);
+      expect(
+        un.repondue(const EtapeQuestionnaire(SorteEtape.famille)),
+        isFalse,
+      );
+      final QuestionnaireInscription deux = un.copier(
+        apprenants: const <ApprenantQuestionnaire>[
+          ApprenantQuestionnaire(),
+          ApprenantQuestionnaire(),
+        ],
+      );
+      expect(deux.encoreUnEnfant, isFalse);
+    });
+
+    test('le remplissage de la barre suit les quatre chapitres', () {
+      final List<EtapeQuestionnaire> plan = _moiComplet.etapes;
+      expect(
+        remplissageOnboarding(
+          plan,
+          plan.indexOf(const EtapeQuestionnaire(SorteEtape.langue)),
+        ),
+        <double>[1, 1, 0, 0],
+      );
+      expect(remplissageOnboarding(plan, 0, rangDemande: 3), <double>[
+        1,
+        1,
+        1,
+        3 / 5,
+      ]);
+    });
+  });
+
+  group('les reponses', () {
+    test('un prenom : des lettres de toute ecriture, 2 a 30 signes', () {
+      for (final String bon in <String>[
+        'Yasmine',
+        'Jean-Luc',
+        "N'Diaye",
+        'ياسمين',
+        'Aïcha',
+        'Mamadou Lamine',
+      ]) {
+        expect(prenomValide(bon), isTrue, reason: bon);
+      }
+      for (final String mauvais in <String>[
+        'Y',
+        'Bah2',
+        '٠١',
+        'Yasmine 😀',
+        '-Ali',
+        'A' * 31,
+        '   ',
+      ]) {
+        expect(prenomValide(mauvais), isFalse, reason: mauvais);
+      }
+    });
+
+    test('ce qui part au serveur : lecture, memorise, priere, langues', () {
+      const QuestionnaireInscription q = QuestionnaireInscription(
+        commence: true,
+        apprendre: true,
+        pourQui: PourQui.unEnfant,
+        apprenants: <ApprenantQuestionnaire>[
+          ApprenantQuestionnaire(
+            prenom: 'Yasmine',
+            age: 8,
+            genre: Genre.femme,
+            niveau: NiveauDeclare.debutLettres,
+            objectif: ObjectifOnboarding.priere,
+          ),
+          ApprenantQuestionnaire(
+            prenom: 'Bilal',
+            age: 12,
+            genre: Genre.homme,
+            niveau: NiveauDeclare.memorisationPartielle,
+            lecture: LectureCoran.autre,
+            lectureAutre: 'Qalun',
+            quantite: QuantiteMemorisee.unACinqJuz,
+            juz: <int>[30, 29],
+            sourates: <String>['fatiha'],
+            objectif: ObjectifOnboarding.memoriser,
+          ),
+        ],
+        langue: 'ha',
+        langueSecours: 'francais',
+        langueAutre: ' Tamoul ',
+        source: SourceConnaissance.reseaux,
+      );
+      expect(q.apprenantsPourServeur(), <Map<String, Object?>>[
+        <String, Object?>{
+          'prenom': 'Yasmine',
+          'age': 8,
+          'genre': 'female',
+          'niveau': 'debut_lettres',
+          'objectif': 'priere_invocations',
+          'moments': <String>[],
+          'langue': 'ha',
+          'langue_secours': 'francais',
+          'langue_autre': 'Tamoul',
+        },
+        <String, Object?>{
+          'prenom': 'Bilal',
+          'age': 12,
+          'genre': 'male',
+          'niveau': 'memorisation_partielle',
+          'objectif': 'memoriser',
+          'moments': <String>[],
+          'langue': 'ha',
+          'langue_secours': 'francais',
+          'langue_autre': 'Tamoul',
+          'riwaya': 'autre',
+          'riwaya_autre': 'Qalun',
+          'memorise': '1_5_juz',
+          'juz': <int>[29, 30],
+        },
+      ]);
+      expect(q.sourcePourServeur, 'reseaux');
+      // « Lire » se dit « apprendre a lire » pour un debutant, « devenir
+      // fluide » pour un lecteur.
+      expect(
+        const ApprenantQuestionnaire(
+          niveau: NiveauDeclare.lectureLente,
+          objectif: ObjectifOnboarding.lire,
+        ).objectifSql,
+        'devenir_fluide',
+      );
+      expect(
+        const ApprenantQuestionnaire(
+          niveau: NiveauDeclare.lettresAvecAide,
+          objectif: ObjectifOnboarding.lire,
+        ).objectifSql,
+        'apprendre_a_lire',
+      );
+      // Relu depuis l'appareil, a l'identique.
+      final QuestionnaireInscription relu =
+          QuestionnaireInscription.depuisTexte(q.versTexte());
+      expect(relu.apprenantsPourServeur(), q.apprenantsPourServeur());
+      expect(relu.source, SourceConnaissance.reseaux);
+      // Un texte d'avant ce questionnaire repart de zero.
+      expect(
+        QuestionnaireInscription.depuisTexte('{"usage":"moi"}').pourQui,
+        isNull,
+      );
+    });
+
+    test('la duree des bases suit la tranche d age du programme', () {
+      expect(const ApprenantQuestionnaire(age: 7).tranche.semainesPrevues, 37);
+      expect(const ApprenantQuestionnaire(age: 12).tranche.semainesLimite, 36);
+      expect(const ApprenantQuestionnaire(age: 15).tranche.semainesPrevues, 24);
+      expect(
+        const ApprenantQuestionnaire(titulaire: true).tranche.semainesLimite,
+        20,
+      );
+    });
+
+    test('creer un compte passe par le questionnaire, sauf candidat, code '
+        'ou foyer', () {
+      Uri u(String q) => Uri.parse('/connexion?mode=$parametreModeCreation$q');
+      expect(
+        redirectionCreationCompte(u(''), questionnaireComplet: false),
+        Routes.commencer,
+      );
+      expect(
+        redirectionCreationCompte(u(''), questionnaireComplet: true),
+        isNull,
+      );
+      for (final String p in <String>[
+        '&$parametreCandidature=1',
+        '&$parametreInvitation=1',
+        '&$parametreFoyer=1',
+      ]) {
+        expect(
+          redirectionCreationCompte(u(p), questionnaireComplet: false),
+          isNull,
+        );
+      }
+    });
+  });
+
+  group('l ecran', () {
+    testWidgets('un adulte debutant, de l accueil a l acces, avec Praxis', (
       WidgetTester tester,
     ) async {
+      final GoRouter r = await _monter(tester, Routes.commencer);
+      expect(_etape(r), 'accueil');
+      expect(_titre(tester), t.onboarding.accueil.titre);
+      expect(_bulle(tester), t.onboarding.accueil.dit);
+      expect(find.byKey(PraxisGuide.cle), findsOneWidget);
+      // Les gestes de la maquette (directeur, 22/11/2026) : salut a
+      // l'accueil.
+      PraxisGuide praxis() =>
+          tester.widget<PraxisGuide>(find.byType(PraxisGuide));
+      expect(praxis().geste, Geste.salut);
+      expect(praxis().expression, Expr.joie);
+      expect(find.text(t.onboarding.praxisIa), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+      await _continuer(tester);
+
+      expect(_etape(r), 'garde');
+      expect(praxis().geste, Geste.pointe);
+      await _carte(tester, 'garde', 'apprendre');
+      expect(_bulle(tester), t.onboarding.garde.reponse);
+      await _continuer(tester);
+
+      expect(_etape(r), 'pourQui');
+      await _carte(tester, 'pour-qui', 'moi');
+      expect(_bulle(tester), t.onboarding.pourQui.reponseMoi);
+      await _continuer(tester);
+
+      expect(_etape(r), 'prenom-0');
+      expect(_titre(tester), t.onboarding.prenom.titreMoi);
+      await tester.enterText(
+        find.byKey(const Key('questionnaire-prenom')),
+        'Amina',
+      );
+      await _continuer(tester);
+      // Un adulte : jamais son age.
+      expect(_etape(r), 'genre-0');
+      await _carte(tester, 'genre', 'femme');
+      await _continuer(tester);
+
+      expect(_etape(r), 'famille');
+      expect(_titre(tester), t.onboarding.famille.titreSeul);
+      expect(praxis().geste, Geste.coeur);
+      expect(_bulle(tester), t.onboarding.famille.ditSeul(prenom: 'Amina'));
+      await _continuer(tester);
+
+      expect(_etape(r), 'niveau-0');
+      await _carte(tester, 'niveau', 'debut_lettres');
+      await _continuer(tester);
+      // Un debutant : ni lecture ni memorise.
+      expect(_etape(r), 'objectif-0');
+      // Un adulte n a pas la carte « priere ».
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-objectif-priere')),
+        findsNothing,
+      );
+      await _carte(tester, 'objectif', 'lire');
+      await _continuer(tester);
+
+      expect(_etape(r), 'depart');
+      expect(find.text(t.onboarding.depart.probable), findsOneWidget);
+      expect(find.text(t.onboarding.depart.etapes.examen), findsOneWidget);
+      await _continuer(tester);
+
+      expect(_etape(r), 'langue');
+      await _carte(tester, 'langue-afrique', 'ha');
+      expect(
+        _bulle(tester),
+        t.onboarding.langue.reponse(langue: t.onboarding.langues.ha),
+      );
+      await _continuer(tester);
+      expect(_etape(r), 'langueSecours');
+      // La langue choisie n'est pas proposee en secours.
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-langue-secours-ha')),
+        findsNothing,
+      );
+      await _carte(tester, 'langue-secours', 'francais');
+      await _continuer(tester);
+
+      expect(_etape(r), 'chemin');
+      // La courbe du debutant adulte : 15 semaines prevues.
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.chemin.prevues(n: 15))),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(
+          t.onboarding.chemin.rigueurTitre,
+          findRichText: true,
+        ),
+        findsOneWidget,
+      );
+      await _continuer(tester);
+
+      expect(_etape(r), 'recap');
+      await _taper(
+        tester,
+        find.byKey(const ValueKey<String>('questionnaire-source-mosquee')),
+      );
+      expect(find.text(t.onboarding.recap.rembourse), findsOneWidget);
+      // Le fuseau n'a pas pu etre lu (machine de test) : il est demande,
+      // jamais pose par defaut ; sans lui, la demande n'avance pas.
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-fuseau-inconnu')),
+        findsOneWidget,
+      );
+      await _continuer(tester);
+      expect(_etape(r), 'recap');
+      expect(
+        find.byKey(const Key('questionnaire-reponse-requise')),
+        findsOneWidget,
+      );
+      await _taper(
+        tester,
+        find.byKey(
+          const ValueKey<String>('questionnaire-fuseau-Africa/Conakry'),
+        ),
+      );
+      await _continuer(tester);
+      expect(_etape(r), codeEtapeAcces);
+      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
+      expect(_titre(tester), t.onboarding.acces.titre);
+
+      final QuestionnaireInscription q = QuestionnaireInscription.depuisTexte(
+        lireMemoireAppareil(clefQuestionnaire),
+      );
+      expect(q.complet, isTrue);
+      expect(q.langue, 'ha');
+      expect(q.langueSecours, 'francais');
+      expect(q.source, SourceConnaissance.mosquee);
+      expect(q.fuseau, 'Africa/Conakry');
+      expect(q.fuseauDetecte, isFalse);
+    });
+
+    testWidgets('le fuseau lu se dit en clair, l heure de la personne puis '
+        'celle de La Mecque ; « Ce n est pas mon fuseau » le corrige', (
+      WidgetTester tester,
+    ) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        _moiComplet
+            .copier(fuseau: 'Europe/Paris', fuseauDetecte: true)
+            .versTexte(),
+      );
+      await _monter(tester, '${Routes.commencer}?etape=recap');
+      expect(
+        find.text(
+          t.onboarding.recap.heure(ville: villeDuFuseauLibelle('Europe/Paris')),
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining(RegExp(r'\d\d:\d\d')), findsOneWidget);
+      expect(find.byKey(CarteFuseau.cleListe), findsNothing);
+      await _taper(tester, find.byKey(CarteFuseau.cleCorriger));
+      expect(find.byKey(CarteFuseau.cleListe), findsOneWidget);
+      await _taper(
+        tester,
+        find.byKey(const ValueKey<String>('questionnaire-fuseau-Africa/Lagos')),
+      );
+      final QuestionnaireInscription q = QuestionnaireInscription.depuisTexte(
+        lireMemoireAppareil(clefQuestionnaire),
+      );
+      expect(q.fuseau, 'Africa/Lagos');
+      expect(q.fuseauDetecte, isFalse);
+      expect(
+        find.text(
+          t.onboarding.recap.heureChoisie(
+            ville: villeDuFuseauLibelle('Africa/Lagos'),
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    test('sans fuseau, le questionnaire n est pas complet (jamais Paris par '
+        'defaut)', () {
+      expect(
+        QuestionnaireInscription.depuisTexte(_moiComplet.copier().versTexte())
+            .complet,
+        isTrue,
+      );
+      const QuestionnaireInscription sansFuseau = QuestionnaireInscription(
+        commence: true,
+        apprendre: true,
+        pourQui: PourQui.moi,
+        apprenants: <ApprenantQuestionnaire>[
+          ApprenantQuestionnaire(
+            prenom: 'Amina',
+            genre: Genre.femme,
+            niveau: NiveauDeclare.debutLettres,
+            objectif: ObjectifOnboarding.lire,
+            titulaire: true,
+          ),
+        ],
+        langue: 'francais',
+      );
+      expect(sansFuseau.complet, isFalse);
+      expect(sansFuseau.premiereManquante?.sorte, SorteEtape.recap);
+    });
+
+    testWidgets('un enfant qui a memorise : lecture (Hafs preselectionnee), '
+        'quantite, sourates, objectif « memoriser » preselectionne', (
+      WidgetTester tester,
+    ) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+          pourQui: PourQui.unEnfant,
+          apprenants: <ApprenantQuestionnaire>[
+            ApprenantQuestionnaire(
+              prenom: 'Yasmine',
+              age: 9,
+              genre: Genre.femme,
+            ),
+          ],
+        ).versTexte(),
+      );
+      final GoRouter r = await _monter(
+        tester,
+        '${Routes.commencer}?etape=niveau-0',
+      );
+      expect(_titre(tester), t.onboarding.niveau.titre(prenom: 'Yasmine'));
+      // Le niveau se dit au feminin pour une fille.
+      expect(find.text(t.onboarding.niveau.elle.memo), findsOneWidget);
+      await _carte(tester, 'niveau', 'memorisation_partielle');
+      await _continuer(tester);
+
+      expect(_etape(r), 'lecture-0');
+      expect(_titre(tester), t.onboarding.lecture.titreElle(prenom: 'Yasmine'));
+      await _carte(tester, 'lecture', 'autre');
+      await tester.enterText(
+        find.byKey(const Key('questionnaire-lecture-autre')),
+        'Qalun',
+      );
+      await _continuer(tester);
+
+      expect(_etape(r), 'memorise-0');
+      await _carte(tester, 'memorise', 'quelques_sourates');
+      expect(_bulle(tester), t.onboarding.memorise.reponse);
+      await _continuer(tester);
+
+      expect(_etape(r), 'detail-0');
+      expect(_titre(tester), t.onboarding.detail.titreSourates);
+      await _carte(tester, 'sourates', 'fatiha');
+      await _carte(tester, 'sourates', 'nas');
+      expect(_bulle(tester), t.onboarding.detail.plusieurs(n: 2));
+      await _continuer(tester);
+
+      expect(_etape(r), 'objectif-0');
+      expect(find.text(t.onboarding.objectif.sousMemo), findsOneWidget);
+      // Un enfant a la carte « priere ».
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-objectif-priere')),
+        findsOneWidget,
+      );
+      await _continuer(tester);
+      expect(_etape(r), 'depart');
+
+      final ApprenantQuestionnaire a = QuestionnaireInscription.depuisTexte(
+        lireMemoireAppareil(clefQuestionnaire),
+      ).apprenants.single;
+      expect(a.lecture, LectureCoran.autre);
+      expect(a.lectureAutre, 'Qalun');
+      expect(a.sourates, <String>['fatiha', 'nas']);
+      expect(a.objectif, ObjectifOnboarding.memoriser);
+    });
+
+    testWidgets('« Pour plusieurs enfants » : « Ajouter l enfant suivant », '
+        'puis l interlude de la famille', (WidgetTester tester) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+          pourQui: PourQui.plusieurs,
+          apprenants: <ApprenantQuestionnaire>[
+            ApprenantQuestionnaire(
+              prenom: 'Yasmine',
+              age: 9,
+              genre: Genre.femme,
+            ),
+          ],
+        ).versTexte(),
+      );
+      final GoRouter r = await _monter(
+        tester,
+        '${Routes.commencer}?etape=famille',
+      );
+      expect(find.text(t.onboarding.famille.suivant), findsOneWidget);
+      expect(_bulle(tester), t.onboarding.famille.ditEncore(prenom: 'Yasmine'));
+      await _continuer(tester);
+      expect(_etape(r), 'prenom-1');
+      expect(_titre(tester), t.onboarding.prenom.titreSuivant);
+      await tester.enterText(
+        find.byKey(const Key('questionnaire-prenom')),
+        'Bilal',
+      );
+      await _continuer(tester);
+      await _carte(tester, 'age', '12');
+      await _continuer(tester);
+      await _carte(tester, 'genre', 'homme');
+      await _continuer(tester);
+      expect(_etape(r), 'famille');
+      expect(_titre(tester), t.onboarding.famille.titre);
+      expect(find.text(t.commun.continuer), findsOneWidget);
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+    });
+
+    testWidgets('revenir du prenom d un eleve ajoute, sans le saisir, le '
+        'retire', (WidgetTester tester) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+          pourQui: PourQui.unEnfant,
+          apprenants: <ApprenantQuestionnaire>[
+            ApprenantQuestionnaire(
+              prenom: 'Yasmine',
+              age: 9,
+              genre: Genre.femme,
+            ),
+          ],
+        ).versTexte(),
+      );
+      final GoRouter r = await _monter(
+        tester,
+        '${Routes.commencer}?etape=famille',
+      );
+      await _taper(
+        tester,
+        find.byKey(const Key('questionnaire-famille-aussi')),
+      );
+      expect(_etape(r), 'prenom-1');
+      expect(_titre(tester), t.onboarding.prenom.titreMoi);
+      await _taper(tester, find.byType(DisqueRetour));
+      expect(_etape(r), 'famille');
+      expect(
+        QuestionnaireInscription.depuisTexte(
+          lireMemoireAppareil(clefQuestionnaire),
+        ).apprenants,
+        hasLength(1),
+      );
+    });
+
+    testWidgets('un prenom en chiffres : Praxis explique, rien n avance', (
+      WidgetTester tester,
+    ) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+          pourQui: PourQui.unEnfant,
+          apprenants: <ApprenantQuestionnaire>[ApprenantQuestionnaire()],
+        ).versTexte(),
+      );
+      final GoRouter r = await _monter(
+        tester,
+        '${Routes.commencer}?etape=prenom-0',
+      );
+      await tester.enterText(
+        find.byKey(const Key('questionnaire-prenom')),
+        'Yas2',
+      );
+      await tester.pump();
+      expect(_bulle(tester), t.onboarding.prenom.refus);
+      await _continuer(tester);
+      expect(_etape(r), 'prenom-0');
+      expect(find.text(t.onboarding.prenom.refus), findsWidgets);
+    });
+
+    testWidgets('« Continuer » sans reponse n est jamais grise : il le dit', (
+      WidgetTester tester,
+    ) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(commence: true).versTexte(),
+      );
+      final GoRouter r = await _monter(tester, Routes.commencer);
+      expect(_etape(r), 'garde');
+      expect(
+        tester
+            .widget<ActionPrincipale>(
+              find.byKey(const Key('questionnaire-continuer')),
+            )
+            .onPress,
+        isNotNull,
+      );
+      await _continuer(tester);
+      expect(
+        find.byKey(const Key('questionnaire-reponse-requise')),
+        findsOneWidget,
+      );
+      expect(_etape(r), 'garde');
+    });
+
+    testWidgets('18 ans ou plus, moins de 18 ans seul : Praxis oriente', (
+      WidgetTester tester,
+    ) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+        ).versTexte(),
+      );
+      await _monter(tester, '${Routes.commencer}?etape=pourQui');
+      await _taper(tester, find.byKey(const Key('questionnaire-mineur')));
+      expect(_bulle(tester), t.onboarding.pourQui.mineurReponse);
+    });
+
+    // La garde « Enseigner » (directeur, 22/11/2026) : la candidature
+    // commence ici, sans invitation ; aucun apprenant, aucun compte eleve.
+    testWidgets('« Enseigner » : la candidature sans invitation, par le lien '
+        'du candidat, sans rien du questionnaire', (WidgetTester tester) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(commence: true).versTexte(),
+      );
+      final GoRouter r = await _monter(tester, Routes.commencer);
+      await _carte(tester, 'garde', 'enseigner');
+      expect(_etape(r), 'enseigner');
+      expect(_titre(tester), t.onboarding.enseigner.titre);
+      expect(
+        find.byKey(const ValueKey<String>('onboarding-chapitre')),
+        findsNothing,
+      );
+
+      // « Je me suis trompe » ramene a la garde.
+      await _taper(
+        tester,
+        find.byKey(const Key('questionnaire-enseigner-trompe')),
+      );
+      expect(_etape(r), 'garde');
+      await _carte(tester, 'garde', 'enseigner');
+
+      await _taper(tester, find.text(t.onboarding.enseigner.commencer));
+      expect(r.state.uri.path, Routes.connexion);
+      expect(r.state.uri.queryParameters['mode'], parametreModeCreation);
+      expect(r.state.uri.queryParameters[parametreCandidature], '1');
+      expect(lireInvitationEnCours()?.candidature, isTrue);
+      // Aucun apprenant, aucune reponse d'eleve.
+      final QuestionnaireInscription q = QuestionnaireInscription.depuisTexte(
+        lireMemoireAppareil(clefQuestionnaire),
+      );
+      expect(q.apprendre, isFalse);
+      expect(q.apprenants, isEmpty);
+    });
+
+    testWidgets('« J ai deja un compte » mene a la connexion', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter r = await _monter(tester, Routes.commencer);
+      await _taper(
+        tester,
+        find.byKey(const Key('questionnaire-deja-un-compte')),
+      );
+      expect(r.state.uri.path, Routes.connexion);
+      expect(r.state.uri.queryParameters['mode'], parametreModeConnexion);
+    });
+
+    testWidgets('une adresse ouverte trop tot ramene au premier ecran sans '
+        'reponse ; l acces aussi', (WidgetTester tester) async {
+      final GoRouter r = await _monter(
+        tester,
+        '${Routes.commencer}?etape=$codeEtapeAcces',
+      );
+      expect(find.byKey(EcranAccesQuestionnaire.cle), findsNothing);
+      expect(_etape(r), 'accueil');
+      r.go('${Routes.commencer}?etape=langue');
+      await tester.pumpAndSettle();
+      expect(_etape(r), 'accueil');
+    });
+
+    testWidgets('ONBOARDING-BOUCLE : session arrivee sans reponses, le '
+        'bandeau le dit', (WidgetTester tester) async {
       await _monter(
         tester,
         Routes.commencer,
@@ -129,338 +912,20 @@ void main() {
         find.text(t.inscription.questionnaire.acces.absentesTitre),
         findsOneWidget,
       );
-      expect(
-        find.text(t.inscription.questionnaire.acces.absentesPhrase),
-        findsOneWidget,
-      );
     });
 
-    testWidgets('ouverture ordinaire : aucun bandeau', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, Routes.commencer);
-      expect(
-        find.text(t.inscription.questionnaire.acces.absentesTitre),
-        findsNothing,
-      );
-    });
-  });
-
-  group('les ecrans, dans l ordre (Q5)', () {
-    test('pour moi : cinq ecrans avant la connexion', () {
-      const QuestionnaireInscription q = QuestionnaireInscription(
-        usage: UsageInscription.moi,
-      );
-      expect(q.etapes.map((EtapeQuestionnaire e) => e.code), <String>[
-        'pourQui',
-        'langue',
-        'niveauTitulaire',
-        'objectif',
-        'moments',
-      ]);
-    });
-
-    test('une famille d un enfant : neuf ecrans, dix si le parent apprend', () {
-      const QuestionnaireInscription sans = QuestionnaireInscription(
-        usage: UsageInscription.famille,
-        enfants: <EnfantQuestionnaire>[_yasmine],
-        parentSuitDesCours: false,
-      );
-      expect(sans.etapes.map((EtapeQuestionnaire e) => e.code), <String>[
-        'pourQui',
-        'prenom-0',
-        'age-0',
-        'genre-0',
-        'niveau-0',
-        'parent',
-        'langue',
-        'objectif',
-        'moments',
-      ]);
-      expect(sans.copier(parentSuitDesCours: true).etapes, hasLength(10));
-    });
-
-    test('le total du compteur ne grandit jamais apres une reponse '
-        '(FINITION 22 b)', () {
-      // Avant toute reponse : le plus long parcours d'un enfant.
-      expect(const QuestionnaireInscription().etapesAuPlus, 10);
-      // « J'inscris mon enfant » : le meme total, rien ne s'ajoute.
-      const QuestionnaireInscription famille = QuestionnaireInscription(
-        usage: UsageInscription.famille,
-        enfants: <EnfantQuestionnaire>[_yasmine],
-      );
-      expect(famille.etapesAuPlus, 10);
-      // Le parent ne suit pas de cours : une question de moins.
-      expect(famille.copier(parentSuitDesCours: false).etapesAuPlus, 9);
-      // « Pour moi » : le total baisse, il ne monte pas.
-      expect(
-        const QuestionnaireInscription(usage: UsageInscription.moi)
-            .etapesAuPlus,
-        5,
-      );
-      // Le total au plus n'est jamais plus court que le parcours reel.
-      for (final QuestionnaireInscription q in <QuestionnaireInscription>[
-        const QuestionnaireInscription(),
-        famille,
-        famille.copier(parentSuitDesCours: true),
-      ]) {
-        expect(q.etapesAuPlus, greaterThanOrEqualTo(q.etapes.length));
-      }
-    });
-
-    test('chaque enfant de plus ajoute quatre ecrans', () {
-      const QuestionnaireInscription q = QuestionnaireInscription(
-        usage: UsageInscription.famille,
-        enfants: <EnfantQuestionnaire>[_yasmine, EnfantQuestionnaire()],
-        parentSuitDesCours: false,
-      );
-      expect(q.etapes, hasLength(13));
-      expect(
-        q.premiereManquante,
-        const EtapeQuestionnaire(SorteEtape.prenom, 1),
-      );
-    });
-
-    test('les reponses survivent a la relecture, et partent au serveur', () {
-      const QuestionnaireInscription q = QuestionnaireInscription(
-        usage: UsageInscription.famille,
-        enfants: <EnfantQuestionnaire>[_yasmine],
-        parentSuitDesCours: true,
-        niveauTitulaire: NiveauDeclare.lectureCourante,
-        objectif: ObjectifApprentissage.memoriser,
-        moments: <MomentJournee>{MomentJournee.soir, MomentJournee.matin},
-        langue: 'poular',
-      );
-      final QuestionnaireInscription relu =
-          QuestionnaireInscription.depuisTexte(q.versTexte());
-      expect(relu.complet, isTrue);
-      expect(relu.enfants.single.prenom, 'Yasmine');
-      expect(relu.apprenantsPourServeur(), <Object?>[
-        <String, Object?>{
-          'prenom': 'Yasmine',
-          'age': 9,
-          'genre': 'female',
-          'niveau': 'debut_lettres',
-          'objectif': 'memoriser',
-          'moments': <String>['matin', 'soir'],
-          'langue': 'poular',
-        },
-        <String, Object?>{
-          'est_titulaire': true,
-          'niveau': 'lecture_courante',
-          'objectif': 'memoriser',
-          'moments': <String>['matin', 'soir'],
-          'langue': 'poular',
-        },
-      ]);
-      expect(
-        QuestionnaireInscription.depuisTexte('{pas du json').usage,
-        isNull,
-      );
-    });
-
-    test('creer un compte passe par le questionnaire, sauf avec un code', () {
-      Uri creer([Map<String, String> plus = const <String, String>{}]) => Uri(
-        path: Routes.connexion,
-        queryParameters: <String, String>{
-          'mode': parametreModeCreation,
-          ...plus,
-        },
-      );
-      expect(
-        redirectionCreationCompte(creer(), questionnaireComplet: false),
-        Routes.commencer,
-      );
-      expect(
-        redirectionCreationCompte(creer(), questionnaireComplet: true),
-        isNull,
-      );
-      expect(
-        redirectionCreationCompte(
-          creer(<String, String>{parametreInvitation: '1'}),
-          questionnaireComplet: false,
-        ),
-        isNull,
-      );
-      // CAND-04 : le lien direct du candidat enseignant.
-      expect(
-        redirectionCreationCompte(
-          creer(<String, String>{parametreCandidature: '1'}),
-          questionnaireComplet: false,
-        ),
-        isNull,
-      );
-      // INVITATION-SECOND-ADULTE (07/11/2026) : l'adulte invite a rejoindre
-      // un foyer cree son compte sans le questionnaire des familles.
-      expect(
-        redirectionCreationCompte(
-          creer(<String, String>{
-            parametreFoyer: '1',
-            'code': 'ABCD-EFGH-JKMN',
-          }),
-          questionnaireComplet: false,
-        ),
-        isNull,
-      );
-      expect(
-        redirectionCreationCompte(
-          Uri(path: Routes.connexion),
-          questionnaireComplet: false,
-        ),
-        isNull,
-      );
-    });
-  });
-
-  group('l ecran', () {
-    testWidgets('une famille d un enfant va jusqu au dernier ecran, l acces, '
-        'dans le questionnaire (QUESTIONNAIRE-FIN)', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAuth auth = FauxServiceAuth();
-      final GoRouter routeur = await _monter(
-        tester,
-        Routes.commencer,
-        auth: auth,
-      );
-      expect(find.text(t.inscription.usage.question), findsOneWidget);
-      // Le dernier ecran, l'acces, compte dans la barre. Le total est celui
-      // du plus long parcours : il ne grandit jamais apres une reponse
-      // (FINITION 22 b ; avant : « 1 sur 6 », puis « 2 sur 10 »).
-      expect(find.text('1 sur 11'), findsOneWidget);
-      verifierUnSeulBoutonPlein(tester);
-      // Jamais grise : sans reponse, « Continuer » le dit et reste ici.
-      await _continuer(tester);
-      expect(
-        find.byKey(const Key('questionnaire-reponse-requise')),
-        findsOneWidget,
-      );
-      expect(find.text(t.inscription.usage.question), findsOneWidget);
-
-      await _taper(tester, find.text(t.inscription.usage.familleTitre));
-      await _continuer(tester);
-      expect(
-        find.text(t.inscription.questionnaire.prenomQuestion),
-        findsOneWidget,
-      );
-      expect(find.text('2 sur 11'), findsOneWidget);
-      await tester.enterText(
-        find.byKey(const Key('questionnaire-prenom')),
-        'Yasmine',
-      );
-      await tester.pump();
-      await _continuer(tester);
-
-      expect(
-        find.text(t.inscription.questionnaire.ageQuestion(prenom: 'Yasmine')),
-        findsOneWidget,
-      );
-      await _taper(
-        tester,
-        find.byKey(const ValueKey<String>('questionnaire-age-9')),
-      );
-      await _continuer(tester);
-
-      expect(
-        find.text(t.inscription.questionnaire.genreQuestion(prenom: 'Yasmine')),
-        findsOneWidget,
-      );
-      await _taper(tester, find.text(t.inscription.questionnaire.fille));
-      await _continuer(tester);
-
-      expect(
-        find.text(t.parcours.niveauQuestion(prenom: 'Yasmine')),
-        findsOneWidget,
-      );
-      await _taper(tester, find.text(t.parcours.niveauDebutLettres));
-      await _continuer(tester);
-
-      expect(find.text(t.inscription.usage.coursQuestion), findsOneWidget);
-      await _taper(tester, find.text(t.inscription.usage.coursNon));
-      await _continuer(tester);
-
-      // La langue du cours, avant le compte (directeur, 29/10).
-      expect(find.text(t.parcours.langueQuestion), findsOneWidget);
-      await _taper(tester, find.text('Poular'));
-      await _continuer(tester);
-
-      expect(find.text(t.parcours.objectifQuestion), findsOneWidget);
-      await _taper(tester, find.text(t.parcours.objectifApprendreALire));
-      await _continuer(tester);
-
-      expect(find.text(t.parcours.momentsQuestion), findsOneWidget);
-      expect(find.text('9 sur 10'), findsOneWidget);
-      await _taper(tester, find.text(t.parcours.momentSoir));
-      await _continuer(tester);
-
-      // Avant : la page passait a la connexion (`/connexion?mode=creer`).
-      // Le dernier ecran reste dans le questionnaire, la barre au bout.
-      expect(routeur.state.uri.path, Routes.commencer);
-      expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
-      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
-      expect(find.text('10 sur 10'), findsOneWidget);
-      final a = t.inscription.questionnaire.acces;
-      expect(find.text('${a.reponsesGardees} ${a.resteAcces}'), findsOneWidget);
-      expect(find.text(t.connexion.avecGoogle), findsOneWidget);
-      // Ni onglets ni bouton eleve : seulement l'acces.
-      expect(find.text(t.connexion.modeCreation), findsNothing);
-      expect(find.text(t.connexion.modeConnexion), findsNothing);
-      expect(find.text(t.connexion.appareilEleve), findsNothing);
-      verifierUnSeulBoutonPlein(tester);
-      // Les reponses attendent la connexion sur l'appareil.
-      final QuestionnaireInscription garde =
-          QuestionnaireInscription.depuisTexte(
-            lireMemoireAppareil(clefQuestionnaire),
-          );
-      expect(garde.complet, isTrue);
-      expect(garde.enfants.single.genre, Genre.femme);
-      expect(garde.langue, 'poular');
-      expect(garde.moments, <MomentJournee>{MomentJournee.soir});
-
-      // Le lien envoye reste dans le meme habillage.
-      await tester.enterText(
-        find.byKey(const Key('questionnaire-acces-courriel')),
-        'famille@exemple.com',
-      );
-      await tester.pump();
-      await _taper(
-        tester,
-        find.byKey(const ValueKey<String>('questionnaire-acces-envoyer')),
-      );
-      expect(auth.liensEnvoyes, <String>['famille@exemple.com']);
-      expect(find.text(t.connexion.lienEnvoye), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey<String>('questionnaire-acces-envoye')),
-        findsOneWidget,
-      );
-      // Le lien parti : seulement « Vos reponses sont gardees. ».
-      expect(find.text(a.reponsesGardees), findsOneWidget);
-      expect(find.textContaining(a.resteAcces), findsNothing);
-      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
-      expect(routeur.state.uri.queryParameters['etape'], codeEtapeAcces);
-    });
-
-    // DECISION-FLUIDITE (07/11/2026) : se connecter est sensible ; pendant
-    // la connexion avec Google, le bouton attend (ActionPrincipale.enCours).
-    testWidgets('connexion avec Google : le bouton attend pendant la '
-        'connexion', (WidgetTester tester) async {
-      ecrireMemoireAppareil(
-        clefQuestionnaire,
-        const QuestionnaireInscription(
-          usage: UsageInscription.famille,
-          enfants: <EnfantQuestionnaire>[_yasmine],
-          parentSuitDesCours: false,
-          objectif: ObjectifApprentissage.apprendreALire,
-          moments: <MomentJournee>{MomentJournee.soir},
-          langue: 'poular',
-        ).versTexte(),
-      );
+    testWidgets('acces : l adresse porte la marque des champs obligatoires, '
+        'Google attend pendant la connexion', (WidgetTester tester) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      ecrireMemoireAppareil(clefQuestionnaire, _moiComplet.versTexte());
       final _AuthGoogleLente auth = _AuthGoogleLente();
       await _monter(
         tester,
         '${Routes.commencer}?etape=$codeEtapeAcces',
         auth: auth,
       );
+      expect(find.byType(PointRappel), findsOneWidget);
+      expect(find.text(t.onboarding.acces.indice), findsOneWidget);
       const ValueKey<String> cle = ValueKey<String>(
         'questionnaire-acces-google',
       );
@@ -468,147 +933,19 @@ void main() {
       await tester.tap(find.byKey(cle));
       await tester.pump();
       expect(tester.widget<ActionPrincipale>(find.byKey(cle)).enCours, isTrue);
-      // Un second appui pendant l'attente ne relance rien.
       await tester.tap(find.byKey(cle), warnIfMissed: false);
       await tester.pump();
       expect(auth.google, 1);
       auth.reponse.complete();
       await tester.pumpAndSettle();
-      expect(tester.widget<ActionPrincipale>(find.byKey(cle)).enCours, isFalse);
-    });
-
-    // CHAMP-OBLIGATOIRE-2 (directeur, 08/11/2026) : le prenom de l'enfant et
-    // l'adresse de l'ecran d'acces portent la marque partagee des champs
-    // obligatoires, lue « champ obligatoire » par le lecteur d'ecran.
-    testWidgets('prenom et adresse : la marque des champs obligatoires', (
-      WidgetTester tester,
-    ) async {
-      final SemanticsHandle semantique = tester.ensureSemantics();
-      await _monter(tester, Routes.commencer);
-      await _taper(tester, find.text(t.inscription.usage.familleTitre));
-      await _continuer(tester);
-      expect(find.byType(PointRappel), findsOneWidget);
-      expect(
-        find.bySemanticsLabel(
-          RegExp(
-            RegExp.escape(
-              t.formulaire.champObligatoire(champ: t.inscription.prenom),
-            ),
-          ),
-        ),
-        findsOneWidget,
-      );
       semantique.dispose();
     });
 
-    testWidgets('acces : l adresse porte la marque des champs obligatoires', (
+    testWidgets('acces : le lien parti, « Regardez votre boite »', (
       WidgetTester tester,
     ) async {
-      final SemanticsHandle semantique = tester.ensureSemantics();
-      ecrireMemoireAppareil(
-        clefQuestionnaire,
-        const QuestionnaireInscription(
-          usage: UsageInscription.famille,
-          enfants: <EnfantQuestionnaire>[_yasmine],
-          parentSuitDesCours: false,
-          objectif: ObjectifApprentissage.apprendreALire,
-          moments: <MomentJournee>{MomentJournee.soir},
-          langue: 'poular',
-        ).versTexte(),
-      );
+      ecrireMemoireAppareil(clefQuestionnaire, _moiComplet.versTexte());
       await _monter(tester, '${Routes.commencer}?etape=$codeEtapeAcces');
-      expect(find.byType(PointRappel), findsOneWidget);
-      expect(
-        find.bySemanticsLabel(
-          RegExp(
-            RegExp.escape(
-              t.formulaire.champObligatoire(champ: t.connexion.courriel),
-            ),
-          ),
-        ),
-        findsOneWidget,
-      );
-      semantique.dispose();
-    });
-
-    // Captures R3 de CHAMP-OBLIGATOIRE-2 (donnees de test ; jamais sans
-    // CAPTURE_DIR) : `--dart-define=PHASE=avant` sur la base, `apres` avec
-    // le lot. Prenom et acces, fr et ar, 390 et 1440.
-    group('Captures CHAMP-OBLIGATOIRE-2', skip: sautSansCapture, () {
-      const String phase = String.fromEnvironment(
-        'PHASE',
-        defaultValue: 'apres',
-      );
-      setUpAll(chargerPolicesDuDepot);
-      setUp(masquerRubanDebug);
-      for (final bool arabe in <bool>[false, true]) {
-        for (final Size taille in <Size>[
-          const Size(390, 844),
-          const Size(1440, 900),
-        ]) {
-          for (final bool acces in <bool>[false, true]) {
-            final String nom =
-                '${phase}_${acces ? 'acces' : 'prenom'}_'
-                '${arabe ? 'ar' : 'fr'}_'
-                '${taille.width.toInt()}x${taille.height.toInt()}';
-            testWidgets(nom, (WidgetTester tester) async {
-              await tester.runAsync(
-                () => LocaleSettings.setLocale(
-                  arabe ? AppLocale.ar : AppLocale.fr,
-                ),
-              );
-              addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
-              if (acces) {
-                ecrireMemoireAppareil(
-                  clefQuestionnaire,
-                  const QuestionnaireInscription(
-                    usage: UsageInscription.famille,
-                    enfants: <EnfantQuestionnaire>[_yasmine],
-                    parentSuitDesCours: false,
-                    objectif: ObjectifApprentissage.apprendreALire,
-                    moments: <MomentJournee>{MomentJournee.soir},
-                    langue: 'poular',
-                  ).versTexte(),
-                );
-                await _monter(
-                  tester,
-                  '${Routes.commencer}?etape=$codeEtapeAcces',
-                  taille: taille,
-                );
-              } else {
-                await _monter(tester, Routes.commencer, taille: taille);
-                await _taper(
-                  tester,
-                  find.text(t.inscription.usage.familleTitre),
-                );
-                await _continuer(tester);
-              }
-              debugPrint('PNG ${await capturerVue(tester, nom)}');
-            });
-          }
-        }
-      }
-    });
-
-    testWidgets('ALIGN-RENVOI : a l ordinateur, « Renvoyer le lien » prend la '
-        'largeur du champ', (WidgetTester tester) async {
-      ecrireMemoireAppareil(
-        clefQuestionnaire,
-        const QuestionnaireInscription(
-          usage: UsageInscription.famille,
-          enfants: <EnfantQuestionnaire>[_yasmine],
-          parentSuitDesCours: false,
-          objectif: ObjectifApprentissage.apprendreALire,
-          moments: <MomentJournee>{MomentJournee.soir},
-          langue: 'poular',
-        ).versTexte(),
-      );
-      await _monter(
-        tester,
-        '${Routes.commencer}?etape=$codeEtapeAcces',
-        taille: const Size(1280, 800),
-      );
-      expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('questionnaire-acces-courriel')),
         'famille@exemple.com',
@@ -618,158 +955,277 @@ void main() {
         tester,
         find.byKey(const ValueKey<String>('questionnaire-acces-envoyer')),
       );
-      final Rect texte = tester.getRect(
-        find.byKey(const ValueKey<String>('questionnaire-acces-envoye')),
-      );
-      final Rect bouton = tester.getRect(
-        find.byKey(const ValueKey<String>('questionnaire-acces-renvoyer')),
-      );
-      // Avant : compact au bord de fin (`BoutonEntree`, largeur du libelle).
-      expect(bouton.left, texte.left);
-      expect(bouton.right, texte.right);
-    });
-
-    testWidgets('QUESTIONNAIRE-FIN : l acces ouvert trop tot ramene a la '
-        'premiere question manquante', (WidgetTester tester) async {
-      final GoRouter routeur = await _monter(
-        tester,
-        '${Routes.commencer}?etape=$codeEtapeAcces',
-      );
-      expect(find.byKey(EcranAccesQuestionnaire.cle), findsNothing);
-      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
-    });
-
-    testWidgets('INSCRIPTION-3 : un toucher sur « Pour qui » choisit la carte '
-        'et reste ; seul « Continuer » avance', (WidgetTester tester) async {
-      final GoRouter routeur = await _monter(tester, Routes.commencer);
-      // L'ecran ouvert sans `?etape=` fixe son adresse des l'ouverture.
-      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
-      final Finder famille = find.text(t.inscription.usage.familleTitre);
-      await _taper(tester, famille);
-      // Avant : la page passait aussitot au prenom, sans etat choisi.
-      expect(find.text(t.inscription.usage.question), findsOneWidget);
+      expect(_titre(tester), t.onboarding.envoye.titre);
       expect(
-        find.text(t.inscription.questionnaire.prenomQuestion),
-        findsNothing,
-      );
-      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
-      // La carte choisie est annoncee comme telle.
-      expect(
-        tester.getSemantics(
-          find.bySemanticsLabel(RegExp('^${t.inscription.usage.familleTitre}')),
-        ),
-        isSemantics(isChecked: true),
-      );
-      // Un second toucher ne saute rien.
-      await _taper(tester, famille);
-      expect(find.text(t.inscription.usage.question), findsOneWidget);
-      await _continuer(tester);
-      expect(
-        find.text(t.inscription.questionnaire.prenomQuestion),
-        findsOneWidget,
-      );
-      expect(routeur.state.uri.queryParameters['etape'], 'prenom-0');
-    });
-
-    testWidgets('18 ans ou plus : la phrase dit de s inscrire soi-meme, '
-        'aucune avance', (WidgetTester tester) async {
-      ecrireMemoireAppareil(
-        clefQuestionnaire,
-        const QuestionnaireInscription(
-          usage: UsageInscription.famille,
-          enfants: <EnfantQuestionnaire>[EnfantQuestionnaire(prenom: 'Omar')],
-        ).versTexte(),
-      );
-      await _monter(tester, '${Routes.commencer}?etape=age-0');
-      await _taper(
-        tester,
-        find.byKey(const ValueKey<String>('questionnaire-age-adulte')),
-      );
-      expect(
-        find.text(t.inscription.questionnaire.adulteDetail),
-        findsOneWidget,
-      );
-      await _continuer(tester);
-      expect(
-        find.text(t.inscription.questionnaire.ageQuestion(prenom: 'Omar')),
+        find.text(t.onboarding.envoye.ecrit(courriel: 'famille@exemple.com')),
         findsOneWidget,
       );
     });
 
-    testWidgets('UX-032 : l age commence a 6 ans, comme l ajout d un profil, '
-        'et la regle se dit au moment du choix', (WidgetTester tester) async {
-      ecrireMemoireAppareil(
-        clefQuestionnaire,
-        const QuestionnaireInscription(
-          usage: UsageInscription.famille,
-          enfants: <EnfantQuestionnaire>[EnfantQuestionnaire(prenom: 'Omar')],
-        ).versTexte(),
-      );
-      await _monter(tester, '${Routes.commencer}?etape=age-0');
-      // Une seule source avec l'ajout d'un profil eleve, jamais une valeur
-      // ecrite deux fois.
-      expect(ageMinimum, BornesAge.clientActuelle.min);
-      expect(ageMinimum, 6);
-      expect(
-        find.byKey(const ValueKey<String>('questionnaire-age-5')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const ValueKey<String>('questionnaire-age-6')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.inscription.questionnaire.ageMinimum(min: 6)),
-        findsOneWidget,
-      );
-    });
-
-    testWidgets('une adresse ouverte trop tot ramene au premier ecran sans '
-        'reponse', (WidgetTester tester) async {
-      final GoRouter routeur = await _monter(
-        tester,
-        '${Routes.commencer}?etape=moments',
-      );
-      expect(routeur.state.uri.queryParameters['etape'], 'pourQui');
-      expect(find.text(t.inscription.usage.question), findsOneWidget);
-    });
-
-    testWidgets('revenir du prenom d un enfant ajoute, sans le saisir, le '
-        'retire', (WidgetTester tester) async {
-      ecrireMemoireAppareil(
-        clefQuestionnaire,
-        const QuestionnaireInscription(
-          usage: UsageInscription.famille,
-          enfants: <EnfantQuestionnaire>[_yasmine, EnfantQuestionnaire()],
-          parentSuitDesCours: false,
-          objectif: ObjectifApprentissage.indecis,
-          moments: <MomentJournee>{MomentJournee.matin},
-          langue: 'francais',
-        ).versTexte(),
-      );
-      await _monter(tester, '${Routes.commencer}?etape=prenom-1');
-      await _taper(tester, find.byType(DisqueRetour));
-      final QuestionnaireInscription garde =
-          QuestionnaireInscription.depuisTexte(
-            lireMemoireAppareil(clefQuestionnaire),
-          );
-      expect(garde.enfants, hasLength(1));
-      expect(garde.complet, isTrue);
-    });
-
-    testWidgets('« J ai deja un compte » mene a la connexion', (
+    // Sur ordinateur, jamais une carte de telephone etiree : deux colonnes
+    // bornees (directeur, regle repetee le 21/11/2026).
+    for (final Size taille in <Size>[
+      const Size(320, 640),
+      const Size(1280, 800),
+      const Size(1440, 900),
+    ]) {
+      testWidgets('a ${taille.width.toInt()} : rien ne deborde, la colonne '
+          'des reponses est bornee', (WidgetTester tester) async {
+        ecrireMemoireAppareil(
+          clefQuestionnaire,
+          const QuestionnaireInscription(
+            commence: true,
+            apprendre: true,
+          ).versTexte(),
+        );
+        await _monter(
+          tester,
+          '${Routes.commencer}?etape=pourQui',
+          taille: taille,
+        );
+        expect(tester.takeException(), isNull);
+        final double largeur = tester
+            .getSize(
+              find.byKey(const ValueKey<String>('questionnaire-pour-qui')),
+            )
+            .width;
+        if (taille.width >= 840) {
+          expect(largeur, lessThanOrEqualTo(640));
+        } else {
+          expect(largeur, lessThanOrEqualTo(taille.width));
+        }
+        verifierUnSeulBoutonPlein(tester);
+      });
+    }
+  });
+  // Directeur, 22/11/2026 (sur la maquette) : avec deux enfants, seul le
+  // prenom du deuxieme a ete demande, et les deux cartes « point de depart »
+  // portaient le meme prenom. Dans l'application, c'est impossible : chaque
+  // enfant passe par toutes ses questions, a son prenom ; chaque apprenant est
+  // un objet distinct ; chaque prenom est la ou il doit etre.
+  group('deux enfants : chacun ses questions, son prenom partout', () {
+    testWidgets('« Pour plusieurs enfants », ajout depuis la famille, retour '
+        'arriere : aucun ecran saute, aucun prenom melange', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await _monter(tester, Routes.commencer);
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+        ).versTexte(),
+      );
+      final GoRouter r = await _monter(
+        tester,
+        '${Routes.commencer}?etape=pourQui',
+      );
+      final List<String> vus = <String>[];
+      void noter() => vus.add(_etape(r)!);
+      Future<void> prenom(String p) async {
+        // Le champ repart vide pour chaque nouvel enfant.
+        expect(
+          tester
+              .widget<EditableText>(
+                find.descendant(
+                  of: find.byKey(const Key('questionnaire-prenom')),
+                  matching: find.byType(EditableText),
+                ),
+              )
+              .controller
+              .text,
+          isEmpty,
+        );
+        await tester.enterText(
+          find.byKey(const Key('questionnaire-prenom')),
+          p,
+        );
+        await _continuer(tester);
+      }
+
+      await _carte(tester, 'pour-qui', 'plusieurs');
+      await _continuer(tester);
+
+      // Premier enfant.
+      noter();
+      expect(_titre(tester), t.onboarding.prenom.titreEnfant);
+      await prenom('Yasmine');
+      noter();
+      expect(_titre(tester), t.onboarding.age.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'age', '9');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.genre.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'genre', 'femme');
+      await _continuer(tester);
+
+      // La famille : « Ajouter l'enfant suivant ».
+      noter();
+      expect(find.text(t.onboarding.famille.suivant), findsOneWidget);
+      await _continuer(tester);
+
+      // Deuxieme enfant : toutes ses questions, a son prenom.
+      noter();
+      expect(_titre(tester), t.onboarding.prenom.titreSuivant);
+      await prenom('Bilal');
+      noter();
+      expect(_titre(tester), t.onboarding.age.titre(prenom: 'Bilal'));
+      await _carte(tester, 'age', '12');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.genre.titre(prenom: 'Bilal'));
+      await _carte(tester, 'genre', 'homme');
+      await _continuer(tester);
+
+      // La famille : un troisieme ajoute puis abandonne par le retour.
+      noter();
       await _taper(
         tester,
-        find.byKey(const Key('questionnaire-deja-un-compte')),
+        find.byKey(const Key('questionnaire-famille-ajouter')),
       );
-      expect(routeur.state.uri.path, Routes.connexion);
-      // ENTREE-ORDRE : la connexion demandee expressement, qui reste meme sur
-      // un appareil qui n'a jamais connu de compte.
-      expect(routeur.state.uri.queryParameters['mode'], parametreModeConnexion);
+      expect(_etape(r), 'prenom-2');
+      expect(_titre(tester), t.onboarding.prenom.titreSuivant);
+      await _taper(tester, find.byType(DisqueRetour));
+      expect(_etape(r), 'famille');
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      await _continuer(tester);
+
+      // Le niveau de chacun.
+      noter();
+      expect(_titre(tester), t.onboarding.niveau.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'niveau', 'debut_lettres');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.objectif.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'objectif', 'priere');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.niveau.titre(prenom: 'Bilal'));
+      // Un retour arriere, puis on revient : Yasmine garde ses reponses.
+      await _taper(tester, find.byType(DisqueRetour));
+      expect(_etape(r), 'objectif-0');
+      expect(_titre(tester), t.onboarding.objectif.titre(prenom: 'Yasmine'));
+      await _continuer(tester);
+      expect(_etape(r), 'niveau-1');
+      await _carte(tester, 'niveau', 'memorisation_partielle');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.lecture.titreIl(prenom: 'Bilal'));
+      await _carte(tester, 'lecture', 'warsh');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.memorise.titreIl(prenom: 'Bilal'));
+      await _carte(tester, 'memorise', 'quelques_sourates');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.detail.titreSourates);
+      await _carte(tester, 'sourates', 'fatiha');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.objectif.titre(prenom: 'Bilal'));
+      await _continuer(tester);
+
+      // Le point de depart : une carte par enfant, chacune a son prenom.
+      noter();
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      await _continuer(tester);
+      noter();
+      await _carte(tester, 'langue-plusDemandees', 'francais');
+      await _continuer(tester);
+      noter();
+      await _continuer(tester);
+
+      // Le chemin : la courbe de Yasmine (6-9 ans), la duree de Bilal plus
+      // tard.
+      noter();
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.chemin.prevues(n: 37))),
+        findsOneWidget,
+      );
+      expect(find.text(t.onboarding.chemin.precise), findsOneWidget);
+      await _continuer(tester);
+
+      // Le recapitulatif : une fiche par enfant, son prenom et son age.
+      noter();
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.recap.ans(n: 9))),
+        findsOneWidget,
+      );
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.recap.ans(n: 12))),
+        findsOneWidget,
+      );
+
+      expect(vus, <String>[
+        'prenom-0',
+        'age-0',
+        'genre-0',
+        'famille',
+        'prenom-1',
+        'age-1',
+        'genre-1',
+        'famille',
+        'niveau-0',
+        'objectif-0',
+        'niveau-1',
+        'lecture-1',
+        'memorise-1',
+        'detail-1',
+        'objectif-1',
+        'depart',
+        'langue',
+        'langueSecours',
+        'chemin',
+        'recap',
+      ]);
+
+      // Deux objets distincts, chacun ses reponses.
+      final List<ApprenantQuestionnaire> a =
+          QuestionnaireInscription.depuisTexte(
+            lireMemoireAppareil(clefQuestionnaire),
+          ).apprenants;
+      expect(a, hasLength(2));
+      expect(a[0].prenom, 'Yasmine');
+      expect(a[0].age, 9);
+      expect(a[0].genre, Genre.femme);
+      expect(a[0].niveau, NiveauDeclare.debutLettres);
+      expect(a[0].objectif, ObjectifOnboarding.priere);
+      expect(a[0].sourates, isEmpty);
+      expect(a[1].prenom, 'Bilal');
+      expect(a[1].age, 12);
+      expect(a[1].genre, Genre.homme);
+      expect(a[1].niveau, NiveauDeclare.memorisationPartielle);
+      expect(a[1].lecture, LectureCoran.warsh);
+      expect(a[1].sourates, <String>['fatiha']);
+      expect(a[1].objectif, ObjectifOnboarding.memoriser);
     });
+  });
+
+  testWidgets('« Reduire les effets » : Praxis pose d emblee, son geste '
+      'visible, aucune horloge qui tourne', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: EffetsReduits(
+          actifs: true,
+          child: Center(
+            child: PraxisGuide(
+              expression: Expr.joie,
+              geste: Geste.salut,
+              phrase: 'Bonjour',
+              taille: 120,
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(tester.hasRunningAnimations, isFalse);
+    expect(find.byKey(PraxisGuide.cle), findsOneWidget);
   });
 }
 

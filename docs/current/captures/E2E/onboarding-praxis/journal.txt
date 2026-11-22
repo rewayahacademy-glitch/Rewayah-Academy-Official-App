@@ -1,0 +1,41 @@
+ONBOARDING-PRAXIS, captures R3 (22/11/2026)
+
+Rendu : tests de widgets, polices du depot, densite 1, theme clair, francais.
+Commande :
+  CAPTURE_DIR=docs/current/captures/E2E/onboarding-praxis \
+    flutter test test/capture/onboarding_praxis_capture_test.dart
+Donnees de test : une famille (Yasmine, 9 ans, debutante, objectif priere ;
+Bilal, 12 ans, a memorise quelques sourates), langue francais, secours poular.
+
+Chaque ecran a deux images : NN_nom_390.png (telephone) et NN_nom_1440.png
+(ordinateur : deux colonnes bornees, jamais une carte de telephone etiree).
+A comparer, ecran par ecran, avec la maquette validee
+docs/current/maquettes/onboarding-praxis/prototype.html (ouvrir dans un
+navigateur, largeur 390) :
+
+  01 accueil          maquette « Bienvenue chez Rewayah Academy »
+  02 garde            « Vous venez pour apprendre, ou pour enseigner ? »
+  03 enseigner        « Votre candidature d'enseignant »
+  04 pour qui         « Qui va suivre les cours ? »
+  05 prenom           « Le prenom de l'eleve suivant »
+  06 age              « Quel age a Bilal ? »
+  07 famille          interlude « Voici votre famille »
+  08 niveau           « Ou en est Bilal aujourd'hui ? »
+  09 lecture          « Quelle lecture Bilal lit-il ? » (Hafs preselectionnee)
+  10 memorise         « Combien Bilal a-t-il memorise ? »
+  11 detail           « Quelles sourates ? »
+  12 objectif         « Que souhaitez-vous pour Bilal ? »
+  13 depart           interlude « Le point de depart de chacun »
+  14 langue           « La langue des explications »
+  15 langue secours   « Une deuxieme langue ? »
+  16 chemin           interlude « Votre chemin » (courbe 37 / 48 semaines)
+  17 recap            interlude « Voici ce que nous avons compris »
+  18 acces            « Votre adresse e-mail »
+
+Non captures ici : « Regardez votre boite », « Votre nom de famille » ou
+« Vous, le tuteur du compte », et « Votre demande est en cours » (apres la
+connexion) : couverts par les tests de widgets (test/features/inscription_test.dart,
+test/features/inscription/questionnaire_test.dart), pas par une image.
+
+Ecarts a la maquette : docs/current/UX_REVIEW_ONBOARDING-PRAXIS.md.
+Pas une preuve de production : rien n'a ete vu par le directeur en ligne.

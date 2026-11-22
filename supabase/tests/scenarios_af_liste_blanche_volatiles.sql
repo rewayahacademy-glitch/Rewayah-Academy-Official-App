@@ -401,7 +401,8 @@ declare
     -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).
     'inscrire_candidat(text,text,text,gender,text,text,text)',
     'inscrire_comptable_invite(text,text,text,gender)',
-    'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb)',
+    -- ONBOARDING-PRAXIS (22/11) : p_source s'ajoute, l'ancienne forme part dans private.
+    'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb,text)',
     -- ADMISSION lot C (30/10) : gestes de la direction sur les familles et
     -- les eleves adultes (direction active seulement), et le lien d'un enfant
     -- de la demande a son profil (le titulaire, sur sa demande confirmee).

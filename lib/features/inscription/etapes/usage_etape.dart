@@ -146,7 +146,7 @@ class _UsageEtapeState extends ConsumerState<UsageEtape> {
           : () {
               ref
                   .read(questionnaireInscriptionProvider.notifier)
-                  .choisirUsage(retenu);
+                  .reprendreDepuisCompte(retenu);
               context.go(Routes.commencer);
             },
       // Le groupe partage (ADR-013), sans carte « Autre » : deux cartes
