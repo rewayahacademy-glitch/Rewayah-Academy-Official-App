@@ -1,0 +1,10 @@
+fix-apercu-compte, 22/11/2026
+- Cause de la feuille "a moitie" : NON reproduite (390x844, fr/ar, x1/x2, sombre, dans NavShell, clavier simule) ;
+  elle s'affiche entiere. Hypothese du clavier de la recherche refutee (la route retire le focus du champ).
+- Ce que le code montrait avant a22503aa1 : les colonnes de la vue Comptes (a9f1af43d, 20/11) ; jamais de courriel.
+- Ajoute : contact_compte_admin(uuid) (migration 20261130996000, additive, garde direction, rien sous masquage),
+  ligne "Courriel" de l'apercu (profilId), test de hauteur et de visibilite (courriel compris).
+- Verifie : migrations rejouees sur Postgres 16 nu (stub_auth + toutes) puis scenarios_contact_compte_admin.sql OK ;
+  dart analyze --fatal-infos lib + admin_comptes : 0 ; tests admin_comptes, admin_personnes, accessibilite, i18n : verts.
+- Captures : apercu-compte-390-ar-sombre.png, apercu-compte-1440-ar-sombre.png (avant/apres impossible : pas d'"avant" reproductible).
+- A faire par le pilote : ajouter l'etape du scenario dans .github/workflows/ci.yml (interdit aux agents) ; installer la migration apres fusion.

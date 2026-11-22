@@ -14,7 +14,9 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/contact_compte.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -43,6 +45,7 @@ Future<void> ouvrirApercuCompte(
   required String nom,
   required List<InformationCompte> informations,
   required List<EntreeAction> gestes,
+  String? profilId,
 }) => AppBottomSheet.ouvrir<void>(
   context,
   titre: nom,
@@ -53,6 +56,9 @@ Future<void> ouvrirApercuCompte(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     mainAxisSize: MainAxisSize.min,
     children: <Widget>[
+      // Le courriel, lu a part (direction seulement, cote serveur) : il
+      // s'ajoute des qu'il arrive, sans retarder le reste.
+      if (profilId != null) _LigneCourriel(profilId: profilId),
       for (final InformationCompte i in informations)
         if (i.valeur.trim().isNotEmpty)
           LigneCleValeur(cle: i.titre, valeur: i.valeur),
@@ -73,3 +79,22 @@ Future<void> ouvrirApercuCompte(
     ],
   ),
 );
+
+/// La ligne « Courriel » de l'apercu : rien tant qu'il n'est pas lu, ni quand
+/// le serveur n'en rend pas (masquage d'identite).
+class _LigneCourriel extends ConsumerWidget {
+  const _LigneCourriel({required this.profilId});
+
+  final String profilId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String? courriel = ref.watch(courrielCompteProvider(profilId)).value;
+    if (courriel == null) return const SizedBox.shrink();
+    return LigneCleValeur(
+      cle: t.admin.comptes.colonneCourriel,
+      // Une adresse se lit de gauche a droite, meme dans une page arabe.
+      valeur: '\u2066$courriel\u2069',
+    );
+  }
+}
