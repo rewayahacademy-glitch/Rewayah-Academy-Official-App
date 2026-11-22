@@ -56,10 +56,13 @@ Future<void> _monter(
 );
 
 Future<DemandeFamille?> _enCours() async =>
-    (issue: IssueDemandeFamille.enCours, precisions: null);
+    (issue: IssueDemandeFamille.enCours, precisions: null, motif: null);
 
-Future<DemandeFamille?> _aCompleter() async =>
-    (issue: IssueDemandeFamille.aCompleter, precisions: 'Quel niveau ?');
+Future<DemandeFamille?> _aCompleter() async => (
+  issue: IssueDemandeFamille.aCompleter,
+  precisions: 'Quel niveau ?',
+  motif: null,
+);
 
 EtatEtapeAttente _etat(WidgetTester tester, CleEtapeInscription c) {
   final Finder f = find.byKey(FriseInscription.cleEtape(c));
@@ -199,7 +202,7 @@ void main() {
       await _monter(
         tester,
         demande: () async =>
-            (issue: IssueDemandeFamille.refusee, precisions: null),
+            (issue: IssueDemandeFamille.refusee, precisions: null, motif: null),
       );
       expect(
         find.byKey(const ValueKey<String>('inscription-frise')),

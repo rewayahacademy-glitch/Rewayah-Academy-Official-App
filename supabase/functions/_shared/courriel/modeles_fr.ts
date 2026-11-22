@@ -92,12 +92,33 @@ export const MODELES: Record<string, Fabrique> = {
   // demande d'acces d'une famille ou d'un eleve adulte, a son inscription.
   // Admission, lot C (30/10/2026) : les trois gestes de la direction qui
   // changent l'etat d'une demande de famille ou d'eleve adulte.
-  admission_acceptee: (d) => avis(d, 'Votre demande est acceptée', 'Bienvenue à Rewayah Academy',
-    'La direction a accepté votre demande. Votre espace est ouvert : entrez dans l’application pour le retrouver.',
-    'Entrer dans l’application', '/'),
+  // AUDIT-FAMILLE-6 (22/11/2026) : l'acceptation dit la suite concrete (choisir un horaire, etre prevenu, payer au
+  // debut) ; avant, « Votre espace est ouvert » sans rien d'autre (R22, R33, L10).
+  admission_acceptee: (d) => {
+    const c = avis(d, 'Votre demande est acceptée', 'Bienvenue à Rewayah Academy',
+      'La direction a accepté votre demande. Votre espace est ouvert. Voici la suite :',
+      'Choisir un horaire', '/')
+    c.blocs.splice(2, 0,
+      { type: 'texte', texte: '1. Choisissez un horaire dans l’application, parmi ceux qui sont ouverts.' },
+      { type: 'texte', texte: '2. Nous vous prévenons dès que votre classe est prête.' },
+      { type: 'texte', texte: '3. Le premier paiement se fait au début, avant le premier cours.' })
+    return c
+  },
   admission_refusee: (d) => avis(d, 'Nous ne pouvons pas donner suite', 'Votre demande',
     REFUS_ADMISSION_FR[String(d.modele ?? '')] ?? REFUS_ADMISSION_FR.refus_general,
     'Voir ma demande', '/attente'),
+  // AUDIT-FAMILLE-7 (22/11/2026) : la direction annule une acceptation ou un refus (sept jours) ; sans ce courriel, la
+  // famille voyait « en cours » sans un mot. `cas` : acceptation ou refus.
+  admission_reprise: (d) => avis(d, 'La direction reprend l’examen de votre demande', 'Votre demande',
+    d.cas === 'refus'
+      ? 'La direction reprend l’examen de votre demande, qu’elle avait refusée. Nous vous écrivons dès qu’une nouvelle réponse est donnée.'
+      : 'La direction reprend l’examen de votre demande. Votre espace est fermé le temps de cet examen. Nous vous écrivons dès qu’une nouvelle réponse est donnée.',
+    'Voir ma demande', '/attente'),
+  // AUDIT-FAMILLE-4 (22/11/2026) : un horaire ouvert correspond a une demande « Me prévenir ». Aucune date ni place
+  // promise : l'horaire se choisit dans l'application.
+  horaire_ouvert: (d) => avis(d, 'Un horaire s’est ouvert', 'Un horaire s’est ouvert',
+    'Un horaire correspondant à votre demande est ouvert. Entrez dans l’application pour le consulter et le choisir.',
+    'Choisir un horaire', '/'),
   admission_precisions: (d) => {
     const c = avis(d, 'Il nous manque une information', 'Il nous manque une information',
       'Pour étudier votre demande, la direction a besoin d’une précision :',
@@ -581,6 +602,8 @@ export const MODELES: Record<string, Fabrique> = {
 /// ecrits en francais et en arabe.
 export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'attente_candidat', 'admission_recue', 'admission_acceptee', 'admission_refusee', 'admission_precisions',
+  // AUDIT-FAMILLE-4 et 7 (22/11/2026) : ecrits en francais, en anglais et en arabe ; espagnol et portugais traduits a l'envoi.
+  'admission_reprise', 'horaire_ouvert',
   // D2 (30/10/2026) : ecrit en francais et en arabe.
   'compte_enseignant_valide',
   // SALLE-1 (07/11/2026) : ecrit en francais et en arabe.

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../domain/enums.dart';
+import '../i18n/strings.g.dart';
 import 'depot_resilient.dart';
 import 'echec_depot.dart';
 import 'etat_dossier.dart';
@@ -156,19 +157,34 @@ class ServiceDossierSupabase implements ServiceDossier {
     String? fuseau,
   }) async {
     if (role == AppRole.guardian && usage != null) {
-      await _client.rpc<Object?>(
-        'inscrire_titulaire',
-        params: <String, dynamic>{
-          'p_usage': usage.valeurSql,
-          'p_first_name': prenom,
-          'p_last_name': nom,
-          'p_gender': genre?.valeurSql,
-          'p_suit_des_cours': suitDesCours,
-          'p_apprenants': ?apprenants,
-          'p_source': ?source,
-          'p_timezone': ?fuseau,
-        },
-      );
+      final Map<String, dynamic> params = <String, dynamic>{
+        'p_usage': usage.valeurSql,
+        'p_first_name': prenom,
+        'p_last_name': nom,
+        'p_gender': genre?.valeurSql,
+        'p_suit_des_cours': suitDesCours,
+        'p_apprenants': ?apprenants,
+        'p_source': ?source,
+        'p_timezone': ?fuseau,
+      };
+      try {
+        // AUDIT-FAMILLE-2 (22/11/2026, R27) : la langue de l'interface au
+        // moment de la demande devient celle du compte : les courriels
+        // partent dans la langue de la famille.
+        await _client.rpc<Object?>(
+          'inscrire_titulaire',
+          params: <String, dynamic>{
+            ...params,
+            'p_langue': LocaleSettings.currentLocale.languageCode,
+          },
+        );
+      } on PostgrestException catch (e) {
+        // Serveur d'avant la migration 20261130995000 : la fonction n'a pas
+        // encore le parametre. La demande part sans langue plutot que de ne
+        // pas partir (PGRST202 : fonction introuvable avec ces parametres).
+        if (e.code != 'PGRST202') rethrow;
+        await _client.rpc<Object?>('inscrire_titulaire', params: params);
+      }
       return;
     }
     if (role == AppRole.teacher && codeInvitation != null) {

@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
+import 'package:rewayah_academy/core/capacites/port_support.dart';
+import 'package:rewayah_academy/core/capacites/support_public.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/resignature_contrat.dart';
@@ -19,6 +21,8 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_candidature.dart';
+import 'package:rewayah_academy/features/connexion/aide_entree.dart';
 import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/apprenants_demande.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
@@ -531,6 +535,7 @@ void main() {
       EtatDossier etat, {
       List<ApprenantDemande>? apprenants,
       DemandeFamille? demande,
+      CanalSupport? canal,
     }) async {
       final FauxServiceDossier dossier = FauxServiceDossier()..etatRendu = etat;
       final FausseSourceSession source = FausseSourceSession();
@@ -563,6 +568,9 @@ void main() {
             ),
             lectureDemandeFamilleProvider.overrideWithValue(
               () async => demande,
+            ),
+            lectureCanalSupportPublicProvider.overrideWithValue(
+              () async => canal,
             ),
           ],
         ),
@@ -842,6 +850,7 @@ void main() {
         demande: (
           issue: IssueDemandeFamille.aCompleter,
           precisions: 'Quel est le niveau exact de Yasmine ?',
+          motif: null,
         ),
       );
       expect(find.text(t.attente.precisionsTitre), findsOneWidget);
@@ -859,10 +868,72 @@ void main() {
       await monter(
         tester,
         _etat(role: AppRole.guardian, accuse: true, contrat: true),
-        demande: (issue: IssueDemandeFamille.refusee, precisions: null),
+        demande: (
+          issue: IssueDemandeFamille.refusee,
+          precisions: null,
+          motif: 'refus_niveau',
+        ),
       );
       expect(find.text(t.attente.demandeRefuseeTitre), findsOneWidget);
       expect(find.text(t.attente.demandeTitre), findsNothing);
+      // AUDIT-FAMILLE-7 : la raison se lit dans l'application.
+      expect(
+        find.textContaining(t.attente.motifRefus.niveau),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining(t.attente.demandeRefuseeDetail),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('tuteur refuse, motif general : aucune phrase en double', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(role: AppRole.guardian, accuse: true, contrat: true),
+        demande: (
+          issue: IssueDemandeFamille.refusee,
+          precisions: null,
+          motif: 'refus_general',
+        ),
+      );
+      expect(find.text(t.attente.demandeRefuseeMessage), findsOneWidget);
+      expect(find.textContaining(t.attente.motifRefus.niveau), findsNothing);
+    });
+
+    // AUDIT-FAMILLE-1 et 3 : une famille en attente ecrit a la direction par
+    // la messagerie existante, et lit l'adresse d'aide ; sans canal, rien.
+    testWidgets('tuteur en attente : ecrire a la direction et l aide', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(role: AppRole.guardian, accuse: true, contrat: true),
+        canal: const CanalSupport(
+          nature: NatureCanalSupport.courriel,
+          adresse: 'support@rewayahacademy.com',
+        ),
+      );
+      expect(find.byType(EntreeMessagesCandidature), findsOneWidget);
+      expect(
+        find.text(
+          t.connexion.aideEntree(adresse: 'support@rewayahacademy.com'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('tuteur en attente, aucun canal publie : pas de ligne d aide', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        _etat(role: AppRole.guardian, accuse: true, contrat: true),
+      );
+      expect(find.byType(AideEntree), findsOneWidget);
+      expect(find.byKey(AideEntree.cle), findsNothing);
     });
 
     testWidgets(

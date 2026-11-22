@@ -158,3 +158,24 @@ Les lignes « confort » et les vérifications non faites (rebond de courriel, t
 
 - Chaque ligne se ferme par une PR et la preuve du directeur ; ajouter le problème vécu à `RETOURS-TERRAIN-INSCRIPTIONS.md` (consigne 20).
 - Cet audit ne modifie aucun code ni aucune donnée.
+
+## Suites du 22/11/2026 : correctifs de la PR `claude/audit-famille-correctifs` (brouillon)
+
+Ordre du directeur : « l'infrastructure complète pour accueillir 100 familles », sans les points 5 et 10 (argent,
+décision du directeur) ni le 9 (capacité). **Rien n'est prouvé en production** : les cinq migrations
+(20261130995000 à 20261130995400) ne sont pas installées ; « fait » veut dire « prouvé par le directeur ».
+
+| Point | Ce que fait la PR | Où | Preuve locale |
+| :-- | :-- | :-- | :-- |
+| 1. Canal d'aide | Ligne `support_canal` (`support@rewayahacademy.com`, courriel) posée si absente ; `canal_support_public()` la lit sans compte ; ligne d'aide sur la connexion et sur `/attente`. | `20261130995000`, `lib/features/connexion/aide_entree.dart` | scénario SQL, 4 tests de widget, captures |
+| 2. Langue | `inscrire_titulaire(..., p_langue)` écrit la langue de l'interface au compte et à la demande (fr, ar, en) ; rattrapage des comptes déjà acceptés dont la demande porte une langue, sinon rien. | `20261130995000`, `service_dossier.dart` | scénario SQL |
+| 3. Écrire à la direction | Le titulaire d'une demande en attente, à compléter ou refusée ouvre son fil « candidature » (messagerie existante, aucun nouvel écran). | `20261130995100`, `attente_page.dart`, `MESSAGERIE-MATRICE.md` ligne 21 | scénario SQL, `verifier_conversations` |
+| 4. Me prévenir | Une offre de l'administration publiée prévient une fois les demandes compatibles (langue, public) : notification et courriel `horaire_ouvert`. Liste « familles en attente d'un horaire » pour la direction : **pas faite** (non demandée dans le lot). | `20261130995200`, `modeles_*.ts` | scénario SQL |
+| 6. Courriel d'acceptation | Dit la suite (horaire, avis, paiement au début) en fr, en, ar. | `modeles_fr.ts`, `modeles_en.ts`, `modeles_ar.ts` | rendu sous Node ; test Deno écrit, non joué |
+| 7. Refus et reprise | Le motif (modèle) se lit sur `/attente` ; courriel `admission_reprise` quand une acceptation ou un refus est annulé. | `20261130995300`, `attente_page.dart` | scénario SQL, tests de widget |
+| 8. Frères et sœurs | `ajouter_eleve_groupe` et `creer_classe_depuis_regroupement` refusent deux enfants d'un même foyer dans une classe (refus nommé, phrase dans les deux écrans). | `20261130995400` | scénario SQL |
+
+Limites dites : la réponse d'une famille « à compléter » ne remet pas la demande « à traiter » (la direction voit le
+message et son badge) ; si deux frères sont parmi les premiers d'un regroupement, « Créer la classe » est refusée
+tout entière et la direction doit les séparer ; une famille en attente lit désormais aussi les annonces qui lui sont
+adressées (`com_annonce_lecteur` suit l'appelant de la messagerie).

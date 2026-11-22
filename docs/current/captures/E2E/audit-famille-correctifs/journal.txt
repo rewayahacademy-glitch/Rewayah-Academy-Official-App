@@ -1,0 +1,33 @@
+AUDIT-FAMILLE-CORRECTIFS, captures R3 (22/11/2026)
+
+Source : docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md, points 1, 2, 3, 4, 6, 7, 8.
+Hors lot, par ordre du directeur : 5 et 10 (paiement et règles d'argent : décision du directeur), 9 (capacité).
+
+Rendu : tests de widgets, polices du dépôt, densité 1. Données de test seulement (une famille « Yasmine, 9 ans »,
+adresse d'aide support@rewayahacademy.com lue par la surcharge de `lectureCanalSupportPublicProvider`).
+Commande :
+  CAPTURE_DIR=docs/current/captures/E2E/audit-famille-correctifs \
+    flutter test test/features/dossier/captures_audit_famille_test.dart
+
+Ce que chaque image montre, et ce qu'elle ne prouve pas :
+
+  attente_refusee_fr_390_clair.png, attente_refusee_fr_1440_sombre.png, attente_refusee_ar_390_clair.png
+      Famille refusée : la raison (« Le niveau demandé n'est pas encore proposé. », modèle refus_niveau) se lit sur
+      /attente sans dépendre d'un courriel (point 7) ; la ligne d'aide avec l'adresse (point 1).
+      NE MONTRE PAS l'entrée « Écrire à la direction » (point 3) : elle ne se dessine que si le serveur rend
+      l'identifiant de la demande (`com_ma_candidature`), ce que la capture ne branche pas. Le texte « écrire à la
+      direction ci-dessous » est donc, dans l'image, sans l'entrée qu'il annonce. En production l'entrée vient du
+      même fil que celui des candidats enseignants. À VOIR PAR LE DIRECTEUR avec une vraie famille.
+  attente_a_completer_fr_1440_clair.png
+      Famille « à compléter » : la précision demandée, la phrase qui renvoie à l'application ou au courriel (point 3).
+  connexion_aide_fr_390.png, connexion_aide_fr_1440.png, connexion_aide_ar_390.png
+      La ligne « Une difficulté pour entrer ? Écrivez à support@rewayahacademy.com » sous les liens de la connexion,
+      sans compte (point 1) ; en arabe, l'adresse reste lisible dans la phrase de droite à gauche.
+
+À comparer : aucune maquette n'existe pour ces lignes ; le critère est la règle de l'audit (une sortie pour qui
+n'arrive pas à entrer ; la raison d'un refus dans l'application). Les écrans de 1440 gardent la colonne bornée de
+la page d'attente (jamais une carte de téléphone étirée).
+
+Non capturé (courriels, serveur) : le rendu des trois courriels (admission_acceptee, admission_reprise,
+horaire_ouvert, en fr, en et ar) est vérifié sous Node (`modeles.ts`), pas par une image ; le scénario SQL
+`supabase/tests/scenarios_audit_famille.sql` prouve les points serveur sur un Postgres 16 neuf.

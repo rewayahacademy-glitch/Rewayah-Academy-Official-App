@@ -402,7 +402,8 @@ declare
     'inscrire_candidat(text,text,text,gender,text,text,text)',
     'inscrire_comptable_invite(text,text,text,gender)',
     -- ONBOARDING-PRAXIS (22/11) : p_source s'ajoute, l'ancienne forme part dans private.
-    'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb,text)',
+    -- AUDIT-FAMILLE-2 (22/11) : p_langue s'ajoute, l'ancienne forme part dans private.
+    'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb,text,text)',
     -- ADMISSION lot C (30/10) : gestes de la direction sur les familles et
     -- les eleves adultes (direction active seulement), et le lien d'un enfant
     -- de la demande a son profil (le titulaire, sur sa demande confirmee).

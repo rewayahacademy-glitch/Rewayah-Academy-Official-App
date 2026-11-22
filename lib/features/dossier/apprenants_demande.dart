@@ -48,8 +48,15 @@ enum IssueDemandeFamille {
   refusee,
 }
 
-/// La demande de la personne : son issue, et la precision demandee.
-typedef DemandeFamille = ({IssueDemandeFamille issue, String? precisions});
+/// La demande de la personne : son issue, la precision demandee, et, apres un
+/// refus, le modele du refus (`refus_general`, `refus_niveau`, `refus_besoins`,
+/// `refus_sans_reponse`) : la raison se lit dans l'application, pas seulement
+/// dans un courriel qui peut se perdre (audit famille, 22/11/2026).
+typedef DemandeFamille = ({
+  IssueDemandeFamille issue,
+  String? precisions,
+  String? motif,
+});
 
 /// Lit `ma_demande_admission` ; `null` sans demande.
 typedef LectureDemandeFamille = Future<DemandeFamille?> Function();
@@ -71,6 +78,9 @@ Future<DemandeFamille?> _lireDemande() async {
     precisions: precisions == null || precisions.trim().isEmpty
         ? null
         : precisions.trim(),
+    motif: r['issue'] == 'refusee' && r['motif'] is String
+        ? (r['motif'] as String).trim()
+        : null,
   );
 }
 

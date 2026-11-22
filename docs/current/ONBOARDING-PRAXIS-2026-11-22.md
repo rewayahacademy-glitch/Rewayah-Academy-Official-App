@@ -111,6 +111,6 @@ jours et les horaires (D6) ; avec plusieurs enfants, chacun aura sa classe et so
 3. **Remboursement de 14 jours** : texte du directeur (D11) ; la règle elle-même reste à harmoniser (`A-HARMONISER-REGLES-ARGENT-ET-ARRET.md`).
 4. **Lien ouvert sur un autre appareil (FN-111)** : non résolu ; le code à six chiffres du message reste la voie (`SaisieCodeCourriel`). Brouillon côté serveur : lot de suite.
 5. **Adolescent de moins de 18 ans seul** : orienté vers un parent (« Choisissez « Pour mon enfant » »).
-6. **`?ref=`** : absent de `main` à ce jour ; la question de la source est donc toujours posée.
+6. **`?ref=`** : gardé 30 jours et noté une fois au compte depuis REF-SUIVI (#699, `lib/core/source_inscription/source_inscription.dart`) ; la question « Comment avez-vous connu Rewayah ? » reste posée, c'est voulu (correction du 22/11/2026 : la phrase « absent de `main` » était fausse depuis #699).
 7. **Soussou** : langue déclarée par les candidats enseignants mais absente de la maquette ; non affichée, par fidélité. À trancher.
 8. **Affichage des nouveaux champs côté direction** : le serveur les rend ; l'écran de la direction ne les montre pas encore (lot de suite).

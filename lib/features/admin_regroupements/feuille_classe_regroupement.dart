@@ -43,6 +43,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
@@ -169,6 +170,13 @@ class _FeuilleClasseRegroupementEtat
         libelle: '',
         cleEnvoi: _cleEnvoi,
       );
+    } on PostgrestException catch (e) {
+      // AUDIT-FAMILLE-8 (22/11/2026) : deux freres ou soeurs dans le meme
+      // regroupement ; le serveur refuse la creation tout entiere.
+      resultat =
+          e.message.toLowerCase().startsWith('deux enfants du meme foyer')
+          ? CreationRefusee(t.admin.regroupements.fratrieMotif)
+          : null;
     } on Object {
       resultat = null;
     }

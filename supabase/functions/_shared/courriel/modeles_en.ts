@@ -301,6 +301,27 @@ const MODELES: Record<string, Fabrique> = {
       ? 'The management has read your application and invites you to a video interview, to get to know each other. Choose the time that suits you in the app.'
       : 'The management has read your application and invites you to a video interview, to get to know each other. We will write to you as soon as interview times are open; there is nothing for you to do for now.',
     'See my application', '/attente'),
+  // AUDIT-FAMILLE-6 (22/11/2026) : voir modeles_fr.ts. Ecrit a la main (avant : traduit du francais a l'envoi).
+  admission_acceptee: (d) => {
+    const c = avis(d, 'Your request is accepted', 'Welcome to Rewayah Academy',
+      'The management has accepted your request. Your space is open. Here is what comes next:',
+      'Choose a time', '/')
+    c.blocs.splice(2, 0,
+      { type: 'texte', texte: '1. Choose a time in the app, among those that are open.' },
+      { type: 'texte', texte: '2. We will let you know as soon as your class is ready.' },
+      { type: 'texte', texte: '3. The first payment is made at the start, before the first class.' })
+    return c
+  },
+  // AUDIT-FAMILLE-7 (22/11/2026) : voir modeles_fr.ts.
+  admission_reprise: (d) => avis(d, 'The management is reviewing your request again', 'Your request',
+    d.cas === 'refus'
+      ? 'The management is reviewing your request again, which it had declined. We will write to you as soon as a new answer is given.'
+      : 'The management is reviewing your request again. Your space is closed while it does. We will write to you as soon as a new answer is given.',
+    'See my request', '/attente'),
+  // AUDIT-FAMILLE-4 (22/11/2026) : voir modeles_fr.ts.
+  horaire_ouvert: (d) => avis(d, 'A time has opened', 'A time has opened',
+    'A time matching your request is open. Open the app to see it and choose it.',
+    'Choose a time', '/'),
   // PE-A7 (20/11/2026) : voir modeles_fr.ts.
   entretien_creneau_ouvert: (d) => avis(d, 'An interview time is open', 'Let’s get to know each other',
     'A video interview time has just opened for you. Choose the time that suits you in the app: each time goes to the first person who chooses it.',

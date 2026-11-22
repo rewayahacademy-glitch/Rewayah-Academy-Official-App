@@ -71,12 +71,30 @@ export const MOTS_CONVERSION_REFUSEE_AR: MotsConversionRefusee = {
 }
 
 const MODELES: Record<string, Fabrique> = {
-  admission_acceptee: (d) => avis(d, 'قُبل طلبك', 'أهلا بك في أكاديمية الرواية',
-    'قبلت الإدارة طلبك. مساحتك مفتوحة: ادخل إلى التطبيق لتجدها.',
-    'الدخول إلى التطبيق', '/'),
+  // AUDIT-FAMILLE-6 (22/11/2026) : voir modeles_fr.ts.
+  admission_acceptee: (d) => {
+    const c = avis(d, 'قُبل طلبك', 'أهلا بك في أكاديمية الرواية',
+      'قبلت الإدارة طلبك. مساحتك مفتوحة. وهذه هي الخطوات التالية:',
+      'اختيار موعد', '/')
+    c.blocs.splice(2, 0,
+      { type: 'texte', texte: '1. اختر موعدًا في التطبيق من بين المواعيد المفتوحة.' },
+      { type: 'texte', texte: '2. سنخبرك فور أن يصبح فصلك جاهزًا.' },
+      { type: 'texte', texte: '3. تُدفع الدفعة الأولى في البداية، قبل أول حصة.' })
+    return c
+  },
   admission_refusee: (d) => avis(d, 'لا يمكننا متابعة طلبك', 'طلبك',
     REFUS_ADMISSION[String(d.modele ?? '')] ?? REFUS_ADMISSION.refus_general,
     'عرض طلبي', '/attente'),
+  // AUDIT-FAMILLE-7 (22/11/2026) : voir modeles_fr.ts.
+  admission_reprise: (d) => avis(d, 'تعيد الإدارة دراسة طلبك', 'طلبك',
+    d.cas === 'refus'
+      ? 'تعيد الإدارة دراسة طلبك الذي كانت قد رفضته. سنكتب إليك فور صدور رد جديد.'
+      : 'تعيد الإدارة دراسة طلبك. مساحتك مغلقة طوال هذه الدراسة. سنكتب إليك فور صدور رد جديد.',
+    'عرض طلبي', '/attente'),
+  // AUDIT-FAMILLE-4 (22/11/2026) : voir modeles_fr.ts.
+  horaire_ouvert: (d) => avis(d, 'فُتح موعد جديد', 'فُتح موعد جديد',
+    'فُتح موعد يناسب طلبك. ادخل إلى التطبيق للاطلاع عليه واختياره.',
+    'اختيار موعد', '/'),
   admission_precisions: (d) => {
     const c = avis(d, 'تنقصنا معلومة', 'تنقصنا معلومة',
       'لدراسة طلبك، تحتاج الإدارة إلى توضيح:',

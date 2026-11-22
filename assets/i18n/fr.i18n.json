@@ -1189,10 +1189,16 @@
     "demandePour": "Votre demande porte sur : {liste}.",
     "demandeRefuseeTitre": "Nous ne pouvons pas donner suite",
     "demandeRefuseeMessage": "La direction a lu votre demande et ne peut pas y donner suite pour le moment.",
-    "demandeRefuseeDetail": "L'e‑mail que nous vous avons envoyé vous en dit la raison. Vous pouvez y répondre pour toute question.",
+    "demandeRefuseeDetail": "Vous pouvez écrire à la direction ci‑dessous pour toute question.",
+    "motifRefus": {
+      "general": "Nous ne pouvons pas donner suite à votre demande pour le moment.",
+      "niveau": "Le niveau demandé n'est pas encore proposé.",
+      "besoins": "Nos classes ne répondent pas encore à ce que vous cherchez.",
+      "sansReponse": "Nous n'avons pas reçu de réponse à notre dernier message."
+    },
     "precisionsTitre": "Il nous manque une information",
     "precisionsMessage": "Pour étudier votre demande, la direction a besoin d'une précision :",
-    "precisionsReponse": "Répondez simplement à l'e‑mail que nous vous avons envoyé. La direction reprend votre demande dès votre réponse.",
+    "precisionsReponse": "Répondez ici, dans l'application, en écrivant à la direction ci‑dessous, ou à l'e‑mail que nous vous avons envoyé. La direction reprend votre demande dès votre réponse.",
     "actualiserCompte": "Actualiser",
     "lireEtAccepter": "Lire et accepter nos conditions",
     "nosConditions": "Nos conditions, à lire et à accepter",
@@ -1327,6 +1333,7 @@
       "horsLigne": "La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue."
     },
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
+    "aideEntree": "Une difficulté pour entrer ? Écrivez à {adresse}",
     "recuperation": {
       "titre": "Retrouver mon accès",
       "intro": "Il n'y a pas de mot de passe à réinitialiser\u00a0: indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.",
@@ -5899,6 +5906,7 @@
         "abandonConfirmer": "Abandonner la nouvelle classe",
         "abandonContinuer": "Continuer la saisie",
         "eleveDejaEnClasse": "cet élève est déjà dans une classe active. Retirez-le d'abord de cette classe, ou transférez-le, puis pressez de nouveau.",
+        "fratrieMemeClasse": "deux enfants d'un même foyer ne suivent jamais la même classe. Choisissez une autre classe pour cet enfant, puis pressez de nouveau.",
         "eleveInvalide": "le compte de cet élève n'existe plus ou n'est pas actif. Choisissez un autre élève dans la liste.",
         "eleveNonMembre": "cet élève n'est déjà plus dans cette classe. Rechargez la liste pour voir ses membres.",
         "classeDejaClose": "cette classe est déjà clôturée. Rechargez la liste des classes.",
@@ -6348,6 +6356,7 @@
       "nomDetail": "Déduit du genre, du public, des jours et de l'heure.",
       "dejaCreee": "Un autre membre de la direction vient de créer cette classe\u00a0: rien n'a été créé en double. Fermez cette feuille pour retrouver la liste à jour.",
       "refusee": "La classe n'a pas été créée\u00a0: {motif}. Vérifiez les demandes, puis pressez de nouveau.",
+      "fratrieMotif": "deux enfants d'un même foyer se trouvent dans ce regroupement, et ils ne suivent jamais la même classe",
       "nonConfirmee": "La création n'est pas confirmée\u00a0: la réponse du serveur n'est pas arrivée. Pressez de nouveau\u00a0: la même demande sera reprise, sans classe en double.",
       "creee": {
         "one": "Classe {libelle} créée\u00a0: {n} élève intégré.",

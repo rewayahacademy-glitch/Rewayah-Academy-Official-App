@@ -25,6 +25,8 @@ List<(String, String Function())> get _refusConnus {
   return <(String, String Function())>[
     ('cet eleve appartient deja a un groupe actif', () => c1.eleveDejaEnClasse),
     ('cet eleve n\'existe pas', () => c1.eleveInvalide),
+    // AUDIT-FAMILLE-8 (22/11/2026) : freres et soeurs en classes differentes.
+    ('deux enfants du meme foyer', () => c1.fratrieMemeClasse),
     ('cet eleve n\'est pas membre actif', () => c1.eleveNonMembre),
     ('groupe introuvable ou deja cloture', () => c1.classeDejaClose),
     ('un motif est requis', () => c1.motifManquant),
