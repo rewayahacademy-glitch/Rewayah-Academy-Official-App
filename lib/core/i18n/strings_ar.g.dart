@@ -20786,7 +20786,7 @@ class _Traductions$admin$ficheEleve$progression$ar extends Traductions$admin$fic
 	@override String get titre => 'التقدّم';
 	@override String get aucune => 'لا مرحلة بعد: الطالب ليس في أي حلقة، أو ينتظر مقابلة القراءة.';
 	@override String get etape => 'المرحلة الحالية';
-	@override String ordre({required Object ordre}) => 'المرحلة ${ordre}';
+	@override String ordre({required Object ordre}) => 'المرحلة ⁨${ordre}⁩';
 	@override String get depuis => 'في المرحلة منذ';
 	@override String get dateLimite => 'تُنهى قبل';
 	@override String get rythme => 'الوتيرة';
@@ -38148,7 +38148,7 @@ extension on TraductionsAr {
 			'admin.ficheEleve.progression.titre' => 'التقدّم',
 			'admin.ficheEleve.progression.aucune' => 'لا مرحلة بعد: الطالب ليس في أي حلقة، أو ينتظر مقابلة القراءة.',
 			'admin.ficheEleve.progression.etape' => 'المرحلة الحالية',
-			'admin.ficheEleve.progression.ordre' => ({required Object ordre}) => 'المرحلة ${ordre}',
+			'admin.ficheEleve.progression.ordre' => ({required Object ordre}) => 'المرحلة ⁨${ordre}⁩',
 			'admin.ficheEleve.progression.depuis' => 'في المرحلة منذ',
 			'admin.ficheEleve.progression.dateLimite' => 'تُنهى قبل',
 			'admin.ficheEleve.progression.rythme' => 'الوتيرة',
