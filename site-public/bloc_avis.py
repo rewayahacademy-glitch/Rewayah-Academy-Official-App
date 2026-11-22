@@ -77,6 +77,24 @@ TEXTES = {
            "titre": "O que dizem as nossas famílias", "sous_titre": "As palavras dos nossos alunos e dos seus pais, publicadas tal como foram escritas.",
            "moyenne": "com base em {n} opiniões, publicadas tal como foram escritas"},
 }
+# Les boutons de styles/avis-plus.js (SITE-CORRECTIFS 6, 22/11/2026), ecrits dans chaque langue : lire la suite d'un avis long,
+# le replier, montrer six avis de plus. « avis » reste le mot du site (reviews, opiniones, opiniões, آراء).
+TEXTES_REPLI = {
+    "fr": {"lire": "Lire la suite", "reduire": "Réduire", "plus": "Voir plus d’avis"},
+    "ar": {"lire": "اقرأ المزيد", "reduire": "عرض أقل", "plus": "عرض المزيد من الآراء"},
+    "en": {"lire": "Read more", "reduire": "Show less", "plus": "Show more reviews"},
+    "es": {"lire": "Leer más", "reduire": "Leer menos", "plus": "Ver más opiniones"},
+    "pt": {"lire": "Ler mais", "reduire": "Ler menos", "plus": "Ver mais opiniões"},
+}
+
+
+def script_replier(assets: str) -> str:
+    """La balise du script qui replie les avis longs et montre la liste par paquets ; ses textes sont dans la langue de la page."""
+    t = TEXTES_REPLI.get(LANGUE, TEXTES_REPLI["fr"])
+    return (f'<script src="{assets}/avis-plus.js" defer data-lire="{esc(t["lire"])}" data-reduire="{esc(t["reduire"])}" '
+            f'data-plus="{esc(t["plus"])}"></script>')
+
+
 _PAYS_LANGUES: dict[str, dict[str, str]] = {}
 
 

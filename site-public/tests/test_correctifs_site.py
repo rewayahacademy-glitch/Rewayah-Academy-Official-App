@@ -186,5 +186,68 @@ class DefilementLegerDeLAccueil(unittest.TestCase):
         self.assertEqual(re.findall(r"<figure[^>]*data-attenue", accueil), [])
 
 
+class AvisRepliablesEtParPaquets(unittest.TestCase):
+    JS = (SITE / "styles" / "avis-plus.js").read_text(encoding="utf-8")
+    ATTENDUS = {
+        "fr": ("Lire la suite", "Réduire", "Voir plus d’avis"),
+        "ar": ("اقرأ المزيد", "عرض أقل", "عرض المزيد من الآراء"),
+        "en": ("Read more", "Show less", "Show more reviews"),
+        "es": ("Leer más", "Leer menos", "Ver más opiniones"),
+        "pt": ("Ler mais", "Ler menos", "Ver mais opiniões"),
+    }
+
+    def test_les_boutons_sont_ecrits_dans_chaque_langue_de_la_page(self) -> None:
+        for langue, (lire, reduire, plus) in self.ATTENDUS.items():
+            h = lire_fichier(langue)
+            balise = re.search(r'<script src="/fr/assets/avis-plus.js" defer ([^>]*)>', h)
+            self.assertIsNotNone(balise, langue)
+            self.assertIn(f'data-lire="{lire}"', balise.group(1), langue)
+            self.assertIn(f'data-reduire="{reduire}"', balise.group(1), langue)
+            self.assertIn(f'data-plus="{plus}"', balise.group(1), langue)
+            self.assertLess(h.index("avis-plus.js"), h.index("<body"), langue)
+
+    def test_le_script_est_accessible_et_agit_au_clavier(self) -> None:
+        for marque in ("document.createElement('button')", "bouton.type = 'button'", "aria-expanded", "aria-controls",
+                       "PAR_PAQUET = 6", "premier.focus(", "window.ameliorerAvis = ameliorer"):
+            self.assertIn(marque, self.JS)
+        self.assertNotIn("innerHTML", self.JS)   # aucun texte d'avis n'est jamais reecrit
+
+    def test_le_repli_est_en_css_sur_l_attribut_pose_par_le_script_seulement(self) -> None:
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        self.assertIn(".avis-texte[data-court] p { display: -webkit-box;", css)
+        self.assertIn("-webkit-line-clamp: 4", css)
+        self.assertIn(".avis-lire:focus-visible", css)
+        self.assertNotIn("data-court", lire("fr/avis.html"))   # sans JavaScript, tout est entier
+
+    def test_les_avis_remis_a_jour_en_direct_repassent_par_le_script(self) -> None:
+        self.assertIn("window.ameliorerAvis()", (SITE / "styles" / "avis.js").read_text(encoding="utf-8"))
+
+    def test_les_cinq_langues_ont_leurs_textes(self) -> None:
+        sys.path.insert(0, str(SITE))
+        spec = importlib.util.spec_from_file_location("bloc_avis_correctifs", SITE / "bloc_avis.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        self.assertEqual(set(mod.TEXTES_REPLI), {"fr", "ar", "en", "es", "pt"})
+        for langue, (lire, reduire, plus) in self.ATTENDUS.items():
+            self.assertEqual((mod.TEXTES_REPLI[langue]["lire"], mod.TEXTES_REPLI[langue]["reduire"], mod.TEXTES_REPLI[langue]["plus"]), (lire, reduire, plus))
+
+    def test_avec_quatorze_avis_la_page_en_porte_quatorze_et_le_script_en_montre_six(self) -> None:
+        # Le comportement dans un navigateur a ete verifie dans Chrome (6 visibles, puis 12, puis 14 ; avis longs repliés) ;
+        # ici, la construction avec quatorze avis garde les quatorze dans le HTML (moteurs de recherche, sans script).
+        avis = {"nombre": 14, "moyenne_dixiemes": 50, "avis": [
+            {"nom": f"Famille {i}", "qualite": "parent", "pays": "FR", "depuis": "2026-09-01", "note": 5, "titre": f"Avis {i}",
+             "texte": "Très bon cours, merci. " * (30 if i % 3 == 0 else 1), "publie_le": f"2026-11-{20 - i:02d}"} for i in range(14)]}
+        spec = importlib.util.spec_from_file_location("bloc_avis_quatorze", SITE / "bloc_avis.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        html = mod.rendre_avis_section("liste", mod.valider_avis(avis))
+        self.assertEqual(html.count('<article class="avis-carte">'), 14)
+        self.assertNotRegex(html, r"\shidden[\s>]")
+
+
+def lire_fichier(langue: str) -> str:
+    return lire(f"{langue}/avis.html")
+
+
 if __name__ == "__main__":
     unittest.main()

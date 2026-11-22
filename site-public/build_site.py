@@ -1724,6 +1724,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <link rel="stylesheet" href="{ASSETS}/site.css">
   <script src="{ASSETS}/motion.js" defer></script>
   <script src="{ASSETS}/site.js" defer></script>
+  {avis_mod.script_replier(ASSETS) if avis and route in PAGES_AVIS_DIRECT else ""}
   {avis_mod.bloc_direct(avis, _AVIS_SOURCE["v"], ASSETS) if avis and route in PAGES_AVIS_DIRECT else ""}
   <link rel="icon" type="image/svg+xml" href="{ASSETS}/symbole.svg">
   <link rel="apple-touch-icon" href="{ASSETS}/apple-touch-icon.png">

@@ -2610,6 +2610,13 @@ li, dd { text-wrap: wrap; }
 .avis-auteur strong { font-size: var(--t-petit); }
 .avis-auteur span:not(.avis-initiale) { font-size: 16px; color: var(--encre-douce); overflow-wrap: anywhere; }
 .avis-auteur .avis-date { font-size: 15px; opacity: .85; }
+/* Avis repliables (SITE-CORRECTIFS 6, 22/11/2026) : styles/avis-plus.js replie un avis de plus de 4 lignes et montre la liste six par six.
+   Sans JavaScript, rien n'est replie : la regle ne vaut que sur l'attribut que pose le script. */
+.avis-texte[data-court] p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden; }
+.avis-lire { align-self: flex-start; min-height: 44px; margin: calc(var(--e-2) * -1) 0 0; padding: 0 var(--e-1); border: 0; background: none; color: var(--encre-accent); font-weight: 700; font-size: var(--t-petit); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.avis-lire:hover { text-decoration-thickness: 2px; }
+.avis-lire:focus-visible, .avis-carte:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 3px; border-radius: var(--r-sm); }
+.avis-plus { display: flex; margin: var(--e-8) auto 0; }
 .avis-intro { margin: 0; font-size: var(--t-corps); color: var(--encre-douce); max-width: 60ch; }
 .avis-moyenne { display: grid; gap: var(--e-2); justify-items: start; margin-bottom: var(--e-2); }
 .avis-moyenne__note { display: flex; align-items: center; gap: var(--e-4); margin: 0; }
