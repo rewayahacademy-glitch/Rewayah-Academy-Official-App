@@ -581,29 +581,26 @@ void main() {
       expect(_brouillon(tester).nom, isEmpty);
     });
 
-    testWidgets('le titulaire garde ses trois etapes, sans telephone', (
+    // ONBOARDING-PRAXIS (directeur, 22/11/2026) : le titulaire a tout dit
+    // dans le questionnaire ; apres la connexion, un seul ecran, sans
+    // telephone, sans langue de l'application, sans case de confidentialite.
+    testWidgets('le titulaire n a plus qu un ecran, sans telephone', (
       WidgetTester tester,
     ) async {
       final _Hote hote = await _monter(tester);
       _conteneur(tester)
           .read(brouillonInscriptionProvider.notifier)
           .choisirUsage(UsageInscription.moi);
-      hote.routeur.go(Routes.inscriptionIdentite);
-      await tester.pumpAndSettle();
-      expect(find.text('1 sur 3'), findsOneWidget);
-      await tester.enterText(
-        find.byKey(const Key('inscription-prenom')),
-        'Sara',
+      expect(etapesPour(_brouillon(tester)), <String>[
+        Routes.inscriptionRecapitulatif,
+      ]);
+      expect(
+        _brouillon(tester).premiereEtapeManquante,
+        Routes.inscriptionRecapitulatif,
       );
-      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Kane');
-      await _continuer(tester);
-      expect(find.text('2 sur 3'), findsOneWidget);
-      await _taper(tester, find.text(t.inscription.genreFemme));
-      await _continuer(tester);
-      // Le recapitulatif, sans telephone, sans langue, sans case de
-      // confidentialite.
+      hote.routeur.go(Routes.inscriptionRecapitulatif);
+      await tester.pumpAndSettle();
       expect(hote.chemin, Routes.inscriptionRecapitulatif);
-      expect(find.text('3 sur 3'), findsOneWidget);
       expect(
         find.byKey(const Key('inscription-modifier-telephone')),
         findsNothing,
@@ -1902,7 +1899,9 @@ void main() {
       await ecrire(tester, prenomArabe, nomArabe);
       expect(find.byKey(champLatin), findsNothing);
       await _continuer(tester);
-      expect(hote.chemin, Routes.inscriptionGenre);
+      // ONBOARDING-PRAXIS : apres l'identite, le titulaire va a son seul
+      // ecran (la route du recapitulatif).
+      expect(hote.chemin, Routes.inscriptionRecapitulatif);
       expect(_brouillon(tester).nomLatinAEnvoyer, isNull);
     });
 

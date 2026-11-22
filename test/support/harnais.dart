@@ -144,6 +144,9 @@ class FauxServiceDossier implements ServiceDossier {
   final List<List<Map<String, Object?>>?> apprenantsEnvoyes =
       <List<Map<String, Object?>>?>[];
 
+  /// ONBOARDING-PRAXIS : la source declaree envoyee a chaque creation.
+  final List<String?> sourcesEnvoyees = <String?>[];
+
   /// Vrai pour simuler le service de la demonstration.
   @override
   bool demonstration = false;
@@ -182,11 +185,14 @@ class FauxServiceDossier implements ServiceDossier {
     UsageTitulaire? usage,
     bool suitDesCours = false,
     List<Map<String, Object?>>? apprenants,
+    String? source,
+    String? fuseau,
   }) async {
     _peutEchouer();
     codesInvitation.add(codeInvitation);
     usages.add((usage: usage, suitDesCours: suitDesCours));
     apprenantsEnvoyes.add(apprenants);
+    sourcesEnvoyees.add(source);
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
   }
 

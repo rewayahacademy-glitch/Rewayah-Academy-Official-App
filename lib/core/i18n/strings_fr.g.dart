@@ -131,6 +131,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$journalSorties$fr journalSorties = Traductions$journalSorties$fr.internal(_root);
 	late final Traductions$calendrier$fr calendrier = Traductions$calendrier$fr.internal(_root);
 	late final Traductions$pause$fr pause = Traductions$pause$fr.internal(_root);
+	late final Traductions$onboarding$fr onboarding = Traductions$onboarding$fr.internal(_root);
 }
 
 // Path: commun
@@ -4743,6 +4744,47 @@ class Traductions$pause$fr {
 	String annuler({required Object mois}) => 'Annuler la pause de ${mois}';
 
 	late final Traductions$pause$refus$fr refus = Traductions$pause$refus$fr.internal(_root);
+}
+
+// Path: onboarding
+class Traductions$onboarding$fr {
+	Traductions$onboarding$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$onboarding$chapitres$fr chapitres = Traductions$onboarding$chapitres$fr.internal(_root);
+
+	/// fr: 'Retour'
+	String get retour => 'Retour';
+
+	/// fr: 'Praxis est une intelligence artificielle. Chaque demande est lue par la direction.'
+	String get praxisIa => 'Praxis est une intelligence artificielle. Chaque demande est lue par la direction.';
+
+	late final Traductions$onboarding$accueil$fr accueil = Traductions$onboarding$accueil$fr.internal(_root);
+	late final Traductions$onboarding$garde$fr garde = Traductions$onboarding$garde$fr.internal(_root);
+	late final Traductions$onboarding$enseigner$fr enseigner = Traductions$onboarding$enseigner$fr.internal(_root);
+	late final Traductions$onboarding$pourQui$fr pourQui = Traductions$onboarding$pourQui$fr.internal(_root);
+	late final Traductions$onboarding$prenom$fr prenom = Traductions$onboarding$prenom$fr.internal(_root);
+	late final Traductions$onboarding$age$fr age = Traductions$onboarding$age$fr.internal(_root);
+	late final Traductions$onboarding$genre$fr genre = Traductions$onboarding$genre$fr.internal(_root);
+	late final Traductions$onboarding$famille$fr famille = Traductions$onboarding$famille$fr.internal(_root);
+	late final Traductions$onboarding$niveau$fr niveau = Traductions$onboarding$niveau$fr.internal(_root);
+	late final Traductions$onboarding$lecture$fr lecture = Traductions$onboarding$lecture$fr.internal(_root);
+	late final Traductions$onboarding$memorise$fr memorise = Traductions$onboarding$memorise$fr.internal(_root);
+	late final Traductions$onboarding$detail$fr detail = Traductions$onboarding$detail$fr.internal(_root);
+	late final Traductions$onboarding$sourates$fr sourates = Traductions$onboarding$sourates$fr.internal(_root);
+	late final Traductions$onboarding$objectif$fr objectif = Traductions$onboarding$objectif$fr.internal(_root);
+	late final Traductions$onboarding$depart$fr depart = Traductions$onboarding$depart$fr.internal(_root);
+	late final Traductions$onboarding$langue$fr langue = Traductions$onboarding$langue$fr.internal(_root);
+	late final Traductions$onboarding$langueSecours$fr langueSecours = Traductions$onboarding$langueSecours$fr.internal(_root);
+	late final Traductions$onboarding$langues$fr langues = Traductions$onboarding$langues$fr.internal(_root);
+	late final Traductions$onboarding$chemin$fr chemin = Traductions$onboarding$chemin$fr.internal(_root);
+	late final Traductions$onboarding$recap$fr recap = Traductions$onboarding$recap$fr.internal(_root);
+	late final Traductions$onboarding$acces$fr acces = Traductions$onboarding$acces$fr.internal(_root);
+	late final Traductions$onboarding$envoye$fr envoye = Traductions$onboarding$envoye$fr.internal(_root);
+	late final Traductions$onboarding$vous$fr vous = Traductions$onboarding$vous$fr.internal(_root);
+	late final Traductions$onboarding$fin$fr fin = Traductions$onboarding$fin$fr.internal(_root);
 }
 
 // Path: commun.langue
@@ -27752,6 +27794,1008 @@ class Traductions$pause$refus$fr {
 	String get inconnu => 'La demande n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 }
 
+// Path: onboarding.chapitres
+class Traductions$onboarding$chapitres$fr {
+	Traductions$onboarding$chapitres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qui apprend'
+	String get quiApprend => 'Qui apprend';
+
+	/// fr: 'Où en est le niveau'
+	String get niveau => 'Où en est le niveau';
+
+	/// fr: 'Vos cours'
+	String get cours => 'Vos cours';
+
+	/// fr: 'Votre demande'
+	String get demande => 'Votre demande';
+
+	/// fr: '{n}/4 · {nom}'
+	String lu({required Object n, required Object nom}) => '${n}/4 · ${nom}';
+
+	/// fr: 'Chapitre {n} sur 4 : {nom}'
+	String luLong({required Object n, required Object nom}) => 'Chapitre ${n} sur 4 : ${nom}';
+}
+
+// Path: onboarding.accueil
+class Traductions$onboarding$accueil$fr {
+	Traductions$onboarding$accueil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bonjour, je suis Praxis, l'assistant de la direction. Quelques questions, environ deux minutes, pour préparer votre arrivée.'
+	String get dit => 'Bonjour, je suis Praxis, l\'assistant de la direction. Quelques questions, environ deux minutes, pour préparer votre arrivée.';
+
+	/// fr: 'Bienvenue chez Rewayah Academy'
+	String get titre => 'Bienvenue chez Rewayah Academy';
+
+	/// fr: 'Cours de Coran en direct, en classe stable, avec le même enseignant.'
+	String get sous => 'Cours de Coran en direct, en classe stable, avec le même enseignant.';
+
+	/// fr: 'Commencer'
+	String get commencer => 'Commencer';
+
+	/// fr: 'J'ai déjà un compte'
+	String get dejaCompte => 'J\'ai déjà un compte';
+}
+
+// Path: onboarding.garde
+class Traductions$onboarding$garde$fr {
+	Traductions$onboarding$garde$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'D'abord, une question pour bien vous orienter. Que venez-vous faire ?'
+	String get dit => 'D\'abord, une question pour bien vous orienter. Que venez-vous faire ?';
+
+	/// fr: 'Vous venez pour apprendre, ou pour enseigner ?'
+	String get titre => 'Vous venez pour apprendre, ou pour enseigner ?';
+
+	/// fr: 'Apprendre'
+	String get apprendre => 'Apprendre';
+
+	/// fr: 'Pour moi ou pour mon enfant'
+	String get apprendreDesc => 'Pour moi ou pour mon enfant';
+
+	/// fr: 'Enseigner'
+	String get enseigner => 'Enseigner';
+
+	/// fr: 'Je veux rejoindre l'équipe'
+	String get enseignerDesc => 'Je veux rejoindre l\'équipe';
+
+	/// fr: 'Très bien. Je vous guide.'
+	String get reponse => 'Très bien. Je vous guide.';
+}
+
+// Path: onboarding.enseigner
+class Traductions$onboarding$enseigner$fr {
+	Traductions$onboarding$enseigner$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bienvenue. Votre candidature commence ici, sans invitation. Je vous guide pas à pas.'
+	String get dit => 'Bienvenue. Votre candidature commence ici, sans invitation. Je vous guide pas à pas.';
+
+	/// fr: 'Votre candidature d'enseignant'
+	String get titre => 'Votre candidature d\'enseignant';
+
+	/// fr: 'Ce chemin crée une candidature, jamais un compte élève : aucun doublon possible.'
+	String get sous => 'Ce chemin crée une candidature, jamais un compte élève : aucun doublon possible.';
+
+	/// fr: 'Commencer ma candidature'
+	String get commencer => 'Commencer ma candidature';
+
+	/// fr: 'Je me suis trompé : je veux apprendre'
+	String get trompe => 'Je me suis trompé : je veux apprendre';
+}
+
+// Path: onboarding.pourQui
+class Traductions$onboarding$pourQui$fr {
+	Traductions$onboarding$pourQui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dites-moi qui va suivre les cours, je m'occupe du reste.'
+	String get dit => 'Dites-moi qui va suivre les cours, je m\'occupe du reste.';
+
+	/// fr: 'Qui va suivre les cours ?'
+	String get titre => 'Qui va suivre les cours ?';
+
+	/// fr: 'Pour moi'
+	String get moi => 'Pour moi';
+
+	/// fr: 'Je suis adulte (18 ans ou plus)'
+	String get moiDesc => 'Je suis adulte (18 ans ou plus)';
+
+	/// fr: 'Pour mon enfant'
+	String get unEnfant => 'Pour mon enfant';
+
+	/// fr: 'De 6 à 17 ans'
+	String get unEnfantDesc => 'De 6 à 17 ans';
+
+	/// fr: 'Pour plusieurs enfants'
+	String get plusieurs => 'Pour plusieurs enfants';
+
+	/// fr: 'Je poserai les mêmes questions pour chacun'
+	String get plusieursDesc => 'Je poserai les mêmes questions pour chacun';
+
+	/// fr: 'Parfait, on commence par vous.'
+	String get reponseMoi => 'Parfait, on commence par vous.';
+
+	/// fr: 'Très bien. Parlons de votre enfant.'
+	String get reponseUn => 'Très bien. Parlons de votre enfant.';
+
+	/// fr: 'Très bien. Nous irons enfant par enfant, c'est rapide.'
+	String get reponsePlusieurs => 'Très bien. Nous irons enfant par enfant, c\'est rapide.';
+
+	/// fr: 'J'ai moins de 18 ans et je m'inscris moi-même'
+	String get mineur => 'J\'ai moins de 18 ans et je m\'inscris moi-même';
+
+	/// fr: 'Un parent ou tuteur crée le compte et vous y ajoute. Choisissez « Pour mon enfant ».'
+	String get mineurReponse => 'Un parent ou tuteur crée le compte et vous y ajoute. Choisissez « Pour mon enfant ».';
+}
+
+// Path: onboarding.prenom
+class Traductions$onboarding$prenom$fr {
+	Traductions$onboarding$prenom$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment dois-je vous appeler ?'
+	String get ditMoi => 'Comment dois-je vous appeler ?';
+
+	/// fr: 'Comment s'appelle votre enfant ?'
+	String get ditEnfant => 'Comment s\'appelle votre enfant ?';
+
+	/// fr: 'Et comment s'appelle l'élève suivant ?'
+	String get ditSuivant => 'Et comment s\'appelle l\'élève suivant ?';
+
+	/// fr: 'Votre prénom'
+	String get titreMoi => 'Votre prénom';
+
+	/// fr: 'Le prénom de votre enfant'
+	String get titreEnfant => 'Le prénom de votre enfant';
+
+	/// fr: 'Le prénom de l'élève suivant'
+	String get titreSuivant => 'Le prénom de l\'élève suivant';
+
+	/// fr: 'Seulement le prénom pour l'instant.'
+	String get sousMoi => 'Seulement le prénom pour l\'instant.';
+
+	/// fr: 'Le prénom suffit.'
+	String get sousEnfant => 'Le prénom suffit.';
+
+	/// fr: 'Prénom'
+	String get etiquette => 'Prénom';
+
+	/// fr: 'Votre prénom'
+	String get indiceMoi => 'Votre prénom';
+
+	/// fr: 'Prénom'
+	String get indice => 'Prénom';
+
+	/// fr: 'Seulement des lettres, s'il vous plaît : un vrai prénom, sans chiffres ni émojis.'
+	String get refus => 'Seulement des lettres, s\'il vous plaît : un vrai prénom, sans chiffres ni émojis.';
+}
+
+// Path: onboarding.age
+class Traductions$onboarding$age$fr {
+	Traductions$onboarding$age$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quel âge a {prenom} ?'
+	String titre({required Object prenom}) => 'Quel âge a ${prenom} ?';
+
+	/// fr: 'De 6 à 17 ans. Cela fixe la durée prévue de son parcours.'
+	String get sous => 'De 6 à 17 ans. Cela fixe la durée prévue de son parcours.';
+
+	/// fr: '{n} ans'
+	String ans({required Object n}) => '${n} ans';
+
+	/// fr: '{n} ans : noté.'
+	String reponse({required Object n}) => '${n} ans : noté.';
+
+	/// fr: 'Il a 18 ans ou plus'
+	String get adulte => 'Il a 18 ans ou plus';
+
+	/// fr: 'Une personne de 18 ans ou plus crée son propre compte. Vous pouvez l'y aider.'
+	String get adulteReponse => 'Une personne de 18 ans ou plus crée son propre compte. Vous pouvez l\'y aider.';
+}
+
+// Path: onboarding.genre
+class Traductions$onboarding$genre$fr {
+	Traductions$onboarding$genre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cela sert à former des classes adaptées : elles ne sont pas mixtes par défaut.'
+	String get dit => 'Cela sert à former des classes adaptées : elles ne sont pas mixtes par défaut.';
+
+	/// fr: 'Vous êtes…'
+	String get titreMoi => 'Vous êtes…';
+
+	/// fr: '{prenom} est…'
+	String titre({required Object prenom}) => '${prenom} est…';
+
+	/// fr: 'Un homme'
+	String get homme => 'Un homme';
+
+	/// fr: 'Une femme'
+	String get femme => 'Une femme';
+
+	/// fr: 'Un garçon'
+	String get garcon => 'Un garçon';
+
+	/// fr: 'Une fille'
+	String get fille => 'Une fille';
+
+	/// fr: 'Merci. Les classes sont formées par genre.'
+	String get reponse => 'Merci. Les classes sont formées par genre.';
+}
+
+// Path: onboarding.famille
+class Traductions$onboarding$famille$fr {
+	Traductions$onboarding$famille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voici {prenom}. Passons à l’enfant suivant.'
+	String ditEncore({required Object prenom}) => 'Voici ${prenom}. Passons à l’enfant suivant.';
+
+	/// fr: 'Enchanté, {prenom}. Parlons maintenant de votre niveau.'
+	String ditSeul({required Object prenom}) => 'Enchanté, ${prenom}. Parlons maintenant de votre niveau.';
+
+	/// fr: 'Voici votre famille. Parlons maintenant du niveau de chacun.'
+	String get dit => 'Voici votre famille. Parlons maintenant du niveau de chacun.';
+
+	/// fr: 'Enchanté'
+	String get titreSeul => 'Enchanté';
+
+	/// fr: 'Voici votre famille'
+	String get titre => 'Voici votre famille';
+
+	/// fr: 'Ajouter l’enfant suivant'
+	String get suivant => 'Ajouter l’enfant suivant';
+
+	/// fr: 'Ajouter un autre élève'
+	String get ajouter => 'Ajouter un autre élève';
+
+	/// fr: 'Je suivrai aussi des cours'
+	String get aussi => 'Je suivrai aussi des cours';
+}
+
+// Path: onboarding.niveau
+class Traductions$onboarding$niveau$fr {
+	Traductions$onboarding$niveau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Répondez au plus juste : un enseignant vérifiera lors de la première séance.'
+	String get dit => 'Répondez au plus juste : un enseignant vérifiera lors de la première séance.';
+
+	/// fr: 'Où en êtes-vous aujourd'hui ?'
+	String get titreMoi => 'Où en êtes-vous aujourd\'hui ?';
+
+	/// fr: 'Où en est {prenom} aujourd'hui ?'
+	String titre({required Object prenom}) => 'Où en est ${prenom} aujourd\'hui ?';
+
+	late final Traductions$onboarding$niveau$moi$fr moi = Traductions$onboarding$niveau$moi$fr.internal(_root);
+	late final Traductions$onboarding$niveau$il$fr il = Traductions$onboarding$niveau$il$fr.internal(_root);
+	late final Traductions$onboarding$niveau$elle$fr elle = Traductions$onboarding$niveau$elle$fr.internal(_root);
+	late final Traductions$onboarding$niveau$desc$fr desc = Traductions$onboarding$niveau$desc$fr.internal(_root);
+
+	/// fr: 'Un très bon point de départ : tout est prévu.'
+	String get reponseDebut => 'Un très bon point de départ : tout est prévu.';
+
+	/// fr: 'Très bien. Je vais demander ce qui est déjà mémorisé.'
+	String get reponseMemo => 'Très bien. Je vais demander ce qui est déjà mémorisé.';
+
+	/// fr: 'Très bien. Une précision sur la lecture, et nous continuons.'
+	String get reponseLecture => 'Très bien. Une précision sur la lecture, et nous continuons.';
+
+	/// fr: 'Noté.'
+	String get reponse => 'Noté.';
+}
+
+// Path: onboarding.lecture
+class Traductions$onboarding$lecture$fr {
+	Traductions$onboarding$lecture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une précision : dans quelle lecture du Coran ?'
+	String get dit => 'Une précision : dans quelle lecture du Coran ?';
+
+	/// fr: 'Quelle lecture lisez-vous ?'
+	String get titreMoi => 'Quelle lecture lisez-vous ?';
+
+	/// fr: 'Quelle lecture {prenom} lit-il ?'
+	String titreIl({required Object prenom}) => 'Quelle lecture ${prenom} lit-il ?';
+
+	/// fr: 'Quelle lecture {prenom} lit-elle ?'
+	String titreElle({required Object prenom}) => 'Quelle lecture ${prenom} lit-elle ?';
+
+	/// fr: 'Hafs est présélectionnée.'
+	String get sous => 'Hafs est présélectionnée.';
+
+	/// fr: 'Lecture de Hafs'
+	String get hafs => 'Lecture de Hafs';
+
+	/// fr: 'La plus répandue, choisie par défaut'
+	String get hafsDesc => 'La plus répandue, choisie par défaut';
+
+	/// fr: 'Lecture de Warsh'
+	String get warsh => 'Lecture de Warsh';
+
+	/// fr: 'Nous la notons pour la direction'
+	String get warshDesc => 'Nous la notons pour la direction';
+
+	/// fr: 'Une autre lecture'
+	String get autre => 'Une autre lecture';
+
+	/// fr: 'À préciser'
+	String get autreDesc => 'À préciser';
+
+	/// fr: 'Laquelle ?'
+	String get autreEtiquette => 'Laquelle ?';
+
+	/// fr: 'Par exemple : Qalun'
+	String get autreIndice => 'Par exemple : Qalun';
+
+	/// fr: 'Hafs, c'est noté.'
+	String get reponseHafs => 'Hafs, c\'est noté.';
+
+	/// fr: 'Noté. La direction vous dira quelles classes existent.'
+	String get reponseWarsh => 'Noté. La direction vous dira quelles classes existent.';
+
+	/// fr: 'Laquelle ? Écrivez-la, la direction la lira.'
+	String get reponseAutre => 'Laquelle ? Écrivez-la, la direction la lira.';
+}
+
+// Path: onboarding.memorise
+class Traductions$onboarding$memorise$fr {
+	Traductions$onboarding$memorise$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Combien est déjà mémorisé, à peu près ?'
+	String get dit => 'Combien est déjà mémorisé, à peu près ?';
+
+	/// fr: 'Combien avez-vous mémorisé ?'
+	String get titreMoi => 'Combien avez-vous mémorisé ?';
+
+	/// fr: 'Combien {prenom} a-t-il mémorisé ?'
+	String titreIl({required Object prenom}) => 'Combien ${prenom} a-t-il mémorisé ?';
+
+	/// fr: 'Combien {prenom} a-t-elle mémorisé ?'
+	String titreElle({required Object prenom}) => 'Combien ${prenom} a-t-elle mémorisé ?';
+
+	/// fr: 'Quelques sourates'
+	String get quelques => 'Quelques sourates';
+
+	/// fr: 'Un à cinq juz'
+	String get unACinq => 'Un à cinq juz';
+
+	/// fr: 'Plus de cinq juz'
+	String get plusDeCinq => 'Plus de cinq juz';
+
+	/// fr: 'Tout le Coran'
+	String get tout => 'Tout le Coran';
+
+	/// fr: 'Mâ châ’ Allah. La direction vous recevra pour une vérification.'
+	String get reponseTout => 'Mâ châ’ Allah. La direction vous recevra pour une vérification.';
+
+	/// fr: 'Mâ châ’ Allah. Quelques détails, si vous les connaissez.'
+	String get reponse => 'Mâ châ’ Allah. Quelques détails, si vous les connaissez.';
+}
+
+// Path: onboarding.detail
+class Traductions$onboarding$detail$fr {
+	Traductions$onboarding$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quels juz, si vous les connaissez ? Vous pouvez passer.'
+	String get ditJuz => 'Quels juz, si vous les connaissez ? Vous pouvez passer.';
+
+	/// fr: 'Lesquelles ? Touchez celles que vous connaissez. Vous pouvez passer.'
+	String get ditSourates => 'Lesquelles ? Touchez celles que vous connaissez. Vous pouvez passer.';
+
+	/// fr: 'Quels juz ?'
+	String get titreJuz => 'Quels juz ?';
+
+	/// fr: 'Quelles sourates ?'
+	String get titreSourates => 'Quelles sourates ?';
+
+	/// fr: 'Facultatif : l'enseignant vérifiera de toute façon.'
+	String get sous => 'Facultatif : l\'enseignant vérifiera de toute façon.';
+
+	/// fr: 'Aucun pour l'instant.'
+	String get aucun => 'Aucun pour l\'instant.';
+
+	/// fr: '1 choisi.'
+	String get un => '1 choisi.';
+
+	/// fr: '{n} choisis.'
+	String plusieurs({required Object n}) => '${n} choisis.';
+
+	/// fr: 'Juz {n}'
+	String juz({required Object n}) => 'Juz ${n}';
+}
+
+// Path: onboarding.sourates
+class Traductions$onboarding$sourates$fr {
+	Traductions$onboarding$sourates$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Al-Fatiha'
+	String get fatiha => 'Al-Fatiha';
+
+	/// fr: 'An-Nâs'
+	String get nas => 'An-Nâs';
+
+	/// fr: 'Al-Falaq'
+	String get falaq => 'Al-Falaq';
+
+	/// fr: 'Al-Ikhlâs'
+	String get ikhlas => 'Al-Ikhlâs';
+
+	/// fr: 'Al-Masad'
+	String get masad => 'Al-Masad';
+
+	/// fr: 'An-Nasr'
+	String get nasr => 'An-Nasr';
+
+	/// fr: 'Al-Kâfirûn'
+	String get kafirun => 'Al-Kâfirûn';
+
+	/// fr: 'Al-Kawthar'
+	String get kawthar => 'Al-Kawthar';
+
+	/// fr: 'Al-Mâ'ûn'
+	String get maun => 'Al-Mâ\'ûn';
+
+	/// fr: 'Quraysh'
+	String get quraysh => 'Quraysh';
+
+	/// fr: 'Al-Fîl'
+	String get fil => 'Al-Fîl';
+
+	/// fr: 'Al-Humaza'
+	String get humaza => 'Al-Humaza';
+
+	/// fr: 'Al-'Asr'
+	String get asr => 'Al-\'Asr';
+
+	/// fr: 'At-Takâthur'
+	String get takathur => 'At-Takâthur';
+
+	/// fr: 'Al-Qâri'a'
+	String get qaria => 'Al-Qâri\'a';
+
+	/// fr: 'Al-'Âdiyât'
+	String get adiyat => 'Al-\'Âdiyât';
+
+	/// fr: 'Az-Zalzalah'
+	String get zalzala => 'Az-Zalzalah';
+}
+
+// Path: onboarding.objectif
+class Traductions$onboarding$objectif$fr {
+	Traductions$onboarding$objectif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qu'aimeriez-vous atteindre en premier ?'
+	String get dit => 'Qu\'aimeriez-vous atteindre en premier ?';
+
+	/// fr: 'Que souhaitez-vous d'abord ?'
+	String get titreMoi => 'Que souhaitez-vous d\'abord ?';
+
+	/// fr: 'Que souhaitez-vous pour {prenom} ?'
+	String titre({required Object prenom}) => 'Que souhaitez-vous pour ${prenom} ?';
+
+	/// fr: 'Mémoriser est présélectionné.'
+	String get sousMemo => 'Mémoriser est présélectionné.';
+
+	/// fr: 'Apprendre à lire le Coran'
+	String get lireBases => 'Apprendre à lire le Coran';
+
+	/// fr: 'Commencer par les bases'
+	String get lireBasesDesc => 'Commencer par les bases';
+
+	/// fr: 'Lire tout le Coran couramment'
+	String get lireCourant => 'Lire tout le Coran couramment';
+
+	/// fr: 'Devenir fluide'
+	String get lireCourantDesc => 'Devenir fluide';
+
+	/// fr: 'Mémoriser le Coran'
+	String get memoriser => 'Mémoriser le Coran';
+
+	/// fr: 'Après les bases'
+	String get memoriserApresBases => 'Après les bases';
+
+	/// fr: 'Avec un enseignant'
+	String get memoriserAvec => 'Avec un enseignant';
+
+	/// fr: 'La prière et les invocations'
+	String get priere => 'La prière et les invocations';
+
+	/// fr: 'Pour que l'enfant prie seul'
+	String get priereDesc => 'Pour que l\'enfant prie seul';
+
+	/// fr: 'Je ne sais pas encore'
+	String get indecis => 'Je ne sais pas encore';
+
+	/// fr: 'L'enseignant me conseillera'
+	String get indecisDesc => 'L\'enseignant me conseillera';
+
+	/// fr: 'Aucun souci : vous pourrez décider en cours de route.'
+	String get reponseIndecis => 'Aucun souci : vous pourrez décider en cours de route.';
+
+	/// fr: 'Bon choix.'
+	String get reponse => 'Bon choix.';
+}
+
+// Path: onboarding.depart
+class Traductions$onboarding$depart$fr {
+	Traductions$onboarding$depart$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voici par où je vous conseille de commencer. L'enseignant le confirmera à la première séance.'
+	String get dit => 'Voici par où je vous conseille de commencer. L\'enseignant le confirmera à la première séance.';
+
+	/// fr: 'Votre point de départ'
+	String get titre => 'Votre point de départ';
+
+	/// fr: 'Le point de départ de chacun'
+	String get titrePlusieurs => 'Le point de départ de chacun';
+
+	/// fr: 'Pour vous'
+	String get pourVous => 'Pour vous';
+
+	/// fr: 'départ probable'
+	String get probable => 'départ probable';
+
+	late final Traductions$onboarding$depart$etapes$fr etapes = Traductions$onboarding$depart$etapes$fr.internal(_root);
+
+	/// fr: 'Après l'examen de fin des bases : mémoriser le Coran.'
+	String get suiteMemoriser => 'Après l\'examen de fin des bases : mémoriser le Coran.';
+
+	/// fr: 'Les paroles de la prière arrivent en matière secondaire, très tôt.'
+	String get suitePriere => 'Les paroles de la prière arrivent en matière secondaire, très tôt.';
+
+	/// fr: 'Après l'examen de fin des bases : lire tout le Coran ou le mémoriser.'
+	String get suite => 'Après l\'examen de fin des bases : lire tout le Coran ou le mémoriser.';
+
+	late final Traductions$onboarding$depart$reco$fr reco = Traductions$onboarding$depart$reco$fr.internal(_root);
+
+	/// fr: 'Un point de départ probable, jamais une promesse : la première séance le vérifie.'
+	String get indice => 'Un point de départ probable, jamais une promesse : la première séance le vérifie.';
+}
+
+// Path: onboarding.langue
+class Traductions$onboarding$langue$fr {
+	Traductions$onboarding$langue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nos enseignants parlent plus de vingt langues. Dans laquelle voulez-vous les explications ?'
+	String get dit => 'Nos enseignants parlent plus de vingt langues. Dans laquelle voulez-vous les explications ?';
+
+	/// fr: 'La langue des explications'
+	String get titre => 'La langue des explications';
+
+	/// fr: 'Votre premier choix. Nous orientons vers une classe dans cette langue dès qu'un enseignant est disponible.'
+	String get sous => 'Votre premier choix. Nous orientons vers une classe dans cette langue dès qu\'un enseignant est disponible.';
+
+	/// fr: '{langue} : c'est noté.'
+	String reponse({required Object langue}) => '${langue} : c\'est noté.';
+
+	late final Traductions$onboarding$langue$groupes$fr groupes = Traductions$onboarding$langue$groupes$fr.internal(_root);
+}
+
+// Path: onboarding.langueSecours
+class Traductions$onboarding$langueSecours$fr {
+	Traductions$onboarding$langueSecours$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Et si aucun enseignant n'est libre dans votre langue, laquelle comprenez-vous aussi ?'
+	String get dit => 'Et si aucun enseignant n\'est libre dans votre langue, laquelle comprenez-vous aussi ?';
+
+	/// fr: 'Une deuxième langue ?'
+	String get titre => 'Une deuxième langue ?';
+
+	/// fr: 'Facultatif. Elle sert seulement si la première n'a pas d'enseignant disponible.'
+	String get sous => 'Facultatif. Elle sert seulement si la première n\'a pas d\'enseignant disponible.';
+
+	/// fr: 'Aucune autre'
+	String get aucune => 'Aucune autre';
+
+	/// fr: 'Très bien.'
+	String get reponseAucune => 'Très bien.';
+
+	/// fr: 'Noté : ce sera notre solution de rechange.'
+	String get reponse => 'Noté : ce sera notre solution de rechange.';
+
+	/// fr: 'Une langue absente de la liste ? (facultatif)'
+	String get autreEtiquette => 'Une langue absente de la liste ? (facultatif)';
+
+	/// fr: 'Par exemple : tamoul'
+	String get autreIndice => 'Par exemple : tamoul';
+}
+
+// Path: onboarding.langues
+class Traductions$onboarding$langues$fr {
+	Traductions$onboarding$langues$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Français'
+	String get francais => 'Français';
+
+	/// fr: 'English'
+	String get english => 'English';
+
+	/// fr: 'العربية (arabe)'
+	String get ar => 'العربية (arabe)';
+
+	/// fr: 'Hausa'
+	String get ha => 'Hausa';
+
+	/// fr: 'Poular (peul)'
+	String get poular => 'Poular (peul)';
+
+	/// fr: 'Yoruba'
+	String get yo => 'Yoruba';
+
+	/// fr: 'Malinké'
+	String get man => 'Malinké';
+
+	/// fr: 'Soninké'
+	String get snk => 'Soninké';
+
+	/// fr: 'Wolof'
+	String get wo => 'Wolof';
+
+	/// fr: 'Bambara'
+	String get bm => 'Bambara';
+
+	/// fr: 'Swahili'
+	String get sw => 'Swahili';
+
+	/// fr: 'Somali'
+	String get so => 'Somali';
+
+	/// fr: 'Amharique'
+	String get am => 'Amharique';
+
+	/// fr: 'Oromo'
+	String get om => 'Oromo';
+
+	/// fr: 'Ourdou'
+	String get ur => 'Ourdou';
+
+	/// fr: 'Hindi'
+	String get hi => 'Hindi';
+
+	/// fr: 'Bengali'
+	String get bn => 'Bengali';
+
+	/// fr: 'Pachto'
+	String get ps => 'Pachto';
+
+	/// fr: 'Persan'
+	String get fa => 'Persan';
+
+	/// fr: 'Turc'
+	String get tr => 'Turc';
+
+	/// fr: 'Indonésien'
+	String get id => 'Indonésien';
+
+	/// fr: 'Ouzbek'
+	String get uz => 'Ouzbek';
+
+	/// fr: 'Português'
+	String get pt => 'Português';
+
+	/// fr: 'Русский (russe)'
+	String get ru => 'Русский (russe)';
+
+	/// fr: 'Deutsch'
+	String get de => 'Deutsch';
+}
+
+// Path: onboarding.chemin
+class Traductions$onboarding$chemin$fr {
+	Traductions$onboarding$chemin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voici le chemin. Une durée prévue, une date limite, et la régularité de chacun.'
+	String get dit => 'Voici le chemin. Une durée prévue, une date limite, et la régularité de chacun.';
+
+	/// fr: 'Votre chemin'
+	String get titre => 'Votre chemin';
+
+	/// fr: 'Pour vous'
+	String get pourVous => 'Pour vous';
+
+	/// fr: '{n} semaines prévues'
+	String prevues({required Object n}) => '${n} semaines prévues';
+
+	/// fr: 'La durée de votre parcours sera précisée après la vérification de niveau, à la première séance.'
+	String get precise => 'La durée de votre parcours sera précisée après la vérification de niveau, à la première séance.';
+
+	/// fr: 'Début'
+	String get debut => 'Début';
+
+	/// fr: 'Fin des bases : {n} sem.'
+	String finBases({required Object n}) => 'Fin des bases : ${n} sem.';
+
+	/// fr: 'Date limite : {n} sem.'
+	String limite({required Object n}) => 'Date limite : ${n} sem.';
+
+	/// fr: 'Durée prévue {prevu} semaines, date limite {limite} semaines'
+	String courbeLue({required Object prevu, required Object limite}) => 'Durée prévue ${prevu} semaines, date limite ${limite} semaines';
+
+	/// fr: 'Durée prévue avec 3 séances par semaine. La date limite est ferme.'
+	String get trois => 'Durée prévue avec 3 séances par semaine. La date limite est ferme.';
+
+	/// fr: 'La rigueur fait partie du cours.'
+	String get rigueurTitre => 'La rigueur fait partie du cours.';
+
+	/// fr: 'Trois séances par semaine, toujours avec le même enseignant. Une absence se rattrape seul, avant la séance suivante, avec les outils que l'académie met à disposition : la lecture enregistrée du programme et les documents de la Bibliothèque.'
+	String get rigueur => 'Trois séances par semaine, toujours avec le même enseignant. Une absence se rattrape seul, avant la séance suivante, avec les outils que l\'académie met à disposition : la lecture enregistrée du programme et les documents de la Bibliothèque.';
+
+	/// fr: 'Vos jours et vos horaires, nous les choisirons ensemble après l'acceptation.'
+	String get horaires => 'Vos jours et vos horaires, nous les choisirons ensemble après l\'acceptation.';
+}
+
+// Path: onboarding.recap
+class Traductions$onboarding$recap$fr {
+	Traductions$onboarding$recap$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voici ce que j'ai compris. Rien n'est engagé : la direction lit chaque demande.'
+	String get dit => 'Voici ce que j\'ai compris. Rien n\'est engagé : la direction lit chaque demande.';
+
+	/// fr: 'Voici ce que nous avons compris'
+	String get titre => 'Voici ce que nous avons compris';
+
+	/// fr: 'Langue : {langue}'
+	String langue({required Object langue}) => 'Langue : ${langue}';
+
+	/// fr: '{langue}, sinon {secours}'
+	String sinon({required Object langue, required Object secours}) => '${langue}, sinon ${secours}';
+
+	/// fr: 'Heure de {ville} (détectée)'
+	String heure({required Object ville}) => 'Heure de ${ville} (détectée)';
+
+	/// fr: '{prenom} (vous)'
+	String vous({required Object prenom}) => '${prenom} (vous)';
+
+	/// fr: 'Adulte'
+	String get adulte => 'Adulte';
+
+	/// fr: '{n} ans'
+	String ans({required Object n}) => '${n} ans';
+
+	/// fr: 'Homme'
+	String get homme => 'Homme';
+
+	/// fr: 'Femme'
+	String get femme => 'Femme';
+
+	/// fr: 'Garçon'
+	String get garcon => 'Garçon';
+
+	/// fr: 'Fille'
+	String get fille => 'Fille';
+
+	/// fr: 'Niveau'
+	String get niveau => 'Niveau';
+
+	/// fr: 'Lecture'
+	String get lecture => 'Lecture';
+
+	/// fr: 'Objectif choisi'
+	String get objectif => 'Objectif choisi';
+
+	/// fr: '{niveau} ({quantite})'
+	String niveauQuantite({required Object niveau, required Object quantite}) => '${niveau} (${quantite})';
+
+	late final Traductions$onboarding$recap$niveaux$fr niveaux = Traductions$onboarding$recap$niveaux$fr.internal(_root);
+	late final Traductions$onboarding$recap$quantites$fr quantites = Traductions$onboarding$recap$quantites$fr.internal(_root);
+	late final Traductions$onboarding$recap$objectifs$fr objectifs = Traductions$onboarding$recap$objectifs$fr.internal(_root);
+	late final Traductions$onboarding$recap$lectures$fr lectures = Traductions$onboarding$recap$lectures$fr.internal(_root);
+
+	/// fr: 'Comment avez-vous connu Rewayah ?'
+	String get sourceTitre => 'Comment avez-vous connu Rewayah ?';
+
+	/// fr: '(facultatif)'
+	String get facultatif => '(facultatif)';
+
+	late final Traductions$onboarding$recap$sources$fr sources = Traductions$onboarding$recap$sources$fr.internal(_root);
+
+	/// fr: 'La direction lit chaque demande avant de former la classe.'
+	String get direction => 'La direction lit chaque demande avant de former la classe.';
+
+	/// fr: 'Si l'élève n'est pas satisfait, il est remboursé dans les 14 jours, moins les séances déjà suivies.'
+	String get rembourse => 'Si l\'élève n\'est pas satisfait, il est remboursé dans les 14 jours, moins les séances déjà suivies.';
+
+	/// fr: 'Vous pourrez corriger ces réponses après l'acceptation.'
+	String get corriger => 'Vous pourrez corriger ces réponses après l\'acceptation.';
+
+	/// fr: 'C'est exact, créer mon compte'
+	String get cta => 'C\'est exact, créer mon compte';
+}
+
+// Path: onboarding.acces
+class Traductions$onboarding$acces$fr {
+	Traductions$onboarding$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dernière étape : où puis-je envoyer votre lien de connexion ?'
+	String get dit => 'Dernière étape : où puis-je envoyer votre lien de connexion ?';
+
+	/// fr: 'Votre adresse e-mail'
+	String get titre => 'Votre adresse e-mail';
+
+	/// fr: 'Vos réponses sont gardées sur cet appareil jusqu'à l'envoi.'
+	String get sous => 'Vos réponses sont gardées sur cet appareil jusqu\'à l\'envoi.';
+
+	/// fr: 'Ouvrez le lien sur cet appareil, avec le même navigateur : vos réponses vous y attendent.'
+	String get indice => 'Ouvrez le lien sur cet appareil, avec le même navigateur : vos réponses vous y attendent.';
+}
+
+// Path: onboarding.envoye
+class Traductions$onboarding$envoye$fr {
+	Traductions$onboarding$envoye$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le lien est parti. Regardez votre boîte de réception.'
+	String get dit => 'Le lien est parti. Regardez votre boîte de réception.';
+
+	/// fr: 'Regardez votre boîte'
+	String get titre => 'Regardez votre boîte';
+
+	/// fr: 'Nous avons écrit à {courriel}.'
+	String ecrit({required Object courriel}) => 'Nous avons écrit à ${courriel}.';
+
+	/// fr: 'Si vous lisez le message sur un autre appareil, le lien vous le dira, et vous pourrez reprendre ici.'
+	String get ailleurs => 'Si vous lisez le message sur un autre appareil, le lien vous le dira, et vous pourrez reprendre ici.';
+}
+
+// Path: onboarding.vous
+class Traductions$onboarding$vous$fr {
+	Traductions$onboarding$vous$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous êtes connecté, {prenom}. Il me manque seulement votre nom de famille.'
+	String ditMoi({required Object prenom}) => 'Vous êtes connecté, ${prenom}. Il me manque seulement votre nom de famille.';
+
+	/// fr: 'Vous êtes connecté. Maintenant, vous : c'est vous qui gérerez le compte de vos enfants.'
+	String get dit => 'Vous êtes connecté. Maintenant, vous : c\'est vous qui gérerez le compte de vos enfants.';
+
+	/// fr: 'Votre nom de famille'
+	String get titreMoi => 'Votre nom de famille';
+
+	/// fr: 'Vous, le tuteur du compte'
+	String get titre => 'Vous, le tuteur du compte';
+
+	/// fr: 'Vos enfants sont déjà notés. Ce nom est le vôtre : vous gérez leur compte et recevez les messages de l'académie.'
+	String get sous => 'Vos enfants sont déjà notés. Ce nom est le vôtre : vous gérez leur compte et recevez les messages de l\'académie.';
+
+	/// fr: 'Votre prénom'
+	String get prenom => 'Votre prénom';
+
+	/// fr: 'Votre nom de famille'
+	String get nom => 'Votre nom de famille';
+
+	/// fr: 'Vous êtes…'
+	String get vousEtes => 'Vous êtes…';
+
+	/// fr: 'Envoyer ma demande'
+	String get envoyer => 'Envoyer ma demande';
+}
+
+// Path: onboarding.fin
+class Traductions$onboarding$fin$fr {
+	Traductions$onboarding$fin$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'C'est envoyé. Merci de votre confiance, la direction va lire votre demande.'
+	String get dit => 'C\'est envoyé. Merci de votre confiance, la direction va lire votre demande.';
+
+	/// fr: 'Votre demande est en cours'
+	String get titre => 'Votre demande est en cours';
+
+	/// fr: 'Et maintenant ?'
+	String get maintenant => 'Et maintenant ?';
+
+	/// fr: '1. La direction lit votre demande.'
+	String get un => '1. La direction lit votre demande.';
+
+	/// fr: '2. Si elle est acceptée, le profil est créé sans rien ressaisir.'
+	String get deux => '2. Si elle est acceptée, le profil est créé sans rien ressaisir.';
+
+	/// fr: '2. Si elle est acceptée, les profils des élèves sont créés sans rien ressaisir.'
+	String get deuxPlusieurs => '2. Si elle est acceptée, les profils des élèves sont créés sans rien ressaisir.';
+
+	/// fr: '3. Il ne reste que vos jours et vos horaires. Tout le reste est déjà noté.'
+	String get trois => '3. Il ne reste que vos jours et vos horaires. Tout le reste est déjà noté.';
+
+	/// fr: 'Chaque enfant aura sa propre classe et son propre enseignant : si un enseignant est absent, les autres continuent, et une seule tablette suffit à tour de rôle.'
+	String get fratrie => 'Chaque enfant aura sa propre classe et son propre enseignant : si un enseignant est absent, les autres continuent, et une seule tablette suffit à tour de rôle.';
+
+	/// fr: 'Suivre ma demande'
+	String get suivre => 'Suivre ma demande';
+}
+
 // Path: commun.etats.recharge1
 class Traductions$commun$etats$recharge1$fr {
 	Traductions$commun$etats$recharge1$fr.internal(this._root);
@@ -49497,6 +50541,306 @@ class Traductions$calendrier$pauses$refus$fr {
 
 	/// fr: 'La décision n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get inconnu => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
+// Path: onboarding.niveau.moi
+class Traductions$onboarding$niveau$moi$fr {
+	Traductions$onboarding$niveau$moi$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Je débute avec les lettres'
+	String get debut => 'Je débute avec les lettres';
+
+	/// fr: 'Je reconnais les lettres'
+	String get aide => 'Je reconnais les lettres';
+
+	/// fr: 'Je lis lentement'
+	String get lente => 'Je lis lentement';
+
+	/// fr: 'Je lis déjà le Coran'
+	String get courante => 'Je lis déjà le Coran';
+
+	/// fr: 'J'ai déjà mémorisé une partie'
+	String get memo => 'J\'ai déjà mémorisé une partie';
+}
+
+// Path: onboarding.niveau.il
+class Traductions$onboarding$niveau$il$fr {
+	Traductions$onboarding$niveau$il$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Il débute avec les lettres'
+	String get debut => 'Il débute avec les lettres';
+
+	/// fr: 'Il reconnaît les lettres'
+	String get aide => 'Il reconnaît les lettres';
+
+	/// fr: 'Il lit lentement'
+	String get lente => 'Il lit lentement';
+
+	/// fr: 'Il lit déjà le Coran'
+	String get courante => 'Il lit déjà le Coran';
+
+	/// fr: 'Il a déjà mémorisé une partie'
+	String get memo => 'Il a déjà mémorisé une partie';
+}
+
+// Path: onboarding.niveau.elle
+class Traductions$onboarding$niveau$elle$fr {
+	Traductions$onboarding$niveau$elle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Elle débute avec les lettres'
+	String get debut => 'Elle débute avec les lettres';
+
+	/// fr: 'Elle reconnaît les lettres'
+	String get aide => 'Elle reconnaît les lettres';
+
+	/// fr: 'Elle lit lentement'
+	String get lente => 'Elle lit lentement';
+
+	/// fr: 'Elle lit déjà le Coran'
+	String get courante => 'Elle lit déjà le Coran';
+
+	/// fr: 'Elle a déjà mémorisé une partie'
+	String get memo => 'Elle a déjà mémorisé une partie';
+}
+
+// Path: onboarding.niveau.desc
+class Traductions$onboarding$niveau$desc$fr {
+	Traductions$onboarding$niveau$desc$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les lettres arabes sont à découvrir'
+	String get debut => 'Les lettres arabes sont à découvrir';
+
+	/// fr: 'Mais il faut de l'aide pour lire'
+	String get aide => 'Mais il faut de l\'aide pour lire';
+
+	/// fr: 'Avec les voyelles'
+	String get lente => 'Avec les voyelles';
+
+	/// fr: 'Couramment, dans le Mushaf'
+	String get courante => 'Couramment, dans le Mushaf';
+
+	/// fr: 'Des sourates ou des juz'
+	String get memo => 'Des sourates ou des juz';
+}
+
+// Path: onboarding.depart.etapes
+class Traductions$onboarding$depart$etapes$fr {
+	Traductions$onboarding$depart$etapes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les lettres'
+	String get lettres => 'Les lettres';
+
+	/// fr: 'Les 28 lettres'
+	String get lettresDetail => 'Les 28 lettres';
+
+	/// fr: 'Lire avec les voyelles'
+	String get voyelles => 'Lire avec les voyelles';
+
+	/// fr: 'Jusqu'à la chadda'
+	String get voyellesDetail => 'Jusqu\'à la chadda';
+
+	/// fr: 'Lire dans le Coran'
+	String get coran => 'Lire dans le Coran';
+
+	/// fr: 'Fin du livre, puis le Mushaf'
+	String get coranDetail => 'Fin du livre, puis le Mushaf';
+
+	/// fr: 'Les sourates courtes'
+	String get sourates => 'Les sourates courtes';
+
+	/// fr: 'D'Al-Masad à Az-Zalzalah'
+	String get souratesDetail => 'D\'Al-Masad à Az-Zalzalah';
+
+	/// fr: 'Examen de fin des bases'
+	String get examen => 'Examen de fin des bases';
+}
+
+// Path: onboarding.depart.reco
+class Traductions$onboarding$depart$reco$fr {
+	Traductions$onboarding$depart$reco$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Étape 1 · Les lettres'
+	String get debut => 'Étape 1 · Les lettres';
+
+	/// fr: 'Vous commencez au début, c'est le chemin prévu.'
+	String get debutSuite => 'Vous commencez au début, c\'est le chemin prévu.';
+
+	/// fr: 'Étape 1 · Les lettres, en révision rapide'
+	String get aide => 'Étape 1 · Les lettres, en révision rapide';
+
+	/// fr: 'Puis l'étape 2.'
+	String get aideSuite => 'Puis l\'étape 2.';
+
+	/// fr: 'Étape 2 ou 3 · Lire avec les voyelles'
+	String get lente => 'Étape 2 ou 3 · Lire avec les voyelles';
+
+	/// fr: 'Selon la première séance.'
+	String get lenteSuite => 'Selon la première séance.';
+
+	/// fr: 'Étape 3 ou 4 · Lire dans le Coran'
+	String get courante => 'Étape 3 ou 4 · Lire dans le Coran';
+
+	/// fr: 'Puis l'examen de fin des bases.'
+	String get couranteSuite => 'Puis l\'examen de fin des bases.';
+
+	/// fr: 'Étape 4 · Les sourates courtes'
+	String get memo => 'Étape 4 · Les sourates courtes';
+
+	/// fr: 'Puis l'examen de fin des bases : la mémorisation commence ensuite.'
+	String get memoSuite => 'Puis l\'examen de fin des bases : la mémorisation commence ensuite.';
+}
+
+// Path: onboarding.langue.groupes
+class Traductions$onboarding$langue$groupes$fr {
+	Traductions$onboarding$langue$groupes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les plus demandées'
+	String get plusDemandees => 'Les plus demandées';
+
+	/// fr: 'Langues d’Afrique'
+	String get afrique => 'Langues d’Afrique';
+
+	/// fr: 'Langues d’Asie'
+	String get asie => 'Langues d’Asie';
+
+	/// fr: 'Langues d’Europe'
+	String get europe => 'Langues d’Europe';
+}
+
+// Path: onboarding.recap.niveaux
+class Traductions$onboarding$recap$niveaux$fr {
+	Traductions$onboarding$recap$niveaux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Débute avec les lettres'
+	String get debut => 'Débute avec les lettres';
+
+	/// fr: 'Reconnaît les lettres'
+	String get aide => 'Reconnaît les lettres';
+
+	/// fr: 'Lit lentement'
+	String get lente => 'Lit lentement';
+
+	/// fr: 'Lit déjà le Coran'
+	String get courante => 'Lit déjà le Coran';
+
+	/// fr: 'A mémorisé une partie'
+	String get memo => 'A mémorisé une partie';
+}
+
+// Path: onboarding.recap.quantites
+class Traductions$onboarding$recap$quantites$fr {
+	Traductions$onboarding$recap$quantites$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'quelques sourates'
+	String get quelques => 'quelques sourates';
+
+	/// fr: '1 à 5 juz'
+	String get unACinq => '1 à 5 juz';
+
+	/// fr: 'plus de 5 juz'
+	String get plusDeCinq => 'plus de 5 juz';
+
+	/// fr: 'tout le Coran'
+	String get tout => 'tout le Coran';
+}
+
+// Path: onboarding.recap.objectifs
+class Traductions$onboarding$recap$objectifs$fr {
+	Traductions$onboarding$recap$objectifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lire'
+	String get lire => 'Lire';
+
+	/// fr: 'Mémoriser'
+	String get memoriser => 'Mémoriser';
+
+	/// fr: 'Prière et invocations'
+	String get priere => 'Prière et invocations';
+
+	/// fr: 'Pas encore décidé'
+	String get indecis => 'Pas encore décidé';
+}
+
+// Path: onboarding.recap.lectures
+class Traductions$onboarding$recap$lectures$fr {
+	Traductions$onboarding$recap$lectures$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Hafs'
+	String get hafs => 'Hafs';
+
+	/// fr: 'Warsh'
+	String get warsh => 'Warsh';
+
+	/// fr: 'Autre'
+	String get autre => 'Autre';
+}
+
+// Path: onboarding.recap.sources
+class Traductions$onboarding$recap$sources$fr {
+	Traductions$onboarding$recap$sources$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mosquée ou association'
+	String get mosquee => 'Mosquée ou association';
+
+	/// fr: 'Famille ou ami'
+	String get proche => 'Famille ou ami';
+
+	/// fr: 'Réseaux sociaux'
+	String get reseaux => 'Réseaux sociaux';
+
+	/// fr: 'Recherche en ligne'
+	String get recherche => 'Recherche en ligne';
+
+	/// fr: 'Autre'
+	String get autre => 'Autre';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -72632,6 +73976,325 @@ extension on Traductions {
 			'pause.refus.nonAnnulable' => 'Cette pause ne peut plus être annulée : elle a déjà commencé, ou elle est déjà refusée ou annulée.',
 			'pause.refus.nonAutorise' => 'Vous ne pouvez pas demander de pause depuis ce compte.',
 			'pause.refus.inconnu' => 'La demande n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'onboarding.chapitres.quiApprend' => 'Qui apprend',
+			'onboarding.chapitres.niveau' => 'Où en est le niveau',
+			'onboarding.chapitres.cours' => 'Vos cours',
+			'onboarding.chapitres.demande' => 'Votre demande',
+			'onboarding.chapitres.lu' => ({required Object n, required Object nom}) => '${n}/4 · ${nom}',
+			'onboarding.chapitres.luLong' => ({required Object n, required Object nom}) => 'Chapitre ${n} sur 4 : ${nom}',
+			'onboarding.retour' => 'Retour',
+			'onboarding.praxisIa' => 'Praxis est une intelligence artificielle. Chaque demande est lue par la direction.',
+			'onboarding.accueil.dit' => 'Bonjour, je suis Praxis, l\'assistant de la direction. Quelques questions, environ deux minutes, pour préparer votre arrivée.',
+			'onboarding.accueil.titre' => 'Bienvenue chez Rewayah Academy',
+			'onboarding.accueil.sous' => 'Cours de Coran en direct, en classe stable, avec le même enseignant.',
+			'onboarding.accueil.commencer' => 'Commencer',
+			'onboarding.accueil.dejaCompte' => 'J\'ai déjà un compte',
+			'onboarding.garde.dit' => 'D\'abord, une question pour bien vous orienter. Que venez-vous faire ?',
+			'onboarding.garde.titre' => 'Vous venez pour apprendre, ou pour enseigner ?',
+			'onboarding.garde.apprendre' => 'Apprendre',
+			'onboarding.garde.apprendreDesc' => 'Pour moi ou pour mon enfant',
+			'onboarding.garde.enseigner' => 'Enseigner',
+			'onboarding.garde.enseignerDesc' => 'Je veux rejoindre l\'équipe',
+			'onboarding.garde.reponse' => 'Très bien. Je vous guide.',
+			'onboarding.enseigner.dit' => 'Bienvenue. Votre candidature commence ici, sans invitation. Je vous guide pas à pas.',
+			'onboarding.enseigner.titre' => 'Votre candidature d\'enseignant',
+			'onboarding.enseigner.sous' => 'Ce chemin crée une candidature, jamais un compte élève : aucun doublon possible.',
+			'onboarding.enseigner.commencer' => 'Commencer ma candidature',
+			'onboarding.enseigner.trompe' => 'Je me suis trompé : je veux apprendre',
+			'onboarding.pourQui.dit' => 'Dites-moi qui va suivre les cours, je m\'occupe du reste.',
+			'onboarding.pourQui.titre' => 'Qui va suivre les cours ?',
+			'onboarding.pourQui.moi' => 'Pour moi',
+			'onboarding.pourQui.moiDesc' => 'Je suis adulte (18 ans ou plus)',
+			'onboarding.pourQui.unEnfant' => 'Pour mon enfant',
+			'onboarding.pourQui.unEnfantDesc' => 'De 6 à 17 ans',
+			'onboarding.pourQui.plusieurs' => 'Pour plusieurs enfants',
+			'onboarding.pourQui.plusieursDesc' => 'Je poserai les mêmes questions pour chacun',
+			'onboarding.pourQui.reponseMoi' => 'Parfait, on commence par vous.',
+			'onboarding.pourQui.reponseUn' => 'Très bien. Parlons de votre enfant.',
+			'onboarding.pourQui.reponsePlusieurs' => 'Très bien. Nous irons enfant par enfant, c\'est rapide.',
+			'onboarding.pourQui.mineur' => 'J\'ai moins de 18 ans et je m\'inscris moi-même',
+			'onboarding.pourQui.mineurReponse' => 'Un parent ou tuteur crée le compte et vous y ajoute. Choisissez « Pour mon enfant ».',
+			'onboarding.prenom.ditMoi' => 'Comment dois-je vous appeler ?',
+			'onboarding.prenom.ditEnfant' => 'Comment s\'appelle votre enfant ?',
+			'onboarding.prenom.ditSuivant' => 'Et comment s\'appelle l\'élève suivant ?',
+			'onboarding.prenom.titreMoi' => 'Votre prénom',
+			'onboarding.prenom.titreEnfant' => 'Le prénom de votre enfant',
+			'onboarding.prenom.titreSuivant' => 'Le prénom de l\'élève suivant',
+			'onboarding.prenom.sousMoi' => 'Seulement le prénom pour l\'instant.',
+			'onboarding.prenom.sousEnfant' => 'Le prénom suffit.',
+			'onboarding.prenom.etiquette' => 'Prénom',
+			'onboarding.prenom.indiceMoi' => 'Votre prénom',
+			'onboarding.prenom.indice' => 'Prénom',
+			'onboarding.prenom.refus' => 'Seulement des lettres, s\'il vous plaît : un vrai prénom, sans chiffres ni émojis.',
+			'onboarding.age.titre' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
+			'onboarding.age.sous' => 'De 6 à 17 ans. Cela fixe la durée prévue de son parcours.',
+			'onboarding.age.ans' => ({required Object n}) => '${n} ans',
+			'onboarding.age.reponse' => ({required Object n}) => '${n} ans : noté.',
+			'onboarding.age.adulte' => 'Il a 18 ans ou plus',
+			'onboarding.age.adulteReponse' => 'Une personne de 18 ans ou plus crée son propre compte. Vous pouvez l\'y aider.',
+			'onboarding.genre.dit' => 'Cela sert à former des classes adaptées : elles ne sont pas mixtes par défaut.',
+			'onboarding.genre.titreMoi' => 'Vous êtes…',
+			'onboarding.genre.titre' => ({required Object prenom}) => '${prenom} est…',
+			'onboarding.genre.homme' => 'Un homme',
+			'onboarding.genre.femme' => 'Une femme',
+			'onboarding.genre.garcon' => 'Un garçon',
+			'onboarding.genre.fille' => 'Une fille',
+			'onboarding.genre.reponse' => 'Merci. Les classes sont formées par genre.',
+			'onboarding.famille.ditEncore' => ({required Object prenom}) => 'Voici ${prenom}. Passons à l’enfant suivant.',
+			'onboarding.famille.ditSeul' => ({required Object prenom}) => 'Enchanté, ${prenom}. Parlons maintenant de votre niveau.',
+			'onboarding.famille.dit' => 'Voici votre famille. Parlons maintenant du niveau de chacun.',
+			'onboarding.famille.titreSeul' => 'Enchanté',
+			'onboarding.famille.titre' => 'Voici votre famille',
+			'onboarding.famille.suivant' => 'Ajouter l’enfant suivant',
+			'onboarding.famille.ajouter' => 'Ajouter un autre élève',
+			'onboarding.famille.aussi' => 'Je suivrai aussi des cours',
+			'onboarding.niveau.dit' => 'Répondez au plus juste : un enseignant vérifiera lors de la première séance.',
+			'onboarding.niveau.titreMoi' => 'Où en êtes-vous aujourd\'hui ?',
+			'onboarding.niveau.titre' => ({required Object prenom}) => 'Où en est ${prenom} aujourd\'hui ?',
+			'onboarding.niveau.moi.debut' => 'Je débute avec les lettres',
+			'onboarding.niveau.moi.aide' => 'Je reconnais les lettres',
+			'onboarding.niveau.moi.lente' => 'Je lis lentement',
+			'onboarding.niveau.moi.courante' => 'Je lis déjà le Coran',
+			'onboarding.niveau.moi.memo' => 'J\'ai déjà mémorisé une partie',
+			'onboarding.niveau.il.debut' => 'Il débute avec les lettres',
+			'onboarding.niveau.il.aide' => 'Il reconnaît les lettres',
+			'onboarding.niveau.il.lente' => 'Il lit lentement',
+			'onboarding.niveau.il.courante' => 'Il lit déjà le Coran',
+			'onboarding.niveau.il.memo' => 'Il a déjà mémorisé une partie',
+			'onboarding.niveau.elle.debut' => 'Elle débute avec les lettres',
+			'onboarding.niveau.elle.aide' => 'Elle reconnaît les lettres',
+			'onboarding.niveau.elle.lente' => 'Elle lit lentement',
+			'onboarding.niveau.elle.courante' => 'Elle lit déjà le Coran',
+			'onboarding.niveau.elle.memo' => 'Elle a déjà mémorisé une partie',
+			'onboarding.niveau.desc.debut' => 'Les lettres arabes sont à découvrir',
+			'onboarding.niveau.desc.aide' => 'Mais il faut de l\'aide pour lire',
+			'onboarding.niveau.desc.lente' => 'Avec les voyelles',
+			'onboarding.niveau.desc.courante' => 'Couramment, dans le Mushaf',
+			'onboarding.niveau.desc.memo' => 'Des sourates ou des juz',
+			'onboarding.niveau.reponseDebut' => 'Un très bon point de départ : tout est prévu.',
+			'onboarding.niveau.reponseMemo' => 'Très bien. Je vais demander ce qui est déjà mémorisé.',
+			'onboarding.niveau.reponseLecture' => 'Très bien. Une précision sur la lecture, et nous continuons.',
+			'onboarding.niveau.reponse' => 'Noté.',
+			'onboarding.lecture.dit' => 'Une précision : dans quelle lecture du Coran ?',
+			'onboarding.lecture.titreMoi' => 'Quelle lecture lisez-vous ?',
+			'onboarding.lecture.titreIl' => ({required Object prenom}) => 'Quelle lecture ${prenom} lit-il ?',
+			'onboarding.lecture.titreElle' => ({required Object prenom}) => 'Quelle lecture ${prenom} lit-elle ?',
+			'onboarding.lecture.sous' => 'Hafs est présélectionnée.',
+			'onboarding.lecture.hafs' => 'Lecture de Hafs',
+			'onboarding.lecture.hafsDesc' => 'La plus répandue, choisie par défaut',
+			'onboarding.lecture.warsh' => 'Lecture de Warsh',
+			'onboarding.lecture.warshDesc' => 'Nous la notons pour la direction',
+			'onboarding.lecture.autre' => 'Une autre lecture',
+			'onboarding.lecture.autreDesc' => 'À préciser',
+			'onboarding.lecture.autreEtiquette' => 'Laquelle ?',
+			'onboarding.lecture.autreIndice' => 'Par exemple : Qalun',
+			'onboarding.lecture.reponseHafs' => 'Hafs, c\'est noté.',
+			'onboarding.lecture.reponseWarsh' => 'Noté. La direction vous dira quelles classes existent.',
+			'onboarding.lecture.reponseAutre' => 'Laquelle ? Écrivez-la, la direction la lira.',
+			'onboarding.memorise.dit' => 'Combien est déjà mémorisé, à peu près ?',
+			'onboarding.memorise.titreMoi' => 'Combien avez-vous mémorisé ?',
+			'onboarding.memorise.titreIl' => ({required Object prenom}) => 'Combien ${prenom} a-t-il mémorisé ?',
+			'onboarding.memorise.titreElle' => ({required Object prenom}) => 'Combien ${prenom} a-t-elle mémorisé ?',
+			'onboarding.memorise.quelques' => 'Quelques sourates',
+			'onboarding.memorise.unACinq' => 'Un à cinq juz',
+			'onboarding.memorise.plusDeCinq' => 'Plus de cinq juz',
+			'onboarding.memorise.tout' => 'Tout le Coran',
+			'onboarding.memorise.reponseTout' => 'Mâ châ’ Allah. La direction vous recevra pour une vérification.',
+			'onboarding.memorise.reponse' => 'Mâ châ’ Allah. Quelques détails, si vous les connaissez.',
+			'onboarding.detail.ditJuz' => 'Quels juz, si vous les connaissez ? Vous pouvez passer.',
+			'onboarding.detail.ditSourates' => 'Lesquelles ? Touchez celles que vous connaissez. Vous pouvez passer.',
+			'onboarding.detail.titreJuz' => 'Quels juz ?',
+			'onboarding.detail.titreSourates' => 'Quelles sourates ?',
+			'onboarding.detail.sous' => 'Facultatif : l\'enseignant vérifiera de toute façon.',
+			'onboarding.detail.aucun' => 'Aucun pour l\'instant.',
+			'onboarding.detail.un' => '1 choisi.',
+			'onboarding.detail.plusieurs' => ({required Object n}) => '${n} choisis.',
+			'onboarding.detail.juz' => ({required Object n}) => 'Juz ${n}',
+			'onboarding.sourates.fatiha' => 'Al-Fatiha',
+			'onboarding.sourates.nas' => 'An-Nâs',
+			'onboarding.sourates.falaq' => 'Al-Falaq',
+			'onboarding.sourates.ikhlas' => 'Al-Ikhlâs',
+			'onboarding.sourates.masad' => 'Al-Masad',
+			'onboarding.sourates.nasr' => 'An-Nasr',
+			'onboarding.sourates.kafirun' => 'Al-Kâfirûn',
+			'onboarding.sourates.kawthar' => 'Al-Kawthar',
+			'onboarding.sourates.maun' => 'Al-Mâ\'ûn',
+			'onboarding.sourates.quraysh' => 'Quraysh',
+			'onboarding.sourates.fil' => 'Al-Fîl',
+			'onboarding.sourates.humaza' => 'Al-Humaza',
+			'onboarding.sourates.asr' => 'Al-\'Asr',
+			'onboarding.sourates.takathur' => 'At-Takâthur',
+			'onboarding.sourates.qaria' => 'Al-Qâri\'a',
+			'onboarding.sourates.adiyat' => 'Al-\'Âdiyât',
+			'onboarding.sourates.zalzala' => 'Az-Zalzalah',
+			'onboarding.objectif.dit' => 'Qu\'aimeriez-vous atteindre en premier ?',
+			'onboarding.objectif.titreMoi' => 'Que souhaitez-vous d\'abord ?',
+			'onboarding.objectif.titre' => ({required Object prenom}) => 'Que souhaitez-vous pour ${prenom} ?',
+			'onboarding.objectif.sousMemo' => 'Mémoriser est présélectionné.',
+			'onboarding.objectif.lireBases' => 'Apprendre à lire le Coran',
+			'onboarding.objectif.lireBasesDesc' => 'Commencer par les bases',
+			'onboarding.objectif.lireCourant' => 'Lire tout le Coran couramment',
+			'onboarding.objectif.lireCourantDesc' => 'Devenir fluide',
+			'onboarding.objectif.memoriser' => 'Mémoriser le Coran',
+			'onboarding.objectif.memoriserApresBases' => 'Après les bases',
+			'onboarding.objectif.memoriserAvec' => 'Avec un enseignant',
+			'onboarding.objectif.priere' => 'La prière et les invocations',
+			'onboarding.objectif.priereDesc' => 'Pour que l\'enfant prie seul',
+			'onboarding.objectif.indecis' => 'Je ne sais pas encore',
+			'onboarding.objectif.indecisDesc' => 'L\'enseignant me conseillera',
+			'onboarding.objectif.reponseIndecis' => 'Aucun souci : vous pourrez décider en cours de route.',
+			'onboarding.objectif.reponse' => 'Bon choix.',
+			'onboarding.depart.dit' => 'Voici par où je vous conseille de commencer. L\'enseignant le confirmera à la première séance.',
+			'onboarding.depart.titre' => 'Votre point de départ',
+			'onboarding.depart.titrePlusieurs' => 'Le point de départ de chacun',
+			'onboarding.depart.pourVous' => 'Pour vous',
+			'onboarding.depart.probable' => 'départ probable',
+			'onboarding.depart.etapes.lettres' => 'Les lettres',
+			'onboarding.depart.etapes.lettresDetail' => 'Les 28 lettres',
+			'onboarding.depart.etapes.voyelles' => 'Lire avec les voyelles',
+			'onboarding.depart.etapes.voyellesDetail' => 'Jusqu\'à la chadda',
+			'onboarding.depart.etapes.coran' => 'Lire dans le Coran',
+			'onboarding.depart.etapes.coranDetail' => 'Fin du livre, puis le Mushaf',
+			'onboarding.depart.etapes.sourates' => 'Les sourates courtes',
+			'onboarding.depart.etapes.souratesDetail' => 'D\'Al-Masad à Az-Zalzalah',
+			'onboarding.depart.etapes.examen' => 'Examen de fin des bases',
+			'onboarding.depart.suiteMemoriser' => 'Après l\'examen de fin des bases : mémoriser le Coran.',
+			'onboarding.depart.suitePriere' => 'Les paroles de la prière arrivent en matière secondaire, très tôt.',
+			'onboarding.depart.suite' => 'Après l\'examen de fin des bases : lire tout le Coran ou le mémoriser.',
+			'onboarding.depart.reco.debut' => 'Étape 1 · Les lettres',
+			'onboarding.depart.reco.debutSuite' => 'Vous commencez au début, c\'est le chemin prévu.',
+			'onboarding.depart.reco.aide' => 'Étape 1 · Les lettres, en révision rapide',
+			'onboarding.depart.reco.aideSuite' => 'Puis l\'étape 2.',
+			'onboarding.depart.reco.lente' => 'Étape 2 ou 3 · Lire avec les voyelles',
+			'onboarding.depart.reco.lenteSuite' => 'Selon la première séance.',
+			'onboarding.depart.reco.courante' => 'Étape 3 ou 4 · Lire dans le Coran',
+			'onboarding.depart.reco.couranteSuite' => 'Puis l\'examen de fin des bases.',
+			'onboarding.depart.reco.memo' => 'Étape 4 · Les sourates courtes',
+			'onboarding.depart.reco.memoSuite' => 'Puis l\'examen de fin des bases : la mémorisation commence ensuite.',
+			'onboarding.depart.indice' => 'Un point de départ probable, jamais une promesse : la première séance le vérifie.',
+			'onboarding.langue.dit' => 'Nos enseignants parlent plus de vingt langues. Dans laquelle voulez-vous les explications ?',
+			'onboarding.langue.titre' => 'La langue des explications',
+			'onboarding.langue.sous' => 'Votre premier choix. Nous orientons vers une classe dans cette langue dès qu\'un enseignant est disponible.',
+			'onboarding.langue.reponse' => ({required Object langue}) => '${langue} : c\'est noté.',
+			'onboarding.langue.groupes.plusDemandees' => 'Les plus demandées',
+			'onboarding.langue.groupes.afrique' => 'Langues d’Afrique',
+			'onboarding.langue.groupes.asie' => 'Langues d’Asie',
+			'onboarding.langue.groupes.europe' => 'Langues d’Europe',
+			'onboarding.langueSecours.dit' => 'Et si aucun enseignant n\'est libre dans votre langue, laquelle comprenez-vous aussi ?',
+			'onboarding.langueSecours.titre' => 'Une deuxième langue ?',
+			'onboarding.langueSecours.sous' => 'Facultatif. Elle sert seulement si la première n\'a pas d\'enseignant disponible.',
+			'onboarding.langueSecours.aucune' => 'Aucune autre',
+			'onboarding.langueSecours.reponseAucune' => 'Très bien.',
+			'onboarding.langueSecours.reponse' => 'Noté : ce sera notre solution de rechange.',
+			'onboarding.langueSecours.autreEtiquette' => 'Une langue absente de la liste ? (facultatif)',
+			'onboarding.langueSecours.autreIndice' => 'Par exemple : tamoul',
+			'onboarding.langues.francais' => 'Français',
+			'onboarding.langues.english' => 'English',
+			'onboarding.langues.ar' => 'العربية (arabe)',
+			'onboarding.langues.ha' => 'Hausa',
+			'onboarding.langues.poular' => 'Poular (peul)',
+			'onboarding.langues.yo' => 'Yoruba',
+			'onboarding.langues.man' => 'Malinké',
+			'onboarding.langues.snk' => 'Soninké',
+			'onboarding.langues.wo' => 'Wolof',
+			'onboarding.langues.bm' => 'Bambara',
+			'onboarding.langues.sw' => 'Swahili',
+			'onboarding.langues.so' => 'Somali',
+			'onboarding.langues.am' => 'Amharique',
+			'onboarding.langues.om' => 'Oromo',
+			'onboarding.langues.ur' => 'Ourdou',
+			'onboarding.langues.hi' => 'Hindi',
+			'onboarding.langues.bn' => 'Bengali',
+			'onboarding.langues.ps' => 'Pachto',
+			'onboarding.langues.fa' => 'Persan',
+			'onboarding.langues.tr' => 'Turc',
+			'onboarding.langues.id' => 'Indonésien',
+			'onboarding.langues.uz' => 'Ouzbek',
+			'onboarding.langues.pt' => 'Português',
+			'onboarding.langues.ru' => 'Русский (russe)',
+			'onboarding.langues.de' => 'Deutsch',
+			'onboarding.chemin.dit' => 'Voici le chemin. Une durée prévue, une date limite, et la régularité de chacun.',
+			'onboarding.chemin.titre' => 'Votre chemin',
+			'onboarding.chemin.pourVous' => 'Pour vous',
+			'onboarding.chemin.prevues' => ({required Object n}) => '${n} semaines prévues',
+			'onboarding.chemin.precise' => 'La durée de votre parcours sera précisée après la vérification de niveau, à la première séance.',
+			'onboarding.chemin.debut' => 'Début',
+			'onboarding.chemin.finBases' => ({required Object n}) => 'Fin des bases : ${n} sem.',
+			'onboarding.chemin.limite' => ({required Object n}) => 'Date limite : ${n} sem.',
+			'onboarding.chemin.courbeLue' => ({required Object prevu, required Object limite}) => 'Durée prévue ${prevu} semaines, date limite ${limite} semaines',
+			'onboarding.chemin.trois' => 'Durée prévue avec 3 séances par semaine. La date limite est ferme.',
+			'onboarding.chemin.rigueurTitre' => 'La rigueur fait partie du cours.',
+			'onboarding.chemin.rigueur' => 'Trois séances par semaine, toujours avec le même enseignant. Une absence se rattrape seul, avant la séance suivante, avec les outils que l\'académie met à disposition : la lecture enregistrée du programme et les documents de la Bibliothèque.',
+			'onboarding.chemin.horaires' => 'Vos jours et vos horaires, nous les choisirons ensemble après l\'acceptation.',
+			'onboarding.recap.dit' => 'Voici ce que j\'ai compris. Rien n\'est engagé : la direction lit chaque demande.',
+			'onboarding.recap.titre' => 'Voici ce que nous avons compris',
+			'onboarding.recap.langue' => ({required Object langue}) => 'Langue : ${langue}',
+			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '${langue}, sinon ${secours}',
+			'onboarding.recap.heure' => ({required Object ville}) => 'Heure de ${ville} (détectée)',
+			'onboarding.recap.vous' => ({required Object prenom}) => '${prenom} (vous)',
+			'onboarding.recap.adulte' => 'Adulte',
+			'onboarding.recap.ans' => ({required Object n}) => '${n} ans',
+			'onboarding.recap.homme' => 'Homme',
+			'onboarding.recap.femme' => 'Femme',
+			'onboarding.recap.garcon' => 'Garçon',
+			'onboarding.recap.fille' => 'Fille',
+			'onboarding.recap.niveau' => 'Niveau',
+			'onboarding.recap.lecture' => 'Lecture',
+			'onboarding.recap.objectif' => 'Objectif choisi',
+			'onboarding.recap.niveauQuantite' => ({required Object niveau, required Object quantite}) => '${niveau} (${quantite})',
+			'onboarding.recap.niveaux.debut' => 'Débute avec les lettres',
+			'onboarding.recap.niveaux.aide' => 'Reconnaît les lettres',
+			'onboarding.recap.niveaux.lente' => 'Lit lentement',
+			'onboarding.recap.niveaux.courante' => 'Lit déjà le Coran',
+			'onboarding.recap.niveaux.memo' => 'A mémorisé une partie',
+			'onboarding.recap.quantites.quelques' => 'quelques sourates',
+			'onboarding.recap.quantites.unACinq' => '1 à 5 juz',
+			'onboarding.recap.quantites.plusDeCinq' => 'plus de 5 juz',
+			'onboarding.recap.quantites.tout' => 'tout le Coran',
+			'onboarding.recap.objectifs.lire' => 'Lire',
+			'onboarding.recap.objectifs.memoriser' => 'Mémoriser',
+			'onboarding.recap.objectifs.priere' => 'Prière et invocations',
+			'onboarding.recap.objectifs.indecis' => 'Pas encore décidé',
+			'onboarding.recap.lectures.hafs' => 'Hafs',
+			'onboarding.recap.lectures.warsh' => 'Warsh',
+			'onboarding.recap.lectures.autre' => 'Autre',
+			'onboarding.recap.sourceTitre' => 'Comment avez-vous connu Rewayah ?',
+			'onboarding.recap.facultatif' => '(facultatif)',
+			'onboarding.recap.sources.mosquee' => 'Mosquée ou association',
+			'onboarding.recap.sources.proche' => 'Famille ou ami',
+			'onboarding.recap.sources.reseaux' => 'Réseaux sociaux',
+			'onboarding.recap.sources.recherche' => 'Recherche en ligne',
+			'onboarding.recap.sources.autre' => 'Autre',
+			'onboarding.recap.direction' => 'La direction lit chaque demande avant de former la classe.',
+			'onboarding.recap.rembourse' => 'Si l\'élève n\'est pas satisfait, il est remboursé dans les 14 jours, moins les séances déjà suivies.',
+			'onboarding.recap.corriger' => 'Vous pourrez corriger ces réponses après l\'acceptation.',
+			'onboarding.recap.cta' => 'C\'est exact, créer mon compte',
+			'onboarding.acces.dit' => 'Dernière étape : où puis-je envoyer votre lien de connexion ?',
+			'onboarding.acces.titre' => 'Votre adresse e-mail',
+			'onboarding.acces.sous' => 'Vos réponses sont gardées sur cet appareil jusqu\'à l\'envoi.',
+			'onboarding.acces.indice' => 'Ouvrez le lien sur cet appareil, avec le même navigateur : vos réponses vous y attendent.',
+			'onboarding.envoye.dit' => 'Le lien est parti. Regardez votre boîte de réception.',
+			'onboarding.envoye.titre' => 'Regardez votre boîte',
+			'onboarding.envoye.ecrit' => ({required Object courriel}) => 'Nous avons écrit à ${courriel}.',
+			'onboarding.envoye.ailleurs' => 'Si vous lisez le message sur un autre appareil, le lien vous le dira, et vous pourrez reprendre ici.',
+			'onboarding.vous.ditMoi' => ({required Object prenom}) => 'Vous êtes connecté, ${prenom}. Il me manque seulement votre nom de famille.',
+			'onboarding.vous.dit' => 'Vous êtes connecté. Maintenant, vous : c\'est vous qui gérerez le compte de vos enfants.',
+			'onboarding.vous.titreMoi' => 'Votre nom de famille',
+			'onboarding.vous.titre' => 'Vous, le tuteur du compte',
+			'onboarding.vous.sous' => 'Vos enfants sont déjà notés. Ce nom est le vôtre : vous gérez leur compte et recevez les messages de l\'académie.',
+			'onboarding.vous.prenom' => 'Votre prénom',
+			'onboarding.vous.nom' => 'Votre nom de famille',
+			'onboarding.vous.vousEtes' => 'Vous êtes…',
+			'onboarding.vous.envoyer' => 'Envoyer ma demande',
+			'onboarding.fin.dit' => 'C\'est envoyé. Merci de votre confiance, la direction va lire votre demande.',
+			'onboarding.fin.titre' => 'Votre demande est en cours',
+			'onboarding.fin.maintenant' => 'Et maintenant ?',
+			'onboarding.fin.un' => '1. La direction lit votre demande.',
+			'onboarding.fin.deux' => '2. Si elle est acceptée, le profil est créé sans rien ressaisir.',
+			'onboarding.fin.deuxPlusieurs' => '2. Si elle est acceptée, les profils des élèves sont créés sans rien ressaisir.',
+			'onboarding.fin.trois' => '3. Il ne reste que vos jours et vos horaires. Tout le reste est déjà noté.',
+			'onboarding.fin.fratrie' => 'Chaque enfant aura sa propre classe et son propre enseignant : si un enseignant est absent, les autres continuent, et une seule tablette suffit à tour de rôle.',
+			'onboarding.fin.suivre' => 'Suivre ma demande',
 			_ => null,
 		};
 	}

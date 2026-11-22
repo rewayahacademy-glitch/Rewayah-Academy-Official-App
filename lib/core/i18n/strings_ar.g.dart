@@ -129,6 +129,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$identiteProfil$ar identiteProfil = _Traductions$identiteProfil$ar._(_root);
 	@override late final _Traductions$presentationTuteur$ar presentationTuteur = _Traductions$presentationTuteur$ar._(_root);
 	@override late final _Traductions$reprisesAdmin$ar reprisesAdmin = _Traductions$reprisesAdmin$ar._(_root);
+	@override late final _Traductions$onboarding$ar onboarding = _Traductions$onboarding$ar._(_root);
 }
 
 // Path: notifications
@@ -2593,6 +2594,42 @@ class _Traductions$reprisesAdmin$ar extends Traductions$reprisesAdmin$fr {
 	@override String get sansDonnees => 'طلبات الاستلام';
 	@override String get indisponibleTitre => 'استلام الأسرة غير متاح';
 	@override String get indisponiblePhrase => 'ستتوفر هذه الوظيفة عند ربط الخادم.';
+}
+
+// Path: onboarding
+class _Traductions$onboarding$ar extends Traductions$onboarding$fr {
+	_Traductions$onboarding$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$onboarding$chapitres$ar chapitres = _Traductions$onboarding$chapitres$ar._(_root);
+	@override String get retour => 'رجوع';
+	@override String get praxisIa => 'براكسيس ذكاء اصطناعي. تقرأ الإدارة كل طلب.';
+	@override late final _Traductions$onboarding$accueil$ar accueil = _Traductions$onboarding$accueil$ar._(_root);
+	@override late final _Traductions$onboarding$garde$ar garde = _Traductions$onboarding$garde$ar._(_root);
+	@override late final _Traductions$onboarding$enseigner$ar enseigner = _Traductions$onboarding$enseigner$ar._(_root);
+	@override late final _Traductions$onboarding$pourQui$ar pourQui = _Traductions$onboarding$pourQui$ar._(_root);
+	@override late final _Traductions$onboarding$prenom$ar prenom = _Traductions$onboarding$prenom$ar._(_root);
+	@override late final _Traductions$onboarding$age$ar age = _Traductions$onboarding$age$ar._(_root);
+	@override late final _Traductions$onboarding$genre$ar genre = _Traductions$onboarding$genre$ar._(_root);
+	@override late final _Traductions$onboarding$famille$ar famille = _Traductions$onboarding$famille$ar._(_root);
+	@override late final _Traductions$onboarding$niveau$ar niveau = _Traductions$onboarding$niveau$ar._(_root);
+	@override late final _Traductions$onboarding$lecture$ar lecture = _Traductions$onboarding$lecture$ar._(_root);
+	@override late final _Traductions$onboarding$memorise$ar memorise = _Traductions$onboarding$memorise$ar._(_root);
+	@override late final _Traductions$onboarding$detail$ar detail = _Traductions$onboarding$detail$ar._(_root);
+	@override late final _Traductions$onboarding$sourates$ar sourates = _Traductions$onboarding$sourates$ar._(_root);
+	@override late final _Traductions$onboarding$objectif$ar objectif = _Traductions$onboarding$objectif$ar._(_root);
+	@override late final _Traductions$onboarding$depart$ar depart = _Traductions$onboarding$depart$ar._(_root);
+	@override late final _Traductions$onboarding$langue$ar langue = _Traductions$onboarding$langue$ar._(_root);
+	@override late final _Traductions$onboarding$langueSecours$ar langueSecours = _Traductions$onboarding$langueSecours$ar._(_root);
+	@override late final _Traductions$onboarding$langues$ar langues = _Traductions$onboarding$langues$ar._(_root);
+	@override late final _Traductions$onboarding$chemin$ar chemin = _Traductions$onboarding$chemin$ar._(_root);
+	@override late final _Traductions$onboarding$recap$ar recap = _Traductions$onboarding$recap$ar._(_root);
+	@override late final _Traductions$onboarding$acces$ar acces = _Traductions$onboarding$acces$ar._(_root);
+	@override late final _Traductions$onboarding$envoye$ar envoye = _Traductions$onboarding$envoye$ar._(_root);
+	@override late final _Traductions$onboarding$vous$ar vous = _Traductions$onboarding$vous$ar._(_root);
+	@override late final _Traductions$onboarding$fin$ar fin = _Traductions$onboarding$fin$ar._(_root);
 }
 
 // Path: notifications.cloche
@@ -13813,6 +13850,496 @@ class _Traductions$reprisesAdmin$etat$ar extends Traductions$reprisesAdmin$etat$
 	// Translations
 	@override String get aExaminer => 'بانتظار الدراسة';
 	@override String get refuseeParTitulaire => 'رفضه صاحب الحساب';
+}
+
+// Path: onboarding.chapitres
+class _Traductions$onboarding$chapitres$ar extends Traductions$onboarding$chapitres$fr {
+	_Traductions$onboarding$chapitres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get quiApprend => 'من سيتعلّم';
+	@override String get niveau => 'المستوى الحالي';
+	@override String get cours => 'دروسك';
+	@override String get demande => 'طلبك';
+	@override String lu({required Object n, required Object nom}) => 'الفصل ⁦⁨${n}⁩/4⁩ · ⁨${nom}⁩';
+	@override String luLong({required Object n, required Object nom}) => 'الفصل ⁨${n}⁩ من 4: ⁨${nom}⁩';
+}
+
+// Path: onboarding.accueil
+class _Traductions$onboarding$accueil$ar extends Traductions$onboarding$accueil$fr {
+	_Traductions$onboarding$accueil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'السلام عليكم، أنا براكسيس، مساعد الإدارة. بضعة أسئلة، في دقيقتين تقريبًا، لنحضّر قدومك.';
+	@override String get titre => 'أهلًا بك في أكاديمية رواية';
+	@override String get sous => 'دروس القرآن مباشرة، في فصل ثابت، مع المعلّم نفسه.';
+	@override String get commencer => 'لنبدأ';
+	@override String get dejaCompte => 'لديّ حساب';
+}
+
+// Path: onboarding.garde
+class _Traductions$onboarding$garde$ar extends Traductions$onboarding$garde$fr {
+	_Traductions$onboarding$garde$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'أولًا، سؤال واحد لنوجّهك جيدًا. ما الذي جاء بك؟';
+	@override String get titre => 'هل جئت لتتعلّم أم لتعلّم؟';
+	@override String get apprendre => 'أتعلّم';
+	@override String get apprendreDesc => 'لي أو لطفلي';
+	@override String get enseigner => 'أعلّم';
+	@override String get enseignerDesc => 'أريد الانضمام إلى الفريق';
+	@override String get reponse => 'حسنًا. سأرشدك.';
+}
+
+// Path: onboarding.enseigner
+class _Traductions$onboarding$enseigner$ar extends Traductions$onboarding$enseigner$fr {
+	_Traductions$onboarding$enseigner$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'أهلًا بك. طلبك يبدأ هنا، بلا دعوة. سأرشدك خطوة بخطوة.';
+	@override String get titre => 'طلبك للتدريس';
+	@override String get sous => 'هذا الطريق ينشئ طلب تدريس، ولا ينشئ حساب طالب أبدًا: لا تكرار ممكن.';
+	@override String get commencer => 'ابدأ طلبي';
+	@override String get trompe => 'أخطأت: أريد أن أتعلّم';
+}
+
+// Path: onboarding.pourQui
+class _Traductions$onboarding$pourQui$ar extends Traductions$onboarding$pourQui$fr {
+	_Traductions$onboarding$pourQui$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'أخبرني من سيحضر الدروس، وأنا أتولّى الباقي.';
+	@override String get titre => 'من سيحضر الدروس؟';
+	@override String get moi => 'لي';
+	@override String get moiDesc => 'أنا بالغ (18 سنة فأكثر)';
+	@override String get unEnfant => 'لطفلي';
+	@override String get unEnfantDesc => 'من 6 إلى 17 سنة';
+	@override String get plusieurs => 'لعدّة أطفال';
+	@override String get plusieursDesc => 'سأطرح الأسئلة نفسها عن كل واحد';
+	@override String get reponseMoi => 'ممتاز، نبدأ بك.';
+	@override String get reponseUn => 'حسنًا. لنتحدّث عن طفلك.';
+	@override String get reponsePlusieurs => 'حسنًا. سنمضي طفلًا بعد طفل، الأمر سريع.';
+	@override String get mineur => 'عمري أقل من 18 سنة وأسجّل بنفسي';
+	@override String get mineurReponse => 'ينشئ أحد الوالدين أو الوليّ الحساب ويضيفك إليه. اختر «لطفلي».';
+}
+
+// Path: onboarding.prenom
+class _Traductions$onboarding$prenom$ar extends Traductions$onboarding$prenom$fr {
+	_Traductions$onboarding$prenom$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ditMoi => 'بماذا أناديك؟';
+	@override String get ditEnfant => 'ما اسم طفلك؟';
+	@override String get ditSuivant => 'وما اسم الطالب التالي؟';
+	@override String get titreMoi => 'اسمك الأول';
+	@override String get titreEnfant => 'الاسم الأول لطفلك';
+	@override String get titreSuivant => 'الاسم الأول للطالب التالي';
+	@override String get sousMoi => 'الاسم الأول فقط الآن.';
+	@override String get sousEnfant => 'الاسم الأول يكفي.';
+	@override String get etiquette => 'الاسم الأول';
+	@override String get indiceMoi => 'اسمك الأول';
+	@override String get indice => 'الاسم الأول';
+	@override String get refus => 'حروف فقط من فضلك: اسم حقيقي، بلا أرقام ولا رموز تعبيرية.';
+}
+
+// Path: onboarding.age
+class _Traductions$onboarding$age$ar extends Traductions$onboarding$age$fr {
+	_Traductions$onboarding$age$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟';
+	@override String get sous => 'من 6 إلى 17 سنة. يحدّد ذلك المدة المتوقعة لمساره.';
+	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
+	@override String reponse({required Object n}) => '⁨${n}⁩ سنة: سُجّل.';
+	@override String get adulte => '18 سنة فأكثر';
+	@override String get adulteReponse => 'من بلغ 18 سنة فأكثر ينشئ حسابه بنفسه. يمكنك مساعدته في ذلك.';
+}
+
+// Path: onboarding.genre
+class _Traductions$onboarding$genre$ar extends Traductions$onboarding$genre$fr {
+	_Traductions$onboarding$genre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'يفيد هذا في تكوين فصول مناسبة: الفصول غير مختلطة.';
+	@override String get titreMoi => 'أنت…';
+	@override String titre({required Object prenom}) => 'جنس ⁨${prenom}⁩';
+	@override String get homme => 'رجل';
+	@override String get femme => 'امرأة';
+	@override String get garcon => 'ولد';
+	@override String get fille => 'بنت';
+	@override String get reponse => 'شكرًا. تتكوّن الفصول حسب الجنس.';
+}
+
+// Path: onboarding.famille
+class _Traductions$onboarding$famille$ar extends Traductions$onboarding$famille$fr {
+	_Traductions$onboarding$famille$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String ditEncore({required Object prenom}) => 'هذا ⁨${prenom}⁩. لننتقل إلى الطفل التالي.';
+	@override String ditSeul({required Object prenom}) => 'تشرّفنا، ⁨${prenom}⁩. لنتحدّث الآن عن مستواك.';
+	@override String get dit => 'هذه عائلتك. لنتحدّث الآن عن مستوى كل واحد.';
+	@override String get titreSeul => 'تشرّفنا';
+	@override String get titre => 'هذه عائلتك';
+	@override String get suivant => 'أضف الطفل التالي';
+	@override String get ajouter => 'أضف طالبًا آخر';
+	@override String get aussi => 'سأحضر الدروس أنا أيضًا';
+}
+
+// Path: onboarding.niveau
+class _Traductions$onboarding$niveau$ar extends Traductions$onboarding$niveau$fr {
+	_Traductions$onboarding$niveau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'أجب بأدقّ ما يمكن: سيتحقّق المعلّم في الحصة الأولى.';
+	@override String get titreMoi => 'أين أنت اليوم؟';
+	@override String titre({required Object prenom}) => 'أين ⁨${prenom}⁩ اليوم؟';
+	@override late final _Traductions$onboarding$niveau$moi$ar moi = _Traductions$onboarding$niveau$moi$ar._(_root);
+	@override late final _Traductions$onboarding$niveau$il$ar il = _Traductions$onboarding$niveau$il$ar._(_root);
+	@override late final _Traductions$onboarding$niveau$elle$ar elle = _Traductions$onboarding$niveau$elle$ar._(_root);
+	@override late final _Traductions$onboarding$niveau$desc$ar desc = _Traductions$onboarding$niveau$desc$ar._(_root);
+	@override String get reponseDebut => 'نقطة بداية جيدة جدًا: كل شيء مخطّط له.';
+	@override String get reponseMemo => 'حسنًا. سأسأل عمّا حُفظ.';
+	@override String get reponseLecture => 'حسنًا. سؤال عن الرواية، ثم نكمل.';
+	@override String get reponse => 'سُجّل.';
+}
+
+// Path: onboarding.lecture
+class _Traductions$onboarding$lecture$ar extends Traductions$onboarding$lecture$fr {
+	_Traductions$onboarding$lecture$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'سؤال: بأيّ رواية تقرأ القرآن؟';
+	@override String get titreMoi => 'بأيّ رواية تقرأ؟';
+	@override String titreIl({required Object prenom}) => 'بأيّ رواية يقرأ ⁨${prenom}⁩؟';
+	@override String titreElle({required Object prenom}) => 'بأيّ رواية تقرأ ⁨${prenom}⁩؟';
+	@override String get sous => 'رواية حفص مختارة مسبقًا.';
+	@override String get hafs => 'رواية حفص';
+	@override String get hafsDesc => 'الأكثر انتشارًا، مختارة افتراضيًا';
+	@override String get warsh => 'رواية ورش';
+	@override String get warshDesc => 'نسجّلها للإدارة';
+	@override String get autre => 'رواية أخرى';
+	@override String get autreDesc => 'تُحدَّد';
+	@override String get autreEtiquette => 'أيّ رواية؟';
+	@override String get autreIndice => 'مثلًا: قالون';
+	@override String get reponseHafs => 'حفص، سُجّلت.';
+	@override String get reponseWarsh => 'سُجّلت. ستخبرك الإدارة بالفصول المتاحة.';
+	@override String get reponseAutre => 'أيّ رواية؟ اكتبها، وستقرؤها الإدارة.';
+}
+
+// Path: onboarding.memorise
+class _Traductions$onboarding$memorise$ar extends Traductions$onboarding$memorise$fr {
+	_Traductions$onboarding$memorise$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'كم حُفظ تقريبًا؟';
+	@override String get titreMoi => 'كم حفظت؟';
+	@override String titreIl({required Object prenom}) => 'كم حفظ ⁨${prenom}⁩؟';
+	@override String titreElle({required Object prenom}) => 'كم حفظت ⁨${prenom}⁩؟';
+	@override String get quelques => 'بضع سور';
+	@override String get unACinq => 'من جزء إلى خمسة أجزاء';
+	@override String get plusDeCinq => 'أكثر من خمسة أجزاء';
+	@override String get tout => 'القرآن كاملًا';
+	@override String get reponseTout => 'ما شاء الله. ستستقبلك الإدارة للتحقّق.';
+	@override String get reponse => 'ما شاء الله. بعض التفاصيل إن كنت تعرفها.';
+}
+
+// Path: onboarding.detail
+class _Traductions$onboarding$detail$ar extends Traductions$onboarding$detail$fr {
+	_Traductions$onboarding$detail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ditJuz => 'أيّ الأجزاء، إن كنت تعرفها؟ يمكنك التخطّي.';
+	@override String get ditSourates => 'أيّها؟ المس ما تعرفه منها. يمكنك التخطّي.';
+	@override String get titreJuz => 'أيّ الأجزاء؟';
+	@override String get titreSourates => 'أيّ السور؟';
+	@override String get sous => 'اختياري: سيتحقّق المعلّم على كل حال.';
+	@override String get aucun => 'لا شيء الآن.';
+	@override String get un => 'اختيار واحد.';
+	@override String plusieurs({required Object n}) => 'عدد المختار: ⁨${n}⁩.';
+	@override String juz({required Object n}) => 'الجزء ⁨${n}⁩';
+}
+
+// Path: onboarding.sourates
+class _Traductions$onboarding$sourates$ar extends Traductions$onboarding$sourates$fr {
+	_Traductions$onboarding$sourates$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get fatiha => 'الفاتحة';
+	@override String get nas => 'الناس';
+	@override String get falaq => 'الفلق';
+	@override String get ikhlas => 'الإخلاص';
+	@override String get masad => 'المسد';
+	@override String get nasr => 'النصر';
+	@override String get kafirun => 'الكافرون';
+	@override String get kawthar => 'الكوثر';
+	@override String get maun => 'الماعون';
+	@override String get quraysh => 'قريش';
+	@override String get fil => 'الفيل';
+	@override String get humaza => 'الهمزة';
+	@override String get asr => 'العصر';
+	@override String get takathur => 'التكاثر';
+	@override String get qaria => 'القارعة';
+	@override String get adiyat => 'العاديات';
+	@override String get zalzala => 'الزلزلة';
+}
+
+// Path: onboarding.objectif
+class _Traductions$onboarding$objectif$ar extends Traductions$onboarding$objectif$fr {
+	_Traductions$onboarding$objectif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'ما الذي تودّ بلوغه أولًا؟';
+	@override String get titreMoi => 'ماذا تريد أولًا؟';
+	@override String titre({required Object prenom}) => 'ماذا تريد لـ⁨${prenom}⁩؟';
+	@override String get sousMemo => 'الحفظ مختار مسبقًا.';
+	@override String get lireBases => 'تعلّم قراءة القرآن';
+	@override String get lireBasesDesc => 'البدء بالأساسيات';
+	@override String get lireCourant => 'قراءة القرآن كله بطلاقة';
+	@override String get lireCourantDesc => 'إتقان القراءة';
+	@override String get memoriser => 'حفظ القرآن';
+	@override String get memoriserApresBases => 'بعد الأساسيات';
+	@override String get memoriserAvec => 'مع معلّم';
+	@override String get priere => 'الصلاة والأذكار';
+	@override String get priereDesc => 'ليصلّي الطفل وحده';
+	@override String get indecis => 'لا أعرف بعد';
+	@override String get indecisDesc => 'سينصحني المعلّم';
+	@override String get reponseIndecis => 'لا بأس: يمكنك أن تقرّر في الطريق.';
+	@override String get reponse => 'اختيار جيد.';
+}
+
+// Path: onboarding.depart
+class _Traductions$onboarding$depart$ar extends Traductions$onboarding$depart$fr {
+	_Traductions$onboarding$depart$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'هذا ما أنصحك أن تبدأ به. سيؤكّده المعلّم في الحصة الأولى.';
+	@override String get titre => 'نقطة بدايتك';
+	@override String get titrePlusieurs => 'نقطة بداية كل واحد';
+	@override String get pourVous => 'لك';
+	@override String get probable => 'بداية مرجّحة';
+	@override late final _Traductions$onboarding$depart$etapes$ar etapes = _Traductions$onboarding$depart$etapes$ar._(_root);
+	@override String get suiteMemoriser => 'بعد اختبار نهاية الأساسيات: حفظ القرآن.';
+	@override String get suitePriere => 'تأتي ألفاظ الصلاة مبكرًا، مادةً ثانوية.';
+	@override String get suite => 'بعد اختبار نهاية الأساسيات: قراءة القرآن كله أو حفظه.';
+	@override late final _Traductions$onboarding$depart$reco$ar reco = _Traductions$onboarding$depart$reco$ar._(_root);
+	@override String get indice => 'نقطة بداية مرجّحة، لا وعد: تتحقّق منها الحصة الأولى.';
+}
+
+// Path: onboarding.langue
+class _Traductions$onboarding$langue$ar extends Traductions$onboarding$langue$fr {
+	_Traductions$onboarding$langue$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'يتكلّم معلّمونا أكثر من عشرين لغة. بأيّ لغة تريد الشرح؟';
+	@override String get titre => 'لغة الشرح';
+	@override String get sous => 'اختيارك الأول. نوجّهك إلى فصل بهذه اللغة متى توفّر معلّم.';
+	@override String reponse({required Object langue}) => '⁨${langue}⁩: سُجّلت.';
+	@override late final _Traductions$onboarding$langue$groupes$ar groupes = _Traductions$onboarding$langue$groupes$ar._(_root);
+}
+
+// Path: onboarding.langueSecours
+class _Traductions$onboarding$langueSecours$ar extends Traductions$onboarding$langueSecours$fr {
+	_Traductions$onboarding$langueSecours$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'وإن لم يتوفّر معلّم بلغتك، أيّ لغة تفهمها أيضًا؟';
+	@override String get titre => 'لغة ثانية؟';
+	@override String get sous => 'اختياري. لا تُستعمل إلا إذا لم يتوفّر معلّم للغة الأولى.';
+	@override String get aucune => 'لا لغة أخرى';
+	@override String get reponseAucune => 'حسنًا.';
+	@override String get reponse => 'سُجّلت: ستكون حلّنا البديل.';
+	@override String get autreEtiquette => 'لغة غير موجودة في القائمة؟ (اختياري)';
+	@override String get autreIndice => 'مثلًا: التاميلية';
+}
+
+// Path: onboarding.langues
+class _Traductions$onboarding$langues$ar extends Traductions$onboarding$langues$fr {
+	_Traductions$onboarding$langues$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get francais => 'Français (الفرنسية)';
+	@override String get english => 'English (الإنجليزية)';
+	@override String get ar => 'العربية';
+	@override String get ha => 'الهوسا';
+	@override String get poular => 'البولار (الفولانية)';
+	@override String get yo => 'اليوروبا';
+	@override String get man => 'المالينكي';
+	@override String get snk => 'السوننكي';
+	@override String get wo => 'الولوف';
+	@override String get bm => 'البامبارا';
+	@override String get sw => 'السواحيلية';
+	@override String get so => 'الصومالية';
+	@override String get am => 'الأمهرية';
+	@override String get om => 'الأورومية';
+	@override String get ur => 'الأردية';
+	@override String get hi => 'الهندية';
+	@override String get bn => 'البنغالية';
+	@override String get ps => 'البشتو';
+	@override String get fa => 'الفارسية';
+	@override String get tr => 'التركية';
+	@override String get id => 'الإندونيسية';
+	@override String get uz => 'الأوزبكية';
+	@override String get pt => 'Português (البرتغالية)';
+	@override String get ru => 'Русский (الروسية)';
+	@override String get de => 'Deutsch (الألمانية)';
+}
+
+// Path: onboarding.chemin
+class _Traductions$onboarding$chemin$ar extends Traductions$onboarding$chemin$fr {
+	_Traductions$onboarding$chemin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'هذا هو الطريق. مدة متوقعة، وموعد نهائي، ومواظبة كل واحد.';
+	@override String get titre => 'طريقك';
+	@override String get pourVous => 'لك';
+	@override String prevues({required Object n}) => 'الأسابيع المتوقعة: ⁨${n}⁩';
+	@override String get precise => 'تُحدَّد مدة مسارك بعد التحقّق من المستوى، في الحصة الأولى.';
+	@override String get debut => 'البداية';
+	@override String finBases({required Object n}) => 'نهاية الأساسيات: الأسبوع ⁨${n}⁩';
+	@override String limite({required Object n}) => 'الموعد النهائي: الأسبوع ⁨${n}⁩';
+	@override String courbeLue({required Object prevu, required Object limite}) => 'المدة المتوقعة بالأسابيع ⁨${prevu}⁩، والموعد النهائي بالأسابيع ⁨${limite}⁩';
+	@override String get trois => 'مدة متوقعة بثلاث حصص في الأسبوع. الموعد النهائي ثابت.';
+	@override String get rigueurTitre => 'الانضباط جزء من الدرس.';
+	@override String get rigueur => 'ثلاث حصص في الأسبوع، دائمًا مع المعلّم نفسه. يُستدرك الغياب ذاتيًا قبل الحصة التالية، بالأدوات التي توفّرها الأكاديمية: القراءة المسجّلة للمنهج ووثائق المكتبة.';
+	@override String get horaires => 'أيامك وأوقاتك نختارها معًا بعد القبول.';
+}
+
+// Path: onboarding.recap
+class _Traductions$onboarding$recap$ar extends Traductions$onboarding$recap$fr {
+	_Traductions$onboarding$recap$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'هذا ما فهمته. لا شيء ملزم: تقرأ الإدارة كل طلب.';
+	@override String get titre => 'هذا ما فهمناه';
+	@override String langue({required Object langue}) => 'اللغة: ⁨${langue}⁩';
+	@override String sinon({required Object langue, required Object secours}) => '⁨${langue}⁩، وإلا ⁨${secours}⁩';
+	@override String heure({required Object ville}) => 'توقيت ⁨${ville}⁩ (مكتشف تلقائيًا)';
+	@override String vous({required Object prenom}) => '⁨${prenom}⁩ (أنت)';
+	@override String get adulte => 'بالغ';
+	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
+	@override String get homme => 'رجل';
+	@override String get femme => 'امرأة';
+	@override String get garcon => 'ولد';
+	@override String get fille => 'بنت';
+	@override String get niveau => 'المستوى';
+	@override String get lecture => 'الرواية';
+	@override String get objectif => 'الهدف المختار';
+	@override String niveauQuantite({required Object niveau, required Object quantite}) => '⁨${niveau}⁩ (⁨${quantite}⁩)';
+	@override late final _Traductions$onboarding$recap$niveaux$ar niveaux = _Traductions$onboarding$recap$niveaux$ar._(_root);
+	@override late final _Traductions$onboarding$recap$quantites$ar quantites = _Traductions$onboarding$recap$quantites$ar._(_root);
+	@override late final _Traductions$onboarding$recap$objectifs$ar objectifs = _Traductions$onboarding$recap$objectifs$ar._(_root);
+	@override late final _Traductions$onboarding$recap$lectures$ar lectures = _Traductions$onboarding$recap$lectures$ar._(_root);
+	@override String get sourceTitre => 'كيف عرفت رواية؟';
+	@override String get facultatif => '(اختياري)';
+	@override late final _Traductions$onboarding$recap$sources$ar sources = _Traductions$onboarding$recap$sources$ar._(_root);
+	@override String get direction => 'تقرأ الإدارة كل طلب قبل تكوين الفصل.';
+	@override String get rembourse => 'إن لم يكن الطالب راضيًا، يُستردّ المبلغ خلال 14 يومًا، بعد خصم الحصص التي حضرها.';
+	@override String get corriger => 'يمكنك تصحيح هذه الإجابات بعد القبول.';
+	@override String get cta => 'صحيح، أنشئ حسابي';
+}
+
+// Path: onboarding.acces
+class _Traductions$onboarding$acces$ar extends Traductions$onboarding$acces$fr {
+	_Traductions$onboarding$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'الخطوة الأخيرة: إلى أين أرسل رابط الدخول؟';
+	@override String get titre => 'بريدك الإلكتروني';
+	@override String get sous => 'إجاباتك محفوظة على هذا الجهاز حتى الإرسال.';
+	@override String get indice => 'افتح الرابط على هذا الجهاز، في المتصفح نفسه: إجاباتك بانتظارك هناك.';
+}
+
+// Path: onboarding.envoye
+class _Traductions$onboarding$envoye$ar extends Traductions$onboarding$envoye$fr {
+	_Traductions$onboarding$envoye$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'أُرسل الرابط. انظر في بريدك الوارد.';
+	@override String get titre => 'انظر في بريدك';
+	@override String ecrit({required Object courriel}) => 'كتبنا إلى ⁨${courriel}⁩.';
+	@override String get ailleurs => 'إن قرأت الرسالة على جهاز آخر، سيخبرك الرابط بذلك، ويمكنك المتابعة هنا.';
+}
+
+// Path: onboarding.vous
+class _Traductions$onboarding$vous$ar extends Traductions$onboarding$vous$fr {
+	_Traductions$onboarding$vous$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String ditMoi({required Object prenom}) => 'أنت متّصل الآن، ⁨${prenom}⁩. ينقصني اسم عائلتك فقط.';
+	@override String get dit => 'أنت متّصل الآن. والآن عنك: أنت من سيدير حساب أطفالك.';
+	@override String get titreMoi => 'اسم عائلتك';
+	@override String get titre => 'أنت، وليّ الحساب';
+	@override String get sous => 'أطفالك مسجّلون. هذا الاسم اسمك: أنت تدير حسابهم وتتلقّى رسائل الأكاديمية.';
+	@override String get prenom => 'اسمك الأول';
+	@override String get nom => 'اسم عائلتك';
+	@override String get vousEtes => 'أنت…';
+	@override String get envoyer => 'أرسل طلبي';
+}
+
+// Path: onboarding.fin
+class _Traductions$onboarding$fin$ar extends Traductions$onboarding$fin$fr {
+	_Traductions$onboarding$fin$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dit => 'أُرسل الطلب. شكرًا على ثقتك، ستقرأ الإدارة طلبك.';
+	@override String get titre => 'طلبك قيد الدراسة';
+	@override String get maintenant => 'وماذا بعد؟';
+	@override String get un => '1. تقرأ الإدارة طلبك.';
+	@override String get deux => '2. إن قُبل، يُنشأ الملف دون إعادة كتابة أي شيء.';
+	@override String get deuxPlusieurs => '2. إن قُبل، تُنشأ ملفات الطلاب دون إعادة كتابة أي شيء.';
+	@override String get trois => '3. لا يبقى إلا أيامك وأوقاتك. كل ما عدا ذلك مسجّل.';
+	@override String get fratrie => 'لكل طفل فصله الخاص ومعلّمه الخاص: إن غاب معلّم، يكمل الآخرون، ويكفي جهاز لوحي واحد بالتناوب.';
+	@override String get suivre => 'تابع طلبي';
 }
 
 // Path: commun.etats.recharge1
@@ -25426,6 +25953,178 @@ class _Traductions$motifs$signalement$changement$ar extends Traductions$motifs$s
 	@override String get classe => 'تغيير الفصل قيد الدراسة.';
 	@override String get niveau => 'لم يعد مستوى الفصل يبدو مناسبًا.';
 	@override String get suite => 'ستعود إليكم الأكاديمية للحديث في ذلك.';
+}
+
+// Path: onboarding.niveau.moi
+class _Traductions$onboarding$niveau$moi$ar extends Traductions$onboarding$niveau$moi$fr {
+	_Traductions$onboarding$niveau$moi$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debut => 'أبدأ بالحروف';
+	@override String get aide => 'أعرف الحروف';
+	@override String get lente => 'أقرأ ببطء';
+	@override String get courante => 'أقرأ القرآن';
+	@override String get memo => 'حفظت جزءًا';
+}
+
+// Path: onboarding.niveau.il
+class _Traductions$onboarding$niveau$il$ar extends Traductions$onboarding$niveau$il$fr {
+	_Traductions$onboarding$niveau$il$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debut => 'يبدأ بالحروف';
+	@override String get aide => 'يعرف الحروف';
+	@override String get lente => 'يقرأ ببطء';
+	@override String get courante => 'يقرأ القرآن';
+	@override String get memo => 'حفظ جزءًا';
+}
+
+// Path: onboarding.niveau.elle
+class _Traductions$onboarding$niveau$elle$ar extends Traductions$onboarding$niveau$elle$fr {
+	_Traductions$onboarding$niveau$elle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debut => 'تبدأ بالحروف';
+	@override String get aide => 'تعرف الحروف';
+	@override String get lente => 'تقرأ ببطء';
+	@override String get courante => 'تقرأ القرآن';
+	@override String get memo => 'حفظت جزءًا';
+}
+
+// Path: onboarding.niveau.desc
+class _Traductions$onboarding$niveau$desc$ar extends Traductions$onboarding$niveau$desc$fr {
+	_Traductions$onboarding$niveau$desc$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debut => 'الحروف العربية ما زالت جديدة';
+	@override String get aide => 'لكن القراءة تحتاج إلى مساعدة';
+	@override String get lente => 'بالحركات';
+	@override String get courante => 'بطلاقة، في المصحف';
+	@override String get memo => 'سور أو أجزاء';
+}
+
+// Path: onboarding.depart.etapes
+class _Traductions$onboarding$depart$etapes$ar extends Traductions$onboarding$depart$etapes$fr {
+	_Traductions$onboarding$depart$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lettres => 'الحروف';
+	@override String get lettresDetail => 'الحروف الثمانية والعشرون';
+	@override String get voyelles => 'القراءة بالحركات';
+	@override String get voyellesDetail => 'حتى الشدّة';
+	@override String get coran => 'القراءة في المصحف';
+	@override String get coranDetail => 'نهاية الكتاب، ثم المصحف';
+	@override String get sourates => 'السور القصيرة';
+	@override String get souratesDetail => 'من المسد إلى الزلزلة';
+	@override String get examen => 'اختبار نهاية الأساسيات';
+}
+
+// Path: onboarding.depart.reco
+class _Traductions$onboarding$depart$reco$ar extends Traductions$onboarding$depart$reco$fr {
+	_Traductions$onboarding$depart$reco$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debut => 'المرحلة 1 · الحروف';
+	@override String get debutSuite => 'تبدأ من البداية، كما هو مخطّط.';
+	@override String get aide => 'المرحلة 1 · الحروف، مراجعة سريعة';
+	@override String get aideSuite => 'ثم المرحلة 2.';
+	@override String get lente => 'المرحلة 2 أو 3 · القراءة بالحركات';
+	@override String get lenteSuite => 'بحسب الحصة الأولى.';
+	@override String get courante => 'المرحلة 3 أو 4 · القراءة في المصحف';
+	@override String get couranteSuite => 'ثم اختبار نهاية الأساسيات.';
+	@override String get memo => 'المرحلة 4 · السور القصيرة';
+	@override String get memoSuite => 'ثم اختبار نهاية الأساسيات: ويبدأ الحفظ بعده.';
+}
+
+// Path: onboarding.langue.groupes
+class _Traductions$onboarding$langue$groupes$ar extends Traductions$onboarding$langue$groupes$fr {
+	_Traductions$onboarding$langue$groupes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get plusDemandees => 'الأكثر طلبًا';
+	@override String get afrique => 'لغات أفريقيا';
+	@override String get asie => 'لغات آسيا';
+	@override String get europe => 'لغات أوروبا';
+}
+
+// Path: onboarding.recap.niveaux
+class _Traductions$onboarding$recap$niveaux$ar extends Traductions$onboarding$recap$niveaux$fr {
+	_Traductions$onboarding$recap$niveaux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get debut => 'يبدأ بالحروف';
+	@override String get aide => 'يعرف الحروف';
+	@override String get lente => 'يقرأ ببطء';
+	@override String get courante => 'يقرأ القرآن';
+	@override String get memo => 'حفظ جزءًا';
+}
+
+// Path: onboarding.recap.quantites
+class _Traductions$onboarding$recap$quantites$ar extends Traductions$onboarding$recap$quantites$fr {
+	_Traductions$onboarding$recap$quantites$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get quelques => 'بضع سور';
+	@override String get unACinq => 'من 1 إلى 5 أجزاء';
+	@override String get plusDeCinq => 'أكثر من 5 أجزاء';
+	@override String get tout => 'القرآن كاملًا';
+}
+
+// Path: onboarding.recap.objectifs
+class _Traductions$onboarding$recap$objectifs$ar extends Traductions$onboarding$recap$objectifs$fr {
+	_Traductions$onboarding$recap$objectifs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lire => 'القراءة';
+	@override String get memoriser => 'الحفظ';
+	@override String get priere => 'الصلاة والأذكار';
+	@override String get indecis => 'لم يُقرَّر بعد';
+}
+
+// Path: onboarding.recap.lectures
+class _Traductions$onboarding$recap$lectures$ar extends Traductions$onboarding$recap$lectures$fr {
+	_Traductions$onboarding$recap$lectures$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get hafs => 'حفص';
+	@override String get warsh => 'ورش';
+	@override String get autre => 'أخرى';
+}
+
+// Path: onboarding.recap.sources
+class _Traductions$onboarding$recap$sources$ar extends Traductions$onboarding$recap$sources$fr {
+	_Traductions$onboarding$recap$sources$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get mosquee => 'مسجد أو جمعية';
+	@override String get proche => 'العائلة أو صديق';
+	@override String get reseaux => 'مواقع التواصل';
+	@override String get recherche => 'بحث على الإنترنت';
+	@override String get autre => 'غير ذلك';
 }
 
 // Path: classe.entree.demo.roles
@@ -44838,6 +45537,325 @@ extension on TraductionsAr {
 			'reprisesAdmin.sansDonnees' => 'طلبات الاستلام',
 			'reprisesAdmin.indisponibleTitre' => 'استلام الأسرة غير متاح',
 			'reprisesAdmin.indisponiblePhrase' => 'ستتوفر هذه الوظيفة عند ربط الخادم.',
+			'onboarding.chapitres.quiApprend' => 'من سيتعلّم',
+			'onboarding.chapitres.niveau' => 'المستوى الحالي',
+			'onboarding.chapitres.cours' => 'دروسك',
+			'onboarding.chapitres.demande' => 'طلبك',
+			'onboarding.chapitres.lu' => ({required Object n, required Object nom}) => 'الفصل ⁦⁨${n}⁩/4⁩ · ⁨${nom}⁩',
+			'onboarding.chapitres.luLong' => ({required Object n, required Object nom}) => 'الفصل ⁨${n}⁩ من 4: ⁨${nom}⁩',
+			'onboarding.retour' => 'رجوع',
+			'onboarding.praxisIa' => 'براكسيس ذكاء اصطناعي. تقرأ الإدارة كل طلب.',
+			'onboarding.accueil.dit' => 'السلام عليكم، أنا براكسيس، مساعد الإدارة. بضعة أسئلة، في دقيقتين تقريبًا، لنحضّر قدومك.',
+			'onboarding.accueil.titre' => 'أهلًا بك في أكاديمية رواية',
+			'onboarding.accueil.sous' => 'دروس القرآن مباشرة، في فصل ثابت، مع المعلّم نفسه.',
+			'onboarding.accueil.commencer' => 'لنبدأ',
+			'onboarding.accueil.dejaCompte' => 'لديّ حساب',
+			'onboarding.garde.dit' => 'أولًا، سؤال واحد لنوجّهك جيدًا. ما الذي جاء بك؟',
+			'onboarding.garde.titre' => 'هل جئت لتتعلّم أم لتعلّم؟',
+			'onboarding.garde.apprendre' => 'أتعلّم',
+			'onboarding.garde.apprendreDesc' => 'لي أو لطفلي',
+			'onboarding.garde.enseigner' => 'أعلّم',
+			'onboarding.garde.enseignerDesc' => 'أريد الانضمام إلى الفريق',
+			'onboarding.garde.reponse' => 'حسنًا. سأرشدك.',
+			'onboarding.enseigner.dit' => 'أهلًا بك. طلبك يبدأ هنا، بلا دعوة. سأرشدك خطوة بخطوة.',
+			'onboarding.enseigner.titre' => 'طلبك للتدريس',
+			'onboarding.enseigner.sous' => 'هذا الطريق ينشئ طلب تدريس، ولا ينشئ حساب طالب أبدًا: لا تكرار ممكن.',
+			'onboarding.enseigner.commencer' => 'ابدأ طلبي',
+			'onboarding.enseigner.trompe' => 'أخطأت: أريد أن أتعلّم',
+			'onboarding.pourQui.dit' => 'أخبرني من سيحضر الدروس، وأنا أتولّى الباقي.',
+			'onboarding.pourQui.titre' => 'من سيحضر الدروس؟',
+			'onboarding.pourQui.moi' => 'لي',
+			'onboarding.pourQui.moiDesc' => 'أنا بالغ (18 سنة فأكثر)',
+			'onboarding.pourQui.unEnfant' => 'لطفلي',
+			'onboarding.pourQui.unEnfantDesc' => 'من 6 إلى 17 سنة',
+			'onboarding.pourQui.plusieurs' => 'لعدّة أطفال',
+			'onboarding.pourQui.plusieursDesc' => 'سأطرح الأسئلة نفسها عن كل واحد',
+			'onboarding.pourQui.reponseMoi' => 'ممتاز، نبدأ بك.',
+			'onboarding.pourQui.reponseUn' => 'حسنًا. لنتحدّث عن طفلك.',
+			'onboarding.pourQui.reponsePlusieurs' => 'حسنًا. سنمضي طفلًا بعد طفل، الأمر سريع.',
+			'onboarding.pourQui.mineur' => 'عمري أقل من 18 سنة وأسجّل بنفسي',
+			'onboarding.pourQui.mineurReponse' => 'ينشئ أحد الوالدين أو الوليّ الحساب ويضيفك إليه. اختر «لطفلي».',
+			'onboarding.prenom.ditMoi' => 'بماذا أناديك؟',
+			'onboarding.prenom.ditEnfant' => 'ما اسم طفلك؟',
+			'onboarding.prenom.ditSuivant' => 'وما اسم الطالب التالي؟',
+			'onboarding.prenom.titreMoi' => 'اسمك الأول',
+			'onboarding.prenom.titreEnfant' => 'الاسم الأول لطفلك',
+			'onboarding.prenom.titreSuivant' => 'الاسم الأول للطالب التالي',
+			'onboarding.prenom.sousMoi' => 'الاسم الأول فقط الآن.',
+			'onboarding.prenom.sousEnfant' => 'الاسم الأول يكفي.',
+			'onboarding.prenom.etiquette' => 'الاسم الأول',
+			'onboarding.prenom.indiceMoi' => 'اسمك الأول',
+			'onboarding.prenom.indice' => 'الاسم الأول',
+			'onboarding.prenom.refus' => 'حروف فقط من فضلك: اسم حقيقي، بلا أرقام ولا رموز تعبيرية.',
+			'onboarding.age.titre' => ({required Object prenom}) => 'كم عمر ⁨${prenom}⁩؟',
+			'onboarding.age.sous' => 'من 6 إلى 17 سنة. يحدّد ذلك المدة المتوقعة لمساره.',
+			'onboarding.age.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
+			'onboarding.age.reponse' => ({required Object n}) => '⁨${n}⁩ سنة: سُجّل.',
+			'onboarding.age.adulte' => '18 سنة فأكثر',
+			'onboarding.age.adulteReponse' => 'من بلغ 18 سنة فأكثر ينشئ حسابه بنفسه. يمكنك مساعدته في ذلك.',
+			'onboarding.genre.dit' => 'يفيد هذا في تكوين فصول مناسبة: الفصول غير مختلطة.',
+			'onboarding.genre.titreMoi' => 'أنت…',
+			'onboarding.genre.titre' => ({required Object prenom}) => 'جنس ⁨${prenom}⁩',
+			'onboarding.genre.homme' => 'رجل',
+			'onboarding.genre.femme' => 'امرأة',
+			'onboarding.genre.garcon' => 'ولد',
+			'onboarding.genre.fille' => 'بنت',
+			'onboarding.genre.reponse' => 'شكرًا. تتكوّن الفصول حسب الجنس.',
+			'onboarding.famille.ditEncore' => ({required Object prenom}) => 'هذا ⁨${prenom}⁩. لننتقل إلى الطفل التالي.',
+			'onboarding.famille.ditSeul' => ({required Object prenom}) => 'تشرّفنا، ⁨${prenom}⁩. لنتحدّث الآن عن مستواك.',
+			'onboarding.famille.dit' => 'هذه عائلتك. لنتحدّث الآن عن مستوى كل واحد.',
+			'onboarding.famille.titreSeul' => 'تشرّفنا',
+			'onboarding.famille.titre' => 'هذه عائلتك',
+			'onboarding.famille.suivant' => 'أضف الطفل التالي',
+			'onboarding.famille.ajouter' => 'أضف طالبًا آخر',
+			'onboarding.famille.aussi' => 'سأحضر الدروس أنا أيضًا',
+			'onboarding.niveau.dit' => 'أجب بأدقّ ما يمكن: سيتحقّق المعلّم في الحصة الأولى.',
+			'onboarding.niveau.titreMoi' => 'أين أنت اليوم؟',
+			'onboarding.niveau.titre' => ({required Object prenom}) => 'أين ⁨${prenom}⁩ اليوم؟',
+			'onboarding.niveau.moi.debut' => 'أبدأ بالحروف',
+			'onboarding.niveau.moi.aide' => 'أعرف الحروف',
+			'onboarding.niveau.moi.lente' => 'أقرأ ببطء',
+			'onboarding.niveau.moi.courante' => 'أقرأ القرآن',
+			'onboarding.niveau.moi.memo' => 'حفظت جزءًا',
+			'onboarding.niveau.il.debut' => 'يبدأ بالحروف',
+			'onboarding.niveau.il.aide' => 'يعرف الحروف',
+			'onboarding.niveau.il.lente' => 'يقرأ ببطء',
+			'onboarding.niveau.il.courante' => 'يقرأ القرآن',
+			'onboarding.niveau.il.memo' => 'حفظ جزءًا',
+			'onboarding.niveau.elle.debut' => 'تبدأ بالحروف',
+			'onboarding.niveau.elle.aide' => 'تعرف الحروف',
+			'onboarding.niveau.elle.lente' => 'تقرأ ببطء',
+			'onboarding.niveau.elle.courante' => 'تقرأ القرآن',
+			'onboarding.niveau.elle.memo' => 'حفظت جزءًا',
+			'onboarding.niveau.desc.debut' => 'الحروف العربية ما زالت جديدة',
+			'onboarding.niveau.desc.aide' => 'لكن القراءة تحتاج إلى مساعدة',
+			'onboarding.niveau.desc.lente' => 'بالحركات',
+			'onboarding.niveau.desc.courante' => 'بطلاقة، في المصحف',
+			'onboarding.niveau.desc.memo' => 'سور أو أجزاء',
+			'onboarding.niveau.reponseDebut' => 'نقطة بداية جيدة جدًا: كل شيء مخطّط له.',
+			'onboarding.niveau.reponseMemo' => 'حسنًا. سأسأل عمّا حُفظ.',
+			'onboarding.niveau.reponseLecture' => 'حسنًا. سؤال عن الرواية، ثم نكمل.',
+			'onboarding.niveau.reponse' => 'سُجّل.',
+			'onboarding.lecture.dit' => 'سؤال: بأيّ رواية تقرأ القرآن؟',
+			'onboarding.lecture.titreMoi' => 'بأيّ رواية تقرأ؟',
+			'onboarding.lecture.titreIl' => ({required Object prenom}) => 'بأيّ رواية يقرأ ⁨${prenom}⁩؟',
+			'onboarding.lecture.titreElle' => ({required Object prenom}) => 'بأيّ رواية تقرأ ⁨${prenom}⁩؟',
+			'onboarding.lecture.sous' => 'رواية حفص مختارة مسبقًا.',
+			'onboarding.lecture.hafs' => 'رواية حفص',
+			'onboarding.lecture.hafsDesc' => 'الأكثر انتشارًا، مختارة افتراضيًا',
+			'onboarding.lecture.warsh' => 'رواية ورش',
+			'onboarding.lecture.warshDesc' => 'نسجّلها للإدارة',
+			'onboarding.lecture.autre' => 'رواية أخرى',
+			'onboarding.lecture.autreDesc' => 'تُحدَّد',
+			'onboarding.lecture.autreEtiquette' => 'أيّ رواية؟',
+			'onboarding.lecture.autreIndice' => 'مثلًا: قالون',
+			'onboarding.lecture.reponseHafs' => 'حفص، سُجّلت.',
+			'onboarding.lecture.reponseWarsh' => 'سُجّلت. ستخبرك الإدارة بالفصول المتاحة.',
+			'onboarding.lecture.reponseAutre' => 'أيّ رواية؟ اكتبها، وستقرؤها الإدارة.',
+			'onboarding.memorise.dit' => 'كم حُفظ تقريبًا؟',
+			'onboarding.memorise.titreMoi' => 'كم حفظت؟',
+			'onboarding.memorise.titreIl' => ({required Object prenom}) => 'كم حفظ ⁨${prenom}⁩؟',
+			'onboarding.memorise.titreElle' => ({required Object prenom}) => 'كم حفظت ⁨${prenom}⁩؟',
+			'onboarding.memorise.quelques' => 'بضع سور',
+			'onboarding.memorise.unACinq' => 'من جزء إلى خمسة أجزاء',
+			'onboarding.memorise.plusDeCinq' => 'أكثر من خمسة أجزاء',
+			'onboarding.memorise.tout' => 'القرآن كاملًا',
+			'onboarding.memorise.reponseTout' => 'ما شاء الله. ستستقبلك الإدارة للتحقّق.',
+			'onboarding.memorise.reponse' => 'ما شاء الله. بعض التفاصيل إن كنت تعرفها.',
+			'onboarding.detail.ditJuz' => 'أيّ الأجزاء، إن كنت تعرفها؟ يمكنك التخطّي.',
+			'onboarding.detail.ditSourates' => 'أيّها؟ المس ما تعرفه منها. يمكنك التخطّي.',
+			'onboarding.detail.titreJuz' => 'أيّ الأجزاء؟',
+			'onboarding.detail.titreSourates' => 'أيّ السور؟',
+			'onboarding.detail.sous' => 'اختياري: سيتحقّق المعلّم على كل حال.',
+			'onboarding.detail.aucun' => 'لا شيء الآن.',
+			'onboarding.detail.un' => 'اختيار واحد.',
+			'onboarding.detail.plusieurs' => ({required Object n}) => 'عدد المختار: ⁨${n}⁩.',
+			'onboarding.detail.juz' => ({required Object n}) => 'الجزء ⁨${n}⁩',
+			'onboarding.sourates.fatiha' => 'الفاتحة',
+			'onboarding.sourates.nas' => 'الناس',
+			'onboarding.sourates.falaq' => 'الفلق',
+			'onboarding.sourates.ikhlas' => 'الإخلاص',
+			'onboarding.sourates.masad' => 'المسد',
+			'onboarding.sourates.nasr' => 'النصر',
+			'onboarding.sourates.kafirun' => 'الكافرون',
+			'onboarding.sourates.kawthar' => 'الكوثر',
+			'onboarding.sourates.maun' => 'الماعون',
+			'onboarding.sourates.quraysh' => 'قريش',
+			'onboarding.sourates.fil' => 'الفيل',
+			'onboarding.sourates.humaza' => 'الهمزة',
+			'onboarding.sourates.asr' => 'العصر',
+			'onboarding.sourates.takathur' => 'التكاثر',
+			'onboarding.sourates.qaria' => 'القارعة',
+			'onboarding.sourates.adiyat' => 'العاديات',
+			'onboarding.sourates.zalzala' => 'الزلزلة',
+			'onboarding.objectif.dit' => 'ما الذي تودّ بلوغه أولًا؟',
+			'onboarding.objectif.titreMoi' => 'ماذا تريد أولًا؟',
+			'onboarding.objectif.titre' => ({required Object prenom}) => 'ماذا تريد لـ⁨${prenom}⁩؟',
+			'onboarding.objectif.sousMemo' => 'الحفظ مختار مسبقًا.',
+			'onboarding.objectif.lireBases' => 'تعلّم قراءة القرآن',
+			'onboarding.objectif.lireBasesDesc' => 'البدء بالأساسيات',
+			'onboarding.objectif.lireCourant' => 'قراءة القرآن كله بطلاقة',
+			'onboarding.objectif.lireCourantDesc' => 'إتقان القراءة',
+			'onboarding.objectif.memoriser' => 'حفظ القرآن',
+			'onboarding.objectif.memoriserApresBases' => 'بعد الأساسيات',
+			'onboarding.objectif.memoriserAvec' => 'مع معلّم',
+			'onboarding.objectif.priere' => 'الصلاة والأذكار',
+			'onboarding.objectif.priereDesc' => 'ليصلّي الطفل وحده',
+			'onboarding.objectif.indecis' => 'لا أعرف بعد',
+			'onboarding.objectif.indecisDesc' => 'سينصحني المعلّم',
+			'onboarding.objectif.reponseIndecis' => 'لا بأس: يمكنك أن تقرّر في الطريق.',
+			'onboarding.objectif.reponse' => 'اختيار جيد.',
+			'onboarding.depart.dit' => 'هذا ما أنصحك أن تبدأ به. سيؤكّده المعلّم في الحصة الأولى.',
+			'onboarding.depart.titre' => 'نقطة بدايتك',
+			'onboarding.depart.titrePlusieurs' => 'نقطة بداية كل واحد',
+			'onboarding.depart.pourVous' => 'لك',
+			'onboarding.depart.probable' => 'بداية مرجّحة',
+			'onboarding.depart.etapes.lettres' => 'الحروف',
+			'onboarding.depart.etapes.lettresDetail' => 'الحروف الثمانية والعشرون',
+			'onboarding.depart.etapes.voyelles' => 'القراءة بالحركات',
+			'onboarding.depart.etapes.voyellesDetail' => 'حتى الشدّة',
+			'onboarding.depart.etapes.coran' => 'القراءة في المصحف',
+			'onboarding.depart.etapes.coranDetail' => 'نهاية الكتاب، ثم المصحف',
+			'onboarding.depart.etapes.sourates' => 'السور القصيرة',
+			'onboarding.depart.etapes.souratesDetail' => 'من المسد إلى الزلزلة',
+			'onboarding.depart.etapes.examen' => 'اختبار نهاية الأساسيات',
+			'onboarding.depart.suiteMemoriser' => 'بعد اختبار نهاية الأساسيات: حفظ القرآن.',
+			'onboarding.depart.suitePriere' => 'تأتي ألفاظ الصلاة مبكرًا، مادةً ثانوية.',
+			'onboarding.depart.suite' => 'بعد اختبار نهاية الأساسيات: قراءة القرآن كله أو حفظه.',
+			'onboarding.depart.reco.debut' => 'المرحلة 1 · الحروف',
+			'onboarding.depart.reco.debutSuite' => 'تبدأ من البداية، كما هو مخطّط.',
+			'onboarding.depart.reco.aide' => 'المرحلة 1 · الحروف، مراجعة سريعة',
+			'onboarding.depart.reco.aideSuite' => 'ثم المرحلة 2.',
+			'onboarding.depart.reco.lente' => 'المرحلة 2 أو 3 · القراءة بالحركات',
+			'onboarding.depart.reco.lenteSuite' => 'بحسب الحصة الأولى.',
+			'onboarding.depart.reco.courante' => 'المرحلة 3 أو 4 · القراءة في المصحف',
+			'onboarding.depart.reco.couranteSuite' => 'ثم اختبار نهاية الأساسيات.',
+			'onboarding.depart.reco.memo' => 'المرحلة 4 · السور القصيرة',
+			'onboarding.depart.reco.memoSuite' => 'ثم اختبار نهاية الأساسيات: ويبدأ الحفظ بعده.',
+			'onboarding.depart.indice' => 'نقطة بداية مرجّحة، لا وعد: تتحقّق منها الحصة الأولى.',
+			'onboarding.langue.dit' => 'يتكلّم معلّمونا أكثر من عشرين لغة. بأيّ لغة تريد الشرح؟',
+			'onboarding.langue.titre' => 'لغة الشرح',
+			'onboarding.langue.sous' => 'اختيارك الأول. نوجّهك إلى فصل بهذه اللغة متى توفّر معلّم.',
+			'onboarding.langue.reponse' => ({required Object langue}) => '⁨${langue}⁩: سُجّلت.',
+			'onboarding.langue.groupes.plusDemandees' => 'الأكثر طلبًا',
+			'onboarding.langue.groupes.afrique' => 'لغات أفريقيا',
+			'onboarding.langue.groupes.asie' => 'لغات آسيا',
+			'onboarding.langue.groupes.europe' => 'لغات أوروبا',
+			'onboarding.langueSecours.dit' => 'وإن لم يتوفّر معلّم بلغتك، أيّ لغة تفهمها أيضًا؟',
+			'onboarding.langueSecours.titre' => 'لغة ثانية؟',
+			'onboarding.langueSecours.sous' => 'اختياري. لا تُستعمل إلا إذا لم يتوفّر معلّم للغة الأولى.',
+			'onboarding.langueSecours.aucune' => 'لا لغة أخرى',
+			'onboarding.langueSecours.reponseAucune' => 'حسنًا.',
+			'onboarding.langueSecours.reponse' => 'سُجّلت: ستكون حلّنا البديل.',
+			'onboarding.langueSecours.autreEtiquette' => 'لغة غير موجودة في القائمة؟ (اختياري)',
+			'onboarding.langueSecours.autreIndice' => 'مثلًا: التاميلية',
+			'onboarding.langues.francais' => 'Français (الفرنسية)',
+			'onboarding.langues.english' => 'English (الإنجليزية)',
+			'onboarding.langues.ar' => 'العربية',
+			'onboarding.langues.ha' => 'الهوسا',
+			'onboarding.langues.poular' => 'البولار (الفولانية)',
+			'onboarding.langues.yo' => 'اليوروبا',
+			'onboarding.langues.man' => 'المالينكي',
+			'onboarding.langues.snk' => 'السوننكي',
+			'onboarding.langues.wo' => 'الولوف',
+			'onboarding.langues.bm' => 'البامبارا',
+			'onboarding.langues.sw' => 'السواحيلية',
+			'onboarding.langues.so' => 'الصومالية',
+			'onboarding.langues.am' => 'الأمهرية',
+			'onboarding.langues.om' => 'الأورومية',
+			'onboarding.langues.ur' => 'الأردية',
+			'onboarding.langues.hi' => 'الهندية',
+			'onboarding.langues.bn' => 'البنغالية',
+			'onboarding.langues.ps' => 'البشتو',
+			'onboarding.langues.fa' => 'الفارسية',
+			'onboarding.langues.tr' => 'التركية',
+			'onboarding.langues.id' => 'الإندونيسية',
+			'onboarding.langues.uz' => 'الأوزبكية',
+			'onboarding.langues.pt' => 'Português (البرتغالية)',
+			'onboarding.langues.ru' => 'Русский (الروسية)',
+			'onboarding.langues.de' => 'Deutsch (الألمانية)',
+			'onboarding.chemin.dit' => 'هذا هو الطريق. مدة متوقعة، وموعد نهائي، ومواظبة كل واحد.',
+			'onboarding.chemin.titre' => 'طريقك',
+			'onboarding.chemin.pourVous' => 'لك',
+			'onboarding.chemin.prevues' => ({required Object n}) => 'الأسابيع المتوقعة: ⁨${n}⁩',
+			'onboarding.chemin.precise' => 'تُحدَّد مدة مسارك بعد التحقّق من المستوى، في الحصة الأولى.',
+			'onboarding.chemin.debut' => 'البداية',
+			'onboarding.chemin.finBases' => ({required Object n}) => 'نهاية الأساسيات: الأسبوع ⁨${n}⁩',
+			'onboarding.chemin.limite' => ({required Object n}) => 'الموعد النهائي: الأسبوع ⁨${n}⁩',
+			'onboarding.chemin.courbeLue' => ({required Object prevu, required Object limite}) => 'المدة المتوقعة بالأسابيع ⁨${prevu}⁩، والموعد النهائي بالأسابيع ⁨${limite}⁩',
+			'onboarding.chemin.trois' => 'مدة متوقعة بثلاث حصص في الأسبوع. الموعد النهائي ثابت.',
+			'onboarding.chemin.rigueurTitre' => 'الانضباط جزء من الدرس.',
+			'onboarding.chemin.rigueur' => 'ثلاث حصص في الأسبوع، دائمًا مع المعلّم نفسه. يُستدرك الغياب ذاتيًا قبل الحصة التالية، بالأدوات التي توفّرها الأكاديمية: القراءة المسجّلة للمنهج ووثائق المكتبة.',
+			'onboarding.chemin.horaires' => 'أيامك وأوقاتك نختارها معًا بعد القبول.',
+			'onboarding.recap.dit' => 'هذا ما فهمته. لا شيء ملزم: تقرأ الإدارة كل طلب.',
+			'onboarding.recap.titre' => 'هذا ما فهمناه',
+			'onboarding.recap.langue' => ({required Object langue}) => 'اللغة: ⁨${langue}⁩',
+			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '⁨${langue}⁩، وإلا ⁨${secours}⁩',
+			'onboarding.recap.heure' => ({required Object ville}) => 'توقيت ⁨${ville}⁩ (مكتشف تلقائيًا)',
+			'onboarding.recap.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
+			'onboarding.recap.adulte' => 'بالغ',
+			'onboarding.recap.ans' => ({required Object n}) => '⁨${n}⁩ سنة',
+			'onboarding.recap.homme' => 'رجل',
+			'onboarding.recap.femme' => 'امرأة',
+			'onboarding.recap.garcon' => 'ولد',
+			'onboarding.recap.fille' => 'بنت',
+			'onboarding.recap.niveau' => 'المستوى',
+			'onboarding.recap.lecture' => 'الرواية',
+			'onboarding.recap.objectif' => 'الهدف المختار',
+			'onboarding.recap.niveauQuantite' => ({required Object niveau, required Object quantite}) => '⁨${niveau}⁩ (⁨${quantite}⁩)',
+			'onboarding.recap.niveaux.debut' => 'يبدأ بالحروف',
+			'onboarding.recap.niveaux.aide' => 'يعرف الحروف',
+			'onboarding.recap.niveaux.lente' => 'يقرأ ببطء',
+			'onboarding.recap.niveaux.courante' => 'يقرأ القرآن',
+			'onboarding.recap.niveaux.memo' => 'حفظ جزءًا',
+			'onboarding.recap.quantites.quelques' => 'بضع سور',
+			'onboarding.recap.quantites.unACinq' => 'من 1 إلى 5 أجزاء',
+			'onboarding.recap.quantites.plusDeCinq' => 'أكثر من 5 أجزاء',
+			'onboarding.recap.quantites.tout' => 'القرآن كاملًا',
+			'onboarding.recap.objectifs.lire' => 'القراءة',
+			'onboarding.recap.objectifs.memoriser' => 'الحفظ',
+			'onboarding.recap.objectifs.priere' => 'الصلاة والأذكار',
+			'onboarding.recap.objectifs.indecis' => 'لم يُقرَّر بعد',
+			'onboarding.recap.lectures.hafs' => 'حفص',
+			'onboarding.recap.lectures.warsh' => 'ورش',
+			'onboarding.recap.lectures.autre' => 'أخرى',
+			'onboarding.recap.sourceTitre' => 'كيف عرفت رواية؟',
+			'onboarding.recap.facultatif' => '(اختياري)',
+			'onboarding.recap.sources.mosquee' => 'مسجد أو جمعية',
+			'onboarding.recap.sources.proche' => 'العائلة أو صديق',
+			'onboarding.recap.sources.reseaux' => 'مواقع التواصل',
+			'onboarding.recap.sources.recherche' => 'بحث على الإنترنت',
+			'onboarding.recap.sources.autre' => 'غير ذلك',
+			'onboarding.recap.direction' => 'تقرأ الإدارة كل طلب قبل تكوين الفصل.',
+			'onboarding.recap.rembourse' => 'إن لم يكن الطالب راضيًا، يُستردّ المبلغ خلال 14 يومًا، بعد خصم الحصص التي حضرها.',
+			'onboarding.recap.corriger' => 'يمكنك تصحيح هذه الإجابات بعد القبول.',
+			'onboarding.recap.cta' => 'صحيح، أنشئ حسابي',
+			'onboarding.acces.dit' => 'الخطوة الأخيرة: إلى أين أرسل رابط الدخول؟',
+			'onboarding.acces.titre' => 'بريدك الإلكتروني',
+			'onboarding.acces.sous' => 'إجاباتك محفوظة على هذا الجهاز حتى الإرسال.',
+			'onboarding.acces.indice' => 'افتح الرابط على هذا الجهاز، في المتصفح نفسه: إجاباتك بانتظارك هناك.',
+			'onboarding.envoye.dit' => 'أُرسل الرابط. انظر في بريدك الوارد.',
+			'onboarding.envoye.titre' => 'انظر في بريدك',
+			'onboarding.envoye.ecrit' => ({required Object courriel}) => 'كتبنا إلى ⁨${courriel}⁩.',
+			'onboarding.envoye.ailleurs' => 'إن قرأت الرسالة على جهاز آخر، سيخبرك الرابط بذلك، ويمكنك المتابعة هنا.',
+			'onboarding.vous.ditMoi' => ({required Object prenom}) => 'أنت متّصل الآن، ⁨${prenom}⁩. ينقصني اسم عائلتك فقط.',
+			'onboarding.vous.dit' => 'أنت متّصل الآن. والآن عنك: أنت من سيدير حساب أطفالك.',
+			'onboarding.vous.titreMoi' => 'اسم عائلتك',
+			'onboarding.vous.titre' => 'أنت، وليّ الحساب',
+			'onboarding.vous.sous' => 'أطفالك مسجّلون. هذا الاسم اسمك: أنت تدير حسابهم وتتلقّى رسائل الأكاديمية.',
+			'onboarding.vous.prenom' => 'اسمك الأول',
+			'onboarding.vous.nom' => 'اسم عائلتك',
+			'onboarding.vous.vousEtes' => 'أنت…',
+			'onboarding.vous.envoyer' => 'أرسل طلبي',
+			'onboarding.fin.dit' => 'أُرسل الطلب. شكرًا على ثقتك، ستقرأ الإدارة طلبك.',
+			'onboarding.fin.titre' => 'طلبك قيد الدراسة',
+			'onboarding.fin.maintenant' => 'وماذا بعد؟',
+			'onboarding.fin.un' => '1. تقرأ الإدارة طلبك.',
+			'onboarding.fin.deux' => '2. إن قُبل، يُنشأ الملف دون إعادة كتابة أي شيء.',
+			'onboarding.fin.deuxPlusieurs' => '2. إن قُبل، تُنشأ ملفات الطلاب دون إعادة كتابة أي شيء.',
+			'onboarding.fin.trois' => '3. لا يبقى إلا أيامك وأوقاتك. كل ما عدا ذلك مسجّل.',
+			'onboarding.fin.fratrie' => 'لكل طفل فصله الخاص ومعلّمه الخاص: إن غاب معلّم، يكمل الآخرون، ويكفي جهاز لوحي واحد بالتناوب.',
+			'onboarding.fin.suivre' => 'تابع طلبي',
 			_ => null,
 		};
 	}

@@ -14,12 +14,9 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import 'package:rewayah_academy/features/connexion/coquille_entree.dart';
-import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
-    show UsageInscription;
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
-import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart'
-    show MomentJournee;
 
 import '../support/harnais.dart';
 
@@ -193,10 +190,18 @@ void main() {
       ecrireMemoireAppareil(
         clefQuestionnaire,
         const QuestionnaireInscription(
-          usage: UsageInscription.moi,
-          niveauTitulaire: NiveauDeclare.lectureLente,
-          objectif: ObjectifApprentissage.indecis,
-          moments: <MomentJournee>{MomentJournee.soir},
+          commence: true,
+          apprendre: true,
+          pourQui: PourQui.moi,
+          apprenants: <ApprenantQuestionnaire>[
+            ApprenantQuestionnaire(
+              prenom: 'Amina',
+              genre: Genre.femme,
+              niveau: NiveauDeclare.lectureLente,
+              objectif: ObjectifOnboarding.indecis,
+              titulaire: true,
+            ),
+          ],
           langue: 'francais',
         ).versTexte(),
       );

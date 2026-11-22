@@ -88,6 +88,10 @@ abstract interface class ServiceDossier {
   ///
   /// [apprenants] (admission, lot B) : les apprenants du questionnaire, tels
   /// que `inscrire_titulaire` les range avec la demande (`p_apprenants`).
+  ///
+  /// [source] et [fuseau] (ONBOARDING-PRAXIS, 22/11/2026) : « Comment
+  /// avez-vous connu Rewayah ? » (`p_source`, facultatif) et le fuseau IANA
+  /// de l'appareil, montre au recapitulatif (`p_timezone`, quand il est connu).
   Future<void> creerProfil({
     required AppRole role,
     required String prenom,
@@ -97,6 +101,8 @@ abstract interface class ServiceDossier {
     UsageTitulaire? usage,
     bool suitDesCours = false,
     List<Map<String, Object?>>? apprenants,
+    String? source,
+    String? fuseau,
   });
 
   /// Ou en est le dossier.
@@ -146,6 +152,8 @@ class ServiceDossierSupabase implements ServiceDossier {
     UsageTitulaire? usage,
     bool suitDesCours = false,
     List<Map<String, Object?>>? apprenants,
+    String? source,
+    String? fuseau,
   }) async {
     if (role == AppRole.guardian && usage != null) {
       await _client.rpc<Object?>(
@@ -157,6 +165,8 @@ class ServiceDossierSupabase implements ServiceDossier {
           'p_gender': genre?.valeurSql,
           'p_suit_des_cours': suitDesCours,
           'p_apprenants': ?apprenants,
+          'p_source': ?source,
+          'p_timezone': ?fuseau,
         },
       );
       return;

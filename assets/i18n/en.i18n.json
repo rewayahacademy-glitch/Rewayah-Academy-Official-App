@@ -18002,5 +18002,400 @@
       "nonAutorise": "You cannot request a break from this account.",
       "inconnu": "The request is not confirmed: it may not have reached Rewayah. Try again in a moment."
     }
+  },
+  "onboarding": {
+    "chapitres": {
+      "quiApprend": "Who is learning",
+      "niveau": "Current level",
+      "cours": "Your classes",
+      "demande": "Your request",
+      "lu": "{n}/4 · {nom}",
+      "luLong": "Chapter {n} of 4: {nom}"
+    },
+    "retour": "Back",
+    "praxisIa": "Praxis is an artificial intelligence. Every request is read by the administration.",
+    "accueil": {
+      "dit": "Hello, I am Praxis, the administration's assistant. A few questions, about two minutes, to prepare your arrival.",
+      "titre": "Welcome to Rewayah Academy",
+      "sous": "Live Quran classes, in a stable class, with the same teacher.",
+      "commencer": "Start",
+      "dejaCompte": "I already have an account"
+    },
+    "garde": {
+      "dit": "First, one question to point you in the right direction. What brings you here?",
+      "titre": "Are you here to learn, or to teach?",
+      "apprendre": "Learn",
+      "apprendreDesc": "For me or for my child",
+      "enseigner": "Teach",
+      "enseignerDesc": "I want to join the team",
+      "reponse": "Very good. I will guide you."
+    },
+    "enseigner": {
+      "dit": "Welcome. Your application starts here, no invitation needed. I will guide you step by step.",
+      "titre": "Your teacher application",
+      "sous": "This path creates an application, never a student account: no duplicate is possible.",
+      "commencer": "Start my application",
+      "trompe": "I made a mistake: I want to learn"
+    },
+    "pourQui": {
+      "dit": "Tell me who will attend the classes, I will take care of the rest.",
+      "titre": "Who will attend the classes?",
+      "moi": "For me",
+      "moiDesc": "I am an adult (18 or older)",
+      "unEnfant": "For my child",
+      "unEnfantDesc": "From 6 to 17 years old",
+      "plusieurs": "For several children",
+      "plusieursDesc": "I will ask the same questions for each one",
+      "reponseMoi": "Perfect, let's start with you.",
+      "reponseUn": "Very good. Let's talk about your child.",
+      "reponsePlusieurs": "Very good. We will go child by child, it is quick.",
+      "mineur": "I am under 18 and signing up myself",
+      "mineurReponse": "A parent or guardian creates the account and adds you to it. Choose “For my child”."
+    },
+    "prenom": {
+      "ditMoi": "What should I call you?",
+      "ditEnfant": "What is your child's name?",
+      "ditSuivant": "And what is the next student's name?",
+      "titreMoi": "Your first name",
+      "titreEnfant": "Your child's first name",
+      "titreSuivant": "The next student's first name",
+      "sousMoi": "Just your first name for now.",
+      "sousEnfant": "The first name is enough.",
+      "etiquette": "First name",
+      "indiceMoi": "Your first name",
+      "indice": "First name",
+      "refus": "Letters only, please: a real first name, without numbers or emojis."
+    },
+    "age": {
+      "titre": "How old is {prenom}?",
+      "sous": "From 6 to 17. This sets the planned length of the path.",
+      "ans": "{n} years",
+      "reponse": "{n} years old: noted.",
+      "adulte": "18 or older",
+      "adulteReponse": "A person aged 18 or older creates their own account. You can help them do it."
+    },
+    "genre": {
+      "dit": "This is used to form suitable classes: they are not mixed by default.",
+      "titreMoi": "You are…",
+      "titre": "{prenom} is…",
+      "homme": "A man",
+      "femme": "A woman",
+      "garcon": "A boy",
+      "fille": "A girl",
+      "reponse": "Thank you. Classes are formed by gender."
+    },
+    "famille": {
+      "ditEncore": "Here is {prenom}. Let's move on to the next child.",
+      "ditSeul": "Nice to meet you, {prenom}. Now let's talk about your level.",
+      "dit": "Here is your family. Now let's talk about each one's level.",
+      "titreSeul": "Nice to meet you",
+      "titre": "Here is your family",
+      "suivant": "Add the next child",
+      "ajouter": "Add another student",
+      "aussi": "I will attend classes too"
+    },
+    "niveau": {
+      "dit": "Answer as accurately as you can: a teacher will check during the first session.",
+      "titreMoi": "Where are you today?",
+      "titre": "Where is {prenom} today?",
+      "moi": {
+        "debut": "I am starting with the letters",
+        "aide": "I recognise the letters",
+        "lente": "I read slowly",
+        "courante": "I already read the Quran",
+        "memo": "I have already memorised a part"
+      },
+      "il": {
+        "debut": "He is starting with the letters",
+        "aide": "He recognises the letters",
+        "lente": "He reads slowly",
+        "courante": "He already reads the Quran",
+        "memo": "He has already memorised a part"
+      },
+      "elle": {
+        "debut": "She is starting with the letters",
+        "aide": "She recognises the letters",
+        "lente": "She reads slowly",
+        "courante": "She already reads the Quran",
+        "memo": "She has already memorised a part"
+      },
+      "desc": {
+        "debut": "The Arabic letters are still to discover",
+        "aide": "But reading needs help",
+        "lente": "With the vowels",
+        "courante": "Fluently, in the Mushaf",
+        "memo": "Surahs or juz"
+      },
+      "reponseDebut": "A very good starting point: everything is planned.",
+      "reponseMemo": "Very good. I will ask what is already memorised.",
+      "reponseLecture": "Very good. One detail about the reading, and we continue.",
+      "reponse": "Noted."
+    },
+    "lecture": {
+      "dit": "One detail: in which reading of the Quran?",
+      "titreMoi": "Which reading do you read?",
+      "titreIl": "Which reading does {prenom} read?",
+      "titreElle": "Which reading does {prenom} read?",
+      "sous": "Hafs is preselected.",
+      "hafs": "Hafs reading",
+      "hafsDesc": "The most widespread, chosen by default",
+      "warsh": "Warsh reading",
+      "warshDesc": "We note it for the administration",
+      "autre": "Another reading",
+      "autreDesc": "To be specified",
+      "autreEtiquette": "Which one?",
+      "autreIndice": "For example: Qalun",
+      "reponseHafs": "Hafs, noted.",
+      "reponseWarsh": "Noted. The administration will tell you which classes exist.",
+      "reponseAutre": "Which one? Write it, the administration will read it."
+    },
+    "memorise": {
+      "dit": "Roughly how much is already memorised?",
+      "titreMoi": "How much have you memorised?",
+      "titreIl": "How much has {prenom} memorised?",
+      "titreElle": "How much has {prenom} memorised?",
+      "quelques": "A few surahs",
+      "unACinq": "One to five juz",
+      "plusDeCinq": "More than five juz",
+      "tout": "The whole Quran",
+      "reponseTout": "Masha Allah. The administration will meet you for a check.",
+      "reponse": "Masha Allah. A few details, if you know them."
+    },
+    "detail": {
+      "ditJuz": "Which juz, if you know them? You can skip.",
+      "ditSourates": "Which ones? Tap those you know. You can skip.",
+      "titreJuz": "Which juz?",
+      "titreSourates": "Which surahs?",
+      "sous": "Optional: the teacher will check anyway.",
+      "aucun": "None for now.",
+      "un": "1 selected.",
+      "plusieurs": "{n} selected.",
+      "juz": "Juz {n}"
+    },
+    "sourates": {
+      "fatiha": "Al-Fatiha",
+      "nas": "An-Nas",
+      "falaq": "Al-Falaq",
+      "ikhlas": "Al-Ikhlas",
+      "masad": "Al-Masad",
+      "nasr": "An-Nasr",
+      "kafirun": "Al-Kafirun",
+      "kawthar": "Al-Kawthar",
+      "maun": "Al-Ma'un",
+      "quraysh": "Quraysh",
+      "fil": "Al-Fil",
+      "humaza": "Al-Humaza",
+      "asr": "Al-'Asr",
+      "takathur": "At-Takathur",
+      "qaria": "Al-Qari'a",
+      "adiyat": "Al-'Adiyat",
+      "zalzala": "Az-Zalzalah"
+    },
+    "objectif": {
+      "dit": "What would you like to reach first?",
+      "titreMoi": "What would you like first?",
+      "titre": "What would you like for {prenom}?",
+      "sousMemo": "Memorise is preselected.",
+      "lireBases": "Learn to read the Quran",
+      "lireBasesDesc": "Start with the basics",
+      "lireCourant": "Read the whole Quran fluently",
+      "lireCourantDesc": "Become fluent",
+      "memoriser": "Memorise the Quran",
+      "memoriserApresBases": "After the basics",
+      "memoriserAvec": "With a teacher",
+      "priere": "Prayer and supplications",
+      "priereDesc": "So that the child prays alone",
+      "indecis": "I don't know yet",
+      "indecisDesc": "The teacher will advise me",
+      "reponseIndecis": "No problem: you can decide along the way.",
+      "reponse": "Good choice."
+    },
+    "depart": {
+      "dit": "Here is where I advise you to start. The teacher will confirm it at the first session.",
+      "titre": "Your starting point",
+      "titrePlusieurs": "Each one's starting point",
+      "pourVous": "For you",
+      "probable": "likely start",
+      "etapes": {
+        "lettres": "The letters",
+        "lettresDetail": "The 28 letters",
+        "voyelles": "Reading with vowels",
+        "voyellesDetail": "Up to the shadda",
+        "coran": "Reading in the Quran",
+        "coranDetail": "End of the book, then the Mushaf",
+        "sourates": "The short surahs",
+        "souratesDetail": "From Al-Masad to Az-Zalzalah",
+        "examen": "End of basics exam"
+      },
+      "suiteMemoriser": "After the end of basics exam: memorise the Quran.",
+      "suitePriere": "The words of the prayer come early, as the secondary subject.",
+      "suite": "After the end of basics exam: read the whole Quran or memorise it.",
+      "reco": {
+        "debut": "Stage 1 · The letters",
+        "debutSuite": "You start at the beginning, as planned.",
+        "aide": "Stage 1 · The letters, as a quick review",
+        "aideSuite": "Then stage 2.",
+        "lente": "Stage 2 or 3 · Reading with vowels",
+        "lenteSuite": "Depending on the first session.",
+        "courante": "Stage 3 or 4 · Reading in the Quran",
+        "couranteSuite": "Then the end of basics exam.",
+        "memo": "Stage 4 · The short surahs",
+        "memoSuite": "Then the end of basics exam: memorisation starts afterwards."
+      },
+      "indice": "A likely starting point, never a promise: the first session checks it."
+    },
+    "langue": {
+      "dit": "Our teachers speak more than twenty languages. In which one do you want the explanations?",
+      "titre": "The language of explanations",
+      "sous": "Your first choice. We direct you to a class in this language as soon as a teacher is available.",
+      "reponse": "{langue}: noted.",
+      "groupes": {
+        "plusDemandees": "Most requested",
+        "afrique": "Languages of Africa",
+        "asie": "Languages of Asia",
+        "europe": "Languages of Europe"
+      }
+    },
+    "langueSecours": {
+      "dit": "And if no teacher is free in your language, which one do you also understand?",
+      "titre": "A second language?",
+      "sous": "Optional. It is only used if the first one has no teacher available.",
+      "aucune": "No other",
+      "reponseAucune": "Very good.",
+      "reponse": "Noted: this will be our fallback.",
+      "autreEtiquette": "A language not in the list? (optional)",
+      "autreIndice": "For example: Tamil"
+    },
+    "langues": {
+      "francais": "Français (French)",
+      "english": "English",
+      "ar": "العربية (Arabic)",
+      "ha": "Hausa",
+      "poular": "Pulaar (Fula)",
+      "yo": "Yoruba",
+      "man": "Malinke",
+      "snk": "Soninke",
+      "wo": "Wolof",
+      "bm": "Bambara",
+      "sw": "Swahili",
+      "so": "Somali",
+      "am": "Amharic",
+      "om": "Oromo",
+      "ur": "Urdu",
+      "hi": "Hindi",
+      "bn": "Bengali",
+      "ps": "Pashto",
+      "fa": "Persian",
+      "tr": "Turkish",
+      "id": "Indonesian",
+      "uz": "Uzbek",
+      "pt": "Português (Portuguese)",
+      "ru": "Русский (Russian)",
+      "de": "Deutsch (German)"
+    },
+    "chemin": {
+      "dit": "Here is the path. A planned length, a deadline, and everyone's regularity.",
+      "titre": "Your path",
+      "pourVous": "For you",
+      "prevues": "{n} weeks planned",
+      "precise": "The length of your path will be set after the level check, at the first session.",
+      "debut": "Start",
+      "finBases": "End of basics: {n} wk",
+      "limite": "Deadline: {n} wk",
+      "courbeLue": "Planned length {prevu} weeks, deadline {limite} weeks",
+      "trois": "Planned length with 3 sessions a week. The deadline is firm.",
+      "rigueurTitre": "Rigour is part of the class.",
+      "rigueur": "Three sessions a week, always with the same teacher. An absence is caught up alone, before the next session, with the tools the academy provides: the recorded reading of the programme and the documents in the Library.",
+      "horaires": "Your days and times will be chosen together after acceptance."
+    },
+    "recap": {
+      "dit": "Here is what I understood. Nothing is committed: the administration reads every request.",
+      "titre": "Here is what we understood",
+      "langue": "Language: {langue}",
+      "sinon": "{langue}, otherwise {secours}",
+      "heure": "{ville} time (detected)",
+      "vous": "{prenom} (you)",
+      "adulte": "Adult",
+      "ans": "{n} years",
+      "homme": "Man",
+      "femme": "Woman",
+      "garcon": "Boy",
+      "fille": "Girl",
+      "niveau": "Level",
+      "lecture": "Reading",
+      "objectif": "Chosen goal",
+      "niveauQuantite": "{niveau} ({quantite})",
+      "niveaux": {
+        "debut": "Starting with the letters",
+        "aide": "Recognises the letters",
+        "lente": "Reads slowly",
+        "courante": "Already reads the Quran",
+        "memo": "Has memorised a part"
+      },
+      "quantites": {
+        "quelques": "a few surahs",
+        "unACinq": "1 to 5 juz",
+        "plusDeCinq": "more than 5 juz",
+        "tout": "the whole Quran"
+      },
+      "objectifs": {
+        "lire": "Read",
+        "memoriser": "Memorise",
+        "priere": "Prayer and supplications",
+        "indecis": "Not decided yet"
+      },
+      "lectures": {
+        "hafs": "Hafs",
+        "warsh": "Warsh",
+        "autre": "Other"
+      },
+      "sourceTitre": "How did you hear about Rewayah?",
+      "facultatif": "(optional)",
+      "sources": {
+        "mosquee": "Mosque or association",
+        "proche": "Family or friend",
+        "reseaux": "Social media",
+        "recherche": "Online search",
+        "autre": "Other"
+      },
+      "direction": "The administration reads every request before forming the class.",
+      "rembourse": "If the student is not satisfied, they are refunded within 14 days, minus the sessions already attended.",
+      "corriger": "You can correct these answers after acceptance.",
+      "cta": "That's right, create my account"
+    },
+    "acces": {
+      "dit": "Last step: where can I send your sign-in link?",
+      "titre": "Your email address",
+      "sous": "Your answers are kept on this device until they are sent.",
+      "indice": "Open the link on this device, in the same browser: your answers are waiting for you there."
+    },
+    "envoye": {
+      "dit": "The link has been sent. Check your inbox.",
+      "titre": "Check your inbox",
+      "ecrit": "We wrote to {courriel}.",
+      "ailleurs": "If you read the message on another device, the link will tell you, and you can continue here."
+    },
+    "vous": {
+      "ditMoi": "You are signed in, {prenom}. I only need your family name.",
+      "dit": "You are signed in. Now, about you: you will manage your children's account.",
+      "titreMoi": "Your family name",
+      "titre": "You, the account guardian",
+      "sous": "Your children are already noted. This name is yours: you manage their account and receive the academy's messages.",
+      "prenom": "Your first name",
+      "nom": "Your family name",
+      "vousEtes": "You are…",
+      "envoyer": "Send my request"
+    },
+    "fin": {
+      "dit": "It is sent. Thank you for your trust, the administration will read your request.",
+      "titre": "Your request is in progress",
+      "maintenant": "What happens now?",
+      "un": "1. The administration reads your request.",
+      "deux": "2. If it is accepted, the profile is created without retyping anything.",
+      "deuxPlusieurs": "2. If it is accepted, the students' profiles are created without retyping anything.",
+      "trois": "3. Only your days and times remain. Everything else is already noted.",
+      "fratrie": "Each child will have their own class and their own teacher: if a teacher is absent, the others continue, and one tablet is enough, taking turns.",
+      "suivre": "Follow my request"
+    }
   }
 }

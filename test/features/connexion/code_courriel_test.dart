@@ -6,16 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import 'package:rewayah_academy/features/connexion/saisie_code_courriel.dart';
-import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart'
-    show UsageInscription;
+import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
-import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart'
-    show MomentJournee;
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../support/harnais.dart';
@@ -23,10 +21,18 @@ import '../../support/harnais.dart';
 class _Repondu extends QuestionnaireControleur {
   @override
   QuestionnaireInscription build() => const QuestionnaireInscription(
-    usage: UsageInscription.moi,
-    niveauTitulaire: NiveauDeclare.lectureLente,
-    objectif: ObjectifApprentissage.memoriser,
-    moments: <MomentJournee>{MomentJournee.soir},
+    commence: true,
+    apprendre: true,
+    pourQui: PourQui.moi,
+    apprenants: <ApprenantQuestionnaire>[
+      ApprenantQuestionnaire(
+        prenom: 'Amina',
+        genre: Genre.femme,
+        niveau: NiveauDeclare.lectureLente,
+        objectif: ObjectifOnboarding.memoriser,
+        titulaire: true,
+      ),
+    ],
     langue: 'francais',
   );
 }

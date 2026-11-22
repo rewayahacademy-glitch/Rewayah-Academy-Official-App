@@ -6,76 +6,238 @@ import '../../../core/domain/enums.dart';
 import '../../../core/foyer/profil_eleve_brouillon.dart';
 import '../../../core/observabilite/journal_dev.dart';
 import '../../../core/offres/offre_horaire.dart';
-import '../../parcours_offres/libelles_parcours.dart' show MomentJournee;
 import '../brouillon_inscription.dart' show UsageInscription;
 import 'memoire_appareil.dart';
+import 'onboarding_donnees.dart';
 
-/// Le questionnaire d'inscription, pose **avant** le compte (admission,
-/// lot B ; fiche `docs/current/FICHE-ONBOARDING-2026-10-29.md`, validee le
-/// 29/10/2026) : pour qui, chaque enfant (prenom, age, genre), le parent
-/// aussi, le niveau de chaque apprenant, l'objectif, les moments. Les
-/// reponses attendent la connexion sur l'appareil ([memoire_appareil.dart]),
-/// partent avec la demande, puis s'effacent.
+/// ONBOARDING-PRAXIS (directeur, 22/11/2026 ; maquette validee
+/// `docs/current/maquettes/onboarding-praxis/prototype.html`, decisions
+/// datees dans `docs/current/ONBOARDING-PRAXIS-2026-11-22.md`) : le
+/// questionnaire pose **avant** le compte, une question par ecran, guide par
+/// Praxis, en quatre chapitres (Qui apprend, Ou en est le niveau, Vos cours,
+/// Votre demande) et quatre interludes.
 ///
-/// Aucune donnee d'enfant n'entre dans un compte avant la decision de la
-/// direction : le serveur les range avec la demande
-/// (`candidature_apprenants`), et les profils sont crees a l'acceptation.
+/// Les reponses attendent la connexion sur l'appareil ([memoire_appareil.dart]),
+/// partent avec la demande (`inscrire_titulaire`, `p_apprenants` et
+/// `p_source`), puis s'effacent. Aucune donnee d'enfant n'entre dans un compte
+/// avant la decision de la direction.
 
-/// Ce qu'une famille dit d'un enfant.
-class EnfantQuestionnaire {
-  /// Cree un enfant, sans reponse.
-  const EnfantQuestionnaire({
+/// « Pour qui » : les trois cartes de la maquette.
+enum PourQui {
+  /// « Pour moi » : un adulte, son propre tuteur.
+  moi,
+
+  /// « Pour mon enfant ».
+  unEnfant,
+
+  /// « Pour plusieurs enfants » : apres le premier, « Ajouter l'enfant
+  /// suivant ».
+  plusieurs,
+}
+
+/// Ce qu'une personne dit d'un apprenant : un enfant, ou le titulaire
+/// lui-meme (« Pour moi », ou le parent qui suivra aussi des cours).
+class ApprenantQuestionnaire {
+  /// Cree un apprenant, sans reponse ; la lecture de Hafs est preselectionnee
+  /// (directeur, 22/11/2026).
+  const ApprenantQuestionnaire({
     this.prenom = '',
     this.age,
     this.genre,
     this.niveau,
+    this.lecture = LectureCoran.hafs,
+    this.lectureAutre = '',
+    this.quantite,
+    this.juz = const <int>[],
+    this.sourates = const <String>[],
+    this.objectif,
+    this.titulaire = false,
   });
 
-  /// Le prenom saisi.
+  /// Le prenom, deja valide ([prenomValide]) ; vide tant qu'il ne l'est pas.
   final String prenom;
 
-  /// L'age, de [ageMinimum] a [ageMaximum].
+  /// L'age d'un enfant, de [ageMinimum] a [ageMaximum] ; nul pour le
+  /// titulaire.
   final int? age;
 
-  /// Le genre (les classes ne sont pas mixtes par defaut, decision du 10/10).
+  /// Le genre (les classes ne sont pas mixtes par defaut).
   final Genre? genre;
 
   /// Le niveau declare (ce n'est pas le niveau officiel).
   final NiveauDeclare? niveau;
 
-  /// Une copie modifiee.
-  EnfantQuestionnaire copier({
+  /// La lecture du Coran (posee seulement s'il lit deja ou a memorise).
+  final LectureCoran lecture;
+
+  /// La lecture precisee quand [lecture] vaut [LectureCoran.autre].
+  final String lectureAutre;
+
+  /// Combien est deja memorise (seulement « a deja memorise une partie »).
+  final QuantiteMemorisee? quantite;
+
+  /// Les juz deja memorises, facultatif (1 a 30).
+  final List<int> juz;
+
+  /// Les sourates des bases deja memorisees, facultatif (codes de
+  /// [souratesDesBases]).
+  final List<String> sourates;
+
+  /// L'objectif choisi.
+  final ObjectifOnboarding? objectif;
+
+  /// Vrai pour le titulaire du compte : ni age, ni prenom redemande apres la
+  /// connexion.
+  final bool titulaire;
+
+  /// Vrai quand la lecture est demandee pour ce niveau.
+  bool get lectureDemandee =>
+      niveau == NiveauDeclare.lectureCourante ||
+      niveau == NiveauDeclare.memorisationPartielle;
+
+  /// Vrai quand la quantite memorisee est demandee.
+  bool get memorisationDemandee =>
+      niveau == NiveauDeclare.memorisationPartielle;
+
+  /// Vrai quand le detail (juz ou sourates) est demande.
+  bool get detailDemande =>
+      memorisationDemandee &&
+      quantite != null &&
+      quantite != QuantiteMemorisee.coranEntier;
+
+  /// Vrai quand le detail se dit en juz (sinon en sourates).
+  bool get detailEnJuz => quantite != QuantiteMemorisee.quelquesSourates;
+
+  /// Vrai pour un debutant complet : seule la courbe du « chemin » a des
+  /// durees du programme.
+  bool get debutant => niveau == NiveauDeclare.debutLettres;
+
+  /// La tranche d'age du programme (6-9, 10-13, 14-17, 18+).
+  TrancheAge get tranche => titulaire || (age ?? 18) >= 18
+      ? TrancheAge.adulte
+      : age! <= 9
+      ? TrancheAge.de6a9
+      : age! <= 13
+      ? TrancheAge.de10a13
+      : TrancheAge.de14a17;
+
+  /// L'objectif tel que la base l'attend.
+  String? get objectifSql => switch (objectif) {
+    null => null,
+    ObjectifOnboarding.lire =>
+      niveau == NiveauDeclare.debutLettres ||
+              niveau == NiveauDeclare.lettresAvecAide
+          ? ObjectifApprentissage.apprendreALire.valeurSql
+          : ObjectifApprentissage.devenirFluide.valeurSql,
+    ObjectifOnboarding.memoriser => ObjectifApprentissage.memoriser.valeurSql,
+    ObjectifOnboarding.priere => 'priere_invocations',
+    ObjectifOnboarding.indecis => ObjectifApprentissage.indecis.valeurSql,
+  };
+
+  /// Une copie modifiee. [effacerQuantite] remet la quantite a nul.
+  ApprenantQuestionnaire copier({
     String? prenom,
     int? age,
     Genre? genre,
     NiveauDeclare? niveau,
-  }) => EnfantQuestionnaire(
+    LectureCoran? lecture,
+    String? lectureAutre,
+    QuantiteMemorisee? quantite,
+    List<int>? juz,
+    List<String>? sourates,
+    ObjectifOnboarding? objectif,
+    bool? titulaire,
+  }) => ApprenantQuestionnaire(
     prenom: prenom ?? this.prenom,
     age: age ?? this.age,
     genre: genre ?? this.genre,
     niveau: niveau ?? this.niveau,
+    lecture: lecture ?? this.lecture,
+    lectureAutre: lectureAutre ?? this.lectureAutre,
+    quantite: quantite ?? this.quantite,
+    juz: juz ?? this.juz,
+    sourates: sourates ?? this.sourates,
+    objectif: objectif ?? this.objectif,
+    titulaire: titulaire ?? this.titulaire,
   );
+
+  /// L'apprenant tel que `inscrire_titulaire` l'attend.
+  Map<String, Object?> versServeur({
+    required String? langue,
+    required String? langueSecours,
+    required String langueAutre,
+  }) => <String, Object?>{
+    if (titulaire) 'est_titulaire': true else 'prenom': prenom.trim(),
+    if (!titulaire) 'age': age,
+    if (!titulaire) 'genre': genre?.valeurSql,
+    'niveau': niveau?.valeurSql,
+    'objectif': objectifSql,
+    'moments': const <String>[],
+    'langue': langue,
+    'langue_secours': ?langueSecours,
+    if (langueAutre.trim().isNotEmpty) 'langue_autre': langueAutre.trim(),
+    if (lectureDemandee) 'riwaya': lecture.name,
+    if (lectureDemandee &&
+        lecture == LectureCoran.autre &&
+        lectureAutre.trim().isNotEmpty)
+      'riwaya_autre': lectureAutre.trim(),
+    if (memorisationDemandee && quantite != null)
+      'memorise': quantite!.valeurSql,
+    if (detailDemande && detailEnJuz) 'juz': (<int>[...juz]..sort()),
+    if (detailDemande && !detailEnJuz) 'sourates': sourates,
+  };
 
   Map<String, Object?> _versJson() => <String, Object?>{
     'prenom': prenom,
     'age': age,
     'genre': genre?.valeurSql,
     'niveau': niveau?.valeurSql,
+    'lecture': lecture.name,
+    'lectureAutre': lectureAutre,
+    'quantite': quantite?.valeurSql,
+    'juz': juz,
+    'sourates': sourates,
+    'objectif': objectif?.name,
+    'titulaire': titulaire,
   };
 
-  static EnfantQuestionnaire _depuisJson(Map<String, Object?> json) =>
-      EnfantQuestionnaire(
-        prenom: json['prenom'] is String ? json['prenom']! as String : '',
-        age: json['age'] is int ? json['age']! as int : null,
-        genre: Genre.depuisSql(json['genre'] as String?),
-        niveau: NiveauDeclare.depuisSql(json['niveau'] as String?),
-      );
+  static ApprenantQuestionnaire _depuisJson(Map<String, Object?> json) {
+    final Object? juz = json['juz'];
+    final Object? sourates = json['sourates'];
+    return ApprenantQuestionnaire(
+      prenom: json['prenom'] is String ? json['prenom']! as String : '',
+      age: json['age'] is int ? json['age']! as int : null,
+      genre: Genre.depuisSql(json['genre'] as String?),
+      niveau: NiveauDeclare.depuisSql(json['niveau'] as String?),
+      lecture:
+          LectureCoran.values
+              .where((LectureCoran l) => l.name == json['lecture'])
+              .firstOrNull ??
+          LectureCoran.hafs,
+      lectureAutre: json['lectureAutre'] is String
+          ? json['lectureAutre']! as String
+          : '',
+      quantite: QuantiteMemorisee.depuisSql(json['quantite'] as String?),
+      juz: <int>[
+        if (juz is List<Object?>)
+          for (final Object? j in juz)
+            if (j is int && j >= 1 && j <= 30) j,
+      ],
+      sourates: <String>[
+        if (sourates is List<Object?>)
+          for (final Object? s in sourates)
+            if (s is String && souratesDesBases.contains(s)) s,
+      ],
+      objectif: ObjectifOnboarding.values
+          .where((ObjectifOnboarding o) => o.name == json['objectif'])
+          .firstOrNull,
+      titulaire: json['titulaire'] == true,
+    );
+  }
 }
 
-/// L'age le plus jeune propose : 6 ans (decision du 13/10/2026, enfant de 6 a
-/// 17 ans dans DECISION-TARIFS-2026-10-18). Lu dans la seule source partagee
-/// avec l'ajout d'un profil eleve ([BornesAge.clientActuelle]) ;
-/// `creer_profil_enfant()` refuse moins de 6 ans (UX-032, NIV1).
+/// L'age le plus jeune propose : 6 ans (decision du 13/10/2026). Lu dans la
+/// seule source partagee avec l'ajout d'un profil eleve.
 final int ageMinimum = BornesAge.clientActuelle.min;
 
 /// L'age le plus grand d'un enfant ; a 18 ans, on s'inscrit soi-meme.
@@ -84,45 +246,94 @@ const int ageMaximum = 17;
 /// Le nombre d'apprenants qu'une demande porte au plus (borne du serveur).
 const int apprenantsMaximum = 6;
 
+/// Un prenom accepte (directeur, 22/11/2026) : des lettres seulement, de
+/// toute ecriture (arabe comprise), de 2 a 30 signes ; espace, apostrophe et
+/// trait d'union entre les lettres ; ni chiffre ni emoji.
+bool prenomValide(String saisie) {
+  final String v = saisie.trim();
+  if (v.length < 2 || v.length > 30) return false;
+  return RegExp(r"^\p{L}[\p{L}\p{M}' \-]*$", unicode: true).hasMatch(v) &&
+      RegExp(r'\p{L}', unicode: true).allMatches(v).length >= 2;
+}
+
 /// La sorte d'un ecran du questionnaire.
 enum SorteEtape {
-  /// « Pour qui creez-vous ce compte ? »
+  /// « Bienvenue chez Rewayah Academy ».
+  accueil,
+
+  /// « Vous venez pour apprendre, ou pour enseigner ? »
+  garde,
+
+  /// La branche « Enseigner » : la candidature commence ici.
+  enseigner,
+
+  /// « Qui va suivre les cours ? »
   pourQui,
 
-  /// Le prenom d'un enfant.
+  /// Le prenom d'un apprenant.
   prenom,
 
   /// L'age d'un enfant.
   age,
 
-  /// Le genre d'un enfant.
+  /// Le genre d'un apprenant.
   genre,
 
-  /// « Suivez-vous aussi des cours ? »
-  parent,
+  /// Interlude « Voici votre famille ».
+  famille,
 
-  /// La langue du cours, une pour toute la demande.
-  langue,
-
-  /// Le niveau d'un enfant.
+  /// Le niveau d'un apprenant.
   niveau,
 
-  /// Le niveau du titulaire.
-  niveauTitulaire,
+  /// La lecture du Coran.
+  lecture,
+
+  /// Combien est memorise.
+  memorise,
+
+  /// Quels juz ou quelles sourates.
+  detail,
 
   /// L'objectif.
   objectif,
 
-  /// Les moments de la journee.
-  moments,
+  /// Interlude « Votre point de depart ».
+  depart,
+
+  /// La langue des explications.
+  langue,
+
+  /// La langue de secours.
+  langueSecours,
+
+  /// Interlude « Votre chemin ».
+  chemin,
+
+  /// Interlude « Voici ce que nous avons compris ».
+  recap,
 }
 
-/// Un ecran du questionnaire : sa sorte et, pour un enfant, son rang.
+/// Les quatre chapitres de la barre de progression.
+enum Chapitre {
+  /// Qui apprend.
+  quiApprend,
+
+  /// Ou en est le niveau.
+  niveau,
+
+  /// Vos cours.
+  cours,
+
+  /// Votre demande.
+  demande,
+}
+
+/// Un ecran du questionnaire : sa sorte et, pour un apprenant, son rang.
 class EtapeQuestionnaire {
   /// Cree un ecran.
   const EtapeQuestionnaire(this.sorte, [this.rang = 0]);
 
-  /// Lit un ecran depuis l'adresse (`prenom-1`, `objectif`), ou `null`.
+  /// Lit un ecran depuis l'adresse (`prenom-1`, `objectif-0`), ou `null`.
   static EtapeQuestionnaire? depuisCode(String? code) {
     if (code == null) {
       return null;
@@ -141,20 +352,55 @@ class EtapeQuestionnaire {
   /// La sorte.
   final SorteEtape sorte;
 
-  /// Le rang de l'enfant (0 pour les ecrans communs).
+  /// Le rang de l'apprenant (0 pour les ecrans communs).
   final int rang;
 
-  /// Vrai quand l'ecran porte sur un enfant.
-  bool get parEnfant => switch (sorte) {
+  /// Vrai quand l'ecran porte sur un apprenant.
+  bool get parApprenant => switch (sorte) {
     SorteEtape.prenom ||
     SorteEtape.age ||
     SorteEtape.genre ||
-    SorteEtape.niveau => true,
+    SorteEtape.niveau ||
+    SorteEtape.lecture ||
+    SorteEtape.memorise ||
+    SorteEtape.detail ||
+    SorteEtape.objectif => true,
     _ => false,
   };
 
+  /// Vrai pour un interlude (un toucher, pas une question).
+  bool get interlude => switch (sorte) {
+    SorteEtape.famille ||
+    SorteEtape.depart ||
+    SorteEtape.chemin ||
+    SorteEtape.recap => true,
+    _ => false,
+  };
+
+  /// Le chapitre de l'ecran ; `null` pour l'accueil et la branche
+  /// « Enseigner ».
+  Chapitre? get chapitre => switch (sorte) {
+    SorteEtape.accueil || SorteEtape.enseigner => null,
+    SorteEtape.garde ||
+    SorteEtape.pourQui ||
+    SorteEtape.prenom ||
+    SorteEtape.age ||
+    SorteEtape.genre ||
+    SorteEtape.famille => Chapitre.quiApprend,
+    SorteEtape.niveau ||
+    SorteEtape.lecture ||
+    SorteEtape.memorise ||
+    SorteEtape.detail ||
+    SorteEtape.objectif ||
+    SorteEtape.depart => Chapitre.niveau,
+    SorteEtape.langue ||
+    SorteEtape.langueSecours ||
+    SorteEtape.chemin => Chapitre.cours,
+    SorteEtape.recap => Chapitre.demande,
+  };
+
   /// Le code de l'adresse.
-  String get code => parEnfant ? '${sorte.name}-$rang' : sorte.name;
+  String get code => parApprenant ? '${sorte.name}-$rang' : sorte.name;
 
   @override
   bool operator ==(Object other) =>
@@ -162,228 +408,246 @@ class EtapeQuestionnaire {
 
   @override
   int get hashCode => Object.hash(sorte, rang);
+
+  @override
+  String toString() => code;
 }
 
 /// Les reponses du questionnaire.
 class QuestionnaireInscription {
   /// Cree un questionnaire.
   const QuestionnaireInscription({
-    this.usage,
-    this.enfants = const <EnfantQuestionnaire>[],
-    this.parentSuitDesCours,
-    this.niveauTitulaire,
-    this.objectif,
-    this.moments = const <MomentJournee>{},
+    this.commence = false,
+    this.apprendre = false,
+    this.pourQui,
+    this.apprenants = const <ApprenantQuestionnaire>[],
     this.langue,
+    this.langueSecours,
+    this.langueAutre = '',
+    this.source,
   });
 
-  /// « Pour moi » ou « mon enfant » ; jamais enseignant ni comptable.
-  final UsageInscription? usage;
+  /// « Commencer » a ete touche sur l'accueil.
+  final bool commence;
 
-  /// Les enfants, dans l'ordre de saisie.
-  final List<EnfantQuestionnaire> enfants;
+  /// « Apprendre » a ete choisi (jamais « Enseigner » : ce chemin ne cree
+  /// aucune demande d'eleve).
+  final bool apprendre;
 
-  /// La reponse a « Suivez-vous aussi des cours ? » (famille).
-  final bool? parentSuitDesCours;
+  /// La reponse a « Qui va suivre les cours ? ».
+  final PourQui? pourQui;
 
-  /// Le niveau du titulaire, quand il apprend.
-  final NiveauDeclare? niveauTitulaire;
+  /// Les apprenants, dans l'ordre de saisie.
+  final List<ApprenantQuestionnaire> apprenants;
 
-  /// L'objectif.
-  final ObjectifApprentissage? objectif;
-
-  /// Les moments retenus.
-  final Set<MomentJournee> moments;
-
-  /// La langue du cours (code de `langues_cours`), lue sans compte
-  /// (`langues_cours_publiques`).
+  /// La langue des explications (code de [languesDesExplications]).
   final String? langue;
 
+  /// La langue de secours, facultative ; `null` : aucune.
+  final String? langueSecours;
+
+  /// Une langue absente de la liste, facultative (pour mesurer la demande).
+  final String langueAutre;
+
+  /// « Comment avez-vous connu Rewayah ? », facultatif.
+  final SourceConnaissance? source;
+
+  /// L'usage, tel que l'inscription le connait.
+  UsageInscription? get usage => switch (pourQui) {
+    null => null,
+    PourQui.moi => UsageInscription.moi,
+    PourQui.unEnfant || PourQui.plusieurs => UsageInscription.famille,
+  };
+
+  /// L'apprenant titulaire, s'il y en a un.
+  ApprenantQuestionnaire? get titulaire =>
+      apprenants.where((ApprenantQuestionnaire a) => a.titulaire).firstOrNull;
+
   /// Vrai quand le titulaire suit des cours.
-  bool get titulaireApprend =>
-      usage == UsageInscription.moi || parentSuitDesCours == true;
+  bool get titulaireApprend => titulaire != null;
 
-  /// Le nombre d'ecrans au plus, pour les reponses deja donnees : une
-  /// reponse encore inconnue compte comme celle qui ajoute des ecrans
-  /// (« mon enfant », le parent qui suit des cours). Le total du compteur ne
-  /// grandit donc jamais seul d'un ecran a l'autre : il ne fait que baisser
-  /// quand une reponse retire des questions. Avant, « 1 sur 6 » a « Pour
-  /// qui », puis « 2 sur 10 » apres « J'inscris mon enfant » (production,
-  /// 05/11 ; FINITION 22 b). Seul l'ajout d'un enfant, geste de la personne,
-  /// l'allonge.
-  int get etapesAuPlus => QuestionnaireInscription(
-    usage: usage ?? UsageInscription.famille,
-    enfants: enfants,
-    parentSuitDesCours: parentSuitDesCours ?? true,
-  ).etapes.length;
+  /// Les enfants, dans l'ordre de saisie.
+  List<ApprenantQuestionnaire> get enfants => <ApprenantQuestionnaire>[
+    for (final ApprenantQuestionnaire a in apprenants)
+      if (!a.titulaire) a,
+  ];
 
-  /// Les ecrans, dans l'ordre, pour les reponses deja donnees.
+  /// Vrai sur l'interlude « famille » de « Pour plusieurs enfants » tant
+  /// qu'un seul apprenant est inscrit : le bouton dit « Ajouter l'enfant
+  /// suivant ».
+  bool get encoreUnEnfant =>
+      pourQui == PourQui.plusieurs && apprenants.length < 2;
+
+  /// Vrai quand un apprenant de plus est encore permis.
+  bool get peutAjouter => apprenants.length < apprenantsMaximum;
+
+  /// Les ecrans, dans l'ordre, pour les reponses deja donnees (la maquette :
+  /// les branches changent la liste).
   List<EtapeQuestionnaire> get etapes {
     final List<EtapeQuestionnaire> liste = <EtapeQuestionnaire>[
+      const EtapeQuestionnaire(SorteEtape.accueil),
+      const EtapeQuestionnaire(SorteEtape.garde),
       const EtapeQuestionnaire(SorteEtape.pourQui),
     ];
-    if (usage == UsageInscription.famille) {
-      // Les quatre ecrans d'un enfant se suivent : son niveau se dit juste
-      // apres son prenom, son age et son genre.
-      final int n = enfants.isEmpty ? 1 : enfants.length;
-      for (int i = 0; i < n; i++) {
-        liste.addAll(<EtapeQuestionnaire>[
-          EtapeQuestionnaire(SorteEtape.prenom, i),
-          EtapeQuestionnaire(SorteEtape.age, i),
-          EtapeQuestionnaire(SorteEtape.genre, i),
-          EtapeQuestionnaire(SorteEtape.niveau, i),
-        ]);
-      }
-      liste.add(const EtapeQuestionnaire(SorteEtape.parent));
+    for (final (int i, ApprenantQuestionnaire a) in apprenants.indexed) {
+      liste.add(EtapeQuestionnaire(SorteEtape.prenom, i));
+      if (!a.titulaire) liste.add(EtapeQuestionnaire(SorteEtape.age, i));
+      liste.add(EtapeQuestionnaire(SorteEtape.genre, i));
     }
-    liste.add(const EtapeQuestionnaire(SorteEtape.langue));
-    if (titulaireApprend) {
-      liste.add(const EtapeQuestionnaire(SorteEtape.niveauTitulaire));
+    if (apprenants.isNotEmpty) {
+      liste.add(const EtapeQuestionnaire(SorteEtape.famille));
+    }
+    for (final (int i, ApprenantQuestionnaire a) in apprenants.indexed) {
+      liste.add(EtapeQuestionnaire(SorteEtape.niveau, i));
+      if (a.lectureDemandee) {
+        liste.add(EtapeQuestionnaire(SorteEtape.lecture, i));
+      }
+      if (a.memorisationDemandee) {
+        liste.add(EtapeQuestionnaire(SorteEtape.memorise, i));
+        if (a.detailDemande) {
+          liste.add(EtapeQuestionnaire(SorteEtape.detail, i));
+        }
+      }
+      liste.add(EtapeQuestionnaire(SorteEtape.objectif, i));
     }
     liste.addAll(const <EtapeQuestionnaire>[
-      EtapeQuestionnaire(SorteEtape.objectif),
-      EtapeQuestionnaire(SorteEtape.moments),
+      EtapeQuestionnaire(SorteEtape.depart),
+      EtapeQuestionnaire(SorteEtape.langue),
+      EtapeQuestionnaire(SorteEtape.langueSecours),
+      EtapeQuestionnaire(SorteEtape.chemin),
+      EtapeQuestionnaire(SorteEtape.recap),
     ]);
     return liste;
   }
 
-  EnfantQuestionnaire? _enfant(int rang) =>
-      rang < enfants.length ? enfants[rang] : null;
+  ApprenantQuestionnaire? _apprenant(int rang) =>
+      rang < apprenants.length ? apprenants[rang] : null;
 
-  /// Vrai quand [etape] a sa reponse.
+  /// Vrai quand [etape] a sa reponse (un interlude, un ecran facultatif : des
+  /// qu'il est atteignable).
   bool repondue(EtapeQuestionnaire etape) => switch (etape.sorte) {
-    SorteEtape.pourQui =>
-      usage == UsageInscription.moi || usage == UsageInscription.famille,
-    SorteEtape.prenom => _enfant(etape.rang)?.prenom.trim().isNotEmpty ?? false,
-    SorteEtape.age => _enfant(etape.rang)?.age != null,
-    SorteEtape.genre => _enfant(etape.rang)?.genre != null,
-    SorteEtape.parent => parentSuitDesCours != null,
+    SorteEtape.accueil => commence,
+    SorteEtape.garde => apprendre,
+    SorteEtape.enseigner => false,
+    SorteEtape.pourQui => pourQui != null && apprenants.isNotEmpty,
+    SorteEtape.prenom => prenomValide(_apprenant(etape.rang)?.prenom ?? ''),
+    SorteEtape.age => _apprenant(etape.rang)?.age != null,
+    SorteEtape.genre => _apprenant(etape.rang)?.genre != null,
+    SorteEtape.famille => !encoreUnEnfant,
+    SorteEtape.niveau => _apprenant(etape.rang)?.niveau != null,
+    SorteEtape.lecture || SorteEtape.detail => true,
+    SorteEtape.memorise => _apprenant(etape.rang)?.quantite != null,
+    SorteEtape.objectif => _apprenant(etape.rang)?.objectif != null,
     SorteEtape.langue => langue != null,
-    SorteEtape.niveau => _enfant(etape.rang)?.niveau != null,
-    SorteEtape.niveauTitulaire => niveauTitulaire != null,
-    SorteEtape.objectif => objectif != null,
-    SorteEtape.moments => moments.isNotEmpty,
+    SorteEtape.depart ||
+    SorteEtape.langueSecours ||
+    SorteEtape.chemin ||
+    SorteEtape.recap => true,
   };
 
   /// Le premier ecran sans reponse, ou `null` quand tout est repondu.
   EtapeQuestionnaire? get premiereManquante =>
       etapes.where((EtapeQuestionnaire e) => !repondue(e)).firstOrNull;
 
-  /// Vrai quand tout est repondu.
+  /// Vrai quand tout est repondu : l'acces (adresse e-mail) s'ouvre.
   bool get complet => premiereManquante == null;
 
   /// Les apprenants, tels que `inscrire_titulaire` les attend
-  /// (`p_apprenants`) : les enfants, puis le titulaire s'il apprend.
-  List<Map<String, Object?>> apprenantsPourServeur() {
-    final List<String> momentsSql = <String>[
-      for (final MomentJournee m in MomentJournee.values)
-        if (moments.contains(m)) momentSql(m),
-    ];
-    return <Map<String, Object?>>[
-      if (usage == UsageInscription.famille)
-        for (final EnfantQuestionnaire e in enfants)
-          <String, Object?>{
-            'prenom': e.prenom.trim(),
-            'age': e.age,
-            'genre': e.genre?.valeurSql,
-            'niveau': e.niveau?.valeurSql,
-            'objectif': objectif?.valeurSql,
-            'moments': momentsSql,
-            'langue': langue,
-          },
-      if (titulaireApprend)
-        <String, Object?>{
-          'est_titulaire': true,
-          'niveau': niveauTitulaire?.valeurSql,
-          'objectif': objectif?.valeurSql,
-          'moments': momentsSql,
-          'langue': langue,
-        },
-    ];
-  }
+  /// (`p_apprenants`) : dans l'ordre de saisie, le titulaire compris.
+  List<Map<String, Object?>> apprenantsPourServeur() => <Map<String, Object?>>[
+    for (final ApprenantQuestionnaire a in apprenants)
+      a.versServeur(
+        langue: langue,
+        langueSecours: langueSecours,
+        langueAutre: langueAutre,
+      ),
+  ];
 
-  /// Une copie modifiee ; aucune reponse ne se remet a `null` par elle.
+  /// La source declaree, telle que `inscrire_titulaire` l'attend
+  /// (`p_source`).
+  String? get sourcePourServeur => source?.name;
+
+  /// Une copie modifiee ; [sansSecours] et [sansSource] remettent ces
+  /// reponses a nul.
   QuestionnaireInscription copier({
-    UsageInscription? usage,
-    List<EnfantQuestionnaire>? enfants,
-    bool? parentSuitDesCours,
-    NiveauDeclare? niveauTitulaire,
-    ObjectifApprentissage? objectif,
-    Set<MomentJournee>? moments,
+    bool? commence,
+    bool? apprendre,
+    PourQui? pourQui,
+    List<ApprenantQuestionnaire>? apprenants,
     String? langue,
+    String? langueSecours,
+    bool sansSecours = false,
+    String? langueAutre,
+    SourceConnaissance? source,
+    bool sansSource = false,
   }) => QuestionnaireInscription(
-    usage: usage ?? this.usage,
-    enfants: enfants ?? this.enfants,
-    parentSuitDesCours: parentSuitDesCours ?? this.parentSuitDesCours,
-    niveauTitulaire: niveauTitulaire ?? this.niveauTitulaire,
-    objectif: objectif ?? this.objectif,
-    moments: moments ?? this.moments,
+    commence: commence ?? this.commence,
+    apprendre: apprendre ?? this.apprendre,
+    pourQui: pourQui ?? this.pourQui,
+    apprenants: apprenants ?? this.apprenants,
     langue: langue ?? this.langue,
+    langueSecours: sansSecours ? null : langueSecours ?? this.langueSecours,
+    langueAutre: langueAutre ?? this.langueAutre,
+    source: sansSource ? null : source ?? this.source,
   );
 
   /// Le texte garde sur l'appareil.
   String versTexte() => jsonEncode(<String, Object?>{
-    'usage': usage?.name,
-    'enfants': <Object?>[
-      for (final EnfantQuestionnaire e in enfants) e._versJson(),
+    'version': 2,
+    'commence': commence,
+    'apprendre': apprendre,
+    'pourQui': pourQui?.name,
+    'apprenants': <Object?>[
+      for (final ApprenantQuestionnaire a in apprenants) a._versJson(),
     ],
-    'parent': parentSuitDesCours,
-    'niveauTitulaire': niveauTitulaire?.valeurSql,
-    'objectif': objectif?.valeurSql,
-    'moments': <String>[for (final MomentJournee m in moments) m.name],
     'langue': langue,
+    'langueSecours': langueSecours,
+    'langueAutre': langueAutre,
+    'source': source?.name,
   });
 
-  /// Relit le texte garde ; un texte illisible rend un questionnaire vide.
+  /// Relit le texte garde ; un texte illisible, ou d'avant ce questionnaire,
+  /// rend un questionnaire vide.
   static QuestionnaireInscription depuisTexte(String? texte) {
     if (texte == null || texte.isEmpty) {
       return const QuestionnaireInscription();
     }
     try {
       final Object? json = jsonDecode(texte);
-      if (json is! Map<String, Object?>) {
+      if (json is! Map<String, Object?> || json['version'] != 2) {
         return const QuestionnaireInscription();
       }
-      final UsageInscription? usage = <UsageInscription>[
-        UsageInscription.moi,
-        UsageInscription.famille,
-      ].where((UsageInscription u) => u.name == json['usage']).firstOrNull;
-      final Object? enfants = json['enfants'];
-      final Object? moments = json['moments'];
+      final Object? apprenants = json['apprenants'];
       return QuestionnaireInscription(
-        usage: usage,
-        enfants: <EnfantQuestionnaire>[
-          if (enfants is List<Object?>)
-            for (final Object? e in enfants.take(apprenantsMaximum))
-              if (e is Map<String, Object?>) EnfantQuestionnaire._depuisJson(e),
+        commence: json['commence'] == true,
+        apprendre: json['apprendre'] == true,
+        pourQui: PourQui.values
+            .where((PourQui p) => p.name == json['pourQui'])
+            .firstOrNull,
+        apprenants: <ApprenantQuestionnaire>[
+          if (apprenants is List<Object?>)
+            for (final Object? a in apprenants.take(apprenantsMaximum))
+              if (a is Map<String, Object?>)
+                ApprenantQuestionnaire._depuisJson(a),
         ],
-        parentSuitDesCours: json['parent'] is bool
-            ? json['parent']! as bool
-            : null,
-        niveauTitulaire: NiveauDeclare.depuisSql(
-          json['niveauTitulaire'] as String?,
-        ),
-        objectif: ObjectifApprentissage.depuisSql(json['objectif'] as String?),
-        moments: <MomentJournee>{
-          if (moments is List<Object?>)
-            for (final MomentJournee m in MomentJournee.values)
-              if (moments.contains(m.name)) m,
-        },
-        langue: json['langue'] is String ? json['langue']! as String : null,
+        langue: _codeLangue(json['langue']),
+        langueSecours: _codeLangue(json['langueSecours']),
+        langueAutre: json['langueAutre'] is String
+            ? json['langueAutre']! as String
+            : '',
+        source: SourceConnaissance.values
+            .where((SourceConnaissance s) => s.name == json['source'])
+            .firstOrNull,
       );
     } on Object catch (erreur) {
       journalDev('Questionnaire d inscription illisible : $erreur');
       return const QuestionnaireInscription();
     }
   }
-}
 
-/// La valeur serveur d'un moment (`candidature_apprenants.moments`).
-String momentSql(MomentJournee moment) => switch (moment) {
-  MomentJournee.matin => 'matin',
-  MomentJournee.apresMidi => 'apres_midi',
-  MomentJournee.soir => 'soir',
-};
+  static String? _codeLangue(Object? brut) =>
+      brut is String && codesDesExplications.contains(brut) ? brut : null;
+}
 
 /// La clef du questionnaire dans la memoire de l'appareil.
 const String clefQuestionnaire = 'rewayah.inscription.questionnaire';
@@ -400,78 +664,145 @@ class QuestionnaireControleur extends Notifier<QuestionnaireInscription> {
     ecrireMemoireAppareil(clefQuestionnaire, q.versTexte());
   }
 
-  /// Retient l'usage. Changer d'usage repart d'un questionnaire vide.
-  void choisirUsage(UsageInscription usage) {
-    if (state.usage != usage) {
-      _poser(QuestionnaireInscription(usage: usage));
-    }
+  /// « Commencer ».
+  void commencer() => _poser(state.copier(commence: true));
+
+  /// « Apprendre » (la garde).
+  void apprendre() => _poser(state.copier(apprendre: true));
+
+  /// Un compte deja ouvert, sans questionnaire (l'etape d'usage de
+  /// l'inscription) : l'accueil et la garde sont passes, « Pour qui » est
+  /// propose avec cette reponse. Changer d'usage repart d'un questionnaire
+  /// vide.
+  void reprendreDepuisCompte(UsageInscription usage) {
+    final PourQui p = usage == UsageInscription.moi
+        ? PourQui.moi
+        : PourQui.unEnfant;
+    if (state.usage == usage) return;
+    _poser(
+      QuestionnaireInscription(commence: true, apprendre: true, pourQui: p),
+    );
   }
 
-  /// Modifie l'enfant de [rang] (cree au besoin).
-  void modifierEnfant(
+  /// Retient « Pour qui » (sans encore creer d'apprenant).
+  void choisirPourQui(PourQui pourQui) =>
+      _poser(state.copier(pourQui: pourQui));
+
+  /// « Continuer » sur « Pour qui » : le premier apprenant existe, titulaire
+  /// pour « Pour moi » (et seul).
+  void validerPourQui() {
+    final PourQui? p = state.pourQui;
+    if (p == null) return;
+    final bool moi = p == PourQui.moi;
+    final List<ApprenantQuestionnaire> liste = state.apprenants.isEmpty
+        ? <ApprenantQuestionnaire>[ApprenantQuestionnaire(titulaire: moi)]
+        : <ApprenantQuestionnaire>[
+            state.apprenants.first.copier(titulaire: moi),
+            if (!moi) ...state.apprenants.skip(1),
+          ];
+    _poser(state.copier(apprenants: liste));
+  }
+
+  /// Modifie l'apprenant de [rang].
+  void modifier(
     int rang,
-    EnfantQuestionnaire Function(EnfantQuestionnaire e) modifier,
+    ApprenantQuestionnaire Function(ApprenantQuestionnaire a) modifier,
   ) {
-    final List<EnfantQuestionnaire> enfants = <EnfantQuestionnaire>[
-      ...state.enfants,
+    if (rang >= state.apprenants.length) return;
+    final List<ApprenantQuestionnaire> liste = <ApprenantQuestionnaire>[
+      ...state.apprenants,
     ];
-    while (enfants.length <= rang) {
-      enfants.add(const EnfantQuestionnaire());
-    }
-    enfants[rang] = modifier(enfants[rang]);
-    _poser(state.copier(enfants: enfants));
+    liste[rang] = modifier(liste[rang]);
+    _poser(state.copier(apprenants: liste));
   }
 
-  /// Ajoute un enfant sans reponse ; rend son rang, ou `null` a la borne.
-  int? ajouterEnfant() {
-    if (state.enfants.length + (state.titulaireApprend ? 1 : 0) >=
-        apprenantsMaximum) {
+  /// Retient le niveau ; « a deja memorise » preselectionne « Memoriser ».
+  void choisirNiveau(int rang, NiveauDeclare niveau) => modifier(
+    rang,
+    (ApprenantQuestionnaire a) => ApprenantQuestionnaire(
+      prenom: a.prenom,
+      age: a.age,
+      genre: a.genre,
+      niveau: niveau,
+      lecture: a.lecture,
+      lectureAutre: a.lectureAutre,
+      quantite: niveau == NiveauDeclare.memorisationPartielle
+          ? a.quantite
+          : null,
+      juz: niveau == NiveauDeclare.memorisationPartielle
+          ? a.juz
+          : const <int>[],
+      sourates: niveau == NiveauDeclare.memorisationPartielle
+          ? a.sourates
+          : const <String>[],
+      objectif:
+          a.objectif ??
+          (niveau == NiveauDeclare.memorisationPartielle
+              ? ObjectifOnboarding.memoriser
+              : null),
+      titulaire: a.titulaire,
+    ),
+  );
+
+  /// Ajoute ou retire un juz, ou une sourate, du detail.
+  void basculerDetail(int rang, {int? juz, String? sourate}) =>
+      modifier(rang, (ApprenantQuestionnaire a) {
+        final List<int> j = <int>[...a.juz];
+        final List<String> s = <String>[...a.sourates];
+        if (juz != null && !j.remove(juz)) j.add(juz);
+        if (sourate != null && !s.remove(sourate)) s.add(sourate);
+        return a.copier(juz: j, sourates: s);
+      });
+
+  /// Ajoute un apprenant ; rend son rang, ou `null` a la borne.
+  int? ajouter({bool titulaire = false}) {
+    if (!state.peutAjouter || (titulaire && state.titulaireApprend)) {
       return null;
     }
-    final List<EnfantQuestionnaire> enfants = <EnfantQuestionnaire>[
-      ...state.enfants,
-      const EnfantQuestionnaire(),
+    final List<ApprenantQuestionnaire> liste = <ApprenantQuestionnaire>[
+      ...state.apprenants,
+      ApprenantQuestionnaire(titulaire: titulaire),
     ];
-    _poser(state.copier(enfants: enfants));
-    return enfants.length - 1;
+    _poser(state.copier(apprenants: liste));
+    return liste.length - 1;
   }
 
-  /// Retire l'enfant de [rang] (le dernier ajoute, quand on revient de son
-  /// prenom sans l'avoir saisi). Le premier enfant d'une famille reste.
-  void retirerEnfant(int rang) {
-    if (rang == 0 || rang >= state.enfants.length) {
-      return;
-    }
+  /// Retire l'apprenant de [rang] (ajoute puis abandonne avant son prenom).
+  /// Le premier reste.
+  void retirer(int rang) {
+    if (rang == 0 || rang >= state.apprenants.length) return;
     _poser(
       state.copier(
-        enfants: <EnfantQuestionnaire>[...state.enfants]..removeAt(rang),
+        apprenants: <ApprenantQuestionnaire>[...state.apprenants]
+          ..removeAt(rang),
       ),
     );
   }
 
-  /// Retient la reponse du parent.
-  void choisirParent({required bool suit}) =>
-      _poser(state.copier(parentSuitDesCours: suit));
+  /// Retient la langue des explications ; la langue de secours ne peut pas
+  /// etre la meme.
+  void choisirLangue(String code) => _poser(
+    state.copier(langue: code, sansSecours: state.langueSecours == code),
+  );
 
-  /// Retient le niveau du titulaire.
-  void choisirNiveauTitulaire(NiveauDeclare niveau) =>
-      _poser(state.copier(niveauTitulaire: niveau));
+  /// Retient la langue de secours ; `null` : « Aucune autre ».
+  void choisirLangueSecours(String? code) => _poser(
+    code == null
+        ? state.copier(sansSecours: true)
+        : state.copier(langueSecours: code),
+  );
 
-  /// Retient l'objectif.
-  void choisirObjectif(ObjectifApprentissage objectif) =>
-      _poser(state.copier(objectif: objectif));
+  /// Retient la langue absente de la liste.
+  void saisirLangueAutre(String texte) =>
+      _poser(state.copier(langueAutre: texte.trim()));
 
-  /// Retient la langue du cours.
-  void choisirLangue(String langue) => _poser(state.copier(langue: langue));
-
-  /// Ajoute ou retire un moment.
-  void basculerMoment(MomentJournee moment) {
-    final Set<MomentJournee> moments = <MomentJournee>{...state.moments};
-    if (!moments.remove(moment)) {
-      moments.add(moment);
-    }
-    _poser(state.copier(moments: moments));
-  }
+  /// Retient la source ; la meme source touchee deux fois se retire
+  /// (facultatif).
+  void basculerSource(SourceConnaissance source) => _poser(
+    state.source == source
+        ? state.copier(sansSource: true)
+        : state.copier(source: source),
+  );
 
   /// Efface le questionnaire, une fois la demande envoyee.
   void effacer() {
@@ -489,12 +820,6 @@ questionnaireInscriptionProvider =
 
 /// INSCRIPTION-3 (constat du directeur, 01/11/2026) : vrai entre la demande
 /// envoyee (profil cree) et l'arrivee sur `/attente`.
-///
-/// Garde hors de l'ecran du recapitulatif, que le rafraichissement de la
-/// session peut remonter avec un etat neuf : il disait alors « Reessayer »
-/// une fraction de seconde, alors que rien n'avait echoue. A l'arrivee sur
-/// `/attente`, les reponses du questionnaire quittent l'appareil
-/// ([QuestionnaireControleur.effacer]) et le drapeau retombe.
 class DepartDemande extends Notifier<bool> {
   @override
   bool build() => false;
@@ -512,9 +837,7 @@ final NotifierProvider<DepartDemande, bool> departDemandeProvider =
 
 /// ONBOARDING-BOUCLE (directeur, 14/11/2026) : vrai quand une session vient de
 /// s'ouvrir ici (lien de connexion ouvert dans un autre navigateur que celui
-/// du questionnaire) alors que le questionnaire de cet appareil est vide. Le
-/// questionnaire le dit au lieu de recommencer sans un mot ; le bandeau
-/// disparait des que le questionnaire est complet.
+/// du questionnaire) alors que le questionnaire de cet appareil est vide.
 class ReponsesResteesAilleurs extends Notifier<bool> {
   @override
   bool build() => false;

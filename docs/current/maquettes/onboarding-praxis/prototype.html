@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onboarding avec Praxis</title>
+<style>
+/* Maquette jetable (22/11/2026) : couleurs de lib/core/theme/app_palette.dart, Praxis d'apres .claude/skills/praxis-rewayah (fiche du §2). */
+:root{--canvas:#F1EFF4;--raised:#FFFFFF;--sunken:#F0EDF4;--ink:#110E20;--mute:#5B566B;--line:#DDD7E8;--primary:#8652E6;--on-primary:#FFFFFF;--wash:#EEE6FA;--on-wash:#4E2983;--alert:#B01B3C;--bubble:#FFFFFF}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--canvas:#16161E;--raised:#272734;--sunken:#262534;--ink:#F5F2FA;--mute:#B4AEC4;--line:#3A3849;--primary:#BA98FB;--on-primary:#25113F;--wash:#2D2D3B;--on-wash:#DCCAFD;--alert:#FFB1BD;--bubble:#2D2D3B}}
+:root[data-theme="dark"]{--canvas:#16161E;--raised:#272734;--sunken:#262534;--ink:#F5F2FA;--mute:#B4AEC4;--line:#3A3849;--primary:#BA98FB;--on-primary:#25113F;--wash:#2D2D3B;--on-wash:#DCCAFD;--alert:#FFB1BD;--bubble:#2D2D3B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;padding:24px 16px}
+.phone{width:390px;max-width:100%;min-height:780px;background:var(--canvas);border:1px solid var(--line);border-radius:28px;box-shadow:0 18px 50px rgba(17,14,32,.16);display:flex;flex-direction:column;overflow:hidden}
+@media (max-width:430px){body{padding:0}.phone{border:0;border-radius:0;box-shadow:none;min-height:100dvh}}
+header{padding:14px 16px 0;display:flex;flex-direction:column;gap:8px}
+.top{display:flex;align-items:center;gap:8px;min-height:32px}
+.back{border:0;background:none;color:var(--mute);font:inherit;font-size:14px;padding:6px 8px;margin-left:-8px;cursor:pointer;border-radius:8px}
+.back[hidden]{display:none}
+.chap{font-size:13px;color:var(--mute);margin-left:auto;letter-spacing:.02em}
+.bar{display:flex;gap:5px}.seg{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}.seg i{display:block;height:100%;width:0;background:var(--primary);border-radius:3px;transition:width .5s cubic-bezier(.3,1.2,.5,1)}
+.stage{display:flex;align-items:flex-end;gap:10px;padding:14px 16px 4px}
+.praxis{width:96px;flex:none;transition:width .4s}.stage.big{flex-direction:column;align-items:center}.stage.big .praxis{width:150px}
+.praxis svg{display:block;width:100%;height:auto;overflow:visible;animation:breathe 4.5s ease-in-out infinite}
+@keyframes breathe{50%{transform:translateY(-1.5px) scale(1.012)}}
+.bubble{background:var(--bubble);border:1px solid var(--line);border-radius:18px 18px 18px 4px;padding:10px 14px;font-size:15.5px;min-height:44px;flex:1;position:relative}
+.stage.big .bubble{border-radius:18px;text-align:center;margin-top:6px;width:100%}
+.bubble .w{opacity:0;animation:wd .25s forwards}@keyframes wd{to{opacity:1}}
+main{padding:10px 16px 8px;display:flex;flex-direction:column;gap:10px;flex:1}
+h1{font-size:21px;line-height:1.25;margin:6px 0 2px;font-weight:700}
+.sub{color:var(--mute);font-size:14.5px;margin:0 0 4px}
+.cards{display:flex;flex-direction:column;gap:10px}
+.card{display:flex;flex-direction:column;gap:2px;text-align:start;width:100%;font:inherit;color:inherit;background:var(--raised);border:2px solid var(--line);border-radius:16px;padding:14px 16px;cursor:pointer;transition:transform .15s,border-color .15s,background .15s}
+.card b{font-size:16.5px}.card span{font-size:14px;color:var(--mute)}
+.card:hover{border-color:var(--primary)}.card:active{transform:scale(.985)}
+.card[aria-pressed="true"]{border-color:var(--primary);background:var(--wash)}.card[aria-pressed="true"] b{color:var(--on-wash)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:15px;color:inherit;background:var(--raised);border:2px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;min-width:44px;min-height:40px}
+.chip[aria-pressed="true"]{border-color:var(--primary);background:var(--wash);color:var(--on-wash);font-weight:600}
+.chips.small .chip{padding:6px 10px;font-size:13.5px;min-height:36px}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:14.5px;font-weight:600}
+label.req::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--alert);margin-inline-end:6px}
+input[type=text],input[type=email]{font:inherit;font-weight:400;color:inherit;background:var(--raised);border:2px solid var(--line);border-radius:14px;padding:13px 14px;width:100%}
+input:focus{outline:none;border-color:var(--primary)}
+footer{padding:10px 16px 18px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.cta{width:100%;font:inherit;font-weight:700;font-size:16.5px;border:0;border-radius:16px;padding:15px;background:var(--primary);color:var(--on-primary);cursor:pointer;transition:transform .15s,opacity .2s}
+.cta:disabled{opacity:.4;cursor:default}.cta:not(:disabled):active{transform:scale(.985)}
+.link{background:none;border:0;font:inherit;font-size:14.5px;color:var(--primary);cursor:pointer;text-decoration:underline;padding:6px}
+.panel{background:var(--raised);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.panel h3{margin:0 0 6px;font-size:15.5px}.panel p{margin:4px 0;font-size:14.5px}
+.avs{display:flex;gap:12px;flex-wrap:wrap}.av{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13.5px;animation:pop .5s cubic-bezier(.3,1.6,.5,1) backwards}
+.av i{width:54px;height:54px;border-radius:50%;background:var(--wash);color:var(--on-wash);display:grid;place-items:center;font:700 22px/1 system-ui;font-style:normal}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.path{display:flex;flex-direction:column;gap:0;margin:6px 0}
+.st{display:flex;gap:12px;align-items:flex-start;position:relative;padding-bottom:12px;font-size:14.5px}
+.st::before{content:"";position:absolute;inset-inline-start:8px;top:18px;bottom:-2px;width:2px;background:var(--line)}.st:last-child::before{display:none}
+.st .d{width:18px;height:18px;border-radius:50%;border:3px solid var(--line);background:var(--canvas);flex:none;margin-top:2px}
+.st.on .d{border-color:var(--primary);background:var(--primary);box-shadow:0 0 0 5px var(--wash)}.st.on b{color:var(--on-wash)}
+.st small{display:block;color:var(--mute);font-size:13px}
+.tag{display:inline-block;background:var(--wash);color:var(--on-wash);border-radius:999px;font-size:12.5px;font-weight:600;padding:3px 10px}
+.rows{display:flex;flex-direction:column;gap:6px;font-size:14.5px}.rows div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding-bottom:5px}.rows div span:first-child{color:var(--mute)}
+.curve path.l{stroke-dasharray:600;stroke-dashoffset:600;animation:dr 1.6s .3s ease forwards}@keyframes dr{to{stroke-dashoffset:0}}
+.hint{font-size:13px;color:var(--mute);text-align:center}
+.side{max-width:390px;width:100%;margin-top:14px;font-size:13px;color:var(--mute);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.side button{background:none;border:0;color:var(--primary);font:inherit;cursor:pointer;text-decoration:underline}
+.fade{animation:fin .35s ease}@keyframes fin{from{opacity:0;transform:translateY(8px)}}
+:focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 5.2s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96.5%{transform:scaleY(.085)}}
+[data-e="paisible"] .eye{animation:none;transform:scaleY(.085)}
+.m{display:none}[data-e="neutre"] .m-neutre,[data-e="sourire"] .m-sourire,[data-e="paisible"] .m-sourire,[data-e="gene"] .m-sourire,[data-e="joie"] .m-joie,[data-e="etonne"] .m-etonne,[data-e="reflexion"] .m-reflexion,[data-e="desole"] .m-desole,[data-e="attente"] .m-neutre,[data-e="concentre"] .m-reflexion{display:inline}
+.joue{opacity:0;transition:opacity .3s}[data-e="joie"] .joue,[data-e="gene"] .joue{opacity:.38}
+.hand{transition:transform .5s cubic-bezier(.3,1.5,.5,1)}
+[data-g="salut"] #mD{transform:translate(2px,-62px)}[data-g="salut"] #mD>circle{animation:wave .9s ease-in-out infinite alternate}
+[data-g="coeur"] #mG{transform:translate(52px,-6px)}[data-g="reflechir"] #mD{transform:translate(-40px,18px)}[data-g="montrer"] #mD{transform:translate(-6px,34px)}
+@keyframes wave{to{transform:translateX(7px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.bubble .w{opacity:1}.curve path.l{stroke-dashoffset:0}}
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+  <header><div class="top"><button class="back" id="back" hidden>&larr; Retour</button><span class="chap" id="chap"></span></div><div class="bar" id="bar"></div></header>
+  <div class="stage" id="stage"><div class="praxis" id="praxis"></div><div class="bubble" id="bubble" aria-live="polite"></div></div>
+  <main id="main"></main>
+  <footer id="foot"></footer>
+</div>
+<div class="side"><span id="count"></span><span><button id="reset">Recommencer</button> &middot; <button id="theme">Clair / sombre</button></span></div>
+
+<script>
+/* ---------- Praxis : fiche du §2 (corps 100,108 r86 ; yeux 26x36 en 84,128 et 122,128 ; pupille r6 ; bouche 103,166 ; toque en volume projetee) ---------- */
+const PRAXIS=`<svg viewBox="-6 0 212 212" role="img" aria-label="Praxis">
+<defs><radialGradient id="gc" cx=".34" cy=".28" r=".85"><stop offset="0" stop-color="#F6EFFF"/><stop offset=".42" stop-color="#DCCAFD"/><stop offset=".8" stop-color="#C9B3F2"/><stop offset="1" stop-color="#AE95DE"/></radialGradient>
+<linearGradient id="gp" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#E9DDFE"/><stop offset=".55" stop-color="#DCCAFD"/><stop offset="1" stop-color="#F3EBFF"/></linearGradient></defs>
+<ellipse cx="80" cy="201" rx="9.75" ry="4.4" fill="#110E20"/><ellipse cx="120" cy="201" rx="9.75" ry="4.4" fill="#110E20"/>
+<circle cx="100" cy="108" r="86" fill="url(#gc)"/>
+<path d="M150 46 A86 86 0 0 1 183 120" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+<g class="eyes"><g class="eye"><ellipse cx="84" cy="128" rx="13" ry="18" fill="#110E20"/><circle class="pu" cx="84" cy="128" r="6" fill="#fff"/></g>
+<g class="eye"><ellipse cx="122" cy="128" rx="13" ry="18" fill="#110E20"/><circle class="pu" cx="122" cy="128" r="6" fill="#fff"/></g></g>
+<ellipse class="joue" cx="62" cy="154" rx="9" ry="5.5" fill="#E0375A"/><ellipse class="joue" cx="146" cy="154" rx="9" ry="5.5" fill="#E0375A"/>
+<g fill="none" stroke="#110E20" stroke-width="4" stroke-linecap="round">
+<path class="m m-neutre" d="M89 166 Q103 170 117 166"/><path class="m m-sourire" d="M89 164 Q103 178 117 164"/><path class="m m-reflexion" d="M91 167 L115 167"/><path class="m m-desole" d="M89 172 Q103 161 117 172"/></g>
+<ellipse class="m m-etonne" cx="103" cy="170" rx="6.5" ry="8.5" fill="#110E20"/>
+<g class="m m-joie"><path d="M86 160 Q103 182 120 160 Z" fill="#110E20" stroke="#110E20" stroke-width="3" stroke-linejoin="round"/><ellipse cx="103" cy="168" rx="7" ry="3.5" fill="#E0375A"/></g>
+<path d="M166.3 53.4 L166.7 53.8 L167.4 56.0 L166.6 58.3 L164.4 60.7 L160.8 63.2 L155.8 65.6 L149.6 68.0 L142.3 70.3 L134.0 72.5 L125.0 74.4 L115.3 76.1 L105.3 77.6 L95.0 78.7 L84.8 79.6 L74.7 80.1 L65.1 80.2 L56.1 80.0 L47.9 79.4 L40.7 78.5 L34.6 77.3 L29.7 75.8 L26.2 74.0 L24.0 72.0 L23.4 69.8 L24.0 68.0 A87.5 87.5 0 0 1 166.3 53.4 Z" fill="#110E20"/>
+<g stroke="#110E20" stroke-width="4" stroke-linejoin="round"><polygon points="158.2,25.9 78.2,45.2 25.7,32.8 105.7,13.4" fill="#110E20"/><polygon points="157.6,20.1 77.6,39.4 25.1,27 105.1,7.6" fill="url(#gp)"/></g>
+<path d="M91.4 23.5 L153.6 20.3" stroke="#110E20" stroke-width="4" stroke-linecap="round"/><circle cx="91.4" cy="23.5" r="5" fill="#110E20"/>
+<g transform="translate(157.6 20.1)"><g><animateTransform attributeName="transform" type="rotate" values="-3;3;-3" dur="4s" repeatCount="indefinite"/><path d="M0 0 L0 29" stroke="#110E20" stroke-width="4" stroke-linecap="round"/><rect x="-6" y="27" width="12" height="19" rx="2.5" fill="#110E20"/></g></g>
+<g class="hand" id="mG"><circle cx="16" cy="158" r="19" fill="url(#gc)"/></g><g class="hand" id="mD"><circle cx="184" cy="158" r="19" fill="url(#gc)"/></g>
+</svg>`;
+const reduit=matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(reduit)document.addEventListener('DOMContentLoaded',()=>document.querySelectorAll('animateTransform').forEach(a=>a.remove()));
+const $=s=>document.querySelector(s);
+$('#praxis').innerHTML=PRAXIS;
+function pose(e,g){const v=$('#praxis svg');v.dataset.e=e||'sourire';v.dataset.g=g||''}
+document.addEventListener('pointermove',e=>look(e.clientX,e.clientY));
+function look(x,y){const s=$('#praxis svg').getBoundingClientRect();const dx=x-(s.left+s.width/2),dy=y-(s.top+s.height/2),d=Math.hypot(dx,dy)||1,k=Math.min(5.5,d/40);document.querySelectorAll('.pu').forEach(p=>p.style.transform=`translate(${dx/d*k}px,${dy/d*k}px)`)}
+let sayT=[];function say(t){sayT.forEach(clearTimeout);sayT=[];const b=$('#bubble');b.textContent='';t.split(' ').forEach((w,i)=>{const s=document.createElement('span');s.className='w';s.textContent=w+' ';s.style.animationDelay=reduit?'0s':(i*55)+'ms';b.appendChild(s)});}
+
+/* ---------- Donnees du programme (skill programme-rewayah) ---------- */
+const PREVU={'6-9':37,'10-13':28,'14-17':24,'18+':15},LIMITE={'6-9':48,'10-13':36,'14-17':31,'18+':20};
+const cohorte=l=>l.moi||l.age>=18?'18+':l.age<=9?'6-9':l.age<=13?'10-13':'14-17';
+const ETAPES=[['Les lettres','Les 28 lettres'],['Lire avec les voyelles','Jusqu\'à la chadda'],['Lire dans le Coran','Fin du livre, puis le Mushaf'],['Les sourates courtes','D\'Al-Masad à Az-Zalzalah']];
+const SOURATES=['Al-Fatiha','An-Nâs','Al-Falaq','Al-Ikhlâs','Al-Masad','An-Nasr','Al-Kâfirûn','Al-Kawthar','Al-Mâ\'ûn','Quraysh','Al-Fîl','Al-Humaza','Al-\'Asr','At-Takâthur','Al-Qâri\'a','Al-\'Âdiyât','Az-Zalzalah'];
+const GROUPES=[['Les plus demandées',[['fr','Français'],['en','English'],['ar','العربية (arabe)']]],['Langues d\u2019Afrique',[['ha','Hausa'],['ff','Poular (peul)'],['yo','Yoruba'],['man','Malinké'],['snk','Soninké'],['wo','Wolof'],['bm','Bambara'],['sw','Swahili'],['so','Somali'],['am','Amharique'],['om','Oromo']]],['Langues d\u2019Asie',[['ur','Ourdou'],['hi','Hindi'],['bn','Bengali'],['ps','Pachto'],['fa','Persan'],['tr','Turc'],['id','Indonésien'],['uz','Ouzbek']]],['Langues d\u2019Europe',[['pt','Português'],['ru','Русский (russe)'],['de','Deutsch']]]];
+const LANGUES=GROUPES.flatMap(g=>g[1]);
+const CH=['Qui apprend','Où en est le niveau','Vos cours','Votre demande'];
+
+/* ---------- Etat et plan (les branches changent la liste des ecrans) ---------- */
+let S,hist;
+function init(){S={role:null,usage:null,learners:[],langue:(navigator.language||'fr').slice(0,2),langue2:null,langueAutre:'',source:null,ref:/[?&]ref=/.test(location.search),titulaire:{}};if(!LANGUES.some(x=>x[0]===S.langue))S.langue=null;hist=[];go('accueil',true)}
+const nl=()=>({prenom:'',age:null,genre:null,niveau:null,riwaya:'hafs',memo:null,sour:[],juz:[],objectif:null,ens:null,moi:false});
+const il=l=>l.genre==='F'?'Elle':'Il';
+const enfant=l=>!l.moi;
+function plan(){const p=[{id:'accueil',ch:-1},{id:'guard',ch:0},{id:'pourqui',ch:0}];
+ S.learners.forEach((l,i)=>{p.push({id:'prenom:'+i,ch:0});if(enfant(l))p.push({id:'age:'+i,ch:0});p.push({id:'genre:'+i,ch:0})});
+ if(S.learners.length)p.push({id:'famille',ch:0,i:1});
+ S.learners.forEach((l,i)=>{p.push({id:'niveau:'+i,ch:1});
+  if(l.niveau==='lecture_courante'||l.niveau==='memorisation_partielle')p.push({id:'riwaya:'+i,ch:1});
+  if(l.niveau==='memorisation_partielle'){p.push({id:'memo:'+i,ch:1});if(l.memo&&l.memo!=='coran_entier')p.push({id:'detail:'+i,ch:1})}
+  p.push({id:'objectif:'+i,ch:1})});
+ p.push({id:'reco',ch:1,i:1},{id:'langue',ch:2},{id:'langue2',ch:2},{id:'chemin',ch:2,i:1},{id:'recap',ch:3,i:1},{id:'connexion',ch:3},{id:'envoye',ch:3,i:1},{id:'vous',ch:3},{id:'fin',ch:3,i:1});return p}
+let cur='accueil';
+function go(id,noPush){if(!noPush&&cur!==id)hist.push(cur);cur=id;render()}
+$('#back').onclick=()=>{if(hist.length){cur=hist.pop();render()}};
+$('#reset').onclick=()=>init();
+$('#theme').onclick=()=>{const r=document.documentElement,d=matchMedia('(prefers-color-scheme: dark)').matches;const now=r.dataset.theme||(d?'dark':'light');r.dataset.theme=now==='dark'?'light':'dark'};
+function next(){const p=plan(),i=p.findIndex(x=>x.id===cur);go(p[i+1].id)}
+
+/* ---------- Gabarits ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function cards(opts,sel,fn,multi){const w=document.createElement('div');w.className='cards';opts.forEach(o=>{const b=document.createElement('button');b.className='card';b.type='button';b.innerHTML=`<b>${esc(o[1])}</b>${o[2]?`<span>${esc(o[2])}</span>`:''}`;b.setAttribute('aria-pressed',String(sel===o[0]));b.onclick=()=>{fn(o[0]);w.querySelectorAll('.card').forEach((c,k)=>c.setAttribute('aria-pressed',String(opts[k][0]===o[0])))};w.appendChild(b)});return w}
+function chips(opts,sel,fn,multi,small){const w=document.createElement('div');w.className='chips'+(small?' small':'');let cur=sel;const on=v=>multi?sel.includes(v):cur===v;opts.forEach(o=>{const b=document.createElement('button');b.className='chip';b.type='button';b.textContent=o[1];b.setAttribute('aria-pressed',String(on(o[0])));b.onclick=()=>{const r=fn(o[0]);if(!multi)cur=r!==undefined?r:o[0];w.querySelectorAll('.chip').forEach((c,k)=>c.setAttribute('aria-pressed',String(on(opts[k][0]))))};w.appendChild(b)});return w}
+function view(o){const m=$('#main'),f=$('#foot');m.innerHTML='';f.innerHTML='';m.className='fade';void m.offsetWidth;m.classList.add('fade');
+ if(o.h){m.insertAdjacentHTML('beforeend',`<h1>${o.h}</h1>`)}if(o.sub)m.insertAdjacentHTML('beforeend',`<p class="sub">${o.sub}</p>`);
+ (o.body||[]).forEach(n=>typeof n==='string'?m.insertAdjacentHTML('beforeend',n):m.appendChild(n));
+ const cta=document.createElement('button');cta.className='cta';cta.textContent=o.cta||'Continuer';cta.disabled=o.ok===false;cta.onclick=o.go||next;f.appendChild(cta);
+ (o.links||[]).forEach(l=>{const b=document.createElement('button');b.className='link';b.textContent=l[0];b.onclick=l[1];f.appendChild(b)});
+ if(o.hint)f.insertAdjacentHTML('beforeend',`<div class="hint">${o.hint}</div>`);
+ $('#stage').classList.toggle('big',!!o.big);pose(o.e,o.g);say(o.say);window.scrollTo({top:0,behavior:reduit?'auto':'smooth'});return cta}
+const enable=(cta,ok)=>{cta.disabled=!ok};
+
+/* ---------- Ecrans ---------- */
+function render(){const p=plan(),idx=p.findIndex(x=>x.id===cur),node=p[idx];const [k,i0]=cur.split(':'),i=+i0,l=S.learners[i];
+ $('#back').hidden=!hist.length||cur==='fin'||cur==='envoye';
+ /* progression : segments par chapitre, remplis selon la part d'ecrans faits (jusqu'a la connexion) */
+ const qs=p.filter(x=>x.ch>=0),bar=$('#bar');bar.innerHTML='';CH.forEach((_,c)=>{const inC=qs.filter(x=>x.ch===c),done=inC.filter(x=>p.findIndex(y=>y.id===x.id)<idx).length;const pc=!node?0:node.ch>c?100:node.ch<c?0:Math.round(done/inC.length*100);const g=document.createElement('div');g.className='seg';g.innerHTML=`<i style="width:${pc}%"></i>`;bar.appendChild(g)});
+ $('#chap').textContent=node&&node.ch>=0?`${node.ch+1}/4 · ${CH[node.ch]}`:'';
+ const nq=p.filter(x=>!x.i&&x.id!=='accueil'&&!['connexion','vous'].includes(x.id)).length;
+ $('#count').textContent=`Questions avant le compte, ce parcours : ${nq} (interludes en plus)`;
+ S_[k]?S_[k](i,l):0}
+const S_={
+accueil(){const c=view({big:1,e:'joie',g:'salut',say:'Bonjour, je suis Praxis, l\'assistant de la direction. Quelques questions, environ deux minutes, pour préparer votre arrivée.',h:'Bienvenue chez Rewayah Academy',sub:'Cours de Coran en direct, en classe stable, avec le même enseignant.',cta:'Commencer',hint:'Praxis est une intelligence artificielle. Chaque demande est lue par la direction.',links:[['J\'ai déjà un compte',()=>alert('Maquette : mène à la connexion.')]]});c.onclick=()=>go('guard')},
+guard(){let c;const b=cards([['a','Apprendre','Pour moi ou pour mon enfant'],['e','Enseigner','Je veux rejoindre l\'équipe']],null,v=>{if(v==='e')return go('enseigner');S.role='a';say('Très bien. Je vous guide.');pose('sourire','montrer');enable(c,1)});
+ c=view({e:'attente',g:'montrer',say:'D\'abord, une question pour bien vous orienter. Que venez-vous faire ?',h:'Vous venez pour apprendre, ou pour enseigner ?',body:[b],ok:false,links:[['J\'ai déjà un compte',()=>alert('Maquette : mène à la connexion.')]]});c.onclick=()=>{S.role='a';go('pourqui')}},
+enseigner(){const c=view({big:1,e:'sourire',g:'montrer',say:'Bienvenue. Votre candidature commence ici, sans invitation. Je vous guide pas à pas.',h:'Votre candidature d\'enseignant',sub:'Ce chemin crée une candidature, jamais un compte élève : aucun doublon possible.',cta:'Commencer ma candidature',links:[['Je me suis trompé : je veux apprendre',()=>{S.role=null;hist.pop();go('guard',true)}]]});c.onclick=()=>alert('Maquette : ouvre la candidature enseignant.')},
+pourqui(){let c;const b=cards([['moi','Pour moi','Je suis adulte (18 ans ou plus)'],['un','Pour mon enfant','De 6 à 17 ans'],['plus','Pour plusieurs enfants','Je poserai les mêmes questions pour chacun']],S.usage,v=>{S.usage=v;pose('joie','');say(v==='moi'?'Parfait, on commence par vous.':v==='un'?'Très bien. Parlons de votre enfant.':'Très bien. Nous irons enfant par enfant, c\'est rapide.');enable(c,1)});
+ c=view({e:'attente',g:'montrer',say:'Dites-moi qui va suivre les cours, je m\'occupe du reste.',h:'Qui va suivre les cours ?',body:[b],ok:!!S.usage,links:[['J\'ai moins de 18 ans et je m\'inscris moi-même',()=>say('Un parent ou tuteur crée le compte et vous y ajoute. Choisissez « Pour mon enfant ».')]]});
+ c.onclick=()=>{if(!S.learners.length){const l=nl();l.moi=S.usage==='moi';S.learners=[l]}else S.learners[0].moi=S.usage==='moi';if(S.usage==='moi')S.learners=[S.learners[0]];go('prenom:0')}},
+prenom(i,l){let c;const m=l.moi;const inp=document.createElement('div');inp.innerHTML=`<label class="f req">Prénom<input type="text" id="pr" autocomplete="given-name" value="${esc(l.prenom)}" placeholder="${m?'Votre prénom':'Prénom'}"></label>`;
+ c=view({e:'attente',g:'',say:m?'Comment dois-je vous appeler ?':i===0?'Comment s\'appelle votre enfant ?':'Et comment s\'appelle l\'élève suivant ?',h:m?'Votre prénom':i===0?'Le prénom de votre enfant':'Le prénom de l\'élève suivant',sub:m?'Seulement le prénom pour l\'instant.':'Le prénom suffit.',body:[inp],ok:!!l.prenom.trim()});
+ const t=inp.querySelector('input');t.maxLength=30;t.oninput=()=>{const v=t.value.trim();const bon=/^[\p{L}][\p{L}\p{M}' -]{0,29}$/u.test(v)&&/\p{L}.*\p{L}|^\p{L}$/u.test(v)&&v.length>=2;l.prenom=bon?v:'';enable(c,bon);if(v&&!bon)say('Seulement des lettres, s\'il vous plaît : un vrai prénom, sans chiffres ni émojis.')};setTimeout(()=>t.focus(),50)},
+age(i,l){let c;const w=chips(Array.from({length:12},(_,k)=>[k+6,String(k+6)]),l.age,v=>{l.age=v;pose('sourire','');say(`${v} ans : noté.`);enable(c,1)});
+ c=view({e:'attente',say:`Quel âge a ${l.prenom} ?`,h:`Quel âge a ${esc(l.prenom)} ?`,sub:'De 6 à 17 ans. Cela fixe la durée prévue de son parcours.',body:[w],ok:!!l.age,links:[['Il a 18 ans ou plus',()=>say('Une personne de 18 ans ou plus crée son propre compte. Vous pouvez l\'y aider.')]]})},
+genre(i,l){let c;const m=l.moi;const b=cards(m?[['H','Un homme',''],['F','Une femme','']]:[['H','Un garçon',''],['F','Une fille','']],l.genre,v=>{l.genre=v;pose('sourire','');say('Merci. Les classes sont formées par genre.');enable(c,1)});
+ c=view({e:'attente',say:'Cela sert à former des classes adaptées : elles ne sont pas mixtes par défaut.',h:m?'Vous êtes…':`${esc(l.prenom)} est…`,body:[b],ok:!!l.genre});
+ },
+famille(){const f=S.learners;const av=f.map(l=>`<div class="av"><i>${esc((l.prenom||'?')[0].toUpperCase())}</i>${esc(l.prenom)}</div>`).join('');
+ const seul=f.length===1&&f[0].moi;const encore=S.usage==='plus'&&f.length<2;const c=view({big:1,cta:encore?'Ajouter l\u2019enfant suivant':undefined,go:encore?()=>{S.learners.push(nl());go('prenom:'+(S.learners.length-1))}:undefined,e:'joie',g:'coeur',say:encore?`Voici ${f[0].prenom}. Passons à l\u2019enfant suivant.`:seul?`Enchanté, ${f[0].prenom}. Parlons maintenant de votre niveau.`:`Voici votre famille. Parlons maintenant du niveau de chacun.`,h:seul?'Enchanté':'Voici votre famille',body:[`<div class="avs">${av}</div>`],links:[...(f.length<6?[['Ajouter un autre élève',()=>{S.learners.push(nl());go('prenom:'+(S.learners.length-1))}]]:[]),...(!f.some(x=>x.moi)?[['Je suivrai aussi des cours',()=>{const l=nl();l.moi=true;S.learners.push(l);go('prenom:'+(S.learners.length-1))}]]:[])]})},
+niveau(i,l){let c;const s=l.moi?'Je':il(l),V=(a,b)=>l.moi?a:b;const o=[['debut_lettres',`${s} ${V('débute','débute')} avec les lettres`,'Les lettres arabes sont à découvrir'],['lettres_avec_aide',`${s} ${V('reconnais','reconnaît')} les lettres`,'Mais il faut de l\'aide pour lire'],['lecture_lente',`${s} ${V('lis','lit')} lentement`,'Avec les voyelles'],['lecture_courante',`${s} ${V('lis','lit')} déjà le Coran`,'Couramment, dans le Mushaf'],['memorisation_partielle',l.moi?'J\'ai déjà mémorisé une partie':`${s} a déjà mémorisé une partie`,'Des sourates ou des juz']];
+ const b=cards(o,l.niveau,v=>{l.niveau=v;pose('reflexion','');say(v==='debut_lettres'?'Un très bon point de départ : tout est prévu.':v==='memorisation_partielle'?'Très bien. Je vais demander ce qui est déjà mémorisé.':v.startsWith('lecture_')&&v!=='lecture_lente'?'Très bien. Une précision sur la lecture, et nous continuons.':'Noté.');enable(c,1)});
+ c=view({e:'attente',g:'montrer',say:`Répondez au plus juste : un enseignant vérifiera lors de la première séance.`,h:l.moi?'Où en êtes-vous aujourd\'hui ?':`Où en est ${esc(l.prenom)} aujourd'hui ?`,body:[b],ok:!!l.niveau})},
+riwaya(i,l){let c;const b=cards([['hafs','Lecture de Hafs','La plus répandue, choisie par défaut'],['warsh','Lecture de Warsh','Nous la notons pour la direction'],['autre','Une autre lecture','À préciser']],l.riwaya,v=>{l.riwaya=v;ar.hidden=v!=='autre';say(v==='autre'?'Laquelle ? Écrivez-la, la direction la lira.':v==='warsh'?'Noté. La direction vous dira quelles classes existent.':'Hafs, c\'est noté.');pose('reflexion','')});const ar=document.createElement('label');ar.className='f';ar.hidden=l.riwaya!=='autre';ar.innerHTML='Laquelle ?<input type="text" maxlength="40" placeholder="Par exemple : Qalun">';
+ c=view({e:'reflexion',say:'Une précision : dans quelle lecture du Coran ?',h:l.moi?'Quelle lecture lisez-vous ?':`Quelle lecture ${esc(l.prenom)} lit-${il(l)==='Elle'?'elle':'il'} ?`,sub:'Hafs est présélectionnée.',body:[b,ar]})},
+memo(i,l){let c;const b=cards([['quelques_sourates','Quelques sourates',''],['1_5_juz','Un à cinq juz',''],['plus_5_juz','Plus de cinq juz',''],['coran_entier','Tout le Coran','']],l.memo,v=>{l.memo=v;pose('etonne','');say(v==='coran_entier'?'Mâ châ’ Allah. La direction vous recevra pour une vérification.':'Mâ châ’ Allah. Quelques détails, si vous les connaissez.');enable(c,1)});
+ c=view({e:'attente',say:'Combien est déjà mémorisé, à peu près ?',h:l.moi?'Combien avez-vous mémorisé ?':`Combien ${esc(l.prenom)} a-t-${il(l)==='Elle'?'elle':'il'} mémorisé ?`,body:[b],ok:!!l.memo})},
+detail(i,l){const juz=l.memo!=='quelques_sourates';const o=juz?Array.from({length:30},(_,k)=>[k+1,String(k+1)]):SOURATES.map(n=>[n,n]);const sel=juz?l.juz:l.sour;
+ const w=chips(o,sel,v=>{const a=sel;const k=a.indexOf(v);k<0?a.push(v):a.splice(k,1);say(a.length?`${a.length} choisi${a.length>1?'s':''}.`:'Aucun pour l\'instant.')},true,true);
+ view({e:'concentre',say:juz?'Quels juz, si vous les connaissez ? Vous pouvez passer.':'Lesquelles ? Touchez celles que vous connaissez. Vous pouvez passer.',h:juz?'Quels juz ?':'Quelles sourates ?',sub:'Facultatif : l\'enseignant vérifiera de toute façon.',body:[w],cta:'Continuer'})},
+objectif(i,l){let c;const base=l.niveau==='memorisation_partielle'?'memoriser':null;if(!l.objectif&&base)l.objectif='memoriser';
+ const lect=['debut_lettres','lettres_avec_aide'].includes(l.niveau);const o=[lect?['lire','Apprendre à lire le Coran','Commencer par les bases']:['lire','Lire tout le Coran couramment','Devenir fluide'],['memoriser','Mémoriser le Coran',lect?'Après les bases':'Avec un enseignant'],...(!l.moi?[['priere','La prière et les invocations','Pour que l\'enfant prie seul']]:[]),['indecis','Je ne sais pas encore','L\'enseignant me conseillera']];
+ const b=cards(o,l.objectif,v=>{l.objectif=v;pose('joie','');say(v==='indecis'?'Aucun souci : vous pourrez décider en cours de route.':'Bon choix.');enable(c,1)});
+ c=view({e:'attente',g:'montrer',say:'Qu\'aimeriez-vous atteindre en premier ?',h:l.moi?'Que souhaitez-vous d\'abord ?':`Que souhaitez-vous pour ${esc(l.prenom)} ?`,sub:l.niveau==='memorisation_partielle'?'Mémoriser est présélectionné.':'',body:[b],ok:!!l.objectif})},
+ens(i,l){let c;const b=cards([['oui','Oui, une enseignante obligatoirement',''],['indiff','Indifférent','']],l.ens,v=>{l.ens=v;pose('sourire','');say('Noté. La direction en tient compte pour former la classe.');enable(c,1)});
+ c=view({e:'attente',say:'Une dernière précision sur l\'enseignant.',h:l.moi?'Souhaitez-vous une enseignante ?':`Pour ${esc(l.prenom)}, une enseignante ?`,body:[b],ok:!!l.ens})},
+reco(){const rec=l=>{const n=l.niveau,k=cohorte(l);const map={debut_lettres:[0,'Étape 1 · Les lettres','Vous commencez au début, c\'est le chemin prévu.'],lettres_avec_aide:[0,'Étape 1 · Les lettres, en révision rapide','Puis l\'étape 2.'],lecture_lente:[1,'Étape 2 ou 3 · Lire avec les voyelles','Selon la première séance.'],lecture_courante:[2,'Étape 3 ou 4 · Lire dans le Coran','Puis l\'examen de fin des bases.'],memorisation_partielle:[3,'Étape 4 · Les sourates courtes','Puis l\'examen de fin des bases : la mémorisation commence ensuite.']};const m=map[n];const suite=l.objectif==='memoriser'?'Après l\'examen de fin des bases : mémoriser le Coran.':l.objectif==='priere'?'Les paroles de la prière arrivent en matière secondaire, très tôt.':'Après l\'examen de fin des bases : lire tout le Coran ou le mémoriser.';
+  return `<div class="panel"><h3>${esc(l.moi?'Pour vous':l.prenom)} <span class="tag">départ probable</span></h3><div class="path">${ETAPES.map((e,x)=>`<div class="st ${x===m[0]?'on':''}"><span class="d"></span><div><b>${e[0]}</b><small>${e[1]}</small></div></div>`).join('')}<div class="st"><span class="d"></span><div><b>Examen de fin des bases</b><small>${suite}</small></div></div></div><p><b>${m[1]}</b>. ${m[2]}</p></div>`};
+ view({big:1,e:'joie',g:'montrer',say:'Voici par où je vous conseille de commencer. L\'enseignant le confirmera à la première séance.',h:S.learners.length>1?'Le point de départ de chacun':'Votre point de départ',body:S.learners.map(rec),hint:'Un point de départ probable, jamais une promesse : la première séance le vérifie.'})},
+langue(){let c;const w=document.createElement('div');GROUPES.forEach(g=>{w.insertAdjacentHTML('beforeend',`<p class="sub" style="margin:8px 0 6px"><b>${g[0]}</b></p>`);w.appendChild(chips(g[1].map(x=>[x[0],x[1]]),S.langue,v=>{S.langue=v;if(S.langue2===v)S.langue2=null;w.querySelectorAll('.chip').forEach(ch=>ch.setAttribute('aria-pressed',String(ch.dataset.v===v)));pose('sourire','');say(`${LANGUES.find(x=>x[0]===v)[1]} : c'est noté.`);enable(c,1);return v},false))});w.querySelectorAll('.chip').forEach((ch,k)=>ch.dataset.v=LANGUES[k][0]);
+ c=view({e:'attente',g:'montrer',say:'Nos enseignants parlent plus de vingt langues. Dans laquelle voulez-vous les explications ?',h:'La langue des explications',sub:'Votre premier choix. Nous orientons vers une classe dans cette langue dès qu\'un enseignant est disponible.',body:[w],ok:!!S.langue})},
+langue2(){const w=document.createElement('div');const opts=LANGUES.filter(x=>x[0]!==S.langue);w.appendChild(chips([['aucune','Aucune autre'],...opts.map(x=>[x[0],x[1]])],S.langue2,v=>{S.langue2=v;pose('sourire','');say(v==='aucune'?'Très bien.':'Noté : ce sera notre solution de rechange.');return v},false,true));
+ const a=document.createElement('label');a.className='f';a.style.marginTop='12px';a.innerHTML='Une langue absente de la liste ? (facultatif)<input type="text" maxlength="30" placeholder="Par exemple : tamoul">';a.querySelector('input').oninput=e=>{S.langueAutre=e.target.value.trim()};
+ view({e:'reflexion',say:'Et si aucun enseignant n\'est libre dans votre langue, laquelle comprenez-vous aussi ?',h:'Une deuxième langue ?',sub:'Facultatif. Elle sert seulement si la première n\'a pas d\'enseignant disponible.',body:[w,a]})},
+chemin(){const rows=S.learners.map(l=>{const k=cohorte(l);const deb=l.niveau==='debut_lettres';const P=PREVU[k],Lm=LIMITE[k];if(!deb)return `<div class="panel"><h3>${esc(l.moi?'Pour vous':l.prenom)}</h3><p>La durée de votre parcours sera précisée après la vérification de niveau, à la première séance.</p></div>`;
+  const x=w=>20+w/Lm*260;return `<div class="panel curve"><h3>${esc(l.moi?'Pour vous':l.prenom)} <span class="tag">${P} semaines prévues</span></h3><svg viewBox="0 0 300 130" width="100%" role="img" aria-label="Durée prévue ${P} semaines, date limite ${Lm} semaines"><path d="M20 105 H280" stroke="var(--line)" stroke-width="2"/><path class="l" d="M20 105 C ${x(P*.4)} 100, ${x(P*.7)} 62, ${x(P)} 34" fill="none" stroke="var(--primary)" stroke-width="4" stroke-linecap="round"/><path d="M${x(P)} 34 L${x(Lm)} 34" stroke="var(--primary)" stroke-width="3" stroke-dasharray="3 6" stroke-linecap="round"/><circle cx="20" cy="105" r="6" fill="var(--primary)"/><circle cx="${x(P)}" cy="34" r="6" fill="var(--primary)"/><circle cx="${x(Lm)}" cy="34" r="6" fill="none" stroke="var(--primary)" stroke-width="3"/><g font-size="11" fill="var(--ink)"><text x="20" y="124">Début</text><text text-anchor="end" x="${x(P)+10}" y="22">Fin des bases : ${P} sem.</text><text text-anchor="end" x="290" y="56">Date limite : ${Lm} sem.</text></g></svg><p>Durée prévue avec 3 séances par semaine. La date limite est ferme.</p></div>`}).join('');
+ view({big:1,e:'concentre',g:'reflechir',say:'Voici le chemin. Une durée prévue, une date limite, et la régularité de chacun.',h:'Votre chemin',body:[rows,`<div class="panel"><p><b>La rigueur fait partie du cours.</b> Trois séances par semaine, toujours avec le même enseignant. Une absence se rattrape seul, avant la séance suivante, avec les outils que l\'académie met à disposition : la lecture enregistrée du programme et les documents de la Bibliothèque.</p><p>Vos jours et vos horaires, nous les choisirons ensemble après l'acceptation.</p></div>`]})},
+recap(){const lab={debut_lettres:'Débute avec les lettres',lettres_avec_aide:'Reconnaît les lettres',lecture_lente:'Lit lentement',lecture_courante:'Lit déjà le Coran',memorisation_partielle:'A mémorisé une partie'};const ob={lire:'Lire',memoriser:'Mémoriser',priere:'Prière et invocations',indecis:'Pas encore décidé'};const mq={quelques_sourates:'quelques sourates','1_5_juz':'1 à 5 juz',plus_5_juz:'plus de 5 juz',coran_entier:'tout le Coran'};
+ const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'Europe/Paris';
+ const ps=S.learners.map((l,i)=>`<div class="panel"><h3>${esc(l.moi?l.prenom+' (vous)':l.prenom)}</h3><div class="rows"><div><span>${l.moi?'Adulte':l.age+' ans'}</span><span>${l.genre==='F'?(l.moi?'Femme':'Fille'):(l.moi?'Homme':'Garçon')}</span></div><div><span>Niveau</span><span>${lab[l.niveau]}${l.memo?' ('+mq[l.memo]+')':''}</span></div>${['lecture_courante','memorisation_partielle'].includes(l.niveau)?`<div><span>Lecture</span><span>${l.riwaya==='warsh'?'Warsh':l.riwaya==='autre'?'Autre':'Hafs'}</span></div>`:''}<div><span>Objectif</span><span>${ob[l.objectif]}</span></div></div></div>`).join('');
+  const srcEl=document.createElement('div');if(!S.ref){srcEl.appendChild(chips([['mosquee','Mosquée ou association'],['proche','Famille ou ami'],['reseaux','Réseaux sociaux'],['recherche','Recherche en ligne'],['autre','Autre']],S.source,v=>{S.source=v===S.source?null:v;return S.source},false,true));srcEl.insertAdjacentHTML('afterbegin','<p class="sub" style="margin:0 0 8px"><b>Comment avez-vous connu Rewayah ?</b> (facultatif)</p>')}
+ view({big:1,e:'sourire',g:'coeur',say:'Voici ce que j\'ai compris. Rien n\'est engagé : la direction lit chaque demande.',h:'Voici ce que nous avons compris',sub:`Langue : ${LANGUES.find(x=>x[0]===S.langue)[1]}${S.langue2&&S.langue2!=='aucune'?', sinon '+LANGUES.find(x=>x[0]===S.langue2)[1]:''} · Heure de ${tz.split('/').pop().replace('_',' ')} (détectée)`,body:[ps,srcEl,`<div class="panel"><p>La direction lit chaque demande avant de former la classe.</p><p>Si l\'élève n\'est pas satisfait, il est remboursé dans les 14 jours, moins les séances déjà suivies.</p><p>Vous pourrez corriger ces réponses après l'acceptation.</p></div>`],cta:'C\'est exact, créer mon compte'})},
+connexion(){let c;const e=document.createElement('div');e.innerHTML=`<label class="f req">Adresse e-mail<input type="email" id="em" autocomplete="email" inputmode="email" placeholder="vous@exemple.com"></label>`;
+ c=view({e:'attente',say:'Dernière étape : où puis-je envoyer votre lien de connexion ?',h:'Votre adresse e-mail',sub:'Vos réponses sont gardées sur cet appareil jusqu\'à l\'envoi.',body:[e,'<p class="hint">Ouvrez le lien sur cet appareil, avec le même navigateur : vos réponses vous y attendent.</p>'],cta:'Recevoir le lien',ok:false,links:[['Continuer avec Google',()=>go('vous')]]});
+ const t=e.querySelector('input');t.oninput=()=>{S.email=t.value;enable(c,/\S+@\S+\.\S+/.test(t.value));if(t.value&&!/\S+@\S+\.\S+/.test(t.value)&&t.value.includes('@'))say('Il manque encore la fin de l\'adresse.')};c.onclick=()=>go('envoye')},
+envoye(){const c=view({big:1,e:'sourire',g:'',say:'Le lien est parti. Regardez votre boîte de réception.',h:'Regardez votre boîte',body:[`<div class="panel"><p>Nous avons écrit à <b>${esc(S.email||'votre adresse')}</b>.</p><p>Si vous lisez le message sur un autre appareil, le lien vous le dira, et vous pourrez reprendre ici.</p></div>`],cta:'Maquette : simuler le clic sur le lien',hint:'Si l\'adresse correspond déjà à une candidature d\'enseignant, Praxis vous y renvoie au lieu de créer une demande élève.'});c.onclick=()=>go('vous')},
+vous(){let c;const t=S.titulaire;const l0=S.learners.find(x=>x.moi);const e=document.createElement('div');e.innerHTML=(l0?`<input type="hidden" id="p" value="${esc(l0.prenom)}">`:`<label class="f req">Votre prénom<input type="text" id="p" maxlength="30" value="${esc(t.prenom||'')}"></label>`)+`<label class="f req" style="margin-top:10px">Votre nom de famille<input type="text" id="n" maxlength="40" value="${esc(t.nom||'')}"></label>`;
+ const g=l0?null:chips([['H','Un homme'],['F','Une femme']],t.genre,v=>{t.genre=v;chk()});const ok=()=>e.querySelector('#p').value.trim()&&e.querySelector('#n').value.trim()&&(l0||t.genre);
+ c=view({e:'concentre',say:l0?`Vous êtes connecté, ${esc(l0.prenom)}. Il me manque seulement votre nom de famille.`:'Vous êtes connecté. Maintenant, vous : c\'est vous qui gérerez le compte de vos enfants.',h:l0?'Votre nom de famille':'Vous, le tuteur du compte',sub:l0?'':'Vos enfants sont déjà notés. Ce nom est le vôtre : vous gérez leur compte et recevez les messages de l\'académie.',body:[e,...(g?['<p class="sub" style="margin:6px 0 0"><b>Vous êtes…</b></p>',g]:[])],cta:'Envoyer ma demande',ok:false});
+ window.chk=()=>{t.prenom=e.querySelector('#p').value;t.nom=e.querySelector('#n').value;enable(c,!!ok())};e.oninput=window.chk;window.chk();c.onclick=()=>go('fin')},
+fin(){const n=S.learners.length;const c=view({big:1,e:'joie',g:'salut',say:'C\'est envoyé. Merci de votre confiance, la direction va lire votre demande.',h:'Votre demande est en cours',body:[`<div class="panel"><h3>Et maintenant ?</h3><p>1. La direction lit votre demande.</p><p>2. Si elle est acceptée, ${n>1?'les profils des élèves sont créés':'le profil est créé'} sans rien ressaisir.</p><p>3. Il ne reste que vos jours et vos horaires. Tout le reste est déjà noté.</p>${n>1?'<p>Chaque enfant aura sa propre classe et son propre enseignant : si un enseignant est absent, les autres continuent, et une seule tablette suffit à tour de rôle.</p>':''}</div>`],cta:'Recommencer la maquette'});c.onclick=init}
+};
+init();
+</script>
+</body>
+</html>

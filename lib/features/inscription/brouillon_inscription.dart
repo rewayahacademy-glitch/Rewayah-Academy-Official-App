@@ -43,14 +43,22 @@ enum UsageInscription {
 /// enseignant, avec ou sans code d'invitation, a en plus l'etape du telephone,
 /// avant le recapitulatif (ou se choisissent aussi la langue et l'accord de
 /// confidentialite).
-List<String> etapesPour(BrouillonInscription brouillon) => <String>[
-  if (!brouillon.titulaire) Routes.inscriptionUsage,
-  Routes.inscriptionIdentite,
-  Routes.inscriptionGenre,
-  if (brouillon.usage == UsageInscription.enseignant)
-    Routes.inscriptionTelephone,
-  Routes.inscriptionRecapitulatif,
-];
+///
+/// ONBOARDING-PRAXIS (directeur, 22/11/2026) : le titulaire n'a plus qu'un
+/// ecran apres la connexion, « Vous, le tuteur du compte » (ou « Votre nom de
+/// famille » pour l'adulte), sur la route du recapitulatif : son prenom et
+/// son genre sont deja dits dans le questionnaire quand il apprend, et rien
+/// n'est redemande.
+List<String> etapesPour(BrouillonInscription brouillon) => brouillon.titulaire
+    ? const <String>[Routes.inscriptionRecapitulatif]
+    : <String>[
+        Routes.inscriptionUsage,
+        Routes.inscriptionIdentite,
+        Routes.inscriptionGenre,
+        if (brouillon.usage == UsageInscription.enseignant)
+          Routes.inscriptionTelephone,
+        Routes.inscriptionRecapitulatif,
+      ];
 
 /// Le rang (a partir de 1) d'une etape dans [etapesPour], 0 si elle n'y est
 /// pas.
@@ -173,6 +181,10 @@ class BrouillonInscription {
   String get premiereEtapeManquante {
     if (usage == null) {
       return Routes.inscriptionUsage;
+    }
+    // ONBOARDING-PRAXIS : l'identite du titulaire se dit sur son seul ecran.
+    if (titulaire) {
+      return Routes.inscriptionRecapitulatif;
     }
     if (!identiteComplete) {
       return Routes.inscriptionIdentite;

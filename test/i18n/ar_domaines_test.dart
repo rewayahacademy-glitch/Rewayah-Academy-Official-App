@@ -160,6 +160,8 @@ const Map<String, int> _domaines = <String, int>{
   'alertes': 58,
   'argent': 71,
   'identiteProfil': 5,
+  // ONBOARDING-PRAXIS (directeur, 22/11/2026) : le questionnaire avec Praxis.
+  'onboarding': 300,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) ;
@@ -208,6 +210,13 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // ONBOARDING-PRAXIS (maquette du 22/11/2026) : le nom de chaque langue
+  // d'Europe, ecrit dans cette langue, suivi de son nom arabe.
+  'onboarding.langues.francais',
+  'onboarding.langues.english',
+  'onboarding.langues.pt',
+  'onboarding.langues.ru',
+  'onboarding.langues.de',
   // LETTRE-CANDIDATS (directeur, 20/11/2026) : le nom propre « Praxis »,
   // ecrit en latin. Le texte de la lettre lui-meme vient du serveur.
   'recrutement.lettre.praxisNom',

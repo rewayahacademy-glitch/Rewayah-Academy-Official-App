@@ -22,7 +22,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
-import '../../../core/accessibilite/texte_sans_coupure.dart';
 import '../../../core/auth/anti_robot.dart';
 import '../../../core/auth/service_auth.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -31,30 +30,21 @@ import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/controle_anti_robot.dart';
-import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/proposition_courriel.dart';
 import '../../connexion/coquille_entree.dart';
 import '../../connexion/recuperation_page.dart'
     show estInscriptionFermee, issueEchecEnvoi, phraseEchecEnvoi;
 import '../../connexion/saisie_code_courriel.dart';
 import '../../juridique/textes_juridiques.dart';
+import 'coquille_onboarding.dart';
+import 'questionnaire_inscription.dart' show Chapitre;
 
 /// Le dernier ecran du questionnaire : l'acces (lien par courriel, ou Google).
 class EcranAccesQuestionnaire extends ConsumerStatefulWidget {
-  /// Cree l'ecran ; [numero] egale [total] : la barre est au bout.
-  const EcranAccesQuestionnaire({
-    required this.numero,
-    required this.total,
-    required this.onRetour,
-    super.key,
-  });
-
-  /// Le rang de l'ecran (le dernier).
-  final int numero;
-
-  /// Le nombre d'ecrans du questionnaire, celui-ci compris.
-  final int total;
+  /// Cree l'ecran.
+  const EcranAccesQuestionnaire({required this.onRetour, super.key});
 
   /// Revient a la derniere question.
   final VoidCallback? onRetour;
@@ -219,54 +209,32 @@ class _EcranAccesQuestionnaireState
             controleur: _controle,
             envoiEnCours: enCours,
           );
-    final a = t.inscription.questionnaire.acces;
+    final a = t.onboarding.acces;
+    final e = t.onboarding.envoye;
+    final bool bureau =
+        MediaQuery.sizeOf(context).width /
+            MediaQuery.textScalerOf(context).scale(1) >=
+        seuilDeuxColonnesOnboarding;
+    // ONBOARDING-PRAXIS : l'habillage de l'onboarding, chapitre « Votre
+    // demande » (l'acces est son deuxieme ecran, le lien envoye le troisieme).
     return KeyedSubtree(
       key: EcranAccesQuestionnaire.cle,
-      child: CoquilleEntree(
-        volet: (bool bureau) => Builder(
-          builder: (BuildContext context) {
-            final TextTheme textes = Theme.of(context).textTheme;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                RangeeEtape(
-                  numero: widget.numero,
-                  total: widget.total,
-                  onRetour: _envoye ? null : widget.onRetour,
-                ),
-                Ecart.vXxl,
-                Semantics(
-                  header: true,
-                  child: TexteSansCoupure(
-                    _envoye ? t.connexion.lienEnvoye : a.titre,
-                    style:
-                        (bureau
-                            ? textes.headlineMedium
-                            : textes.headlineSmall) ??
-                        const TextStyle(),
-                  ),
-                ),
-                Ecart.vSm,
-                // Le lien parti, la phrase ne dit plus ce qu'il reste a faire
-                // (garde-cap, 04/11) : seulement que les reponses sont gardees.
-                TexteSansCoupure(
-                  _envoye
-                      ? a.reponsesGardees
-                      : '${a.reponsesGardees} ${a.resteAcces}',
-                  key: const ValueKey<String>('questionnaire-acces-gardees'),
-                  style: textes.bodyMedium ?? const TextStyle(),
-                ),
-              ],
-            );
-          },
-        ),
-        formulaire: (bool bureau) => Builder(
-          builder: (BuildContext context) => _envoye
-              ? _envoyeContenu(context, bureau, controle(_renvoi))
-              : _saisie(context, bureau, controle(_envoi)),
-        ),
-        pied: <Widget>[
+      child: CoquilleOnboarding(
+        chapitre: Chapitre.demande,
+        remplissage: <double>[1, 1, 1, if (_envoye) 2 / 5 else 1 / 5],
+        onRetour: _envoye ? null : widget.onRetour,
+        grand: _envoye,
+        expression: _envoye
+            ? ExpressionPraxis.sourire
+            : ExpressionPraxis.attente,
+        phrase: _envoye ? e.dit : a.dit,
+        titre: _envoye ? e.titre : a.titre,
+        sousTitre: _envoye ? null : a.sous,
+        corps: <Widget>[
+          if (_envoye)
+            _envoyeContenu(context, bureau, controle(_renvoi))
+          else
+            _saisie(context, bureau, controle(_envoi)),
           Ecart.vXxl,
           LiensPied(
             liens: <Widget>[
@@ -309,6 +277,14 @@ class _EcranAccesQuestionnaireState
         controleur: _courriel,
         onAccepte: () => setState(() {}),
       ),
+      Ecart.vSm,
+      Text(
+        t.onboarding.acces.indice,
+        key: const ValueKey<String>('questionnaire-acces-indice'),
+        style: AppPalette.of(context).inkMuted.applyTo(
+          Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+        ),
+      ),
       Ecart.vLg,
       ActionsEntree(
         bureau: bureau,
@@ -329,10 +305,9 @@ class _EcranAccesQuestionnaireState
           enCours: _googleEnCours,
           niveau: NiveauAction.secondaire,
           pleineLargeur: !bureau,
-          // Sur le violet du telephone, le logo se pose sur un disque blanc ;
-          // sur le parchemin de l'ordinateur, il se pose seul (le disque y
-          // prendrait le violet de `surfacePrimary`), comme la connexion.
-          prefixe: bureau ? const LogoGoogle() : const _LogoGoogleSurBlanc(),
+          // ONBOARDING-PRAXIS : la page est claire (ou sombre) partout, le
+          // logo se pose seul.
+          prefixe: const LogoGoogle(),
         ),
       ),
     ],
@@ -345,14 +320,23 @@ class _EcranAccesQuestionnaireState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Semantics(
-          liveRegion: true,
-          child: Text(
-            _renvoye
-                ? t.connexion.renvoye(courriel: courriel)
-                : t.connexion.lienEnvoyeDetail(courriel: courriel),
-            key: const ValueKey<String>('questionnaire-acces-envoye'),
-            style: textes.bodyLarge,
+        AppCard(
+          child: Semantics(
+            liveRegion: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  _renvoye
+                      ? t.connexion.renvoye(courriel: courriel)
+                      : t.onboarding.envoye.ecrit(courriel: courriel),
+                  key: const ValueKey<String>('questionnaire-acces-envoye'),
+                  style: textes.bodyLarge,
+                ),
+                Ecart.vSm,
+                Text(t.onboarding.envoye.ailleurs, style: textes.bodyMedium),
+              ],
+            ),
           ),
         ),
         if (_erreurRenvoi case final String e) ...<Widget>[
@@ -398,26 +382,4 @@ class _EcranAccesQuestionnaireState
       ],
     );
   }
-}
-
-/// Le logo Google pose sur un disque blanc. Sur le violet de la marque, ses
-/// couleurs officielles (bleu, rouge) se fondaient dans le fond (garde-cap,
-/// 04/11) ; les regles de Google demandent un logo en couleur, lisible. Le
-/// disque prend le blanc de la palette de la marque (`surfacePrimary`), et
-/// le logo reste tel quel. Au telephone seulement : sur le parchemin de
-/// l'ordinateur, `surfacePrimary` est violet.
-class _LogoGoogleSurBlanc extends StatelessWidget {
-  const _LogoGoogleSurBlanc();
-
-  @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      color: AppPalette.of(context).surfacePrimary.background,
-      shape: BoxShape.circle,
-    ),
-    child: const Padding(
-      padding: EdgeInsets.all(AppSpacing.xs),
-      child: LogoGoogle(taille: 18),
-    ),
-  );
 }

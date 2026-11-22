@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/candidature/fuseau_appareil.dart';
 import '../../../core/candidature/port_inscription_candidat.dart';
 import '../../../core/candidature/port_ma_candidature.dart'
     show HorsLigneCandidature;
@@ -16,33 +17,32 @@ import '../../../core/dossier/service_dossier.dart';
 import '../../../core/i18n/isolat_bidi.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
-import '../../../core/offres/offre_horaire.dart' show LangueCours;
-import '../../../core/offres/service_offres.dart' show languesCoursProvider;
+import '../../../core/identite/nom_propre.dart';
 import '../../../core/preferences/preferences_locales.dart';
 import '../../../core/recrutement/port_invitations_comptable.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/session/deconnexion.dart';
 import '../../../core/session/session_controleur.dart';
-import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
-import '../../../core/widgets/champ_etiquete.dart' show TitreChamp;
+import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/lien_fleche.dart';
-import '../../candidature/libelles_parcours.dart' show nomDeLangue;
 import '../../consentements/texte_observation.dart' show CaseAccordTexte;
 import '../../juridique/juridique_pages.dart' show ligneVersionJuridique;
 import '../../juridique/textes_juridiques.dart';
-import '../../parcours_offres/libelles_parcours.dart' show libelleNiveau;
 import '../brouillon_inscription.dart';
+import '../brouillon_persistant.dart' show oublierBrouillonInscription;
 import '../code_comptable_retenu.dart';
 import '../inscription_page.dart';
 import '../invitation_en_cours.dart';
+import '../questionnaire/coquille_onboarding.dart';
 import '../questionnaire/questionnaire_inscription.dart';
-import '../questionnaire/questionnaire_page.dart';
 
 /// `/inscription/recapitulatif` : les reponses, un « Modifier » par ligne, et
 /// la creation du compte.
@@ -66,6 +66,13 @@ import '../questionnaire/questionnaire_page.dart';
 class RecapitulatifEtape extends ConsumerStatefulWidget {
   /// Cree l'etape.
   const RecapitulatifEtape({super.key});
+
+  /// ONBOARDING-PRAXIS : la cle de l'ecran « Vous, le tuteur du compte » (ou
+  /// « Votre nom de famille »).
+  static const Key cleVous = ValueKey<String>('inscription-vous');
+
+  /// ONBOARDING-PRAXIS : la cle de la fin (« Votre demande est en cours »).
+  static const Key cleFin = ValueKey<String>('inscription-fin');
 
   @override
   ConsumerState<RecapitulatifEtape> createState() => _RecapitulatifEtapeState();
@@ -161,13 +168,19 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               apprenants: brouillon.titulaire
                   ? questionnaire.apprenantsPourServeur()
                   : null,
+              source: brouillon.titulaire
+                  ? questionnaire.sourcePourServeur
+                  : null,
+              fuseau: brouillon.titulaire ? fuseauIanaAppareil() : null,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
         // La demande est partie : les reponses quitteront l'appareil a
-        // l'arrivee sur `/attente` ([DepartDemande]). INSCRIPTION-3 : effacees
-        // ici, elles disparaissaient du recapitulatif encore affiche (lignes de
-        // l'enfant et de la langue vides) pendant l'actualisation.
-        ref.read(departDemandeProvider.notifier).commencer();
+        // l'arrivee sur `/attente` ([DepartDemande]). ONBOARDING-PRAXIS : le
+        // titulaire voit d'abord la fin (« Votre demande est en cours ») ; le
+        // depart commence a « Suivre ma demande ».
+        if (!brouillon.titulaire) {
+          ref.read(departDemandeProvider.notifier).commencer();
+        }
         ref.read(codeInvitationRetenuProvider.notifier).oublier();
         // I1 : le profil existe, l'invitation n'est plus en cours.
         oublierInvitationEnCours();
@@ -183,6 +196,21 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       _echec(t.inscription.erreur);
       return;
     }
+    if (brouillon.titulaire) {
+      if (mounted) setState(() => _envoi = false);
+      return;
+    }
+    ref.read(departDemandeProvider.notifier).commencer();
+    await _actualiserPuisAller(Routes.attente);
+  }
+
+  /// ONBOARDING-PRAXIS : « Suivre ma demande », depuis la fin.
+  Future<void> _suivreDemande() async {
+    if (_envoi) return;
+    setState(() {
+      _envoi = true;
+      _erreur = null;
+    });
     ref.read(departDemandeProvider.notifier).commencer();
     await _actualiserPuisAller(Routes.attente);
   }
@@ -501,34 +529,246 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // ONBOARDING-PRAXIS : la demande du titulaire, apres la connexion
+  // ---------------------------------------------------------------------------
+
+  final TextEditingController _prenomTitulaire = TextEditingController();
+  final TextEditingController _nomTitulaire = TextEditingController();
+  Genre? _genreTitulaire;
+  bool _tenteTitulaire = false;
+
+  String? _erreurNom(String saisie, String enLettres) {
+    if (!_tenteTitulaire) return null;
+    if (saisie.trim().isEmpty) return t.inscription.champRequis;
+    return nomPropreValide(saisie) ? null : enLettres;
+  }
+
+  void _envoyerTitulaire(ApprenantQuestionnaire? apprenant) {
+    final String prenom = apprenant?.prenom ?? _prenomTitulaire.text;
+    final Genre? genre = apprenant?.genre ?? _genreTitulaire;
+    if (!nomPropreValide(prenom) ||
+        !nomPropreValide(_nomTitulaire.text) ||
+        genre == null) {
+      setState(() => _tenteTitulaire = true);
+      return;
+    }
+    ref
+        .read(brouillonInscriptionProvider.notifier)
+        .saisirIdentite(prenom: prenom, nom: _nomTitulaire.text);
+    ref.read(brouillonInscriptionProvider.notifier).choisirGenre(genre);
+    unawaited(_creer());
+  }
+
+  Widget _vueTitulaire(
+    BuildContext context, {
+    required BrouillonInscription brouillon,
+    required QuestionnaireInscription questionnaire,
+    required bool sansQuestionnaire,
+    required bool enCours,
+    required String? erreur,
+  }) {
+    final o = t.onboarding;
+    final TextTheme textes = Theme.of(context).textTheme;
+    void deconnecter() => unawaited(
+      seDeconnecter(context, ref).then((bool sortie) {
+        if (sortie) oublierBrouillonInscription();
+      }),
+    );
+    final Widget sortie = LienFleche(
+      key: const Key('inscription-deconnexion'),
+      libelle: t.inscription.seDeconnecter,
+      fleche: false,
+      onPress: deconnecter,
+    );
+    final Widget? ligneErreur = erreur == null
+        ? null
+        : ErreurEtape(message: erreur);
+    // La demande est partie : la fin.
+    if (brouillon.profilCree) {
+      final f = o.fin;
+      final int enfants = questionnaire.enfants.length;
+      return KeyedSubtree(
+        key: RecapitulatifEtape.cleFin,
+        child: CoquilleOnboarding(
+          chapitre: Chapitre.demande,
+          remplissage: const <double>[1, 1, 1, 4 / 5],
+          grand: true,
+          expression: ExpressionPraxis.joie,
+          phrase: f.dit,
+          titre: f.titre,
+          corps: <Widget>[
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(f.maintenant, style: textes.titleMedium),
+                  Ecart.vSm,
+                  Text(f.un, style: textes.bodyMedium),
+                  Ecart.vXs,
+                  Text(
+                    questionnaire.apprenants.length > 1
+                        ? f.deuxPlusieurs
+                        : f.deux,
+                    style: textes.bodyMedium,
+                  ),
+                  Ecart.vXs,
+                  Text(f.trois, style: textes.bodyMedium),
+                  // Les freres et soeurs ne sont jamais dans la meme classe
+                  // (directeur, 22/11/2026) : dit comme un avantage.
+                  if (enfants > 1) ...<Widget>[
+                    Ecart.vSm,
+                    Text(
+                      f.fratrie,
+                      key: const Key('inscription-fin-fratrie'),
+                      style: textes.bodyMedium,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (ligneErreur != null) ...<Widget>[Ecart.vMd, ligneErreur],
+          ],
+          action: ActionPrincipale(
+            key: const Key('inscription-suivre'),
+            libelle: f.suivre,
+            onPress: enCours ? null : () => unawaited(_suivreDemande()),
+            enCours: enCours,
+            affirmee: true,
+          ),
+        ),
+      );
+    }
+    // Les reponses ne sont plus sur cet appareil : reprendre les questions.
+    if (sansQuestionnaire) {
+      return CoquilleOnboarding(
+        chapitre: Chapitre.demande,
+        expression: ExpressionPraxis.reflexion,
+        phrase: t.inscription.questionnaire.aucuneReponse,
+        titre: t.inscription.questionnaire.acces.absentesTitre,
+        corps: const <Widget>[],
+        action: ActionPrincipale(
+          key: const Key('inscription-reprendre'),
+          libelle: t.commun.continuer,
+          onPress: () => context.go(Routes.commencer),
+          affirmee: true,
+        ),
+        liens: <Widget>[sortie],
+      );
+    }
+    final v = o.vous;
+    final ApprenantQuestionnaire? l0 = questionnaire.titulaire;
+    return KeyedSubtree(
+      key: RecapitulatifEtape.cleVous,
+      child: CoquilleOnboarding(
+        chapitre: Chapitre.demande,
+        remplissage: const <double>[1, 1, 1, 3 / 5],
+        expression: ExpressionPraxis.reflexion,
+        phrase: l0 != null ? v.ditMoi(prenom: l0.prenom) : v.dit,
+        titre: l0 != null ? v.titreMoi : v.titre,
+        sousTitre: l0 != null ? null : v.sous,
+        corps: <Widget>[
+          AutofillGroup(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // L'adulte (ou le parent qui apprend) a deja dit son prenom :
+                // il n'est jamais redemande.
+                if (l0 == null) ...<Widget>[
+                  ChampEtiquete(
+                    libelle: v.prenom,
+                    obligatoire: true,
+                    cleChamp: const Key('inscription-prenom'),
+                    controller: _prenomTitulaire,
+                    textCapitalization: TextCapitalization.words,
+                    actionClavier: TextInputAction.next,
+                    remplissage: const <String>[AutofillHints.givenName],
+                    erreur: _erreurNom(
+                      _prenomTitulaire.text,
+                      t.inscription.nomEnLettresPrenom,
+                    ),
+                    onChanged: (String _) => setState(() {}),
+                  ),
+                  Ecart.vLg,
+                ],
+                ChampEtiquete(
+                  libelle: v.nom,
+                  obligatoire: true,
+                  cleChamp: const Key('inscription-nom'),
+                  controller: _nomTitulaire,
+                  textCapitalization: TextCapitalization.words,
+                  actionClavier: TextInputAction.done,
+                  remplissage: const <String>[AutofillHints.familyName],
+                  erreur: _erreurNom(
+                    _nomTitulaire.text,
+                    t.inscription.nomEnLettresNom,
+                  ),
+                  onChanged: (String _) => setState(() {}),
+                  onSubmitted: (String _) => _envoyerTitulaire(l0),
+                ),
+                if (l0 == null) ...<Widget>[
+                  Ecart.vLg,
+                  Text(v.vousEtes, style: textes.titleSmall),
+                  Ecart.vSm,
+                  ChoiceCardGroup(
+                    key: const Key('inscription-genre'),
+                    autoriserSaisieLibre: false,
+                    compacte: true,
+                    valeurInitiale: _genreTitulaire == null
+                        ? null
+                        : ReponseChoix(
+                            valeurs: <String>{_genreTitulaire!.name},
+                          ),
+                    options: <OptionChoix>[
+                      OptionChoix(
+                        cle: const Key('inscription-genre-homme'),
+                        valeur: Genre.homme.name,
+                        libelle: o.genre.homme,
+                      ),
+                      OptionChoix(
+                        cle: const Key('inscription-genre-femme'),
+                        valeur: Genre.femme.name,
+                        libelle: o.genre.femme,
+                      ),
+                    ],
+                    onChange: (ReponseChoix r) {
+                      if (r.valeurs.isEmpty) return;
+                      setState(
+                        () => _genreTitulaire = Genre.values.byName(
+                          r.valeurs.first,
+                        ),
+                      );
+                    },
+                  ),
+                  if (_tenteTitulaire && _genreTitulaire == null) ...<Widget>[
+                    Ecart.vSm,
+                    ErreurEtape(message: t.inscription.champRequis),
+                  ],
+                ],
+              ],
+            ),
+          ),
+          if (ligneErreur != null) ...<Widget>[Ecart.vMd, ligneErreur],
+        ],
+        action: ActionPrincipale(
+          key: const Key('inscription-envoyer'),
+          libelle: v.envoyer,
+          onPress: enCours ? null : () => _envoyerTitulaire(l0),
+          enCours: enCours,
+          affirmee: true,
+        ),
+        liens: <Widget>[sortie],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _filet?.cancel();
+    _prenomTitulaire.dispose();
+    _nomTitulaire.dispose();
     _focusCase.dispose();
     super.dispose();
-  }
-
-  /// L'adresse d'une question du questionnaire.
-  String _question(EtapeQuestionnaire etape) =>
-      QuestionnairePage.adresse(etape);
-
-  /// Le nom d'une langue (UX-005, TXT-1) : d'abord son libelle i18n, dans
-  /// la langue de l'interface (`recrutement.parcours.langues`, deja utilise
-  /// par la candidature) ; sinon le nom du referentiel des langues de cours,
-  /// suivi meme quand l'etape de la langue ne l'a pas charge (application
-  /// rouverte sur le recapitulatif) ; le code seulement pour une langue
-  /// inconnue des deux.
-  String _nomLangue(String? code) {
-    if (code == null) {
-      return '';
-    }
-    if (nomDeLangue(code) case final String nom) {
-      return nom;
-    }
-    final List<LangueCours> langues =
-        ref.watch(languesCoursProvider).value ?? const <LangueCours>[];
-    return langues.where((LangueCours l) => l.code == code).firstOrNull?.nom ??
-        code;
   }
 
   /// Une question du questionnaire s'ouvre telle quelle (il revient ici une
@@ -592,6 +832,20 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                   ? t.inscription.erreurActualisation
                   : null));
 
+    // ONBOARDING-PRAXIS (directeur, 22/11/2026) : le titulaire a tout dit dans
+    // le questionnaire ; ici, seulement son nom (et, pour le tuteur qui ne
+    // suit pas de cours, son prenom et son genre), puis la fin.
+    if (brouillon.titulaire) {
+      return _vueTitulaire(
+        context,
+        brouillon: brouillon,
+        questionnaire: questionnaire,
+        sansQuestionnaire: sansQuestionnaire,
+        enCours: enCours,
+        erreur: _erreur,
+      );
+    }
+
     // Le profil deja cree ne se modifie plus d'ici : « Modifier » n'est pas
     // rendu (jamais grise, BOUTONS-GRISES-1) ; l'erreur d'actualisation et
     // « Reessayer » disent la suite. Pendant l'envoi, il ne repart pas. Le
@@ -611,13 +865,6 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     final bool refaire = candidat
         ? (_reessayer || brouillon.inscriptionEnvoyee)
         : brouillon.profilCree;
-    final bool peutAjouter =
-        brouillon.usage == UsageInscription.famille &&
-        !brouillon.profilCree &&
-        !enCours &&
-        questionnaire.enfants.length +
-                (questionnaire.titulaireApprend ? 1 : 0) <
-            apprenantsMaximum;
     final Widget lignes = KeyedSubtree(
       key: _cleLignes,
       child: GroupeReglages(
@@ -635,71 +882,10 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               null => '',
             },
             controle: modifier(
-              brouillon.titulaire
-                  ? _question(const EtapeQuestionnaire(SorteEtape.pourQui))
-                  : Routes.inscriptionUsage,
+              Routes.inscriptionUsage,
               'inscription-modifier-usage',
             ),
           ),
-          // L5-01 : la reponse « Suivez-vous aussi des cours ? » est montree
-          // avant l'envoi, et part avec le profil.
-          if (brouillon.usage == UsageInscription.famille &&
-              questionnaire.parentSuitDesCours != null)
-            LigneRubrique(
-              icone: AppIcons.livreOuvert,
-              libelle: t.inscription.recap.cours,
-              legende: questionnaire.parentSuitDesCours!
-                  ? t.inscription.recap.coursOui
-                  : t.inscription.recap.coursNon,
-              controle: modifier(
-                _question(const EtapeQuestionnaire(SorteEtape.parent)),
-                'inscription-modifier-cours',
-              ),
-            ),
-          // Admission, lot B : qui apprend, et ou il en est.
-          if (brouillon.titulaire && !sansQuestionnaire) ...<LigneRubrique>[
-            if (brouillon.usage == UsageInscription.famille)
-              for (int i = 0; i < questionnaire.enfants.length; i++)
-                LigneRubrique(
-                  icone: AppIcons.eleves,
-                  libelle: LibellesGroupe.insecable(
-                    t.inscription.questionnaire.ligneEnfant(
-                      prenom: questionnaire.enfants[i].prenom.trim(),
-                      age: questionnaire.enfants[i].age ?? 0,
-                    ),
-                  ),
-                  legende: questionnaire.enfants[i].niveau == null
-                      ? ''
-                      : libelleNiveau(questionnaire.enfants[i].niveau!),
-                  controle: modifier(
-                    _question(EtapeQuestionnaire(SorteEtape.prenom, i)),
-                    'inscription-modifier-enfant-$i',
-                  ),
-                ),
-            if (questionnaire.titulaireApprend)
-              LigneRubrique(
-                icone: AppIcons.profil,
-                libelle: t.inscription.questionnaire.ligneVous,
-                legende: questionnaire.niveauTitulaire == null
-                    ? ''
-                    : libelleNiveau(questionnaire.niveauTitulaire!),
-                controle: modifier(
-                  _question(
-                    const EtapeQuestionnaire(SorteEtape.niveauTitulaire),
-                  ),
-                  'inscription-modifier-vous',
-                ),
-              ),
-            LigneRubrique(
-              icone: AppIcons.livreOuvert,
-              libelle: t.inscription.questionnaire.recapLangue,
-              legende: _nomLangue(questionnaire.langue),
-              controle: modifier(
-                _question(const EtapeQuestionnaire(SorteEtape.langue)),
-                'inscription-modifier-langue',
-              ),
-            ),
-          ],
           LigneRubrique(
             icone: AppIcons.profil,
             libelle: t.inscription.recap.identite,
@@ -747,12 +933,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     );
     return CoquilleEtape(
       route: _route,
-      question: brouillon.titulaire
-          ? t.inscription.questionnaire.recapTitre
-          : t.inscription.recapitulatif,
-      explication: sansQuestionnaire
-          ? t.inscription.questionnaire.aucuneReponse
-          : null,
+      question: t.inscription.recapitulatif,
       // INSCRIPTION-3 : pendant l'envoi, l'etiquette ne change pas ; le
       // profil cree, elle disait « Reessayer » avant meme le depart, alors
       // que rien n'avait echoue.
@@ -764,10 +945,6 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                 : t.inscription.candidat.envoyer)
           : brouillon.profilCree && !enCours
           ? t.inscription.reessayer
-          : sansQuestionnaire
-          ? t.commun.continuer
-          : brouillon.titulaire
-          ? t.inscription.questionnaire.envoyer
           : t.inscription.creer,
       onAction: brouillon.usage == null ? null : _creer,
       complement: candidat && _fermee
@@ -776,27 +953,6 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                 key: const Key('inscription-recap-code'),
                 libelle: t.inscription.usage.enseignant,
                 onPress: () => context.go(Routes.inscriptionInvitation),
-              ),
-            )
-          : peutAjouter
-          ? Center(
-              child: ActionPrincipale(
-                key: const Key('inscription-ajouter-profil'),
-                libelle: t.inscription.questionnaire.ajouterProfil,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-                onPress: () {
-                  final int? rang = ref
-                      .read(questionnaireInscriptionProvider.notifier)
-                      .ajouterEnfant();
-                  if (rang != null) {
-                    context.go(
-                      QuestionnairePage.adresse(
-                        EtapeQuestionnaire(SorteEtape.prenom, rang),
-                      ),
-                    );
-                  }
-                },
               ),
             )
           : null,
