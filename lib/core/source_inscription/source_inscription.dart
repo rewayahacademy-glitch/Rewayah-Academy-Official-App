@@ -75,7 +75,7 @@ final Provider<NoterSource?> noterSourceProvider = Provider<NoterSource?>((
     final SupabaseClient client = Supabase.instance.client;
     return (String r) async {
       final Object? reponse = await client
-          .rpc(
+          .rpc<Object?>(
             'noter_source_inscription',
             params: <String, Object?>{'p_ref': r},
           )
