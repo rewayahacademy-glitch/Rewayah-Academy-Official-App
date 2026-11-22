@@ -223,6 +223,8 @@ import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
 import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
+import 'core/source_inscription/source_inscription.dart'
+    show capturerSourceInscription;
 import 'core/suivi/ma_progression.dart';
 import 'core/suivi/ma_progression_supabase.dart';
 import 'core/suivi/messages_academie_supabase.dart';
@@ -1166,6 +1168,10 @@ Future<void> main() async {
   // TRANSITIONS, regle 9 : sur le web, un retour demande par le navigateur se
   // distingue de la fleche de l'application (hors web, rien n'est ecoute).
   RetourNavigateur.ecouter();
+
+  // REF-SUIVI (22/11/2026) : le `ref` du lien d'une organisation est garde
+  // avant tout redirigement du routeur.
+  capturerSourceInscription();
 
   // La supervision avant tout le reste : une erreur du demarrage lui-meme doit
   // remonter comme les autres, y compris l'ecran de configuration absente.

@@ -17,6 +17,7 @@ import 'core/router/app_router.dart';
 import 'core/router/fil_ariane.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
+import 'core/source_inscription/source_inscription.dart';
 import 'core/tc_horloge/mon_horloge.dart';
 import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
@@ -74,6 +75,9 @@ class RewayahApp extends ConsumerWidget {
     // MESSAGERIE-TEMPS-REEL (14/11/2026) : la veille des messages, meme
     // regle (ouverte avec la session, fermee avec elle).
     ref.watch(veilleMessagesProvider);
+    // REF-SUIVI (22/11/2026) : la source gardee sur l'appareil part au serveur,
+    // une fois, des que la personne est connectee.
+    ref.watch(veilleSourceInscriptionProvider);
     // FUSEAUX (04/11/2026) : l'heure de chacun vient du fuseau de son profil.
     // Lue ici une fois, pour que chaque ecran se redessine quand elle arrive.
     ref.watch(monHorlogeProvider);
