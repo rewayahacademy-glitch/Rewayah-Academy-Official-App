@@ -1,4 +1,4 @@
--- ADMISSIONS-CHAMPS (migration 20261130980000) : lister_demandes_admission rend `suivi`, le lien de suivi
+-- ADMISSIONS-CHAMPS (migration 20261130985000) : lister_demandes_admission rend `suivi`, le lien de suivi
 -- (private.sources_inscription.source_ref) du titulaire de la demande, ou nul ; seule la direction active lit ;
 -- la table reste illisible pour un client. Rejoue apres stub_auth.sql et toutes les migrations.
 -- Donnees fictives, tout est annule a la fin. Un echec leve 'ADM-SUIVI ROUGE : ...'. Aucun mot d'effacement.

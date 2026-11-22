@@ -1,0 +1,60 @@
+PE-A4 COMPTES-EGARES - journal (22/11/2026)
+
+Ordre du directeur (22/11/2026, relaye par le pilote) : « transfere les comptes egares dans l'espace eleves
+vers enseignant (seulement ceux que je n'ai pas acceptes) ».
+
+1. Lecture de la production (lecture seule, execute_sql, 22/11/2026)
+   - Les 18 references (CAND-00040, 00146, 00165, 00205, 00226, 00258, 00303, 00326, 00420, 00425, 00436,
+     00451, 00463, 00478, 00481, 00492, 00554, 00617) : role guardian, pending_kyc, non retires, une seule
+     candidature (17 eleve_adulte, 1 famille : CAND-00205), etape recue, issue en_cours, courriel confirme.
+   - Toutes ont un foyer sans autre membre et une fiche eleve du titulaire (student_profiles du compte).
+   - Aucune n'a : classe (groupe_membres, teacher_student_assignments), seance (session_participants),
+     paiement (paiements_saisis, paiements_soumis, commandes_recharge, factures_mensuelles,
+     engagements_prepaiement), portefeuille, invitation enseignant, candidature enseignant du meme courriel,
+     accord de confidentialite candidat. 34 lignes contract_acceptances (accords famille) : laissees.
+   - Formulaire papier (formulaires_reponses) actif, libre, meme genre :
+       meme courriel exact : CAND-00303 et CAND-00420 (les deux adresses citees par le pilote) -> rattaches ;
+       meme adresse gmail aux points pres : CAND-00451 -> PAS rattache (le circuit normal ne compare que
+       l'adresse exacte) ; a rattacher par la direction si elle le veut.
+   - Les 4 exclues : CAND-00001 (famille, confirmee, active), 00002 (eleve_adulte, confirmee, active),
+     00628 (confirmee, compte retire et desactive), 00645 (famille, confirmee, active).
+
+2. Le circuit normal reproduit (lu dans le depot)
+   - public.inscrire_candidat (20261022000600, retouches 20261117000000, 20261125750000) :
+     private.creer_profil_inscription_interne('teacher', ...) = profil teacher, pending_kyc, sans foyer,
+     teacher_profiles vide ; candidature enseignant prequalification / a_completer / en_cours, source
+     lien_public ou invitation ; candidature_contacts (courriel, telephone) ; evenement creee (transition 5) ;
+     candidat_accords_confidentialite ; log_sensitive_access('candidature_inscription') ;
+     private.formulaires_rapprocher_inscription (meme courriel : rattachement + pre-remplissage).
+   - Aucun courriel enfile par inscrire_candidat (seule la confirmation d'adresse de Supabase Auth).
+
+3. Ecarts assumes avec un vrai « Enseigner » (dits dans la migration)
+   - Pas d'accord de confidentialite candidat fabrique (la personne ne l'a pas donne) ; aucune lecture de cette
+     table dans le depot (ni migration ni lib/) : rien ne le redemande aujourd'hui.
+   - Pas de telephone dans le contact (le compte famille n'en a pas).
+   - Langue de la candidature nulle (langue_communication nulle pour les 18) : les courriels suivent la regle de
+     20261130966000 (sinon francais).
+   - Fiche eleve du titulaire marquee retiree (deleted_at), foyer garde sans membre, demande retiree (issue
+     retiree, motif interne) : rien n'est efface.
+
+4. Rejeu local (Postgres 16, /usr/lib/postgresql/16/bin, base neuve)
+   - stub_auth.sql (sans les CREATE ROLE deja presents sur la grappe locale), puis toutes les migrations :
+     aucune erreur ; la migration PE-A4 dit « aucune des references de l'ordre dans cette base ».
+   - scenarios_pe_a4_comptes_egares.sql : VERT (droits, conversion eleve adulte avec formulaire, famille,
+     courriel voisin non rattache, 9 refus nommes sans ecriture, application tout ou rien sur 18 fixtures aux
+     vraies references + 4 exclues, rejeu sans effet, audit 18 lignes). Deux lignes ERROR attendues (le refus
+     tout ou rien, par \i de la migration).
+   - Les 202 scenarios nommes par ci.yml, rejoues a la suite sur la meme base : voir ligne suivante.
+     Resultat : les 202 scenarios de ci.yml passent avec la migration PE-A4 ; le scenario PE-A4 a la suite
+     echouait d'abord sur sa fixture (la sequence des references, avancee par les autres scenarios, entrait
+     dans la plage CAND-00040..00645 : collision de reference sur une conversion). Corrige dans le scenario
+     (sequence portee au-dela de la plage) ; puis VERT sur cette base et sur une base neuve.
+   - En production, la sequence est a 648 (lu le 22/11) : les 18 nouvelles candidatures enseignant recevront
+     CAND-00649 et suivantes, hors de toute reference existante.
+
+5. Non fait, a dire
+   - Le scenario n'est pas ajoute a .github/workflows/ci.yml : le garde-fou interdit .github/ aux agents.
+   - Rien n'est installe en production ; aucune fusion.
+   - Aucun courriel aux 18 : le circuit normal n'en envoie pas a la creation d'une candidature ; la personne
+     decouvrira l'espace candidat a sa prochaine connexion (authorization_version est augmentee par le
+     declencheur de profiles ; comportement de l'application a la reconnexion non verifie ici).
