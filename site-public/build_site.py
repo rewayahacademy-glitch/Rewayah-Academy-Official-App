@@ -892,7 +892,7 @@ def accueil_tarifs(page: dict, tarifs: dict) -> str:
     age = p["ageAdulte"]
     # Ce qui vaut pour les enfants comme pour les adultes (les deux encarts du 18/10 le disent) n'est dit qu'une fois,
     # sous les deux prix ; seule l'observation d'une seance reste propre aux enfants.
-    communs = ("Le compte rendu de l’enseignant chaque fin de semaine", "Une séance annulée par l’académie est remplacée",
+    communs = ("Le compte rendu de l’enseignant après chaque séance", "Une séance annulée par l’académie est remplacée",
                phrase_remboursement(), "Résiliable chaque mois")
     return f'''<section class="deux-champs" id="tarifs" aria-labelledby="tarifs-titre">
   <h2 id="tarifs-titre" class="deux-champs__titre" data-revele>{titre_html(sec["title"])}</h2>
