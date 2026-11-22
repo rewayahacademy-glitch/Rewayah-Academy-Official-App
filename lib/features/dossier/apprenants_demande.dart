@@ -86,3 +86,41 @@ final FutureProvider<DemandeFamille?> demandeFamilleProvider =
       (Ref ref) => ref.watch(lectureDemandeFamilleProvider)(),
       retry: (int _, Object _) => null,
     );
+
+/// Quand la demande a ete envoyee et quand la direction a decide (precisions
+/// demandees ou acceptation), tels que le serveur les rend
+/// (`ma_demande_admission`, PARCOURS-BOUT-EN-BOUT). Instants UTC : l'ecran les
+/// lit a l'heure de la personne. Aucune date inventee : `null` quand le
+/// serveur n'en donne pas.
+typedef DatesAdmission = ({DateTime? recueLe, DateTime? decisionLe});
+
+/// Lit les dates de `ma_demande_admission` ; `null` sans demande.
+typedef LectureDatesAdmission = Future<DatesAdmission?> Function();
+
+DateTime? _instant(Object? brut) =>
+    brut is String ? DateTime.tryParse(brut)?.toUtc() : null;
+
+Future<DatesAdmission?> _lireDates() async {
+  final Object? r = await Supabase.instance.client.rpc<Object?>(
+    'ma_demande_admission',
+  );
+  if (r is! Map<String, dynamic>) {
+    return null;
+  }
+  return (
+    recueLe: _instant(r['recue_le']),
+    decisionLe: _instant(r['decision_le']),
+  );
+}
+
+/// La lecture des dates ; surchargee par les tests.
+final Provider<LectureDatesAdmission> lectureDatesAdmissionProvider =
+    Provider<LectureDatesAdmission>((Ref _) => _lireDates);
+
+/// Les dates de la demande du compte connecte. Une lecture en echec ne se
+/// relance pas : la frise se lit alors sans dates.
+final FutureProvider<DatesAdmission?> datesAdmissionProvider =
+    FutureProvider<DatesAdmission?>(
+      (Ref ref) => ref.watch(lectureDatesAdmissionProvider)(),
+      retry: (int _, Object _) => null,
+    );

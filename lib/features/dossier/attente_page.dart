@@ -22,6 +22,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../attente_classe/frise_inscription.dart';
 import '../candidature/accueil_candidat.dart';
 import '../candidature/carte_entretien_proche.dart';
 import '../candidature/pays_versement_portail.dart';
@@ -323,6 +324,15 @@ class _AttentePageState extends ConsumerState<AttentePage> {
                     ),
                   ),
                 ),
+              ],
+              // PARCOURS-BOUT-EN-BOUT (directeur, 22/11/2026) : la frise de
+              // l'inscription d'une famille ou d'un eleve adulte, de la
+              // demande a l'enseignant affecte.
+              if (lu != null &&
+                  lu.estTuteur &&
+                  lu.etape == EtapeDossier.accesEnPreparation) ...<Widget>[
+                Ecart.vLg,
+                const BlocFriseInscription(),
               ],
               // CAND-06 : « Aidez une personne a apprendre la parole d'Allah. »,
               // facultatif.

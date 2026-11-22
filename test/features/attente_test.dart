@@ -801,6 +801,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(source.rafraichissements, 1);
 
+        await tester.ensureVisible(find.text(t.attente.seDeconnecter));
         await tester.tap(find.text(t.attente.seDeconnecter));
         await tester.pumpAndSettle();
         expect(auth.deconnexions, 1);

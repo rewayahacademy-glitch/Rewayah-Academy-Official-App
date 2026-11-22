@@ -40,6 +40,7 @@ import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show EnseignantVM;
+import '../../core/tc_horloge/avertissement_fuseau.dart';
 import '../../core/tc_horloge/horloge_vivante.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
@@ -216,6 +217,9 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
               aller: (String chemin) => GoRouter.of(context).go(chemin),
               avecReprise: false,
             ),
+          // PARCOURS-BOUT-EN-BOUT (B4) : l'appareil n'est pas a l'heure de la
+          // ville du foyer.
+          const AvertissementFuseau(),
           BlocAsynchrone<List<ProfilEleveFoyer>>(
             // Tant que l'invitation n'est pas arrivee : l'attente, pas le vide.
             valeur: invitationArrivee

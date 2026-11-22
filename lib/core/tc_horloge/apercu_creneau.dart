@@ -37,6 +37,8 @@ class ApercuCreneau {
     this.dateChangement,
     this.jourApres,
     this.heureApres,
+    this.mecque,
+    this.jourMecque,
   });
 
   /// Lit la reponse, ou `null` quand elle ne se lit pas.
@@ -57,6 +59,10 @@ class ApercuCreneau {
       dateChangement: date is String ? DateTime.tryParse(date) : null,
       jourApres: jourApres is int ? jourApres : null,
       heureApres: heureApres is String ? heureApres : null,
+      mecque: brut['mecque'] is String ? brut['mecque'] as String : null,
+      jourMecque: brut['jour_mecque'] is int
+          ? brut['jour_mecque'] as int
+          : null,
     );
   }
 
@@ -78,6 +84,13 @@ class ApercuCreneau {
 
   /// L'heure du creneau apres ce changement.
   final String? heureApres;
+
+  /// « 21:00 » : la meme heure a l'heure de l'academie (La Mecque), quand le
+  /// serveur la rend (PARCOURS-BOUT-EN-BOUT).
+  final String? mecque;
+
+  /// Le jour (1 a 7) du creneau a La Mecque.
+  final int? jourMecque;
 }
 
 /// L'acces au calcul de la base.

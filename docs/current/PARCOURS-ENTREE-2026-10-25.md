@@ -5,6 +5,21 @@ connexion, avant, pendant, après, pour tout refaire d'un coup ». Remplace la f
 de connexion (son contenu est repris au §3 C). État : **validée par le directeur pour la PR 1
 (25/10, 17:35)** ; deux réponses encore attendues pour la suite (§6).
 
+> **Correction du 22/11/2026 (directeur, confirmée le 22/11) : l'admission par la direction est la
+> règle.** Ce document promettait « aucune attente de validation pour une famille » (étude du
+> 25/10, décision 2 ; §2, §3 E et PR 3). La décision du 27/10/2026
+> (`DECISION-ADMISSION-2026-10-27.md`) l'a annulée : **personne n'entre sans décision de la
+> direction, familles et élèves adultes compris**. Le compte d'une famille naît en attente
+> (`accesEnPreparation`), `/attente` dit « Votre demande est en cours », la direction accepte,
+> demande une précision (« à compléter ») ou refuse, et la famille est prévenue par courriel ; elle
+> n'arrive sur son Accueil qu'après acceptation. Partout où le texte ci-dessous dit « aucune
+> attente » ou « arrive sur son Accueil » sans condition, lire : **après l'acceptation de la
+> direction**. La migration « famille sans attente » de la PR 3 n'est pas à écrire : la décision du 27/10
+> annule `20261024160000_tuteur_nait_actif.sql` (« le tuteur naît actif »). Le suivi visible est
+> la frise de l'inscription sur `/attente` (`features/attente_classe/frise_inscription.dart`,
+> lot PARCOURS-BOUT-EN-BOUT) : demande envoyée, lue par la direction, acceptée ou à compléter, puis
+> classe en formation, classe confirmée, enseignant affecté, tout est prêt.
+
 ## 1. Ce qui existe aujourd'hui (lu dans le code le 25/10)
 
 | Moment | Aujourd'hui | Défaut vu |
@@ -31,8 +46,8 @@ Ce qui ne bouge pas : les redirections, les routes, les règles d'accès, la RLS
   lumière qui part comme une route), pour une page moderne ; **le logo horizontal apparaît
   seulement**, avec un style net, il ne voyage pas. Rien d'autre n'est animé.
 - 25/10, étude « accueil des familles » (`ETUDE-ACCUEIL-ET-CLASSES-2026-10-25.md` §2 et §3,
-  décision 2, après les vidéos de Riwayah) : **compte en dernier et aucune attente de validation
-  pour une famille** ; pays et fuseau repris de la candidature des enseignants ; puces pour les
+  décision 2, après les vidéos de Riwayah) : **compte en dernier ; ~~aucune attente de validation
+  pour une famille~~ (caduc : admission par la direction, décision du 27/10, rappelée le 22/11)** ; pays et fuseau repris de la candidature des enseignants ; puces pour les
   choix courts, cartes avec exemple pour le niveau et l'objectif ; compteur d'étapes ; deux volets
   sur ordinateur (réponses à gauche, question à droite, lettres A/B/C au clavier) ; demande de
   créneau personnalisé branchée sur le serveur existant, roulette jour et heures ; **moins de dix
@@ -75,13 +90,11 @@ immobile ; le logo ne bouge pas. Textes et comportements inchangés.
 Même habillage, mêmes textes, mêmes gestes qu'aujourd'hui. L'écran de l'élève garde sa grande cible
 tactile et son clavier de code.
 
-**E. Après le lien : récapitulatif, puis l'accueil, sans attente.** Un seul écran : « Voici ce que
+**E. Après le lien : récapitulatif, puis la page d'attente de l'admission (corrigé le 22/11 : plus « l'accueil, sans attente »).** Un seul écran : « Voici ce que
 nous avons compris », prénom et nom du tuteur, genre, l'enfant et ses réponses, « Créer mon
 compte ». La demande part à l'académie, la famille arrive sur son Accueil et voit sa demande en
-suivi : **aucune attente de validation pour une famille** (décision 2). Si l'appareil n'a pas de
-réponses (lien ouvert ailleurs), le questionnaire se pose ici. Vérité à dire : l'absence d'attente
-pour une famille est une règle du serveur (statut du compte à la création) : ce lot comprend donc
-une migration, collée par le directeur depuis une page privée, et ses tests SQL.
+suivi : **la direction décide de chaque demande** (décision du 27/10, qui annule la « décision 2 » du 25/10 : « aucune attente de validation pour une famille »). Si l'appareil n'a pas de
+réponses (lien ouvert ailleurs), le questionnaire se pose ici. Vérité à dire : l'attente de la décision est une règle du serveur (statut du compte à la création, décision du 27/10) ; la migration « famille sans attente » prévue ici n'est pas à écrire.
 
 **F. Accords et portail d'attente.** Même habillage ; une page qui défile, chaque texte sa case, un
 bouton « Suivant » inactif tant que tout n'est pas coché (décision du 17/10). Aucun autre
@@ -93,7 +106,7 @@ changement dans le portail.
 |---|---|---|---|
 | 1 | Fondations et connexion | surface de marque, fond de page, porte complète, connexion C, lien envoyé et récupération D, guide du logo | téléphone et ordinateur, français et arabe : la page ressemble à la capture ; le lien arrive |
 | 2 | Démarrage animé | écran A, raccord avec C | ouvrir l'app froide : l'illustration joue, le logo apparaît, pas de coupure |
-| 3 | Questionnaire d'accueil avant le compte | B et E, stockage local, rattachement, règle serveur « famille sans attente », créneau personnalisé | parcours complet d'une nouvelle famille, sur téléphone puis ordinateur : moins de dix étapes, compte en dernier, demande visible dans son Accueil |
+| 3 | Questionnaire d'accueil avant le compte | B et E, stockage local, rattachement, règle serveur d'admission (décision du 27/10, pas « famille sans attente »), créneau personnalisé | parcours complet d'une nouvelle famille, sur téléphone puis ordinateur : moins de dix étapes, compte en dernier, demande visible dans son Accueil |
 | 4 | Habillage de l'appareil de l'élève et des accords | D (élève), F | un élève entre par son code ; un enseignant signe ses accords |
 
 Les PR 1 et 2 passent avant l'invitation des enseignants et des élèves actuels (B2.1, B2.2) : ce

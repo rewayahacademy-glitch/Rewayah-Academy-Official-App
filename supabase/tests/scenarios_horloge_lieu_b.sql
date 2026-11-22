@@ -489,6 +489,13 @@ BEGIN
   IF NOT (v_paris ->> 'meme')::boolean OR v_paris ->> 'maintenant' <> '18:00' THEN
     RAISE EXCEPTION 'HLB ROUGE : l''offre lue a Paris ne doit pas bouger : %', v_paris;
   END IF;
+  -- PARCOURS-BOUT-EN-BOUT : l'apercu rend aussi l'heure de La Mecque. 18:00 a
+  -- Paris font 20:00 l'hiver et 19:00 l'ete a La Mecque (UTC+3 sans changement).
+  IF v_conakry ->> 'mecque' NOT IN ('19:00', '20:00')
+     OR (v_conakry ->> 'jour_mecque')::int <> 3
+     OR v_paris ->> 'mecque' NOT IN ('19:00', '20:00') THEN
+    RAISE EXCEPTION 'HLB ROUGE : l''apercu ne rend pas l''heure de La Mecque : % / %', v_conakry, v_paris;
+  END IF;
   IF v_brouillon IS NOT NULL THEN
     RAISE EXCEPTION 'HLB ROUGE : une offre non publiee ne doit rien montrer : %', v_brouillon;
   END IF;
