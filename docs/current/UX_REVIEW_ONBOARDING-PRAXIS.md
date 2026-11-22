@@ -15,16 +15,12 @@ change ni permission, ni état serveur, ni règle métier (§4.3).
 | 5 | Tout choix s'explique ; toute la carte est cliquable | K-58 ; Fitts | Les cartes reprennent le libellé et la précision de la maquette (`ChoiceCardGroup`, `description`) ; les choix courts (âge, juz, sourates, langues, source) sont des puces `FilterPill` | Aucun bouton recomposé ; `Wrap` de puces déclaré « choix de formulaire » |
 | 6 | Déduit > choisi > saisi | K-57 | Hafs présélectionnée ; « Mémoriser » présélectionné pour qui a mémorisé ; langue de l'appareil proposée ; fuseau déduit ; prénom du titulaire jamais redemandé après la connexion | Seuls le prénom, le nom, « une autre lecture » et « une langue absente » sont saisis (rien d'autre ne les connaît) |
 | 7 | Messages d'erreur utiles | K-59 ; Nielsen n° 9 | Un prénom refusé : Praxis dit pourquoi (« Seulement des lettres… »), la même phrase sous le champ | `prenomValide` (lettres de toute écriture, 2 à 30) |
-| 8 | Mouvement réduit = rien, toute l'information reste | DECISION-MOUVEMENT §3.12 ; WCAG 2.3.3 | Les mots de la bulle apparaissent un à un (35 ms d'écart, jetons) ; la courbe du chemin se trace une fois ; la barre glisse. Sous « Réduire les effets » : tout est posé d'emblée, Praxis immobile, yeux ouverts | `BullePraxis`, `CourbeChemin`, `_Segment`, `PraxisGuide` |
+| 8 | Mouvement réduit = rien, toute l'information reste ; Praxis a le visage et le geste de la maquette à chaque écran (directeur, 22/11 : « il faut les ajouter ») | DECISION-MOUVEMENT §3.12 ; WCAG 2.3.3 | Les mots de la bulle apparaissent un à un (35 ms d'écart, jetons) ; la courbe du chemin se trace une fois ; la barre glisse. Sous « Réduire les effets » : tout est posé d'emblée, Praxis immobile, yeux ouverts | `BullePraxis`, `CourbeChemin`, `_Segment`, `PraxisGuide` (le Praxis de référence `Corps` / `peindrePraxis` de `lib/core/vivant/entree/`, gestes `Geste`, visages `Expr`, sans nouveau dessin ; posé d'emblée sous mouvement réduit) |
 | 9 | Le lecteur d'écran lit le sens, pas le décor | WCAG 1.1.1, 4.1.3 | Praxis est décoratif (exclu) ; sa bulle est une région vivante qui lit la phrase entière ; la courbe a un libellé (« Durée prévue 15 semaines, date limite 20 semaines ») ; la barre est lue par son chapitre | `Semantics(liveRegion)` |
 | 10 | RTL | Material 3, *Bidirectionality* | Les rangées, la barre et la courbe suivent la direction (la courbe se miroite en arabe) | `Directionality` dans `_PeintreCourbe` |
 
 ## Écarts à la maquette, et pourquoi
 
-- **Gestes de Praxis** (salut, montrer, main sur le cœur, réfléchir) : le Praxis de l'application
-  (`PraxisVivant`) n'a pas encore ces gestes ; seule son humeur suit l'expression (joie : heureux ;
-  réflexion, étonnement : curieux ; attente, sourire : calme). On ne redessine pas Praxis
-  (`praxis-rewayah` §10) : le lot PRAXIS-CANON les apportera.
 - **« Continuer » jamais grisé** : voir ligne 4.
 - **Retour** : disque retour de 48 (`DisqueRetour`) au lieu du texte « ← Retour ».
 - **« Continuer avec Google »** : bouton secondaire avec le logo, comme partout dans l'application, au lieu

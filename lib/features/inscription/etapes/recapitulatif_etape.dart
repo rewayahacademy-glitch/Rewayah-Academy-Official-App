@@ -26,6 +26,7 @@ import '../../../core/session/deconnexion.dart';
 import '../../../core/session/session_controleur.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/vivant/entree/gestes_praxis.dart' show Geste;
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/champ_etiquete.dart';
@@ -610,6 +611,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
           remplissage: const <double>[1, 1, 1, 4 / 5],
           grand: true,
           expression: ExpressionPraxis.joie,
+          geste: Geste.salut,
           phrase: f.dit,
           titre: f.titre,
           corps: <Widget>[
@@ -677,7 +679,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       child: CoquilleOnboarding(
         chapitre: Chapitre.demande,
         remplissage: const <double>[1, 1, 1, 3 / 5],
-        expression: ExpressionPraxis.reflexion,
+        expression: ExpressionPraxis.concentre,
         phrase: l0 != null ? v.ditMoi(prenom: l0.prenom) : v.dit,
         titre: l0 != null ? v.titreMoi : v.titre,
         sousTitre: l0 != null ? null : v.sous,

@@ -13,6 +13,7 @@ import '../../../core/session/session_state.dart';
 import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/vivant/entree/gestes_praxis.dart' show Geste;
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/champ_etiquete.dart';
@@ -177,6 +178,9 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
   String? _reaction;
   ExpressionPraxis? _expressionReaction;
 
+  /// Le geste de la reaction ; `null` : celui de l'ecran.
+  Geste? _gesteReaction;
+
   /// Vrai apres un « Continuer » sans reponse : la phrase le dit.
   bool _tente = false;
 
@@ -242,11 +246,16 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
     super.dispose();
   }
 
-  void _reagir(String phrase, [ExpressionPraxis? expression]) => setState(() {
-    _reaction = phrase;
-    _expressionReaction = expression;
-    _tente = false;
-  });
+  /// La reaction de Praxis a un choix. Comme la maquette, une reaction qui
+  /// change son visage pose ses mains (sauf geste donne) ; une phrase seule
+  /// garde le geste de l'ecran.
+  void _reagir(String phrase, [ExpressionPraxis? expression, Geste? geste]) =>
+      setState(() {
+        _reaction = phrase;
+        _expressionReaction = expression;
+        _gesteReaction = geste ?? (expression == null ? null : Geste.aucun);
+        _tente = false;
+      });
 
   bool get _compteCree =>
       ref.read(sessionProvider).porte == PorteAcces.inscription;
@@ -396,6 +405,7 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
       onRetour: _retour,
       phrase: _reaction ?? phrase,
       expression: _expressionReaction ?? expression,
+      geste: _gesteReaction ?? gesteDeLEcran(widget.etape.sorte),
       grand: grand,
       titre: titre,
       sousTitre: sousTitre,
@@ -462,7 +472,11 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
                   return;
                 }
                 _c.apprendre();
-                _reagir(o.garde.reponse, ExpressionPraxis.sourire);
+                _reagir(
+                  o.garde.reponse,
+                  ExpressionPraxis.sourire,
+                  Geste.pointe,
+                );
               },
             ),
           ],
@@ -789,7 +803,7 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
       case SorteEtape.detail:
         final bool enJuz = a?.detailEnJuz ?? true;
         return _ecran(
-          expression: ExpressionPraxis.reflexion,
+          expression: ExpressionPraxis.concentre,
           phrase: enJuz ? o.detail.ditJuz : o.detail.ditSourates,
           titre: enJuz ? o.detail.titreJuz : o.detail.titreSourates,
           sousTitre: o.detail.sous,
@@ -1049,3 +1063,26 @@ String? redirectionCreationCompte(
         !questionnaireComplet
     ? Routes.commencer
     : null;
+
+/// Le geste de Praxis sur chaque ecran, comme la maquette (`pose(e, g)`) :
+/// salut a l'accueil, il montre les choix, main sur le coeur a la famille et
+/// au recapitulatif, il reflechit sur le chemin.
+Geste gesteDeLEcran(SorteEtape sorte) => switch (sorte) {
+  SorteEtape.accueil => Geste.salut,
+  SorteEtape.garde ||
+  SorteEtape.enseigner ||
+  SorteEtape.pourQui ||
+  SorteEtape.niveau ||
+  SorteEtape.objectif ||
+  SorteEtape.depart ||
+  SorteEtape.langue => Geste.pointe,
+  SorteEtape.famille || SorteEtape.recap => Geste.coeur,
+  SorteEtape.chemin => Geste.reflexion,
+  SorteEtape.prenom ||
+  SorteEtape.age ||
+  SorteEtape.genre ||
+  SorteEtape.lecture ||
+  SorteEtape.memorise ||
+  SorteEtape.detail ||
+  SorteEtape.langueSecours => Geste.aucun,
+};

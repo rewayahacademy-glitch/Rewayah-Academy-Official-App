@@ -29,6 +29,7 @@ import '../../../core/marque/logo_google.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/vivant/entree/gestes_praxis.dart' show Geste;
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/controle_anti_robot.dart';
@@ -227,6 +228,8 @@ class _EcranAccesQuestionnaireState
         expression: _envoye
             ? ExpressionPraxis.sourire
             : ExpressionPraxis.attente,
+        // Le lien parti : il l'envoie (directeur, 22/11 : les gestes).
+        geste: _envoye ? Geste.envoie : Geste.aucun,
         phrase: _envoye ? e.dit : a.dit,
         titre: _envoye ? e.titre : a.titre,
         sousTitre: _envoye ? null : a.sous,

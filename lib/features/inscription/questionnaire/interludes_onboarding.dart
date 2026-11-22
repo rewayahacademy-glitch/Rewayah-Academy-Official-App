@@ -451,7 +451,7 @@ CoquilleOnboarding interludeChemin(
   final TextTheme textes = Theme.of(context).textTheme;
   return ecran(
     grand: true,
-    expression: ExpressionPraxis.reflexion,
+    expression: ExpressionPraxis.concentre,
     phrase: ch.dit,
     titre: ch.titre,
     corps: <Widget>[

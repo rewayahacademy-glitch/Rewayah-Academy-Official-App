@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/mode_accessibilite.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart'
     show serviceAuthProvider;
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -21,6 +22,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart'
     show sourceSessionProvider;
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/vivant/entree/gestes_praxis.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
@@ -423,11 +425,18 @@ void main() {
       expect(_titre(tester), t.onboarding.accueil.titre);
       expect(_bulle(tester), t.onboarding.accueil.dit);
       expect(find.byKey(PraxisGuide.cle), findsOneWidget);
+      // Les gestes de la maquette (directeur, 22/11/2026) : salut a
+      // l'accueil.
+      PraxisGuide praxis() =>
+          tester.widget<PraxisGuide>(find.byType(PraxisGuide));
+      expect(praxis().geste, Geste.salut);
+      expect(praxis().expression, Expr.joie);
       expect(find.text(t.onboarding.praxisIa), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       await _continuer(tester);
 
       expect(_etape(r), 'garde');
+      expect(praxis().geste, Geste.pointe);
       await _carte(tester, 'garde', 'apprendre');
       expect(_bulle(tester), t.onboarding.garde.reponse);
       await _continuer(tester);
@@ -451,6 +460,7 @@ void main() {
 
       expect(_etape(r), 'famille');
       expect(_titre(tester), t.onboarding.famille.titreSeul);
+      expect(praxis().geste, Geste.coeur);
       expect(_bulle(tester), t.onboarding.famille.ditSeul(prenom: 'Amina'));
       await _continuer(tester);
 
@@ -1194,6 +1204,28 @@ void main() {
       expect(a[1].sourates, <String>['fatiha']);
       expect(a[1].objectif, ObjectifOnboarding.memoriser);
     });
+  });
+
+  testWidgets('« Reduire les effets » : Praxis pose d emblee, son geste '
+      'visible, aucune horloge qui tourne', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: EffetsReduits(
+          actifs: true,
+          child: Center(
+            child: PraxisGuide(
+              expression: Expr.joie,
+              geste: Geste.salut,
+              phrase: 'Bonjour',
+              taille: 120,
+            ),
+          ),
+        ),
+      ),
+    );
+    expect(tester.hasRunningAnimations, isFalse);
+    expect(find.byKey(PraxisGuide.cle), findsOneWidget);
   });
 }
 

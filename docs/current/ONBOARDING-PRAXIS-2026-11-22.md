@@ -10,8 +10,11 @@ Remplace l'ordre des écrans de `FICHE-ONBOARDING-2026-10-29.md` §3 ; garde ses
 envoyée avec ses apprenants, décision de la direction avant l'entrée, horaires après l'admission.
 
 Règles tenues : « déduit > choisi > saisi » ; une question par écran ; vouvoiement (l'enfant ne répond
-jamais ici) ; le seul Praxis de l'application (`lib/core/vivant/praxis_vivant.dart`, employé sans le
-modifier), phrases courtes, jamais de reproche, ni promesse ni mot interdit (`mots-rewayah`). Point rouge
+jamais ici) ; le Praxis de référence de l'application (`lib/core/vivant/entree/praxis_reference.dart`,
+`Corps` et `peindrePraxis`, gestes `Geste` et visages `Expr` de `gestes_praxis.dart`, employés sans les
+modifier ; directeur, 22/11 : « il faut ajouter les gestes ») avec le visage et le geste de la maquette à
+chaque écran (salut à l'accueil et à la fin, il montre les choix, main sur le cœur à la famille et au
+récapitulatif, il réfléchit au chemin, il envoie le lien), phrases courtes, jamais de reproche, ni promesse ni mot interdit (`mots-rewayah`). Point rouge
 sur les champs obligatoires.
 
 ## 0. Décisions du directeur du 22/11/2026 (datées, en vigueur)

@@ -14,9 +14,8 @@
 // bulle au debut de ligne, la question et ses reponses a cote.
 library;
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' show Ticker;
 
 import '../../../core/accessibilite/mode_accessibilite.dart';
 import '../../../core/accessibilite/texte_sans_coupure.dart';
@@ -26,7 +25,9 @@ import '../../../core/theme/app_mouvement.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/vivant/praxis_vivant.dart';
+import '../../../core/vivant/entree/gestes_praxis.dart';
+import '../../../core/vivant/entree/lumiere_entree.dart' show Teinte;
+import '../../../core/vivant/entree/praxis_reference.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/entete_page.dart' show DisqueRetour;
 import '../../../core/widgets/page_shell.dart';
@@ -49,6 +50,19 @@ enum ExpressionPraxis {
 
   /// Il s'etonne (« Ma cha' Allah »).
   etonne,
+
+  /// Il se concentre.
+  concentre;
+
+  /// Le visage du Praxis de reference.
+  Expr get visage => switch (this) {
+    ExpressionPraxis.attente => Expr.attente,
+    ExpressionPraxis.sourire => Expr.sourire,
+    ExpressionPraxis.joie => Expr.joie,
+    ExpressionPraxis.reflexion => Expr.reflexion,
+    ExpressionPraxis.etonne => Expr.etonne,
+    ExpressionPraxis.concentre => Expr.concentre,
+  };
 }
 
 /// La largeur au-dela de laquelle la page passe en deux colonnes.
@@ -71,6 +85,7 @@ class CoquilleOnboarding extends StatelessWidget {
     this.remplissage = const <double>[0, 0, 0, 0],
     this.onRetour,
     this.expression = ExpressionPraxis.attente,
+    this.geste = Geste.aucun,
     this.grand = false,
     this.titre,
     this.sousTitre,
@@ -94,6 +109,9 @@ class CoquilleOnboarding extends StatelessWidget {
 
   /// Son expression.
   final ExpressionPraxis expression;
+
+  /// Son geste (la maquette : salut, montrer, main sur le coeur...).
+  final Geste geste;
 
   /// Vrai pour un interlude : Praxis en grand, la bulle centree dessous.
   final bool grand;
@@ -199,7 +217,9 @@ class CoquilleOnboarding extends StatelessWidget {
       _ScenePraxis(
         phrase: phrase,
         expression: expression,
+        geste: geste,
         grand: grand,
+        bureau: false,
         taille: grand ? 150 : 96,
       ),
       Ecart.vLg,
@@ -223,7 +243,9 @@ class CoquilleOnboarding extends StatelessWidget {
                 child: _ScenePraxis(
                   phrase: phrase,
                   expression: expression,
+                  geste: geste,
                   grand: true,
+                  bureau: true,
                   taille: grand ? 200 : 160,
                 ),
               ),
@@ -369,21 +391,27 @@ class _ScenePraxis extends StatelessWidget {
   const _ScenePraxis({
     required this.phrase,
     required this.expression,
+    required this.geste,
+    required this.bureau,
     required this.grand,
     required this.taille,
   });
 
   final String phrase;
   final ExpressionPraxis expression;
+  final Geste geste;
+  final bool bureau;
   final bool grand;
   final double taille;
 
   @override
   Widget build(BuildContext context) {
     final Widget praxis = PraxisGuide(
-      expression: expression,
+      expression: expression.visage,
+      geste: geste,
       phrase: phrase,
       taille: taille,
+      viseDeCote: bureau,
     );
     final Widget bulle = BullePraxis(phrase: phrase, centree: grand);
     return LayoutBuilder(
@@ -423,21 +451,30 @@ class _ScenePraxis extends StatelessWidget {
   }
 }
 
-/// Praxis guide : le dessin de l'application (`PraxisVivant`), son humeur
-/// suivant l'expression. Il vit un moment a chaque phrase nouvelle, puis se
-/// pose immobile, yeux ouverts, avant que le sommeil ne vienne (comme sur
-/// l'accueil du candidat) ; sous « Reduire les effets », il est pose d'emblee.
+/// Praxis guide : le Praxis de reference en volume (`Corps` et
+/// `peindrePraxis`, `lib/core/vivant/entree/praxis_reference.dart`, le meme
+/// que la page d'entree ; aucun nouveau dessin), avec le visage ([Expr]) et le
+/// geste ([Geste]) de la maquette a chaque ecran (directeur, 22/11/2026 :
+/// « il faut ajouter les gestes »). Il joue son geste un moment, puis se pose
+/// et plus aucune image n'est produite ; une phrase ou un geste nouveau le
+/// reveille. Sous « Reduire les effets », il est pose d'emblee, sans
+/// mouvement, le geste visible (les mains a leur place).
 class PraxisGuide extends StatefulWidget {
   /// Cree Praxis.
   const PraxisGuide({
     required this.expression,
+    required this.geste,
     required this.phrase,
     required this.taille,
     super.key,
+    this.viseDeCote = false,
   });
 
-  /// Son expression.
-  final ExpressionPraxis expression;
+  /// Son visage.
+  final Expr expression;
+
+  /// Son geste.
+  final Geste geste;
 
   /// Ce qu'il dit : une phrase nouvelle le reveille.
   final String phrase;
@@ -445,72 +482,133 @@ class PraxisGuide extends StatefulWidget {
   /// Sa largeur.
   final double taille;
 
-  /// Combien de temps il vit avant de se poser.
-  static const Duration momentEveille = Duration(seconds: 12);
+  /// Vrai quand les reponses sont a cote de lui (ordinateur) : il montre de
+  /// ce cote, sinon vers le bas.
+  final bool viseDeCote;
+
+  /// Combien de temps il joue avant de se poser.
+  static const Duration momentEveille = Duration(seconds: 4);
 
   /// La cle du dessin, pour les tests.
   static const Key cle = ValueKey<String>('onboarding-praxis');
+
+  /// La hauteur du dessin pour une largeur [taille] (la toque et une main
+  /// levee comprises).
+  static double hauteurPour(double taille) => taille * 1.2;
 
   @override
   State<PraxisGuide> createState() => _EtatPraxisGuide();
 }
 
-class _EtatPraxisGuide extends State<PraxisGuide> {
-  Timer? _minuterie;
-  bool _pose = false;
+class _EtatPraxisGuide extends State<PraxisGuide>
+    with SingleTickerProviderStateMixin {
+  final Corps _corps = Corps();
+  late final Ticker _horloge = createTicker(_image);
+  Duration _avant = Duration.zero;
+  double _joue = 0;
+  int _version = 0;
 
   @override
   void initState() {
     super.initState();
-    _eveiller();
+    _corps.placer(1);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _jouer();
   }
 
   @override
   void didUpdateWidget(PraxisGuide ancien) {
     super.didUpdateWidget(ancien);
     if (ancien.phrase != widget.phrase ||
-        ancien.expression != widget.expression) {
-      setState(_eveiller);
+        ancien.expression != widget.expression ||
+        ancien.geste != widget.geste ||
+        ancien.viseDeCote != widget.viseDeCote) {
+      _jouer();
     }
   }
 
-  void _eveiller() {
-    _minuterie?.cancel();
-    _pose = false;
-    _minuterie = Timer(PraxisGuide.momentEveille, () {
-      if (mounted) setState(() => _pose = true);
-    });
+  void _jouer() {
+    final bool reduit = EffetsReduits.de(context);
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    _corps
+      ..reduit = reduit
+      ..vise = widget.viseDeCote
+          ? Offset(rtl ? -0.92 : 0.92, 0.38)
+          : const Offset(0, 1)
+      ..poser(widget.expression)
+      ..faire(widget.geste);
+    if (widget.geste == Geste.pointe) _corps.montrer();
+    _joue = 0;
+    if (reduit) {
+      // Pose d'emblee : les ressorts vont a leur place sans horloge.
+      _horloge.stop();
+      for (int i = 0; i < 90; i++) {
+        _corps.pas(1 / 60);
+      }
+      _version++;
+      return;
+    }
+    _avant = Duration.zero;
+    if (!_horloge.isActive) _horloge.start();
+  }
+
+  void _image(Duration d) {
+    final double dt = _avant == Duration.zero
+        ? 1 / 60
+        : (d - _avant).inMicroseconds / 1e6;
+    _avant = d;
+    _corps.pas(dt.clamp(0, 0.05));
+    _joue += dt;
+    setState(() => _version++);
+    if (_joue >= PraxisGuide.momentEveille.inMicroseconds / 1e6) {
+      _horloge.stop();
+    }
   }
 
   @override
   void dispose() {
-    _minuterie?.cancel();
+    _horloge.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final HumeurPraxis humeur = switch (widget.expression) {
-      ExpressionPraxis.attente ||
-      ExpressionPraxis.sourire => HumeurPraxis.calme,
-      ExpressionPraxis.joie => HumeurPraxis.heureux,
-      ExpressionPraxis.reflexion ||
-      ExpressionPraxis.etonne => HumeurPraxis.curieux,
-    };
-    final bool pose = _pose || EffetsReduits.de(context);
-    return ExcludeSemantics(
-      key: PraxisGuide.cle,
-      child: EffetsReduits(
-        actifs: pose,
-        child: PraxisVivant(
-          key: ValueKey<bool>(pose),
-          taille: widget.taille,
-          tombe: false,
-          humeur: humeur,
-        ),
-      ),
+  Widget build(BuildContext context) => ExcludeSemantics(
+    key: PraxisGuide.cle,
+    child: SizedBox(
+      width: widget.taille,
+      height: PraxisGuide.hauteurPour(widget.taille),
+      child: CustomPaint(painter: _PeintrePraxisGuide(_corps, _version)),
+    ),
+  );
+}
+
+class _PeintrePraxisGuide extends CustomPainter {
+  _PeintrePraxisGuide(this.corps, this.version);
+
+  final Corps corps;
+  final int version;
+
+  @override
+  void paint(Canvas canvas, Size taille) {
+    final double largeur = taille.width;
+    // Le point du sol entre les pieds (100, 206 dans la boite de 200) ; la
+    // marge du haut laisse la place a la toque et a une main levee.
+    final Offset pied = Offset(largeur / 2, taille.height - largeur * 0.04);
+    peindrePraxis(
+      canvas,
+      corps,
+      pied,
+      largeur,
+      Eclairage(couleur: Teinte.coeur, dir: const Offset(-0.6, -0.8)),
     );
   }
+
+  @override
+  bool shouldRepaint(_PeintrePraxisGuide ancien) => ancien.version != version;
 }
 
 /// La bulle de Praxis : ses mots apparaissent un a un (rien ne bouge sous
