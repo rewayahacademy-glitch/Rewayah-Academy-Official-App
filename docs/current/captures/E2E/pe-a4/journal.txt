@@ -45,3 +45,16 @@ vers enseignant (seulement ceux que je n'ai pas acceptes) ».
      vraies references + 4 exclues, rejeu sans effet, audit 18 lignes). Deux lignes ERROR attendues (le refus
      tout ou rien, par \i de la migration).
    - Les 202 scenarios nommes par ci.yml, rejoues a la suite sur la meme base : voir ligne suivante.
+     Resultat : les 202 scenarios de ci.yml passent avec la migration PE-A4 ; le scenario PE-A4 a la suite
+     echouait d'abord sur sa fixture (la sequence des references, avancee par les autres scenarios, entrait
+     dans la plage CAND-00040..00645 : collision de reference sur une conversion). Corrige dans le scenario
+     (sequence portee au-dela de la plage) ; puis VERT sur cette base et sur une base neuve.
+   - En production, la sequence est a 648 (lu le 22/11) : les 18 nouvelles candidatures enseignant recevront
+     CAND-00649 et suivantes, hors de toute reference existante.
+
+5. Non fait, a dire
+   - Le scenario n'est pas ajoute a .github/workflows/ci.yml : le garde-fou interdit .github/ aux agents.
+   - Rien n'est installe en production ; aucune fusion.
+   - Aucun courriel aux 18 : le circuit normal n'en envoie pas a la creation d'une candidature ; la personne
+     decouvrira l'espace candidat a sa prochaine connexion (authorization_version est augmentee par le
+     declencheur de profiles ; comportement de l'application a la reconnexion non verifie ici).

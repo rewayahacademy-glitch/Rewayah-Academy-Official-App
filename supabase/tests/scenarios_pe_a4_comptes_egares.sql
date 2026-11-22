@@ -276,6 +276,11 @@ SELECT NOT EXISTS (
                          'CAND-00463', 'CAND-00478', 'CAND-00481', 'CAND-00492', 'CAND-00554', 'CAND-00617',
                          'CAND-00001', 'CAND-00002', 'CAND-00628', 'CAND-00645')) AS pea4_refs_libres \gset
 \if :pea4_refs_libres
+-- Les candidatures creees ensuite (fixtures, conversions) prennent des references au-dela de la plage de
+-- l'ordre, comme en production (sequence a 648 le 22/11/2026). Sans cela, apres les autres scenarios de la CI,
+-- la sequence passe dans la plage et une conversion recevrait une reference deja prise.
+SELECT setval('public.candidatures_reference_seq',
+              greatest((SELECT last_value FROM public.candidatures_reference_seq), 900000)) \gset pea4_seq_
 DO $fixtures$
 DECLARE
   v_refs text[] := ARRAY[
