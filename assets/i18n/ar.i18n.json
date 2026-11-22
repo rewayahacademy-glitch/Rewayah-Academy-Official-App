@@ -18321,7 +18321,7 @@
   "friseInscription": {
     "titre": "تسجيلك خطوة بخطوة",
     "contexte": "تؤكد الأكاديمية كل خطوة. يصلك إشعار عند كل انتقال.",
-    "etapeSurTotal": "الخطوة {n} من {total}: {etape}",
+    "etapeSurTotal": "الخطوة ⁨{n}⁩ من ⁨{total}⁩: ⁨{etape}⁩",
     "etapes": {
       "envoyee": "تم إرسال الطلب",
       "lue": "اطّلعت عليه الإدارة",

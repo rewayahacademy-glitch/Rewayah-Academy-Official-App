@@ -2405,7 +2405,7 @@ class _Traductions$friseInscription$ar extends Traductions$friseInscription$fr {
 	// Translations
 	@override String get titre => 'تسجيلك خطوة بخطوة';
 	@override String get contexte => 'تؤكد الأكاديمية كل خطوة. يصلك إشعار عند كل انتقال.';
-	@override String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'الخطوة ${n} من ${total}: ${etape}';
+	@override String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩';
 	@override late final _Traductions$friseInscription$etapes$ar etapes = _Traductions$friseInscription$etapes$ar._(_root);
 	@override late final _Traductions$friseInscription$dit$ar dit = _Traductions$friseInscription$dit$ar._(_root);
 	@override String get vide => 'لا يوجد طلب مسجّل لهذا الحساب.';
@@ -45173,7 +45173,7 @@ extension on TraductionsAr {
 			'apprendre.livret.videTu' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
 			'friseInscription.titre' => 'تسجيلك خطوة بخطوة',
 			'friseInscription.contexte' => 'تؤكد الأكاديمية كل خطوة. يصلك إشعار عند كل انتقال.',
-			'friseInscription.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'الخطوة ${n} من ${total}: ${etape}',
+			'friseInscription.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩',
 			'friseInscription.etapes.envoyee' => 'تم إرسال الطلب',
 			'friseInscription.etapes.lue' => 'اطّلعت عليه الإدارة',
 			'friseInscription.etapes.acceptee' => 'تم القبول',
