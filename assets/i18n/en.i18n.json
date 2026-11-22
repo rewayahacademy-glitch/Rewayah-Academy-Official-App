@@ -17567,6 +17567,36 @@
       "videTu": "Your results, your reports and your certificates will appear here"
     }
   },
+  "friseInscription": {
+    "titre": "Your registration, step by step",
+    "contexte": "The academy confirms every step. You are notified each time one is passed.",
+    "etapeSurTotal": "Step {n} of {total}: {etape}",
+    "etapes": {
+      "envoyee": "Request sent",
+      "lue": "Read by the management",
+      "acceptee": "Accepted",
+      "aCompleter": "To complete",
+      "formation": "Class being formed",
+      "confirmee": "Class confirmed",
+      "enseignant": "Teacher assigned",
+      "pret": "All set"
+    },
+    "dit": {
+      "envoyee": "Your request has reached the academy.",
+      "lueEnCours": "The management is reading your request. You are notified as soon as it has decided.",
+      "lueFait": "The management has read your request.",
+      "accepteeAVenir": "Once your request is accepted, you enter the application.",
+      "aCompleter": "The management asks you for a detail. It is written above."
+    },
+    "vide": "No request is recorded for this account.",
+    "erreur": "We could not read where your request stands. This often comes from the connection. Try again in a moment.",
+    "sansDonnees": "The status of your request could not be loaded"
+  },
+  "avertissementFuseau": {
+    "titre": "This device is not on your city's time",
+    "phrase": "Your class times are shown in this device's time, which differs from your city's ({ville}). The class stays at the same time in Mecca.",
+    "action": "Check my city"
+  },
   "suiviAttente": {
     "titre": "Where your request stands",
     "titreSimple": "Where your request stands",

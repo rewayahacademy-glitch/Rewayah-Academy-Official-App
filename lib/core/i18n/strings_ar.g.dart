@@ -121,6 +121,8 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$nouveautes$ar nouveautes = _Traductions$nouveautes$ar._(_root);
 	@override late final _Traductions$suiviPedagogique$ar suiviPedagogique = _Traductions$suiviPedagogique$ar._(_root);
 	@override late final _Traductions$apprendre$ar apprendre = _Traductions$apprendre$ar._(_root);
+	@override late final _Traductions$friseInscription$ar friseInscription = _Traductions$friseInscription$ar._(_root);
+	@override late final _Traductions$avertissementFuseau$ar avertissementFuseau = _Traductions$avertissementFuseau$ar._(_root);
 	@override late final _Traductions$suiviAttente$ar suiviAttente = _Traductions$suiviAttente$ar._(_root);
 	@override late final _Traductions$journalSorties$ar journalSorties = _Traductions$journalSorties$ar._(_root);
 	@override late final _Traductions$calendrier$ar calendrier = _Traductions$calendrier$ar._(_root);
@@ -2392,6 +2394,35 @@ class _Traductions$apprendre$ar extends Traductions$apprendre$fr {
 	@override late final _Traductions$apprendre$bibliotheque$ar bibliotheque = _Traductions$apprendre$bibliotheque$ar._(_root);
 	@override late final _Traductions$apprendre$programme$ar programme = _Traductions$apprendre$programme$ar._(_root);
 	@override late final _Traductions$apprendre$livret$ar livret = _Traductions$apprendre$livret$ar._(_root);
+}
+
+// Path: friseInscription
+class _Traductions$friseInscription$ar extends Traductions$friseInscription$fr {
+	_Traductions$friseInscription$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تسجيلك خطوة بخطوة';
+	@override String get contexte => 'تؤكد الأكاديمية كل خطوة. يصلك إشعار عند كل انتقال.';
+	@override String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩';
+	@override late final _Traductions$friseInscription$etapes$ar etapes = _Traductions$friseInscription$etapes$ar._(_root);
+	@override late final _Traductions$friseInscription$dit$ar dit = _Traductions$friseInscription$dit$ar._(_root);
+	@override String get vide => 'لا يوجد طلب مسجّل لهذا الحساب.';
+	@override String get erreur => 'تعذّرت قراءة حالة طلبك. غالبًا ما يعود ذلك إلى الاتصال. أعد المحاولة بعد قليل.';
+	@override String get sansDonnees => 'تعذّر تحميل حالة طلبك';
+}
+
+// Path: avertissementFuseau
+class _Traductions$avertissementFuseau$ar extends Traductions$avertissementFuseau$fr {
+	_Traductions$avertissementFuseau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هذا الجهاز ليس على توقيت مدينتك';
+	@override String phrase({required Object ville}) => 'تُعرض مواعيد حصصك بتوقيت هذا الجهاز، وهو يختلف عن توقيت مدينتك (⁨${ville}⁩). تبقى الحصة في الموعد نفسه بتوقيت مكة المكرمة.';
+	@override String get action => 'التحقق من مدينتي';
 }
 
 // Path: suiviAttente
@@ -13175,6 +13206,37 @@ class _Traductions$apprendre$livret$ar extends Traductions$apprendre$livret$fr {
 	// Translations
 	@override String get vide => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك';
 	@override String get videTu => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك';
+}
+
+// Path: friseInscription.etapes
+class _Traductions$friseInscription$etapes$ar extends Traductions$friseInscription$etapes$fr {
+	_Traductions$friseInscription$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'تم إرسال الطلب';
+	@override String get lue => 'اطّلعت عليه الإدارة';
+	@override String get acceptee => 'تم القبول';
+	@override String get aCompleter => 'بحاجة إلى استكمال';
+	@override String get formation => 'الفصل قيد التكوين';
+	@override String get confirmee => 'تأكيد الفصل';
+	@override String get enseignant => 'تعيين المعلم';
+	@override String get pret => 'كل شيء جاهز';
+}
+
+// Path: friseInscription.dit
+class _Traductions$friseInscription$dit$ar extends Traductions$friseInscription$dit$fr {
+	_Traductions$friseInscription$dit$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'وصل طلبك إلى الأكاديمية.';
+	@override String get lueEnCours => 'تقرأ الإدارة طلبك. يصلك إشعار فور أن تقرر.';
+	@override String get lueFait => 'اطّلعت الإدارة على طلبك.';
+	@override String get accepteeAVenir => 'عند قبول طلبك، تدخل إلى التطبيق.';
+	@override String get aCompleter => 'تطلب منك الإدارة توضيحًا. هو مكتوب أعلاه.';
 }
 
 // Path: suiviAttente.tu
@@ -45129,6 +45191,28 @@ extension on TraductionsAr {
 			'apprendre.programme.genre.rencontre' => 'لقاء التلاوة',
 			'apprendre.livret.vide' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
 			'apprendre.livret.videTu' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
+			'friseInscription.titre' => 'تسجيلك خطوة بخطوة',
+			'friseInscription.contexte' => 'تؤكد الأكاديمية كل خطوة. يصلك إشعار عند كل انتقال.',
+			'friseInscription.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩',
+			'friseInscription.etapes.envoyee' => 'تم إرسال الطلب',
+			'friseInscription.etapes.lue' => 'اطّلعت عليه الإدارة',
+			'friseInscription.etapes.acceptee' => 'تم القبول',
+			'friseInscription.etapes.aCompleter' => 'بحاجة إلى استكمال',
+			'friseInscription.etapes.formation' => 'الفصل قيد التكوين',
+			'friseInscription.etapes.confirmee' => 'تأكيد الفصل',
+			'friseInscription.etapes.enseignant' => 'تعيين المعلم',
+			'friseInscription.etapes.pret' => 'كل شيء جاهز',
+			'friseInscription.dit.envoyee' => 'وصل طلبك إلى الأكاديمية.',
+			'friseInscription.dit.lueEnCours' => 'تقرأ الإدارة طلبك. يصلك إشعار فور أن تقرر.',
+			'friseInscription.dit.lueFait' => 'اطّلعت الإدارة على طلبك.',
+			'friseInscription.dit.accepteeAVenir' => 'عند قبول طلبك، تدخل إلى التطبيق.',
+			'friseInscription.dit.aCompleter' => 'تطلب منك الإدارة توضيحًا. هو مكتوب أعلاه.',
+			'friseInscription.vide' => 'لا يوجد طلب مسجّل لهذا الحساب.',
+			'friseInscription.erreur' => 'تعذّرت قراءة حالة طلبك. غالبًا ما يعود ذلك إلى الاتصال. أعد المحاولة بعد قليل.',
+			'friseInscription.sansDonnees' => 'تعذّر تحميل حالة طلبك',
+			'avertissementFuseau.titre' => 'هذا الجهاز ليس على توقيت مدينتك',
+			'avertissementFuseau.phrase' => ({required Object ville}) => 'تُعرض مواعيد حصصك بتوقيت هذا الجهاز، وهو يختلف عن توقيت مدينتك (⁨${ville}⁩). تبقى الحصة في الموعد نفسه بتوقيت مكة المكرمة.',
+			'avertissementFuseau.action' => 'التحقق من مدينتي',
 			'suiviAttente.titre' => 'أين وصل طلبك',
 			'suiviAttente.titreSimple' => 'أين وصل طلبك',
 			'suiviAttente.tu.formationListeAttente' => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.',
@@ -45504,6 +45588,8 @@ extension on TraductionsAr {
 			'motifs.refusDemande.exceptionnel' => 'تغيير المعلّم يبقى استثنائيًا',
 			'motifs.refusDemande.reglePlateforme' => 'تسري قاعدة المنصة',
 			'motifs.refusDemande.plafond' => 'بلوغ الحد الأقصى للطلاب',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.refusDemande.insuffisant' => 'معلومات غير كافية للبتّ',
 			'motifs.poserRegle.famille' => 'طلب الأسرة مقبول',
 			'motifs.poserRegle.pedagogique' => 'حاجة تعليمية للطالب',
@@ -45526,8 +45612,6 @@ extension on TraductionsAr {
 			'motifs.changementNiveau.placement' => 'تصحيح مستوى الإسناد',
 			'motifs.blocage.prerequis' => 'متطلبات سابقة لم تثبت بعد',
 			'motifs.blocage.renforcement' => 'تعزيز لازم قبل التقدم',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.blocage.aRevoir' => 'تقييم يحتاج إلى مراجعة',
 			'motifs.blocage.absences' => 'غيابات متكررة',
 			'motifs.derogation.aucuneClasse' => 'لا فصل مناسب',

@@ -81,16 +81,6 @@ class _LigneEtape extends StatelessWidget {
     );
     final bool enCours = etape.etat == EtatEtapeAttente.enCours;
     final bool aVenir = etape.etat == EtatEtapeAttente.aVenir;
-    final AppInkColor encreMarqueur = switch (etape.etat) {
-      EtatEtapeAttente.fait => palette.inkSuccess,
-      EtatEtapeAttente.enCours => palette.inkAccent,
-      EtatEtapeAttente.aVenir => secondaire,
-    };
-    final AppIcon icone = switch (etape.etat) {
-      EtatEtapeAttente.fait => AppIcons.succes,
-      EtatEtapeAttente.enCours => AppIcons.horloge,
-      EtatEtapeAttente.aVenir => AppIcons.attente,
-    };
     final String nom = nomEtape(etape.numero);
     final String? dit = phraseEtape(suivi, etape);
     final String? date = dateEtape(suivi, etape);
@@ -213,11 +203,75 @@ class _LigneEtape extends StatelessWidget {
       ?dit,
     ].join(', ');
 
+    return LigneFrise(
+      etat: etape.etat,
+      derniere: derniere,
+      cleMarqueur: ValueKey<String>(
+        'attente-marqueur-${etape.numero}-${etape.etat.name}',
+      ),
+      etiquette: etiquette,
+      avecEnfantsSemantiques: dessous != null,
+      child: corpsLigne,
+    );
+  }
+}
+
+/// Une ligne de frise : le marqueur d'etat (icone et mot, jamais la couleur
+/// seule), le filet qui relie a l'etape suivante, et le contenu. Partagee par
+/// la frise de la classe et par celle de l'inscription (PARCOURS-BOUT-EN-BOUT) :
+/// une seule forme de ligne dans l'application.
+class LigneFrise extends StatelessWidget {
+  /// Cree la ligne.
+  const LigneFrise({
+    required this.etat,
+    required this.derniere,
+    required this.cleMarqueur,
+    required this.etiquette,
+    required this.child,
+    this.avecEnfantsSemantiques = false,
+    super.key,
+  });
+
+  /// L'etat de l'etape.
+  final EtatEtapeAttente etat;
+
+  /// Vrai pour la derniere ligne : pas de filet dessous.
+  final bool derniere;
+
+  /// La cle du marqueur (change avec l'etat, pour le fondu).
+  final Key cleMarqueur;
+
+  /// Ce que lit le lecteur d'ecran.
+  final String etiquette;
+
+  /// Vrai quand le contenu porte des controles a garder lisibles.
+  final bool avecEnfantsSemantiques;
+
+  /// Le contenu de l'etape.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppInkColor secondaire = palette.encreSecondaireSur(
+      palette.surfaceCanvas,
+    );
+    final bool aVenir = etat == EtatEtapeAttente.aVenir;
+    final AppInkColor encreMarqueur = switch (etat) {
+      EtatEtapeAttente.fait => palette.inkSuccess,
+      EtatEtapeAttente.enCours => palette.inkAccent,
+      EtatEtapeAttente.aVenir => secondaire,
+    };
+    final AppIcon icone = switch (etat) {
+      EtatEtapeAttente.fait => AppIcons.succes,
+      EtatEtapeAttente.enCours => AppIcons.horloge,
+      EtatEtapeAttente.aVenir => AppIcons.attente,
+    };
     return Semantics(
       label: etiquette,
       container: true,
-      explicitChildNodes: dessous != null,
-      excludeSemantics: dessous == null,
+      explicitChildNodes: avecEnfantsSemantiques,
+      excludeSemantics: !avecEnfantsSemantiques,
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -238,9 +292,7 @@ class _LigneEtape extends StatelessWidget {
                         switchOutCurve: AppMouvement.sortie,
                         child: Icon(
                           icone.resoudre(selectionne: !aVenir),
-                          key: ValueKey<String>(
-                            'attente-marqueur-${etape.numero}-${etape.etat.name}',
-                          ),
+                          key: cleMarqueur,
                         ),
                       ),
                     ),
@@ -263,7 +315,7 @@ class _LigneEtape extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(bottom: derniere ? 0 : AppSpacing.lg),
-                child: corpsLigne,
+                child: child,
               ),
             ),
           ],

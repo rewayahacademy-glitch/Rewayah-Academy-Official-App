@@ -115,6 +115,24 @@ String? phraseApercuOffre(ApercuCreneau c) {
   );
 }
 
+/// « Heure de La Mecque : 21:00 » : l'heure de l'academie, en second, apres
+/// celle de la famille (PARCOURS-BOUT-EN-BOUT). `null` quand le serveur ne la
+/// rend pas, ou quand elle est la meme que chez la famille ; le jour est dit
+/// quand il change.
+String? phraseMecqueApercu(ApercuCreneau c) {
+  final String? mecque = c.mecque;
+  if (mecque == null) return null;
+  final int? jour = c.jourMecque;
+  if (mecque == c.heureMaintenant &&
+      (jour == null || jour == c.jourMaintenant)) {
+    return null;
+  }
+  final String vu = jour != null && jour != c.jourMaintenant
+      ? '${t.disponibilites.joursLongs[jour - 1]} $mecque'
+      : mecque;
+  return t.tc.groupe.horloges.mecqueEnSecond(heure: vu);
+}
+
 /// La phrase d'apercu sous une offre. Rien tant que le serveur ne repond pas,
 /// et rien quand l'heure ne change jamais.
 class LigneApercuOffre extends ConsumerWidget {
@@ -134,21 +152,30 @@ class LigneApercuOffre extends ConsumerWidget {
   /// Cle de la ligne.
   static const Key cle = ValueKey<String>('apercu-offre');
 
+  /// Cle de la ligne de l'heure de La Mecque.
+  static const Key cleMecque = ValueKey<String>('apercu-offre-mecque');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ApercuCreneau? apercu = ref
         .watch(apercuOffreProvider((offreId: offreId, fuseau: fuseau)))
         .value;
     final String? phrase = apercu == null ? null : phraseApercuOffre(apercu);
-    if (phrase == null) return const SizedBox.shrink();
+    final String? mecque = apercu == null ? null : phraseMecqueApercu(apercu);
+    if (phrase == null && mecque == null) return const SizedBox.shrink();
+    final TextStyle style = AppTypography.tabulaire(
+      Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+    );
     return Padding(
       padding: const EdgeInsetsDirectional.only(top: AppSpacing.sm),
-      child: TexteSansCoupure(
-        key: cle,
-        phrase,
-        style: AppTypography.tabulaire(
-          Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (mecque != null)
+            TexteSansCoupure(mecque, key: cleMecque, style: style),
+          if (phrase != null) TexteSansCoupure(phrase, key: cle, style: style),
+        ],
       ),
     );
   }

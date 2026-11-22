@@ -1,0 +1,20 @@
+PARCOURS-BOUT-EN-BOUT, journal de capture, 22/11/2026
+Source : test/features/attente_classe/captures_frise_test.dart, lancé avec CAPTURE_DIR=<ce dossier>.
+Ce ne sont PAS des captures de la production ni de la pile locale complète : le widget BlocFriseInscription
+et AvertissementFuseau sont montés seuls dans un routeur de test, avec des données de test (aucun nom réel).
+Rien n'est prouvé par le directeur en production.
+
+frise_fr_390_clair.png                    390,  clair,  fr, demande en cours (lue par la direction : en cours)
+frise_fr_1280_clair.png                   1280, clair,  fr, demande en cours
+frise_fr_1440_clair.png                   1440, clair,  fr, demande en cours ; date de l'envoi à l'heure de l'appareil puis La Mecque
+frise_fr_390_sombre_a_completer.png       390,  sombre, fr, la direction demande une précision (« À compléter »)
+frise_fr_1440_sombre_a_completer.png      1440, sombre, fr, idem
+frise_ar_390_clair.png                    390,  clair,  ar (droite à gauche), demande en cours
+frise_ar_1440_clair_a_completer.png       1440, clair,  ar, à compléter
+avertissement_fuseau_390.png              390,  clair,  fr, l'appareil (UTC+3) n'est pas à l'heure de la ville (Paris)
+avertissement_fuseau_1280.png             1280, clair,  fr, idem
+
+Tests de rendu associés (pas des images) : frise_inscription_test.dart (5 états, 390/1280/1440, clair/sombre, fr/en/ar),
+fuseaux_parcours_test.dart (avertissement 390/1280/1440).
+Base : scenarios_admission_frise.sql et scenarios_horloge_lieu_b.sql verts sur Postgres 16 local (stub_auth puis toutes
+les migrations rejouées). Non rejoués par la CI : .github/ est interdit aux agents, la ligne du workflow reste à ajouter par le pilote.

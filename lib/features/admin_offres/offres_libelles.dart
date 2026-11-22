@@ -25,7 +25,7 @@ const List<String> fuseauxProposes = <String>[
 ];
 
 /// Le fuseau propose d'abord : celui de l'academie.
-const String fuseauParDefaut = 'Europe/Paris';
+const String fuseauParDefaut = 'Asia/Riyadh';
 
 /// L'heure par defaut : une heure de soiree pour les familles visees.
 const int heureParDefaut = 18;

@@ -147,6 +147,10 @@ const Map<String, int> _domaines = <String, int>{
   'souratesRetirables': 7,
   // SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe.
   'suiviAttente': 100,
+  // PARCOURS-BOUT-EN-BOUT (22/11/2026) : la frise de l'inscription et
+  // l'avertissement de fuseau, traduits.
+  'friseInscription': 18,
+  'avertissementFuseau': 2,
   // HORS-SALLE-2 (13/11/2026) : le journal des sorties de l'application
   // (accord du parent, rapport, reglages).
   'journalSorties': 40,

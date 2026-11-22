@@ -357,7 +357,7 @@ void main() {
       expect(c['public'], 'adulte');
       expect(c['jours'], <int>[1, 3, 5]);
       expect(c['heure'], 18);
-      expect(c['fuseau'], 'Europe/Paris');
+      expect(c['fuseau'], 'Asia/Riyadh');
       expect(c['duree'], 90);
       // Retour a la liste : l'offre est la, en brouillon, et la phrase le dit.
       expect(_cle('offres-contenu'), findsOneWidget);

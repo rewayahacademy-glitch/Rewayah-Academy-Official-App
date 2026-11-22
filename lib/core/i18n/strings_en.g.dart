@@ -125,6 +125,8 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$nouveautes$en nouveautes = _Traductions$nouveautes$en._(_root);
 	@override late final _Traductions$suiviPedagogique$en suiviPedagogique = _Traductions$suiviPedagogique$en._(_root);
 	@override late final _Traductions$apprendre$en apprendre = _Traductions$apprendre$en._(_root);
+	@override late final _Traductions$friseInscription$en friseInscription = _Traductions$friseInscription$en._(_root);
+	@override late final _Traductions$avertissementFuseau$en avertissementFuseau = _Traductions$avertissementFuseau$en._(_root);
 	@override late final _Traductions$suiviAttente$en suiviAttente = _Traductions$suiviAttente$en._(_root);
 	@override late final _Traductions$journalSorties$en journalSorties = _Traductions$journalSorties$en._(_root);
 	@override late final _Traductions$calendrier$en calendrier = _Traductions$calendrier$en._(_root);
@@ -2421,6 +2423,35 @@ class _Traductions$apprendre$en extends Traductions$apprendre$fr {
 	@override late final _Traductions$apprendre$bibliotheque$en bibliotheque = _Traductions$apprendre$bibliotheque$en._(_root);
 	@override late final _Traductions$apprendre$programme$en programme = _Traductions$apprendre$programme$en._(_root);
 	@override late final _Traductions$apprendre$livret$en livret = _Traductions$apprendre$livret$en._(_root);
+}
+
+// Path: friseInscription
+class _Traductions$friseInscription$en extends Traductions$friseInscription$fr {
+	_Traductions$friseInscription$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Your registration, step by step';
+	@override String get contexte => 'The academy confirms every step. You are notified each time one is passed.';
+	@override String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'Step ${n} of ${total}: ${etape}';
+	@override late final _Traductions$friseInscription$etapes$en etapes = _Traductions$friseInscription$etapes$en._(_root);
+	@override late final _Traductions$friseInscription$dit$en dit = _Traductions$friseInscription$dit$en._(_root);
+	@override String get vide => 'No request is recorded for this account.';
+	@override String get erreur => 'We could not read where your request stands. This often comes from the connection. Try again in a moment.';
+	@override String get sansDonnees => 'The status of your request could not be loaded';
+}
+
+// Path: avertissementFuseau
+class _Traductions$avertissementFuseau$en extends Traductions$avertissementFuseau$fr {
+	_Traductions$avertissementFuseau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This device is not on your city\'s time';
+	@override String phrase({required Object ville}) => 'Your class times are shown in this device\'s time, which differs from your city\'s (${ville}). The class stays at the same time in Mecca.';
+	@override String get action => 'Check my city';
 }
 
 // Path: suiviAttente
@@ -12908,6 +12939,37 @@ class _Traductions$apprendre$livret$en extends Traductions$apprendre$livret$fr {
 	// Translations
 	@override String get vide => 'Your results, your reports and your certificates will appear here';
 	@override String get videTu => 'Your results, your reports and your certificates will appear here';
+}
+
+// Path: friseInscription.etapes
+class _Traductions$friseInscription$etapes$en extends Traductions$friseInscription$etapes$fr {
+	_Traductions$friseInscription$etapes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'Request sent';
+	@override String get lue => 'Read by the management';
+	@override String get acceptee => 'Accepted';
+	@override String get aCompleter => 'To complete';
+	@override String get formation => 'Class being formed';
+	@override String get confirmee => 'Class confirmed';
+	@override String get enseignant => 'Teacher assigned';
+	@override String get pret => 'All set';
+}
+
+// Path: friseInscription.dit
+class _Traductions$friseInscription$dit$en extends Traductions$friseInscription$dit$fr {
+	_Traductions$friseInscription$dit$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoyee => 'Your request has reached the academy.';
+	@override String get lueEnCours => 'The management is reading your request. You are notified as soon as it has decided.';
+	@override String get lueFait => 'The management has read your request.';
+	@override String get accepteeAVenir => 'Once your request is accepted, you enter the application.';
+	@override String get aCompleter => 'The management asks you for a detail. It is written above.';
 }
 
 // Path: suiviAttente.tu
@@ -44236,6 +44298,28 @@ extension on TraductionsEn {
 			'apprendre.programme.genre.rencontre' => 'Recitation meeting',
 			'apprendre.livret.vide' => 'Your results, your reports and your certificates will appear here',
 			'apprendre.livret.videTu' => 'Your results, your reports and your certificates will appear here',
+			'friseInscription.titre' => 'Your registration, step by step',
+			'friseInscription.contexte' => 'The academy confirms every step. You are notified each time one is passed.',
+			'friseInscription.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Step ${n} of ${total}: ${etape}',
+			'friseInscription.etapes.envoyee' => 'Request sent',
+			'friseInscription.etapes.lue' => 'Read by the management',
+			'friseInscription.etapes.acceptee' => 'Accepted',
+			'friseInscription.etapes.aCompleter' => 'To complete',
+			'friseInscription.etapes.formation' => 'Class being formed',
+			'friseInscription.etapes.confirmee' => 'Class confirmed',
+			'friseInscription.etapes.enseignant' => 'Teacher assigned',
+			'friseInscription.etapes.pret' => 'All set',
+			'friseInscription.dit.envoyee' => 'Your request has reached the academy.',
+			'friseInscription.dit.lueEnCours' => 'The management is reading your request. You are notified as soon as it has decided.',
+			'friseInscription.dit.lueFait' => 'The management has read your request.',
+			'friseInscription.dit.accepteeAVenir' => 'Once your request is accepted, you enter the application.',
+			'friseInscription.dit.aCompleter' => 'The management asks you for a detail. It is written above.',
+			'friseInscription.vide' => 'No request is recorded for this account.',
+			'friseInscription.erreur' => 'We could not read where your request stands. This often comes from the connection. Try again in a moment.',
+			'friseInscription.sansDonnees' => 'The status of your request could not be loaded',
+			'avertissementFuseau.titre' => 'This device is not on your city\'s time',
+			'avertissementFuseau.phrase' => ({required Object ville}) => 'Your class times are shown in this device\'s time, which differs from your city\'s (${ville}). The class stays at the same time in Mecca.',
+			'avertissementFuseau.action' => 'Check my city',
 			'suiviAttente.titre' => 'Where your request stands',
 			'suiviAttente.titreSimple' => 'Where your request stands',
 			'suiviAttente.tu.formationListeAttente' => 'All classes for this slot are full. Your request is waiting for a place to open.',
@@ -44484,6 +44568,8 @@ extension on TraductionsEn {
 			'calendrier.dates.concernees.erreur' => 'The sessions concerned could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
 			'calendrier.dates.conflits.titre' => 'Sessions that cannot be restored',
 			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Other class at the same time, ${quand}',
@@ -44506,8 +44592,6 @@ extension on TraductionsEn {
 			'calendrier.pauses.videDetail' => 'A request beyond the limit will appear here.',
 			'calendrier.pauses.ligneDescription' => ({required Object mois, required Object n}) => 'Month requested: ${mois}. Months already granted: ${n}.',
 			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'Reply before ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.enRetard' => 'Deadline passed',
 			'calendrier.pauses.accepter' => 'Accept',
 			'calendrier.pauses.refuser' => 'Refuse',

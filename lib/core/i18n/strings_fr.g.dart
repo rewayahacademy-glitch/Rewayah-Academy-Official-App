@@ -127,6 +127,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
 	late final Traductions$apprendre$fr apprendre = Traductions$apprendre$fr.internal(_root);
+	late final Traductions$friseInscription$fr friseInscription = Traductions$friseInscription$fr.internal(_root);
+	late final Traductions$avertissementFuseau$fr avertissementFuseau = Traductions$avertissementFuseau$fr.internal(_root);
 	late final Traductions$suiviAttente$fr suiviAttente = Traductions$suiviAttente$fr.internal(_root);
 	late final Traductions$journalSorties$fr journalSorties = Traductions$journalSorties$fr.internal(_root);
 	late final Traductions$calendrier$fr calendrier = Traductions$calendrier$fr.internal(_root);
@@ -4548,6 +4550,54 @@ class Traductions$apprendre$fr {
 	late final Traductions$apprendre$bibliotheque$fr bibliotheque = Traductions$apprendre$bibliotheque$fr.internal(_root);
 	late final Traductions$apprendre$programme$fr programme = Traductions$apprendre$programme$fr.internal(_root);
 	late final Traductions$apprendre$livret$fr livret = Traductions$apprendre$livret$fr.internal(_root);
+}
+
+// Path: friseInscription
+class Traductions$friseInscription$fr {
+	Traductions$friseInscription$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre inscription, étape par étape'
+	String get titre => 'Votre inscription, étape par étape';
+
+	/// fr: 'L'académie confirme chaque étape. Vous êtes prévenu à chaque passage.'
+	String get contexte => 'L\'académie confirme chaque étape. Vous êtes prévenu à chaque passage.';
+
+	/// fr: 'Étape {n} sur {total} : {etape}'
+	String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}';
+
+	late final Traductions$friseInscription$etapes$fr etapes = Traductions$friseInscription$etapes$fr.internal(_root);
+	late final Traductions$friseInscription$dit$fr dit = Traductions$friseInscription$dit$fr.internal(_root);
+
+	/// fr: 'Aucune demande n'est enregistrée pour ce compte.'
+	String get vide => 'Aucune demande n\'est enregistrée pour ce compte.';
+
+	/// fr: 'Nous n'avons pas pu lire où en est votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.'
+	String get erreur => 'Nous n\'avons pas pu lire où en est votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.';
+
+	/// fr: 'L'état de votre demande n'a pas pu être chargé'
+	String get sansDonnees => 'L\'état de votre demande n\'a pas pu être chargé';
+}
+
+// Path: avertissementFuseau
+class Traductions$avertissementFuseau$fr {
+	Traductions$avertissementFuseau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cet appareil n'est pas à l'heure de votre ville'
+	String get titre => 'Cet appareil n\'est pas à l\'heure de votre ville';
+
+	/// fr: 'Vos heures de cours s'affichent à l'heure de cet appareil, qui diffère de celle de votre ville ({ville}). Le cours reste à la même heure à La Mecque.'
+	String phrase({required Object ville}) => 'Vos heures de cours s\'affichent à l\'heure de cet appareil, qui diffère de celle de votre ville (${ville}). Le cours reste à la même heure à La Mecque.';
+
+	/// fr: 'Vérifier ma ville'
+	String get action => 'Vérifier ma ville';
 }
 
 // Path: suiviAttente
@@ -27006,6 +27056,63 @@ class Traductions$apprendre$livret$fr {
 
 	/// fr: 'Tes résultats, tes bilans et tes attestations apparaîtront ici'
 	String get videTu => 'Tes résultats, tes bilans et tes attestations apparaîtront ici';
+}
+
+// Path: friseInscription.etapes
+class Traductions$friseInscription$etapes$fr {
+	Traductions$friseInscription$etapes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande envoyée'
+	String get envoyee => 'Demande envoyée';
+
+	/// fr: 'Lue par la direction'
+	String get lue => 'Lue par la direction';
+
+	/// fr: 'Acceptée'
+	String get acceptee => 'Acceptée';
+
+	/// fr: 'À compléter'
+	String get aCompleter => 'À compléter';
+
+	/// fr: 'Classe en formation'
+	String get formation => 'Classe en formation';
+
+	/// fr: 'Classe confirmée'
+	String get confirmee => 'Classe confirmée';
+
+	/// fr: 'Enseignant affecté'
+	String get enseignant => 'Enseignant affecté';
+
+	/// fr: 'Tout est prêt'
+	String get pret => 'Tout est prêt';
+}
+
+// Path: friseInscription.dit
+class Traductions$friseInscription$dit$fr {
+	Traductions$friseInscription$dit$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre demande est arrivée à l'académie.'
+	String get envoyee => 'Votre demande est arrivée à l\'académie.';
+
+	/// fr: 'La direction lit votre demande. Vous êtes prévenu dès qu'elle a décidé.'
+	String get lueEnCours => 'La direction lit votre demande. Vous êtes prévenu dès qu\'elle a décidé.';
+
+	/// fr: 'La direction a lu votre demande.'
+	String get lueFait => 'La direction a lu votre demande.';
+
+	/// fr: 'Une fois votre demande acceptée, vous entrez dans l'application.'
+	String get accepteeAVenir => 'Une fois votre demande acceptée, vous entrez dans l\'application.';
+
+	/// fr: 'La direction vous demande une précision. Elle est écrite plus haut.'
+	String get aCompleter => 'La direction vous demande une précision. Elle est écrite plus haut.';
 }
 
 // Path: suiviAttente.tu
@@ -73770,6 +73877,28 @@ extension on Traductions {
 			'apprendre.programme.genre.rencontre' => 'Rencontre de récitation',
 			'apprendre.livret.vide' => 'Vos résultats, vos bilans et vos attestations apparaîtront ici',
 			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',
+			'friseInscription.titre' => 'Votre inscription, étape par étape',
+			'friseInscription.contexte' => 'L\'académie confirme chaque étape. Vous êtes prévenu à chaque passage.',
+			'friseInscription.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
+			'friseInscription.etapes.envoyee' => 'Demande envoyée',
+			'friseInscription.etapes.lue' => 'Lue par la direction',
+			'friseInscription.etapes.acceptee' => 'Acceptée',
+			'friseInscription.etapes.aCompleter' => 'À compléter',
+			'friseInscription.etapes.formation' => 'Classe en formation',
+			'friseInscription.etapes.confirmee' => 'Classe confirmée',
+			'friseInscription.etapes.enseignant' => 'Enseignant affecté',
+			'friseInscription.etapes.pret' => 'Tout est prêt',
+			'friseInscription.dit.envoyee' => 'Votre demande est arrivée à l\'académie.',
+			'friseInscription.dit.lueEnCours' => 'La direction lit votre demande. Vous êtes prévenu dès qu\'elle a décidé.',
+			'friseInscription.dit.lueFait' => 'La direction a lu votre demande.',
+			'friseInscription.dit.accepteeAVenir' => 'Une fois votre demande acceptée, vous entrez dans l\'application.',
+			'friseInscription.dit.aCompleter' => 'La direction vous demande une précision. Elle est écrite plus haut.',
+			'friseInscription.vide' => 'Aucune demande n\'est enregistrée pour ce compte.',
+			'friseInscription.erreur' => 'Nous n\'avons pas pu lire où en est votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.',
+			'friseInscription.sansDonnees' => 'L\'état de votre demande n\'a pas pu être chargé',
+			'avertissementFuseau.titre' => 'Cet appareil n\'est pas à l\'heure de votre ville',
+			'avertissementFuseau.phrase' => ({required Object ville}) => 'Vos heures de cours s\'affichent à l\'heure de cet appareil, qui diffère de celle de votre ville (${ville}). Le cours reste à la même heure à La Mecque.',
+			'avertissementFuseau.action' => 'Vérifier ma ville',
 			'suiviAttente.titre' => 'Où en est votre demande',
 			'suiviAttente.titreSimple' => 'Où en est ta demande',
 			'suiviAttente.tu.formationListeAttente' => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.',
@@ -74018,6 +74147,8 @@ extension on Traductions {
 			'calendrier.dates.concernees.erreur' => 'Les séances concernées n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.conflits.titre' => 'Séances qui ne peuvent pas être rétablies',
 			'calendrier.dates.conflits.intro' => 'Ces séances ont été mises de côté par la fermeture, mais l\'enseignant a pris un autre cours à la même heure. Libérez l\'enseignant puis réessayez, ou confirmez l\'abandon de ces séances : elles ne seront jamais rétablies. Les heures sont celles de La Mecque.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Autre cours : ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Autre cours à la même heure, ${quand}',
@@ -74040,8 +74171,6 @@ extension on Traductions {
 			'calendrier.pauses.videDetail' => 'Une demande au-delà du plafond apparaîtra ici.',
 			'calendrier.pauses.ligneDescription' => ({required Object mois, required Object n}) => 'Mois demandé : ${mois}. Mois déjà accordés : ${n}.',
 			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'Répondre avant le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.enRetard' => 'Délai dépassé',
 			'calendrier.pauses.accepter' => 'Accepter',
 			'calendrier.pauses.refuser' => 'Refuser',

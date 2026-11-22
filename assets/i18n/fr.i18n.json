@@ -17555,6 +17555,36 @@
       "videTu": "Tes résultats, tes bilans et tes attestations apparaîtront ici"
     }
   },
+  "friseInscription": {
+    "titre": "Votre inscription, étape par étape",
+    "contexte": "L'académie confirme chaque étape. Vous êtes prévenu à chaque passage.",
+    "etapeSurTotal": "Étape {n} sur {total}\u00a0: {etape}",
+    "etapes": {
+      "envoyee": "Demande envoyée",
+      "lue": "Lue par la direction",
+      "acceptee": "Acceptée",
+      "aCompleter": "À compléter",
+      "formation": "Classe en formation",
+      "confirmee": "Classe confirmée",
+      "enseignant": "Enseignant affecté",
+      "pret": "Tout est prêt"
+    },
+    "dit": {
+      "envoyee": "Votre demande est arrivée à l'académie.",
+      "lueEnCours": "La direction lit votre demande. Vous êtes prévenu dès qu'elle a décidé.",
+      "lueFait": "La direction a lu votre demande.",
+      "accepteeAVenir": "Une fois votre demande acceptée, vous entrez dans l'application.",
+      "aCompleter": "La direction vous demande une précision. Elle est écrite plus haut."
+    },
+    "vide": "Aucune demande n'est enregistrée pour ce compte.",
+    "erreur": "Nous n'avons pas pu lire où en est votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.",
+    "sansDonnees": "L'état de votre demande n'a pas pu être chargé"
+  },
+  "avertissementFuseau": {
+    "titre": "Cet appareil n'est pas à l'heure de votre ville",
+    "phrase": "Vos heures de cours s'affichent à l'heure de cet appareil, qui diffère de celle de votre ville ({ville}). Le cours reste à la même heure à La Mecque.",
+    "action": "Vérifier ma ville"
+  },
   "suiviAttente": {
     "titre": "Où en est votre demande",
     "titreSimple": "Où en est ta demande",
