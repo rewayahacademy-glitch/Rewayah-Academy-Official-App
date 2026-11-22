@@ -560,6 +560,22 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     unawaited(_creer());
   }
 
+  /// Le seul bouton plein de l'ecran du titulaire (les trois etats, la
+  /// demande, la reprise et la fin, s'excluent) : coupe pendant l'envoi deja
+  /// parti, jamais grise autrement.
+  ActionPrincipale _boutonDemande({
+    required Key cle,
+    required String libelle,
+    required VoidCallback onPress,
+    required bool enCours,
+  }) => ActionPrincipale(
+    key: cle,
+    libelle: libelle,
+    onPress: enCours ? null : onPress,
+    enCours: enCours,
+    affirmee: true,
+  );
+
   Widget _vueTitulaire(
     BuildContext context, {
     required BrouillonInscription brouillon,
@@ -629,12 +645,11 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
             ),
             if (ligneErreur != null) ...<Widget>[Ecart.vMd, ligneErreur],
           ],
-          action: ActionPrincipale(
-            key: const Key('inscription-suivre'),
+          action: _boutonDemande(
+            cle: const Key('inscription-suivre'),
             libelle: f.suivre,
-            onPress: enCours ? null : () => unawaited(_suivreDemande()),
+            onPress: () => unawaited(_suivreDemande()),
             enCours: enCours,
-            affirmee: true,
           ),
         ),
       );
@@ -647,11 +662,11 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
         phrase: t.inscription.questionnaire.aucuneReponse,
         titre: t.inscription.questionnaire.acces.absentesTitre,
         corps: const <Widget>[],
-        action: ActionPrincipale(
-          key: const Key('inscription-reprendre'),
+        action: _boutonDemande(
+          cle: const Key('inscription-reprendre'),
           libelle: t.commun.continuer,
           onPress: () => context.go(Routes.commencer),
-          affirmee: true,
+          enCours: false,
         ),
         liens: <Widget>[sortie],
       );
@@ -754,12 +769,11 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
           ),
           if (ligneErreur != null) ...<Widget>[Ecart.vMd, ligneErreur],
         ],
-        action: ActionPrincipale(
-          key: const Key('inscription-envoyer'),
+        action: _boutonDemande(
+          cle: const Key('inscription-envoyer'),
           libelle: v.envoyer,
-          onPress: enCours ? null : () => _envoyerTitulaire(l0),
+          onPress: () => _envoyerTitulaire(l0),
           enCours: enCours,
-          affirmee: true,
         ),
         liens: <Widget>[sortie],
       ),
