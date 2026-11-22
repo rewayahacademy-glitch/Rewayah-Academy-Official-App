@@ -12260,6 +12260,16 @@ class _Traductions$admissions$reponses$en extends Traductions$admissions$reponse
 	@override String get oui => 'Yes';
 	@override String get non => 'No';
 	@override String get nonRenseigne => 'Not provided';
+	@override String get lecture => 'Quran reading';
+	@override String autreLecture({required Object nom}) => 'Another reading: ${nom}';
+	@override String get memorise => 'Already memorised';
+	@override String get juz => 'Juz given';
+	@override String get sourates => 'Surahs given';
+	@override String get langueSecours => 'Backup language';
+	@override String get langueAutre => 'Other language requested';
+	@override String get langueHorsListe => 'Other language';
+	@override String get source => 'Heard about us through';
+	@override String get suivi => 'Tracking link';
 }
 
 // Path: admissions.etat
@@ -43480,6 +43490,16 @@ extension on TraductionsEn {
 			'admissions.reponses.oui' => 'Yes',
 			'admissions.reponses.non' => 'No',
 			'admissions.reponses.nonRenseigne' => 'Not provided',
+			'admissions.reponses.lecture' => 'Quran reading',
+			'admissions.reponses.autreLecture' => ({required Object nom}) => 'Another reading: ${nom}',
+			'admissions.reponses.memorise' => 'Already memorised',
+			'admissions.reponses.juz' => 'Juz given',
+			'admissions.reponses.sourates' => 'Surahs given',
+			'admissions.reponses.langueSecours' => 'Backup language',
+			'admissions.reponses.langueAutre' => 'Other language requested',
+			'admissions.reponses.langueHorsListe' => 'Other language',
+			'admissions.reponses.source' => 'Heard about us through',
+			'admissions.reponses.suivi' => 'Tracking link',
 			'admissions.reference' => 'Reference',
 			'admissions.courriel' => 'Email address',
 			'admissions.etatLibelle' => 'Status',
@@ -43972,6 +43992,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'These answers create no application: they are used to recognize people when they sign up.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'Saved.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'Already saved: nothing changed.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'Unreadable rows: not imported.',
 			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'Replaced by a more recent one: ${n}',
 			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'Row by row',
@@ -43982,8 +44004,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'Import another file',
 			'candidatsFlux.prevenir.lien' => 'Notify by email',
 			'candidatsFlux.prevenir.titre' => 'Notify by email',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.contexte' => 'The sign-up link is sent by email to the people in the imported forms who left an address and do not have an account yet. The same address never receives the message twice.',
 			'candidatsFlux.prevenir.lecture' => 'Counting the people to notify.',
 			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person to notify', other: '${n} people to notify', ), 
@@ -44486,6 +44506,8 @@ extension on TraductionsEn {
 			'calendrier.pauses.videDetail' => 'A request beyond the limit will appear here.',
 			'calendrier.pauses.ligneDescription' => ({required Object mois, required Object n}) => 'Month requested: ${mois}. Months already granted: ${n}.',
 			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'Reply before ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.enRetard' => 'Deadline passed',
 			'calendrier.pauses.accepter' => 'Accept',
 			'calendrier.pauses.refuser' => 'Refuse',
@@ -44496,8 +44518,6 @@ extension on TraductionsEn {
 			'calendrier.pauses.decisionsRecentes' => 'Recent decisions',
 			'calendrier.pauses.decisionsVide' => 'No decision for now.',
 			'calendrier.pauses.statut.demandee' => 'Pending',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.statut.acceptee' => 'Accepted',
 			'calendrier.pauses.statut.refusee' => 'Refused',
 			'calendrier.pauses.statut.annulee' => 'Cancelled',

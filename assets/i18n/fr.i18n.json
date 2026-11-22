@@ -16468,7 +16468,17 @@
       "titulaireLigne": "Titulaire de la demande",
       "oui": "Oui",
       "non": "Non",
-      "nonRenseigne": "Non renseigné"
+      "nonRenseigne": "Non renseigné",
+      "lecture": "Lecture du Coran",
+      "autreLecture": "Une autre lecture\u00a0: {nom}",
+      "memorise": "Déjà mémorisé",
+      "juz": "Juz indiqués",
+      "sourates": "Sourates indiquées",
+      "langueSecours": "Langue de secours",
+      "langueAutre": "Autre langue demandée",
+      "langueHorsListe": "Autre langue",
+      "source": "Connu grâce à",
+      "suivi": "Lien de suivi"
     },
     "reference": "Référence",
     "courriel": "Adresse e‑mail",

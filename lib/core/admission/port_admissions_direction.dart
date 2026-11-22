@@ -62,6 +62,13 @@ class ApprenantAdmission {
     this.objectif,
     this.moments = const <String>[],
     this.langue,
+    this.riwaya,
+    this.riwayaAutre,
+    this.memorise,
+    this.juz = const <int>[],
+    this.sourates = const <String>[],
+    this.langueSecours,
+    this.langueAutre,
   });
 
   /// Lit une ligne du serveur.
@@ -79,6 +86,21 @@ class ApprenantAdmission {
               if (m is String) m,
         ],
         langue: j['langue'] as String?,
+        riwaya: j['riwaya'] as String?,
+        riwayaAutre: j['riwayaAutre'] as String?,
+        memorise: j['memorise'] as String?,
+        juz: <int>[
+          if (j['juz'] is List<dynamic>)
+            for (final Object? n in j['juz'] as List<dynamic>)
+              if (n is num) n.toInt(),
+        ],
+        sourates: <String>[
+          if (j['sourates'] is List<dynamic>)
+            for (final Object? m in j['sourates'] as List<dynamic>)
+              if (m is String) m,
+        ],
+        langueSecours: j['langueSecours'] as String?,
+        langueAutre: j['langueAutre'] as String?,
       );
 
   /// Le prenom (celui du compte pour le titulaire).
@@ -96,14 +118,38 @@ class ApprenantAdmission {
   /// Le niveau declare (code de `NiveauDeclare`).
   final String? niveau;
 
-  /// L'objectif (code de `ObjectifApprentissage`).
+  /// L'objectif (code de `ObjectifApprentissage`, ou `priere_invocations`).
   final String? objectif;
 
   /// Les moments de la journee (`matin`, `apres_midi`, `soir`).
   final List<String> moments;
 
-  /// La langue du cours (code de `langues_cours`).
+  /// La langue du cours : un code du referentiel des classes (`fr`) ou une
+  /// langue des enseignants hors referentiel (`ur`).
   final String? langue;
+
+  /// La lecture du Coran (`hafs`, `warsh`, `autre`), seulement pour qui lit
+  /// deja ou a deja memorise.
+  final String? riwaya;
+
+  /// La lecture ecrite par la famille quand `riwaya` vaut `autre`.
+  final String? riwayaAutre;
+
+  /// Ce qui est memorise (`quelques_sourates`, `1_5_juz`, `plus_5_juz`,
+  /// `coran_entier`), seulement pour qui a deja memorise une partie.
+  final String? memorise;
+
+  /// Les juz que la famille a indiques (1 a 30).
+  final List<int> juz;
+
+  /// Les sourates des bases que la famille a indiquees (codes stables).
+  final List<String> sourates;
+
+  /// La langue de secours, facultative.
+  final String? langueSecours;
+
+  /// Une langue absente de la liste, ecrite par la famille.
+  final String? langueAutre;
 }
 
 /// Une demande d'admission, vue par la direction.
@@ -118,6 +164,8 @@ class DemandeAdmission {
     required this.version,
     this.courriel,
     this.derniereActivite,
+    this.source,
+    this.suivi,
     this.apprenants = const <ApprenantAdmission>[],
   });
 
@@ -137,6 +185,8 @@ class DemandeAdmission {
         j['derniereActivite'] as String? ?? '',
       )?.toLocal(),
       version: (j['version'] as num?)?.toInt() ?? 0,
+      source: j['source'] as String?,
+      suivi: j['suivi'] as String?,
       etat: switch ((issue, etape, j['etat'])) {
         ('refusee', _, _) => EtatDemandeAdmission.refusee,
         ('retiree', _, _) => EtatDemandeAdmission.retiree,
@@ -175,6 +225,13 @@ class DemandeAdmission {
 
   /// La version attendue par le prochain geste.
   final int version;
+
+  /// Comment la personne a connu l'academie (`mosquee`, `proche`, `reseaux`,
+  /// `recherche`, `autre`), facultatif.
+  final String? source;
+
+  /// Le lien de suivi (`?ref=`) qui l'a amenee, quand il y en a un.
+  final String? suivi;
 
   /// Les apprenants de la demande.
   final List<ApprenantAdmission> apprenants;

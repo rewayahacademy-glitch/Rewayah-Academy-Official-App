@@ -25818,6 +25818,36 @@ class Traductions$admissions$reponses$fr {
 
 	/// fr: 'Non renseigné'
 	String get nonRenseigne => 'Non renseigné';
+
+	/// fr: 'Lecture du Coran'
+	String get lecture => 'Lecture du Coran';
+
+	/// fr: 'Une autre lecture : {nom}'
+	String autreLecture({required Object nom}) => 'Une autre lecture : ${nom}';
+
+	/// fr: 'Déjà mémorisé'
+	String get memorise => 'Déjà mémorisé';
+
+	/// fr: 'Juz indiqués'
+	String get juz => 'Juz indiqués';
+
+	/// fr: 'Sourates indiquées'
+	String get sourates => 'Sourates indiquées';
+
+	/// fr: 'Langue de secours'
+	String get langueSecours => 'Langue de secours';
+
+	/// fr: 'Autre langue demandée'
+	String get langueAutre => 'Autre langue demandée';
+
+	/// fr: 'Autre langue'
+	String get langueHorsListe => 'Autre langue';
+
+	/// fr: 'Connu grâce à'
+	String get source => 'Connu grâce à';
+
+	/// fr: 'Lien de suivi'
+	String get suivi => 'Lien de suivi';
 }
 
 // Path: admissions.etat
@@ -72994,6 +73024,16 @@ extension on Traductions {
 			'admissions.reponses.oui' => 'Oui',
 			'admissions.reponses.non' => 'Non',
 			'admissions.reponses.nonRenseigne' => 'Non renseigné',
+			'admissions.reponses.lecture' => 'Lecture du Coran',
+			'admissions.reponses.autreLecture' => ({required Object nom}) => 'Une autre lecture : ${nom}',
+			'admissions.reponses.memorise' => 'Déjà mémorisé',
+			'admissions.reponses.juz' => 'Juz indiqués',
+			'admissions.reponses.sourates' => 'Sourates indiquées',
+			'admissions.reponses.langueSecours' => 'Langue de secours',
+			'admissions.reponses.langueAutre' => 'Autre langue demandée',
+			'admissions.reponses.langueHorsListe' => 'Autre langue',
+			'admissions.reponses.source' => 'Connu grâce à',
+			'admissions.reponses.suivi' => 'Lien de suivi',
 			'admissions.reference' => 'Référence',
 			'admissions.courriel' => 'Adresse e‑mail',
 			'admissions.etatLibelle' => 'État',
@@ -73486,6 +73526,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'Ces réponses ne créent aucune candidature : elles servent à reconnaître les personnes quand elles s\'inscrivent.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'Enregistrées.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'Déjà enregistrées : rien n\'a changé.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'Lignes illisibles : non importées.',
 			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'Remplacées par une plus récente : ${n}',
 			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'Ligne par ligne',
@@ -73496,8 +73538,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'Importer un autre fichier',
 			'candidatsFlux.prevenir.lien' => 'Prévenir par e-mail',
 			'candidatsFlux.prevenir.titre' => 'Prévenir par e-mail',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.contexte' => 'Le lien d\'inscription part par e-mail aux personnes des formulaires importés qui ont laissé une adresse et n\'ont pas encore de compte. Une même adresse ne reçoit jamais le message deux fois.',
 			'candidatsFlux.prevenir.lecture' => 'Comptage des personnes à prévenir en cours.',
 			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne à prévenir', other: '${n} personnes à prévenir', ), 
@@ -74000,6 +74040,8 @@ extension on Traductions {
 			'calendrier.pauses.videDetail' => 'Une demande au-delà du plafond apparaîtra ici.',
 			'calendrier.pauses.ligneDescription' => ({required Object mois, required Object n}) => 'Mois demandé : ${mois}. Mois déjà accordés : ${n}.',
 			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'Répondre avant le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.enRetard' => 'Délai dépassé',
 			'calendrier.pauses.accepter' => 'Accepter',
 			'calendrier.pauses.refuser' => 'Refuser',
@@ -74010,8 +74052,6 @@ extension on Traductions {
 			'calendrier.pauses.decisionsRecentes' => 'Décisions récentes',
 			'calendrier.pauses.decisionsVide' => 'Aucune décision pour le moment.',
 			'calendrier.pauses.statut.demandee' => 'En attente',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.statut.acceptee' => 'Acceptée',
 			'calendrier.pauses.statut.refusee' => 'Refusée',
 			'calendrier.pauses.statut.annulee' => 'Annulée',

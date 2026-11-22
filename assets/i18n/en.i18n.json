@@ -16480,7 +16480,17 @@
       "titulaireLigne": "Request holder",
       "oui": "Yes",
       "non": "No",
-      "nonRenseigne": "Not provided"
+      "nonRenseigne": "Not provided",
+      "lecture": "Quran reading",
+      "autreLecture": "Another reading: {nom}",
+      "memorise": "Already memorised",
+      "juz": "Juz given",
+      "sourates": "Surahs given",
+      "langueSecours": "Backup language",
+      "langueAutre": "Other language requested",
+      "langueHorsListe": "Other language",
+      "source": "Heard about us through",
+      "suivi": "Tracking link"
     },
     "reference": "Reference",
     "courriel": "Email address",
