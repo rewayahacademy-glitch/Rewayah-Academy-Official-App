@@ -145,5 +145,46 @@ class RacineChoisitLaLangue(unittest.TestCase):
         self.assertTrue(racine and all(r["destination"] == "/langue" for r in racine))
 
 
+class DefilementLegerDeLAccueil(unittest.TestCase):
+    JS = (SITE / "styles" / "motion.js").read_text(encoding="utf-8")
+
+    def test_les_illustrations_ne_s_attenuent_plus_seuls_les_titres_le_font(self) -> None:
+        self.assertIn("contenu.querySelectorAll('h2').forEach", self.JS)
+        self.assertNotIn("'h2, figure, .bande-image'", self.JS)
+
+    def test_une_seule_boucle_par_image_et_les_elements_hors_ecran_ne_sont_pas_mesures(self) -> None:
+        self.assertEqual(self.JS.count("window.addEventListener('scroll'"), 1)
+        self.assertIn("{ passive: true }", self.JS)
+        self.assertIn("new IntersectionObserver", self.JS)
+        self.assertIn("function dansEcran", self.JS)
+        self.assertIn("requestAnimationFrame(image)", self.JS)
+
+    def test_aucune_lecture_de_position_dans_une_boucle_d_ecriture(self) -> None:
+        # sceneParallaxes : toutes les ecritures sont rassemblees puis appliquees apres les lectures.
+        corps = self.JS[self.JS.index("function sceneParallaxes"):self.JS.index("function enteteSuit")]
+        derniere_lecture = corps.rindex("getBoundingClientRect")
+        premiere_ecriture = corps.index("style.setProperty")
+        self.assertLess(derniere_lecture, premiere_ecriture)
+
+    def test_le_mouvement_reduit_arrete_les_scenes_et_les_images_sont_paresseuses(self) -> None:
+        self.assertIn("if (reduit.matches) return;\n    scenePorte(h);", self.JS)
+        h = lire("fr/index.html")
+        images = re.findall(r"<img [^>]*>", h)
+        for img in images:
+            if "logo-horizontal" in img or "fetchpriority" in img or "scene-chemin" in img:
+                continue
+            self.assertIn('loading="lazy"', img)
+            self.assertIn('width="', img)
+            self.assertIn("srcset=", img)
+
+    def test_pas_de_filtre_sur_les_illustrations_qui_s_attenuent(self) -> None:
+        css = (SITE / "styles" / "site.css").read_text(encoding="utf-8")
+        self.assertIn(".voyage-actif [data-attenue] { filter: opacity(var(--eclat, 1)); }", css)   # titres seulement, sans image
+        accueil = lire("fr/index.html")
+        for balise in re.findall(r"<(figure|div)[^>]*data-attenue[^>]*>", accueil):
+            self.assertNotEqual(balise, "figure")
+        self.assertEqual(re.findall(r"<figure[^>]*data-attenue", accueil), [])
+
+
 if __name__ == "__main__":
     unittest.main()

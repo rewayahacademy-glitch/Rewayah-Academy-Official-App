@@ -3097,6 +3097,7 @@ li, dd { text-wrap: wrap; }
 .chemin-fil__trace { fill: none; stroke: #8652E6; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: .55; }
 .chemin-fil__bout { fill: #8652E6; }
 @media (max-width: 599px) { .chemin-fil__trace { stroke-width: 2; } }
+/* Seuls les titres s'attenuent (SITE-CORRECTIFS 5, 22/11/2026) : un filtre sur une illustration, avec son ombre portee floue, la repeignait a chaque image du defilement. Les illustrations restent entieres. */
 .voyage-actif [data-attenue] { filter: opacity(var(--eclat, 1)); }
 
 /* 4. Les arches qui s'ouvrent. --courbe : 0 a plat (motion.js la fait passer de la grande arche a plat). */
