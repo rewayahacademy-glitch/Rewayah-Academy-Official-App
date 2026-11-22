@@ -164,21 +164,41 @@
     });
   }
 
+  /* Lecture d'abord, ecriture ensuite : une seule mise en page par image, jamais de lecture apres une ecriture.
+     Les elements hors ecran sont connus par un IntersectionObserver (marge d'un ecran) : on ne mesure que les visibles. */
+  var visibles = new Set();
+  var vueDefilement = 'IntersectionObserver' in window ? new IntersectionObserver(function (entrees) {
+    entrees.forEach(function (e) { if (e.isIntersecting) visibles.add(e.target); else visibles.delete(e.target); });
+  }, { rootMargin: '100% 0px 100% 0px' }) : null;
+  [parallaxes, bandes, appels].forEach(function (liste) {
+    liste.forEach(function (el) { if (vueDefilement) vueDefilement.observe(el); else visibles.add(el); });
+  });
+  function dansEcran(el) { return visibles.has(el); }
+
   function sceneParallaxes(h) {
+    var ecritures = [];
     parallaxes.forEach(function (el) {
+      if (!dansEcran(el)) return;
       var r = el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > h) return;
-      el.style.setProperty('--par', ((r.top + r.height / 2 - h / 2) * 0.06).toFixed(1));
+      ecritures.push([el, '--par', ((r.top + r.height / 2 - h / 2) * 0.06).toFixed(1)]);
     });
     bandes.forEach(function (el) {
+      if (!dansEcran(el)) return;
       var r = el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > h) return;
       var t = borne((h - r.top) / (h + r.height));
-      el.style.setProperty('--pan', ((0.5 - t) * 160).toFixed(1));
+      ecritures.push([el, '--pan', ((0.5 - t) * 160).toFixed(1)]);
     });
     appels.forEach(function (el) {
+      if (!dansEcran(el)) return;
       var r = el.getBoundingClientRect();
-      el.style.setProperty('--v', adoucie(borne((h - r.top) / (h * 0.6))).toFixed(3));
+      ecritures.push([el, '--v', adoucie(borne((h - r.top) / (h * 0.6))).toFixed(3)]);
+    });
+    ecritures.forEach(function (w) {
+      if (w[0]['__' + w[1]] === w[2]) return;
+      w[0]['__' + w[1]] = w[2];
+      w[0].style.setProperty(w[1], w[2]);
     });
   }
 
@@ -678,7 +698,7 @@
     // Ce qui s'attenue loin de la pointe : les titres de section et les illustrations, hors de l'en-tete de page et des cartes.
     v.attenues.forEach(function (a) { a.el.removeAttribute('data-attenue'); a.el.style.removeProperty('--eclat'); });
     v.attenues = [];
-    contenu.querySelectorAll('h2, figure, .bande-image').forEach(function (el) {
+    contenu.querySelectorAll('h2').forEach(function (el) {
       if (premier.el.contains(el) || el.closest('a, .article-carte, .avis-carte, .fiche, summary, figure figure')) return;
       if (el.tagName.toLowerCase() === 'figure' && el.parentElement.closest('figure, .bande-image')) return;
       // Une illustration ne s'attenue que si elle ne porte aucun texte (legende, citation) : le texte ne s'attenue jamais.
@@ -766,20 +786,22 @@
     v.eclat.style.transform = 'translate3d(' + lx.toFixed(1) + 'px,' + (h * LECTURE).toFixed(1) + 'px,0)';
     // Ce qui est loin de la lumiere s'attenue : pleinement eclaire a moins de 10 % d'ecran, au plus bas a 50 %.
     var r0 = h * 0.1, r1 = h * 0.5;
-    v.attenues.forEach(function (a) {
+    var posVivants = v.attenues.map(function (a) { return a.vivant ? a.el.getBoundingClientRect() : null; });
+    var posArches = v.arches.map(function (el) { return el.getBoundingClientRect().top; });
+    v.attenues.forEach(function (a, k) {
       var haut = a.haut, fin = a.bas;
-      if (a.vivant) { var r = a.el.getBoundingClientRect(); haut = r.top + sy; fin = r.bottom + sy; }
+      if (posVivants[k]) { haut = posVivants[k].top + sy; fin = posVivants[k].bottom + sy; }
       if (fin < sy - h || haut > bas + h) return;
       var dist = Math.max(0, haut - cible, cible - fin);
       var o = a.plancher + (1 - a.plancher) * (1 - lisse(borne((dist - r0) / (r1 - r0))));
-      o = Math.round(o * 100) / 100;
+      o = Math.round(o * 20) / 20;   // par pas de 5 % : l'oeil ne voit pas la difference, le navigateur repeint dix fois moins
       if (o !== a.o) { a.o = o; a.el.style.setProperty('--eclat', o.toFixed(2)); }
     });
     // 4. Les arches : la grande courbe quand la section entre par le bas, a plat quand son haut atteint le tiers de l'ecran.
     var courbe = Math.min(260, window.innerWidth * 0.18);
-    v.arches.forEach(function (el) {
-      var top = el.getBoundingClientRect().top;
-      var val = Math.round(courbe * borne((top - h * 0.33) / (h * 0.67))) + 'px';
+    v.arches.forEach(function (el, k) {
+      var top = posArches[k];
+      var val = Math.round(courbe * borne((top - h * 0.33) / (h * 0.67)) / 8) * 8 + 'px';   // pas de 8 px : l'arche est un grand aplat repeint a chaque pas
       if (el.__courbe !== val) { el.__courbe = val; el.style.setProperty('--courbe', val); }
     });
   }
