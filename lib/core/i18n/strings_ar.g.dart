@@ -14280,7 +14280,7 @@ class _Traductions$onboarding$recap$ar extends Traductions$onboarding$recap$fr {
 	@override String get facultatif => '(اختياري)';
 	@override late final _Traductions$onboarding$recap$sources$ar sources = _Traductions$onboarding$recap$sources$ar._(_root);
 	@override String get direction => 'تقرأ الإدارة كل طلب قبل تكوين الفصل.';
-	@override String get rembourse => 'إن لم يكن الطالب راضيًا، يُستردّ المبلغ خلال 14 يومًا، بعد خصم الحصص التي حضرها.';
+	@override String get rembourse => 'إن لم يكن الطالب راضيًا، يُعاد إليه المبلغ خلال 14 يومًا، بعد خصم الحصص التي حضرها.';
 	@override String get corriger => 'يمكنك تصحيح هذه الإجابات بعد القبول.';
 	@override String get cta => 'صحيح، أنشئ حسابي';
 }
@@ -45837,7 +45837,7 @@ extension on TraductionsAr {
 			'onboarding.recap.sources.recherche' => 'بحث على الإنترنت',
 			'onboarding.recap.sources.autre' => 'غير ذلك',
 			'onboarding.recap.direction' => 'تقرأ الإدارة كل طلب قبل تكوين الفصل.',
-			'onboarding.recap.rembourse' => 'إن لم يكن الطالب راضيًا، يُستردّ المبلغ خلال 14 يومًا، بعد خصم الحصص التي حضرها.',
+			'onboarding.recap.rembourse' => 'إن لم يكن الطالب راضيًا، يُعاد إليه المبلغ خلال 14 يومًا، بعد خصم الحصص التي حضرها.',
 			'onboarding.recap.corriger' => 'يمكنك تصحيح هذه الإجابات بعد القبول.',
 			'onboarding.recap.cta' => 'صحيح، أنشئ حسابي',
 			'onboarding.acces.dit' => 'الخطوة الأخيرة: إلى أين أرسل رابط الدخول؟',
