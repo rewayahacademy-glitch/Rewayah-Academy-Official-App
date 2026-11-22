@@ -1998,6 +1998,7 @@ class _Traductions$admissions$ar extends Traductions$admissions$fr {
 	@override String feuilleTitre({required Object deNom}) => 'طلب ⁨${deNom}⁩';
 	@override String ouvrir({required Object deNom}) => 'فتح طلب ⁨${deNom}⁩';
 	@override String get recueLe => 'تاريخ الاستلام';
+	@override late final _Traductions$admissions$reponses$ar reponses = _Traductions$admissions$reponses$ar._(_root);
 	@override String get reference => 'المرجع';
 	@override String get courriel => 'عنوان البريد الإلكتروني';
 	@override String get etatLibelle => 'الحالة';
@@ -12351,6 +12352,37 @@ class _Traductions$courriels$admin$ar extends Traductions$courriels$admin$fr {
 	@override late final _Traductions$courriels$admin$ecrire$ar ecrire = _Traductions$courriels$admin$ecrire$ar._(_root);
 	@override late final _Traductions$courriels$admin$file$ar file = _Traductions$courriels$admin$file$ar._(_root);
 	@override late final _Traductions$courriels$admin$adresses$ar adresses = _Traductions$courriels$admin$adresses$ar._(_root);
+}
+
+// Path: admissions.reponses
+class _Traductions$admissions$reponses$ar extends Traductions$admissions$reponses$fr {
+	_Traductions$admissions$reponses$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaireTitre => 'صاحب الطلب';
+	@override String get nom => 'الاسم';
+	@override String apprenantsTitre({required Object n}) => 'المتعلمون (⁨${n}⁩)';
+	@override String get aucunApprenant => 'لا يوجد متعلم مرتبط بهذا الطلب.';
+	@override String get titulaireRole => 'صاحب الطلب';
+	@override String get enfantRole => 'ابن أو ابنة من العائلة';
+	@override String get age => 'العمر';
+	@override String ageValeur({required Object age}) => '⁨${age}⁩ سنوات';
+	@override String get adulte => 'بالغ';
+	@override String get genre => 'الجنس';
+	@override String get garcon => 'ولد';
+	@override String get fille => 'بنت';
+	@override String get homme => 'رجل';
+	@override String get femme => 'امرأة';
+	@override String get niveau => 'المستوى المصرّح به';
+	@override String get objectif => 'الهدف';
+	@override String get moments => 'أوقات اليوم';
+	@override String get langue => 'لغة الدرس';
+	@override String get titulaireLigne => 'صاحب الطلب';
+	@override String get oui => 'نعم';
+	@override String get non => 'لا';
+	@override String get nonRenseigne => 'غير مذكور';
 }
 
 // Path: admissions.etat
@@ -43548,6 +43580,28 @@ extension on TraductionsAr {
 			'admissions.feuilleTitre' => ({required Object deNom}) => 'طلب ⁨${deNom}⁩',
 			'admissions.ouvrir' => ({required Object deNom}) => 'فتح طلب ⁨${deNom}⁩',
 			'admissions.recueLe' => 'تاريخ الاستلام',
+			'admissions.reponses.titulaireTitre' => 'صاحب الطلب',
+			'admissions.reponses.nom' => 'الاسم',
+			'admissions.reponses.apprenantsTitre' => ({required Object n}) => 'المتعلمون (⁨${n}⁩)',
+			'admissions.reponses.aucunApprenant' => 'لا يوجد متعلم مرتبط بهذا الطلب.',
+			'admissions.reponses.titulaireRole' => 'صاحب الطلب',
+			'admissions.reponses.enfantRole' => 'ابن أو ابنة من العائلة',
+			'admissions.reponses.age' => 'العمر',
+			'admissions.reponses.ageValeur' => ({required Object age}) => '⁨${age}⁩ سنوات',
+			'admissions.reponses.adulte' => 'بالغ',
+			'admissions.reponses.genre' => 'الجنس',
+			'admissions.reponses.garcon' => 'ولد',
+			'admissions.reponses.fille' => 'بنت',
+			'admissions.reponses.homme' => 'رجل',
+			'admissions.reponses.femme' => 'امرأة',
+			'admissions.reponses.niveau' => 'المستوى المصرّح به',
+			'admissions.reponses.objectif' => 'الهدف',
+			'admissions.reponses.moments' => 'أوقات اليوم',
+			'admissions.reponses.langue' => 'لغة الدرس',
+			'admissions.reponses.titulaireLigne' => 'صاحب الطلب',
+			'admissions.reponses.oui' => 'نعم',
+			'admissions.reponses.non' => 'لا',
+			'admissions.reponses.nonRenseigne' => 'غير مذكور',
 			'admissions.reference' => 'المرجع',
 			'admissions.courriel' => 'عنوان البريد الإلكتروني',
 			'admissions.etatLibelle' => 'الحالة',

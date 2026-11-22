@@ -39,6 +39,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../parcours_offres/libelles_parcours.dart';
+import 'reponses_admission.dart';
 
 /// La cle d'une page de liste.
 typedef CleListeAdmissions = ({
@@ -627,25 +628,18 @@ class _FeuilleDemandeAdmissionState
           ],
           // UX-006 : apres un geste, l'etat est celui relu au serveur ; tant
           // qu'il ne l'est pas, la ligne ne dit rien plutot qu'un etat perime.
-          if (!_gesteFait || _etatRelu != null) ...<Widget>[
-            LigneCleValeur(
-              cle: a.etatLibelle,
-              valeur: _etat(_etatRelu ?? d.etat),
-            ),
-            Ecart.vSm,
-          ],
-          LigneCleValeur(cle: a.recueLe, valeur: _date(d.recueLe)),
-          Ecart.vSm,
-          LigneCleValeur(cle: a.reference, valeur: d.reference),
-          if (d.courriel case final String c) ...<Widget>[
-            Ecart.vSm,
-            LigneCleValeur(cle: a.courriel, valeur: c),
-          ],
-          Ecart.vLg,
-          for (final ApprenantAdmission ap in d.apprenants) ...<Widget>[
-            Text(ligneApprenant(ap), style: textes.bodyMedium),
-            Ecart.vSm,
-          ],
+          // ADMISSIONS-REPONSES (22/11/2026) : tout ce que la famille a
+          // repondu, lu ici (`reponses_admission.dart`).
+          ReponsesAdmission(
+            demande: d,
+            date: _date(d.recueLe),
+            ligneEtat: (!_gesteFait || _etatRelu != null)
+                ? LigneCleValeur(
+                    cle: a.etatLibelle,
+                    valeur: _etat(_etatRelu ?? d.etat),
+                  )
+                : null,
+          ),
           Ecart.vLg,
           erreur,
           if (_gesteFait)

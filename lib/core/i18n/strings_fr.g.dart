@@ -3902,6 +3902,8 @@ class Traductions$admissions$fr {
 	/// fr: 'Reçue le'
 	String get recueLe => 'Reçue le';
 
+	late final Traductions$admissions$reponses$fr reponses = Traductions$admissions$reponses$fr.internal(_root);
+
 	/// fr: 'Référence'
 	String get reference => 'Référence';
 
@@ -25699,6 +25701,81 @@ class Traductions$courriels$admin$fr {
 	late final Traductions$courriels$admin$ecrire$fr ecrire = Traductions$courriels$admin$ecrire$fr.internal(_root);
 	late final Traductions$courriels$admin$file$fr file = Traductions$courriels$admin$file$fr.internal(_root);
 	late final Traductions$courriels$admin$adresses$fr adresses = Traductions$courriels$admin$adresses$fr.internal(_root);
+}
+
+// Path: admissions.reponses
+class Traductions$admissions$reponses$fr {
+	Traductions$admissions$reponses$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Titulaire de la demande'
+	String get titulaireTitre => 'Titulaire de la demande';
+
+	/// fr: 'Nom'
+	String get nom => 'Nom';
+
+	/// fr: 'Apprenants ({n})'
+	String apprenantsTitre({required Object n}) => 'Apprenants (${n})';
+
+	/// fr: 'Aucun apprenant n\'est rattaché à cette demande.'
+	String get aucunApprenant => 'Aucun apprenant n\'est rattaché à cette demande.';
+
+	/// fr: 'Titulaire de la demande'
+	String get titulaireRole => 'Titulaire de la demande';
+
+	/// fr: 'Enfant de la famille'
+	String get enfantRole => 'Enfant de la famille';
+
+	/// fr: 'Âge'
+	String get age => 'Âge';
+
+	/// fr: '{age} ans'
+	String ageValeur({required Object age}) => '${age} ans';
+
+	/// fr: 'Adulte'
+	String get adulte => 'Adulte';
+
+	/// fr: 'Genre'
+	String get genre => 'Genre';
+
+	/// fr: 'Garçon'
+	String get garcon => 'Garçon';
+
+	/// fr: 'Fille'
+	String get fille => 'Fille';
+
+	/// fr: 'Homme'
+	String get homme => 'Homme';
+
+	/// fr: 'Femme'
+	String get femme => 'Femme';
+
+	/// fr: 'Niveau déclaré'
+	String get niveau => 'Niveau déclaré';
+
+	/// fr: 'Objectif'
+	String get objectif => 'Objectif';
+
+	/// fr: 'Moments de la journée'
+	String get moments => 'Moments de la journée';
+
+	/// fr: 'Langue du cours'
+	String get langue => 'Langue du cours';
+
+	/// fr: 'Titulaire de la demande'
+	String get titulaireLigne => 'Titulaire de la demande';
+
+	/// fr: 'Oui'
+	String get oui => 'Oui';
+
+	/// fr: 'Non'
+	String get non => 'Non';
+
+	/// fr: 'Non renseigné'
+	String get nonRenseigne => 'Non renseigné';
 }
 
 // Path: admissions.etat
@@ -71534,6 +71611,28 @@ extension on Traductions {
 			'admissions.feuilleTitre' => ({required Object deNom}) => 'Demande ${deNom}',
 			'admissions.ouvrir' => ({required Object deNom}) => 'Ouvrir la demande ${deNom}',
 			'admissions.recueLe' => 'Reçue le',
+			'admissions.reponses.titulaireTitre' => 'Titulaire de la demande',
+			'admissions.reponses.nom' => 'Nom',
+			'admissions.reponses.apprenantsTitre' => ({required Object n}) => 'Apprenants (${n})',
+			'admissions.reponses.aucunApprenant' => 'Aucun apprenant n\'est rattaché à cette demande.',
+			'admissions.reponses.titulaireRole' => 'Titulaire de la demande',
+			'admissions.reponses.enfantRole' => 'Enfant de la famille',
+			'admissions.reponses.age' => 'Âge',
+			'admissions.reponses.ageValeur' => ({required Object age}) => '${age} ans',
+			'admissions.reponses.adulte' => 'Adulte',
+			'admissions.reponses.genre' => 'Genre',
+			'admissions.reponses.garcon' => 'Garçon',
+			'admissions.reponses.fille' => 'Fille',
+			'admissions.reponses.homme' => 'Homme',
+			'admissions.reponses.femme' => 'Femme',
+			'admissions.reponses.niveau' => 'Niveau déclaré',
+			'admissions.reponses.objectif' => 'Objectif',
+			'admissions.reponses.moments' => 'Moments de la journée',
+			'admissions.reponses.langue' => 'Langue du cours',
+			'admissions.reponses.titulaireLigne' => 'Titulaire de la demande',
+			'admissions.reponses.oui' => 'Oui',
+			'admissions.reponses.non' => 'Non',
+			'admissions.reponses.nonRenseigne' => 'Non renseigné',
 			'admissions.reference' => 'Référence',
 			'admissions.courriel' => 'Adresse e‑mail',
 			'admissions.etatLibelle' => 'État',
