@@ -12,6 +12,7 @@ import '../../core/admission/port_admissions_direction.dart';
 import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/carte_lignes.dart';
@@ -163,7 +164,9 @@ class _CarteApprenant extends StatelessWidget {
         ),
         ReponsesAdmission._ligne(
           r.age,
-          age != null ? r.ageValeur(age: age) : (adulte ? r.adulte : null),
+          age != null
+              ? LibellesGroupe.insecable(r.ageValeur(age: age))
+              : (adulte ? r.adulte : null),
         ),
         ReponsesAdmission._ligne(
           r.genre,

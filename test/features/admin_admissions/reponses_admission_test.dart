@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admission/port_admissions_direction.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/features/admin_admissions/reponses_admission.dart';
 
 import '../../support/hote_theme.dart';
@@ -99,7 +100,7 @@ void main() {
     final Finder carte = find.byKey(ReponsesAdmission.cleApprenant(1));
     for (final String texte in <String>[
       'Yasmine',
-      r.ageValeur(age: 9),
+      LibellesGroupe.insecable(r.ageValeur(age: 9)),
       r.fille,
       r.non,
     ]) {
