@@ -115,5 +115,35 @@ class ReferencementArabe(unittest.TestCase):
             self.assertEqual(site["inLanguage"], dossier)
 
 
+class RacineChoisitLaLangue(unittest.TestCase):
+    def test_la_page_de_la_racine_redirige_d_apres_navigator_languages(self) -> None:
+        h = lire("langue.html")
+        script = re.search(r"<script>(.*?)</script>", h, re.S).group(1)
+        self.assertIn("navigator.languages", script)
+        self.assertIn("location.replace('/'+c+'/')", script)
+        self.assertIn("c='fr'", script)   # toute autre langue : le francais
+        self.assertIn('["fr", "ar", "en", "es", "pt"]', script)
+        self.assertLess(h.index("<script>"), h.index("<body"))   # la redirection part avant le premier affichage
+
+    def test_les_cinq_liens_sont_dans_le_html_sans_script(self) -> None:
+        h = lire("langue.html")
+        for langue in ("fr", "ar", "en", "es", "pt"):
+            self.assertRegex(h, rf'<a class="choix-langue__lien" href="/{langue}/" hreflang="{langue}" lang="{langue}"')
+        self.assertIn('hreflang="x-default" href="https://rewayahacademy.com/langue"', h)
+        self.assertIn('<link rel="canonical" href="https://rewayahacademy.com/langue">', h)
+        self.assertIn("html.auto .choix-langue { visibility: hidden; }", (SITE / "styles" / "site.css").read_text(encoding="utf-8"))
+
+    def test_l_apercu_reste_noindex_et_la_production_comme_avant(self) -> None:
+        self.assertIn('content="index,follow"', lire("langue.html"))
+        with tempfile.TemporaryDirectory() as dossier, unittest.mock.patch.dict(os.environ, {"RA_LANGUES": ""}):
+            B.build(Path(dossier), ORIGINE, False)
+            self.assertIn('content="noindex,nofollow"', (Path(dossier) / "langue.html").read_text(encoding="utf-8"))
+
+    def test_la_racine_mene_a_la_page_de_choix_dans_la_configuration_generee(self) -> None:
+        config = json.loads(lire("vercel.json"))
+        racine = [r for r in config["redirects"] if r["source"] == "/"]
+        self.assertTrue(racine and all(r["destination"] == "/langue" for r in racine))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -3254,21 +3254,19 @@ html:is([lang="en"], [lang="es"], [lang="pt"]) .enonce__texte span { white-space
 /* Page de choix de langue (racine du site des que deux langues existent) : cinq grandes cartes, chaque langue dans son
    ecriture. Aucune redirection, aucun script. Couleurs et ombres : les jetons de la teinte jour. */
 .page-choix-langue { background: var(--avant); color: var(--encre); }
-.choix-langue { min-height: 100svh; max-width: 880px; margin-inline: auto; padding: var(--e-12) var(--marge); display: grid; align-content: center; gap: var(--e-8); }
-.choix-langue__logo { width: min(240px, 60vw); height: auto; }
-.choix-langue__titre { display: flex; flex-wrap: wrap; gap: .2em .9em; font-size: clamp(20px, 2.4vw, 28px); line-height: 1.35; font-weight: 600; }
-.choix-langue__titre span + span { color: var(--encre-douce); font-weight: 500; }
-.choix-langue__liste { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--e-4); }
-.choix-langue__carte { display: grid; grid-template-columns: minmax(9ch, auto) 1fr auto; align-items: center; gap: var(--e-6); padding: var(--e-6) var(--e-8); border-radius: 22px; background: var(--fond); color: inherit; text-decoration: none; box-shadow: var(--ombre-1); transition: transform .2s ease, box-shadow .2s ease; }
-.choix-langue__carte:hover, .choix-langue__carte:focus-visible { transform: translateY(-2px); box-shadow: var(--ombre-2); }
-.choix-langue__carte:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 3px; }
-.choix-langue__nom { font-family: var(--police-titre); font-weight: 700; font-size: clamp(22px, 2.6vw, 30px); }
-.choix-langue__phrase { color: var(--encre-douce); }
-.choix-langue__fleche { font-size: 22px; color: var(--encre-accent); }
+.choix-langue { min-height: 100svh; max-width: 640px; margin-inline: auto; padding: var(--e-12) var(--marge); display: grid; align-content: center; justify-items: center; gap: var(--e-8); text-align: center; }
+.choix-langue__logo { width: min(220px, 56vw); height: auto; }
+.choix-langue__titre { display: flex; flex-direction: column; gap: var(--e-1); margin: 0; font-size: clamp(22px, 3vw, 30px); line-height: 1.35; font-weight: 700; }
+.choix-langue__titre span + span { color: var(--encre-douce); font-size: .62em; font-weight: 500; }
+.choix-langue__liste { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--e-3); }
+.choix-langue__lien { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 var(--e-8); border-radius: var(--r-full); background: var(--fond); color: var(--encre); font-family: var(--police-titre); font-weight: 700; font-size: 18px; text-decoration: none; box-shadow: var(--ombre-1); transition: transform .2s ease, box-shadow .2s ease; }
+.choix-langue__lien:hover, .choix-langue__lien:focus-visible { transform: translateY(-2px); box-shadow: var(--ombre-2); }
+.choix-langue__lien:focus-visible { outline: 3px solid var(--encre-accent); outline-offset: 3px; }
 .choix-langue [lang="ar"] { font-family: var(--police-corps); }
-.choix-langue__carte[lang="ar"] .choix-langue__nom { font-family: var(--police-titre-arabe); }
-@media (max-width: 599px) { .choix-langue__carte { grid-template-columns: 1fr auto; } .choix-langue__phrase { grid-column: 1; grid-row: 2; font-size: 15px; } .choix-langue__fleche { grid-row: 1 / span 2; grid-column: 2; } }
-@media (prefers-reduced-motion: reduce) { .choix-langue__carte { transition: none; } .choix-langue__carte:hover { transform: none; } }
+.choix-langue__lien[lang="ar"] { font-family: var(--police-titre-arabe); }
+/* La redirection est immediate : tant qu'elle est en cours, rien n'est montre (pas d'eclair de la page) ; sans JavaScript ou apres 2,5 s, tout l'est. */
+html.auto .choix-langue { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .choix-langue__lien { transition: none; } .choix-langue__lien:hover { transform: none; } }
 
 /* En-tete entre 840 et 1199 px : le menu (six liens, le choix de langue, l'inscription) ne tient plus sur une ligne,
    surtout en espagnol et en portugais ; il passe dans le menu deroulant, comme sur telephone. */

@@ -1975,11 +1975,20 @@ ROUTE_DESINSCRIPTION = "/fr/courriels/desinscription"
 FONCTION_DESINSCRIPTION = "https://gggmtelinlpseweouyav.supabase.co/functions/v1/courriel-desinscription"
 
 
-# Racine du site quand plusieurs langues existent (fiche SITE-LANGUES §1) : une page statique de choix de langue, marquee
-# x-default, sans redirection automatique ni script. Chaque langue est ecrite dans sa propre ecriture, avec son attribut lang.
+# Racine du site quand plusieurs langues existent (SITE-CORRECTIFS 4, directeur, 22/11/2026) : la racine mene a /langue, une page
+# minimale qui choisit seule la langue d'apres navigator.languages et y redirige tout de suite (arabe, anglais, espagnol,
+# portugais, sinon francais). Sans JavaScript, ou si la redirection n'a pas lieu en 2,5 s, les cinq liens de langue restent
+# visibles ; ils sont toujours dans le HTML (robots, lecteurs d'ecran), marques x-default.
 ROUTE_CHOIX_LANGUE = "/langue"
 CHOISIR = {"fr": "Choisissez votre langue", "ar": "اختاروا لغتكم", "en": "Choose your language",
            "es": "Elija su idioma", "pt": "Escolha o seu idioma"}
+# Les langues du navigateur, dans l'ordre de preference de la personne : la premiere qu'on sert l'emporte.
+SCRIPT_CHOIX_LANGUE = (
+    "(function(){var d=document.documentElement;d.classList.add('auto');"
+    "try{var L=%s,l=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'fr'],c='fr';"
+    "for(var i=0;i<l.length;i++){var k=String(l[i]).toLowerCase().split('-')[0];if(L.indexOf(k)>-1){c=k;break}}"
+    "location.replace('/'+c+'/')}catch(e){}"
+    "setTimeout(function(){d.classList.remove('auto')},2500)})();")
 
 
 def page_choix_langue(disponibles: list[str], pages_par_langue: dict, origin: str, allow_indexing: bool, direction: dict) -> str:
@@ -1992,12 +2001,11 @@ def page_choix_langue(disponibles: list[str], pages_par_langue: dict, origin: st
     alternates += f'<link rel="alternate" hreflang="x-default" href="{base}{ROUTE_CHOIX_LANGUE}">'
     consignes = "".join(f'<span lang="{l}" dir="{langues_mod.DIRECTION[l]}">{html.escape(CHOISIR[l])}</span>' for l in disponibles)
     cartes = "".join(
-        f'<li><a class="choix-langue__carte" href="/{l}/" hreflang="{l}" lang="{l}" dir="{langues_mod.DIRECTION[l]}">'
-        f'<span class="choix-langue__nom">{langues_mod.NOMS[l]}</span>'
-        f'<span class="choix-langue__phrase">{html.escape(pages_par_langue[l]["/fr/"]["h1"])}</span>'
-        f'<span class="choix-langue__fleche" aria-hidden="true">{"←" if langues_mod.DIRECTION[l] == "rtl" else "→"}</span></a></li>'
+        f'<li><a class="choix-langue__lien" href="/{l}/" hreflang="{l}" lang="{l}" dir="{langues_mod.DIRECTION[l]}">'
+        f'{langues_mod.NOMS[l]}</a></li>'
         for l in disponibles)
     description = pages_par_langue["fr"]["/fr/"]["description"]
+    script = SCRIPT_CHOIX_LANGUE % json.dumps(disponibles)
     return (
         f'<!doctype html><html lang="fr" data-ambiance="{esc(ambiance)}"{attribut_teinte}><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
@@ -2007,11 +2015,13 @@ def page_choix_langue(disponibles: list[str], pages_par_langue: dict, origin: st
         f'<meta name="description" content="{html.escape(description, quote=True)}">'
         f'<link rel="preload" href="{ASSETS}/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>'
         f'<link rel="stylesheet" href="{ASSETS}/site.css">'
+        f'<script>{script}</script>'
         '<title>Rewayah Academy</title></head><body class="page-choix-langue">'
         '<main class="choix-langue" id="contenu">'
         f'<img class="choix-langue__logo" src="{ASSETS}/{logo}" width="1027" height="287" alt="Rewayah Academy">'
         f'<h1 class="choix-langue__titre">{consignes}</h1>'
-        f'<ul class="choix-langue__liste">{cartes}</ul></main></body></html>')
+        f'<ul class="choix-langue__liste">{cartes}</ul>'
+        '</main></body></html>')
 
 
 def page_etat(titre: str, classe: str, direction: dict, contenu: str, figure: str, script: str = "") -> str:
