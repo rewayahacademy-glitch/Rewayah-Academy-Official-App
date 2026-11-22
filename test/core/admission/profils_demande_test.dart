@@ -71,6 +71,33 @@ void main() {
     expect(p.liaisons, <String>['a1>profil-Yasmine', 'a3>profil-existant']);
   });
 
+  test('ADMISSION-FICHES-AUTO : tout est deja lie par l\'acceptation, '
+      'la passe ne cree ni ne lie rien', () async {
+    final _Port p = _Port(<EnfantDemande>[
+      _e('a0', 'Awa', age: null, titulaire: true, lie: 'titulaire'),
+      _e('a1', 'Yasmine', lie: 'profil-serveur-1'),
+      _e('a2', 'Ilyas', age: 12, lie: 'profil-serveur-2'),
+    ]);
+    expect(await creerProfilsDemande(p), 0);
+    expect(p.creations, isEmpty);
+    expect(p.liaisons, isEmpty);
+  });
+
+  test(
+    'ADMISSION-FICHES-AUTO : le titulaire lie a sa fiche est lu tel quel',
+    () {
+      final EnfantDemande? e = enfantDepuisJson(<String, dynamic>{
+        'id': 'a0',
+        'prenom': 'Awa',
+        'age': null,
+        'est_titulaire': true,
+        'profil_eleve_id': 't1',
+      });
+      expect(e?.titulaire, isTrue);
+      expect(e?.profilEleveId, 't1');
+    },
+  );
+
   test('un echec arrete la boucle sans lever', () async {
     final _Port p = _Port(<EnfantDemande>[
       _e('a1', 'Yasmine'),

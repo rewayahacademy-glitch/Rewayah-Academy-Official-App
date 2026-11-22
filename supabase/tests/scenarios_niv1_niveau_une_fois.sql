@@ -63,6 +63,25 @@ END;
 $cinq_ans$;
 RESET ROLE;
 
+-- Les profils deja crees par la famille (fonction Edge), avant l'acceptation
+-- qui les lie (ADMISSION-FICHES-AUTO, 22/11/2026) : Enfant Neuf avec sa tranche
+-- (creer_profil_enfant la deduit de l'age) ; Enfant Petit sans tranche
+-- (cas d'une exception de la direction, aucune tranche ne le couvre).
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status)
+SELECT v.id, v.imm, 'student', p.household_id, v.prenom, 'Niveau', 'active'
+  FROM public.profiles p,
+       (VALUES ('a1000000-0000-4000-8000-000000000004'::uuid, 'NIV1ENFANT000004', 'Enfant Neuf'),
+               ('a1000000-0000-4000-8000-000000000005'::uuid, 'NIV1ENFANT000005', 'Enfant Petit'))
+         AS v(id, imm, prenom)
+ WHERE p.id = 'a1000000-0000-4000-8000-000000000002';
+INSERT INTO public.student_profiles (profile_id, student_type, interface_mode, camera_policy, cohorte)
+VALUES
+  ('a1000000-0000-4000-8000-000000000004', 'minor', 'child', 'forbidden',
+   (SELECT c.code FROM public.cohortes_age c
+     WHERE c.actif AND c.type_public = 'enfant' AND 9 BETWEEN c.age_min AND coalesce(c.age_max_inclus, 999)
+     ORDER BY c.ordre LIMIT 1)),
+  ('a1000000-0000-4000-8000-000000000005', 'minor', 'child', 'forbidden', NULL);
+
 -- La direction accepte la famille.
 SELECT set_config('request.jwt.claim.sub', 'a1000000-0000-4000-8000-000000000001', true);
 SELECT set_config('test.uid', 'a1000000-0000-4000-8000-000000000001', true);
@@ -82,25 +101,9 @@ BEGIN
 END;
 $direction$;
 
--- Les profils que la fonction Edge cree : Enfant Neuf avec sa tranche
--- (creer_profil_enfant la deduit de l'age) ; Enfant Petit sans tranche
--- (cas d'une exception de la direction, aucune tranche ne le couvre).
-INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status)
-SELECT v.id, v.imm, 'student', p.household_id, v.prenom, 'Niveau', 'active'
-  FROM public.profiles p,
-       (VALUES ('a1000000-0000-4000-8000-000000000004'::uuid, 'NIV1ENFANT000004', 'Enfant Neuf'),
-               ('a1000000-0000-4000-8000-000000000005'::uuid, 'NIV1ENFANT000005', 'Enfant Petit'))
-         AS v(id, imm, prenom)
- WHERE p.id = 'a1000000-0000-4000-8000-000000000002';
-INSERT INTO public.student_profiles (profile_id, student_type, interface_mode, camera_policy, cohorte)
-VALUES
-  ('a1000000-0000-4000-8000-000000000004', 'minor', 'child', 'forbidden',
-   (SELECT c.code FROM public.cohortes_age c
-     WHERE c.actif AND c.type_public = 'enfant' AND 9 BETWEEN c.age_min AND coalesce(c.age_max_inclus, 999)
-     ORDER BY c.ordre LIMIT 1)),
-  ('a1000000-0000-4000-8000-000000000005', 'minor', 'child', 'forbidden', NULL);
 
--- La famille lie ses enfants ; son propre profil eleve existe deja.
+-- La famille relie ses enfants : deja lies par l'acceptation, sans effet ;
+-- son propre profil eleve existe deja.
 SELECT set_config('request.jwt.claim.sub', 'a1000000-0000-4000-8000-000000000002', true);
 SELECT set_config('test.uid', 'a1000000-0000-4000-8000-000000000002', true);
 SELECT set_config('request.jwt.claims', '{"app_metadata":{"role":"guardian"}}', true);
