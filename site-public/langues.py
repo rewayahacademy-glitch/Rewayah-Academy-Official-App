@@ -168,7 +168,8 @@ def alternates_plan(route_fr: str, disponibles: list[str], origin: str) -> str:
         f'<xhtml:link rel="alternate" hreflang="x-default" href="{base}{"/langue" if route_fr == "/fr/" else route_langue(route_fr, "fr")}"/>'
 
 
-_HREF_INTERNE = re.compile(r'(href|action)="/fr(/|")(?!assets/)')
+# Le lien « Français » du sélecteur (hreflang="fr") garde son adresse française dans toutes les langues.
+_HREF_INTERNE = re.compile(r'(href|action)="/fr(/|")(?!assets/)(?!(?:[^"]*")? hreflang="fr")')
 _ABSOLU = re.compile(r'(https://[^"\'/<> ]+)/fr/(?!assets/)')
 _ABSOLU_RACINE = re.compile(r'(https://[^"\'/<> ]+)/fr"')
 
