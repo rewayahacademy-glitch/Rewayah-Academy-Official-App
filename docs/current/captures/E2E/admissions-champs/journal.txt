@@ -1,0 +1,24 @@
+ADMISSIONS-CHAMPS, journal de verification (22/11/2026, R3). Rien ici n'est une preuve en production.
+
+VERIFIE (poste de l'agent, Postgres 16 local, Flutter /opt/flutter) :
+- Postgres 16 nu : stub_auth.sql, puis TOUTES les migrations (dont 20261130978000, 20261130979000, 20261130980000) sans erreur.
+- Migration 20261130980000 rejouee une seconde fois : sans erreur (rejouable).
+- scenarios_admissions_lien_suivi.sql : 3 OK (la direction lit `suivi` = chingford-londres et source = mosquee ; `suivi` nul sans lien ;
+  une famille ne lit ni la liste ni private.sources_inscription ; anon sans EXECUTE, authenticated avec).
+- scenarios_onboarding_praxis.sql rejoue apres ma migration : 4 OK (la liste rend toujours les champs du lot 979000).
+- dart analyze --fatal-infos : aucune erreur. dart run slang : fr, en, ar generes.
+- flutter test test/features/admin_admissions test/core/i18n test/accessibilite : tout vert (834 tests ; nouveaux : source et lien de suivi,
+  debutant priere avec langue de secours et langue absente, memorise avec sourates en noms, parent autre lecture et juz tries,
+  langue au code inconnu dite « Autre langue », memorise sans detail dit « Non renseigne » ; 320 et 1440 px, texte x1 et x2, clair et sombre
+  sur la demande du nouvel onboarding, sans debordement).
+- tool/verifier_jetons.dart, verifier_branchement.dart (aucun nouveau fichier non atteint), verifier_revue.dart (5 regles) : aucune violation.
+
+CHANGE D'AFFICHAGE A SAVOIR : les « Moments de la journee » ne s'affichent plus quand ils sont vides (le nouvel onboarding n'en demande pas ;
+« Non renseigne » y serait faux). Le test de l'enfant a ete mis a jour (4 lignes « Non renseigne » devenues 3), aucun test supprime.
+
+NON VERIFIE :
+- Aucune capture d'ecran ni ouverture dans un navigateur ; rendu juge par les tests de widgets seulement.
+- La migration n'est PAS installee en production. 20261130978000 (REF-SUIVI) ne l'est pas non plus d'apres le registre : sans elle, 980000 refuse
+  de s'installer (preflight). Ordre : 978000, puis 980000 (979000 est deja en production).
+- scenarios_admissions_lien_suivi.sql n'est pas dans .github/workflows/ci.yml (zone interdite) ; la CI rejoue quand meme la migration.
+- Traductions en et ar ecrites par l'agent, non relues par une personne.
