@@ -106,6 +106,23 @@ ORIGINE_SITE = "https://" + DOMAINE_SITE
 ORIGINE_APP = "https://" + DOMAINE_APP
 # L'alias de production d'avant le domaine : il reste servi (le workflow le controle), jamais indexe.
 ALIAS_VERCEL = "rewayah-academy.vercel.app"
+# REF-SUIVI (directeur, 22/11/2026) : l'organisation qui a envoye la famille (?ref=chingford-londres dans un courriel de
+# mosquee) est gardee 30 jours dans le navigateur (cle rw_ref, « ref|date »), la premiere gagne ; chaque lien vers la
+# connexion de l'application la porte alors. Sans stockage, le ref de l'adresse courante sert quand meme a cette page.
+SCRIPT_REF = (
+    "(function(){var R=/^[a-z0-9-]{1,48}$/,K='rw_ref',J=2592e6,v=null,r=null,s=null;"
+    "try{r=new URLSearchParams(location.search).get('ref');if(!(r&&R.test(r)))r=null;s=window.localStorage;"
+    "var o=s.getItem(K),p=o?o.split('|'):[],t=Date.parse(p[1]);"
+    "if(p[0]&&R.test(p[0])&&t&&Date.now()-t<J)v=p[0];"
+    "if(!v&&r){s.setItem(K,r+'|'+new Date().toISOString());}}catch(e){}"
+    "v=v||r;if(!v)return;"
+    "document.addEventListener('DOMContentLoaded',function(){"
+    "document.querySelectorAll('a[href]').forEach(function(a){try{"
+    "var u=new URL(a.getAttribute('href'),location.href);"
+    "if((u.hostname===location.hostname&&u.pathname.indexOf('/connexion')===0)||u.hostname==='" + DOMAINE_APP + "'){"
+    "if(!u.searchParams.has('ref')){u.searchParams.set('ref',v);a.href=u.href}}}catch(e){}})})})();"
+)
+
 # Les quatre fichiers officiels du logo (assets/brand/logo/), copies telles quelles.
 LOGO = {
     "horizontal": ("logo-horizontal.svg", 1027, 287),
@@ -1715,6 +1732,7 @@ def render_page(route: str, page: dict, site: dict, origin: str, allow_indexing:
   <link rel="canonical" href="{esc(canonical)}">
   {meta_partage}
   <script>document.documentElement.classList.add('js');setTimeout(function(){{if(!window.__mv)document.documentElement.classList.remove('js')}},2500)</script>
+  <script>{SCRIPT_REF}</script>
   <link rel="preload" href="{ASSETS}/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{ASSETS}/site.css">
   <script src="{ASSETS}/motion.js" defer></script>
