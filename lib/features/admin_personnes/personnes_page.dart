@@ -51,6 +51,7 @@ import '../../core/domain/enums.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/enseignants/modeles_enseignants.dart';
 import '../../core/enseignants/port_enseignants.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -492,15 +493,55 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
           suppressionOfferte && compteSupprimable(c) && !_suppressionEnCours
           ? () => unawaited(_supprimer(<CompteAdmin>[c]))
           : null,
-      // « Ouvrir le dossier », « Verifier la ville » (ceux de « Comptes »).
-      propres: gestesDossierEtVille(
-        context,
-        c,
-        references: _references,
-        lieux: _lieux,
-        onVerifierVille: () => unawaited(_verifierVille(c)),
+      // « Ouvrir la fiche » (FICHE-ELEVE-DIRECTION), puis « Ouvrir le
+      // dossier », « Verifier la ville » (ceux de « Comptes »).
+      propres: <EntreeAction>[
+        ..._gestesFicheEleve(context, c),
+        ...gestesDossierEtVille(
+          context,
+          c,
+          references: _references,
+          lieux: _lieux,
+          onVerifierVille: () => unawaited(_verifierVille(c)),
+        ),
+      ],
+    );
+  }
+
+  /// FICHE-ELEVE-DIRECTION : « Ouvrir la fiche » d'un eleve, et, depuis la
+  /// ligne d'une famille, la fiche de chacun de ses eleves (le foyer lu dans
+  /// les comptes deja charges : aucune lecture de plus).
+  List<EntreeAction> _gestesFicheEleve(BuildContext context, CompteAdmin c) {
+    bool eleve(CompteAdmin x) => VueComptes.de(x).contains(VueComptes.eleves);
+    EntreeAction geste(CompteAdmin e, String libelle) => EntreeAction(
+      libelle: libelle,
+      icone: AppIcons.profil,
+      onChoix: () => unawaited(
+        GoRouter.of(context)
+            .push<void>(Routes.adminPersonnesElevePour(e.profilId)),
       ),
     );
+    if (eleve(c)) return <EntreeAction>[geste(c, t.admin.ficheEleve.ouvrir)];
+    final String? foyer = c.foyerId;
+    if (c.role != AppRole.guardian || foyer == null) {
+      return const <EntreeAction>[];
+    }
+    final List<CompteAdmin> eleves = <CompteAdmin>[
+      for (final CompteAdmin x in ref.watch(comptesProvider).value ?? const [])
+        if (x.foyerId == foyer && x.profilId != c.profilId && eleve(x)) x,
+    ];
+    return <EntreeAction>[
+      for (final CompteAdmin e in eleves)
+        geste(
+          e,
+          t.admin.ficheEleve.ouvrirDe(
+            dePrenom: deDevant(
+              e.prenom ?? identifiantInsecable(e.identifiant),
+              cle: 'admin.ficheEleve.ouvrirDe',
+            ),
+          ),
+        ),
+    ];
   }
 
   OngletPersonnes get _onglet => OngletPersonnes.depuis(requete['onglet']);
@@ -1585,7 +1626,17 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
     }
 
     void toucher(LignePersonne l) {
-      if (coteACote) {
+      // FICHE-ELEVE-DIRECTION : sur ordinateur, la ligne d'un eleve ouvre sa
+      // fiche (au telephone, l'apercu garde son role et propose « Ouvrir la
+      // fiche »).
+      if (coteACote &&
+          l.compte != null &&
+          VueComptes.de(l.compte!).contains(VueComptes.eleves)) {
+        unawaited(
+          GoRouter.of(context)
+              .push<void>(Routes.adminPersonnesElevePour(l.compte!.profilId)),
+        );
+      } else if (coteACote) {
         _aller(context, element: l.cle, sansHistorique: true);
       } else {
         toucherLigne(l);

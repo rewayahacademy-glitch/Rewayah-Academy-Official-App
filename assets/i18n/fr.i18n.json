@@ -7147,6 +7147,84 @@
         "voirPlus": "Afficher plus de comptes supprimés"
       }
     },
+    "ficheEleve": {
+      "fil": "Personnes",
+      "introuvable": {
+        "titre": "Cette fiche est introuvable",
+        "phrase": "Aucun élève ne porte cet identifiant, ou la personne a été retirée. Revenez à la liste pour la chercher.",
+        "retour": "Revenir à Personnes"
+      },
+      "sansDonnees": "La fiche de cet élève n'a pas pu être chargée",
+      "ouvrir": "Ouvrir la fiche",
+      "ouvrirDe": "Ouvrir la fiche {dePrenom}",
+      "identite": {
+        "titre": "Identité",
+        "prenom": "Prénom",
+        "nom": "Nom",
+        "matricule": "Matricule",
+        "age": "Âge",
+        "genre": "Genre",
+        "langueCours": "Langue du cours",
+        "langueCompte": "Langue du compte",
+        "masquee": "Identité masquée : seul le matricule est lu.",
+        "ageEnfant": "Enfant, {age} ans"
+      },
+      "famille": {
+        "titre": "Famille",
+        "tuteur": "Tuteur",
+        "courriel": "Courriel",
+        "telephone": "Téléphone",
+        "ouvrir": "Ouvrir la famille",
+        "sansTuteur": "Cet adulte apprend pour lui-même : il n'a pas de tuteur.",
+        "tuteurMasque": "Identité du tuteur masquée."
+      },
+      "admission": {
+        "titre": "Réponses de l'inscription",
+        "aucune": "Aucune réponse d'inscription n'est enregistrée pour cet élève.",
+        "memorise": "Déjà mémorisé"
+      },
+      "classe": {
+        "titre": "Classe",
+        "titrePlusieurs": "Classes",
+        "aucune": "Cet élève n'est dans aucune classe pour l'instant.",
+        "enseignant": "Enseignant",
+        "sansEnseignant": "Enseignant pas encore attribué",
+        "horaire": "Horaire",
+        "depuis": "Dans la classe depuis"
+      },
+      "presences": {
+        "titre": "Présences",
+        "aucune": "Aucune séance passée pour l'instant : les présences apparaîtront après la première séance.",
+        "seances": "Séances tenues",
+        "presents": "Présent",
+        "retards": "En retard",
+        "absents": "Absent",
+        "excuses": "Excusé",
+        "dernieres": "Dernières séances",
+        "presente": "Présent",
+        "enRetard": "En retard",
+        "absente": "Absent",
+        "excusee": "Excusé",
+        "inconnue": "Présence pas encore connue"
+      },
+      "progression": {
+        "titre": "Progression",
+        "aucune": "Pas encore d'étape : l'élève n'est dans aucune classe, ou attend son entretien de lecture.",
+        "etape": "Étape en cours",
+        "ordre": "Étape {ordre}",
+        "depuis": "Dans l'étape depuis le",
+        "dateLimite": "À finir avant le",
+        "rythme": "Rythme",
+        "dansLesTemps": "Dans les temps",
+        "auDelaDuPrevu": "Au-delà du temps prévu"
+      },
+      "compte": {
+        "titre": "Compte",
+        "etat": "État du compte",
+        "inscritLe": "Inscrit le",
+        "accesJusquAu": "Accès provisoire jusqu'au"
+      }
+    },
     "comptes": {
       "titre": "Comptes",
       "intro": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Un enseignant sans pièce d'identité déposée reste visible ici\u00a0: c'est le seul endroit qui le montre.",

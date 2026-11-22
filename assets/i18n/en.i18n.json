@@ -7054,6 +7054,84 @@
         "voirPlus": "Show more deleted accounts"
       }
     },
+    "ficheEleve": {
+      "fil": "People",
+      "introuvable": {
+        "titre": "This record can't be found",
+        "phrase": "No student has this identifier, or the person was removed. Go back to the list to look for them.",
+        "retour": "Back to People"
+      },
+      "sansDonnees": "This student's record could not be loaded",
+      "ouvrir": "Open the record",
+      "ouvrirDe": "Open {dePrenom}'s record",
+      "identite": {
+        "titre": "Identity",
+        "prenom": "First name",
+        "nom": "Last name",
+        "matricule": "ID number",
+        "age": "Age",
+        "genre": "Gender",
+        "langueCours": "Class language",
+        "langueCompte": "Account language",
+        "masquee": "Identity hidden: only the ID number is shown.",
+        "ageEnfant": "Child, {age} years old"
+      },
+      "famille": {
+        "titre": "Family",
+        "tuteur": "Guardian",
+        "courriel": "Email",
+        "telephone": "Phone",
+        "ouvrir": "Open the family",
+        "sansTuteur": "This adult learns for themselves: there is no guardian.",
+        "tuteurMasque": "Guardian's identity hidden."
+      },
+      "admission": {
+        "titre": "Sign-up answers",
+        "aucune": "No sign-up answers are recorded for this student.",
+        "memorise": "Already memorized"
+      },
+      "classe": {
+        "titre": "Class",
+        "titrePlusieurs": "Classes",
+        "aucune": "This student is not in any class yet.",
+        "enseignant": "Teacher",
+        "sansEnseignant": "Teacher not assigned yet",
+        "horaire": "Schedule",
+        "depuis": "In the class since"
+      },
+      "presences": {
+        "titre": "Attendance",
+        "aucune": "No past session yet: attendance will appear after the first session.",
+        "seances": "Sessions held",
+        "presents": "Present",
+        "retards": "Late",
+        "absents": "Absent",
+        "excuses": "Excused",
+        "dernieres": "Latest sessions",
+        "presente": "Present",
+        "enRetard": "Late",
+        "absente": "Absent",
+        "excusee": "Excused",
+        "inconnue": "Attendance not known yet"
+      },
+      "progression": {
+        "titre": "Progress",
+        "aucune": "No stage yet: the student is in no class, or is waiting for the reading interview.",
+        "etape": "Current stage",
+        "ordre": "Stage {ordre}",
+        "depuis": "In the stage since",
+        "dateLimite": "To finish before",
+        "rythme": "Pace",
+        "dansLesTemps": "On schedule",
+        "auDelaDuPrevu": "Past the planned time"
+      },
+      "compte": {
+        "titre": "Account",
+        "etat": "Account status",
+        "inscritLe": "Signed up on",
+        "accesJusquAu": "Temporary access until"
+      }
+    },
     "comptes": {
       "titre": "Accounts",
       "intro": "All the people registered, those awaiting a decision first. A teacher with no ID document submitted stays visible here: this is the only place that shows them.",

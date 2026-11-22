@@ -1064,6 +1064,7 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	@override late final _Traductions$admin$journal$en journal = _Traductions$admin$journal$en._(_root);
 	@override late final _Traductions$admin$observations$en observations = _Traductions$admin$observations$en._(_root);
 	@override late final _Traductions$admin$suppressions$en suppressions = _Traductions$admin$suppressions$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$en ficheEleve = _Traductions$admin$ficheEleve$en._(_root);
 	@override late final _Traductions$admin$comptes$en comptes = _Traductions$admin$comptes$en._(_root);
 	@override late final _Traductions$admin$agents$en agents = _Traductions$admin$agents$en._(_root);
 	@override late final _Traductions$admin$praxis$en praxis = _Traductions$admin$praxis$en._(_root);
@@ -6985,6 +6986,27 @@ class _Traductions$admin$suppressions$en extends Traductions$admin$suppressions$
 	@override String get echec => 'The decision could not be confirmed. Check the list before trying again.';
 	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it returns.';
 	@override late final _Traductions$admin$suppressions$retraits$en retraits = _Traductions$admin$suppressions$retraits$en._(_root);
+}
+
+// Path: admin.ficheEleve
+class _Traductions$admin$ficheEleve$en extends Traductions$admin$ficheEleve$fr {
+	_Traductions$admin$ficheEleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fil => 'People';
+	@override late final _Traductions$admin$ficheEleve$introuvable$en introuvable = _Traductions$admin$ficheEleve$introuvable$en._(_root);
+	@override String get sansDonnees => 'This student\'s record could not be loaded';
+	@override String get ouvrir => 'Open the record';
+	@override String ouvrirDe({required Object dePrenom}) => 'Open ${dePrenom}\'s record';
+	@override late final _Traductions$admin$ficheEleve$identite$en identite = _Traductions$admin$ficheEleve$identite$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$famille$en famille = _Traductions$admin$ficheEleve$famille$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$admission$en admission = _Traductions$admin$ficheEleve$admission$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$classe$en classe = _Traductions$admin$ficheEleve$classe$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$presences$en presences = _Traductions$admin$ficheEleve$presences$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$progression$en progression = _Traductions$admin$ficheEleve$progression$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$compte$en compte = _Traductions$admin$ficheEleve$compte$en._(_root);
 }
 
 // Path: admin.comptes
@@ -17847,6 +17869,134 @@ class _Traductions$admin$suppressions$retraits$en extends Traductions$admin$supp
 	);
 	@override late final _Traductions$admin$suppressions$retraits$refus$en refus = _Traductions$admin$suppressions$retraits$refus$en._(_root);
 	@override String get voirPlus => 'Show more deleted accounts';
+}
+
+// Path: admin.ficheEleve.introuvable
+class _Traductions$admin$ficheEleve$introuvable$en extends Traductions$admin$ficheEleve$introuvable$fr {
+	_Traductions$admin$ficheEleve$introuvable$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This record can\'t be found';
+	@override String get phrase => 'No student has this identifier, or the person was removed. Go back to the list to look for them.';
+	@override String get retour => 'Back to People';
+}
+
+// Path: admin.ficheEleve.identite
+class _Traductions$admin$ficheEleve$identite$en extends Traductions$admin$ficheEleve$identite$fr {
+	_Traductions$admin$ficheEleve$identite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Identity';
+	@override String get prenom => 'First name';
+	@override String get nom => 'Last name';
+	@override String get matricule => 'ID number';
+	@override String get age => 'Age';
+	@override String get genre => 'Gender';
+	@override String get langueCours => 'Class language';
+	@override String get langueCompte => 'Account language';
+	@override String get masquee => 'Identity hidden: only the ID number is shown.';
+	@override String ageEnfant({required Object age}) => 'Child, ${age} years old';
+}
+
+// Path: admin.ficheEleve.famille
+class _Traductions$admin$ficheEleve$famille$en extends Traductions$admin$ficheEleve$famille$fr {
+	_Traductions$admin$ficheEleve$famille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Family';
+	@override String get tuteur => 'Guardian';
+	@override String get courriel => 'Email';
+	@override String get telephone => 'Phone';
+	@override String get ouvrir => 'Open the family';
+	@override String get sansTuteur => 'This adult learns for themselves: there is no guardian.';
+	@override String get tuteurMasque => 'Guardian\'s identity hidden.';
+}
+
+// Path: admin.ficheEleve.admission
+class _Traductions$admin$ficheEleve$admission$en extends Traductions$admin$ficheEleve$admission$fr {
+	_Traductions$admin$ficheEleve$admission$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sign-up answers';
+	@override String get aucune => 'No sign-up answers are recorded for this student.';
+	@override String get memorise => 'Already memorized';
+}
+
+// Path: admin.ficheEleve.classe
+class _Traductions$admin$ficheEleve$classe$en extends Traductions$admin$ficheEleve$classe$fr {
+	_Traductions$admin$ficheEleve$classe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Class';
+	@override String get titrePlusieurs => 'Classes';
+	@override String get aucune => 'This student is not in any class yet.';
+	@override String get enseignant => 'Teacher';
+	@override String get sansEnseignant => 'Teacher not assigned yet';
+	@override String get horaire => 'Schedule';
+	@override String get depuis => 'In the class since';
+}
+
+// Path: admin.ficheEleve.presences
+class _Traductions$admin$ficheEleve$presences$en extends Traductions$admin$ficheEleve$presences$fr {
+	_Traductions$admin$ficheEleve$presences$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Attendance';
+	@override String get aucune => 'No past session yet: attendance will appear after the first session.';
+	@override String get seances => 'Sessions held';
+	@override String get presents => 'Present';
+	@override String get retards => 'Late';
+	@override String get absents => 'Absent';
+	@override String get excuses => 'Excused';
+	@override String get dernieres => 'Latest sessions';
+	@override String get presente => 'Present';
+	@override String get enRetard => 'Late';
+	@override String get absente => 'Absent';
+	@override String get excusee => 'Excused';
+	@override String get inconnue => 'Attendance not known yet';
+}
+
+// Path: admin.ficheEleve.progression
+class _Traductions$admin$ficheEleve$progression$en extends Traductions$admin$ficheEleve$progression$fr {
+	_Traductions$admin$ficheEleve$progression$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Progress';
+	@override String get aucune => 'No stage yet: the student is in no class, or is waiting for the reading interview.';
+	@override String get etape => 'Current stage';
+	@override String ordre({required Object ordre}) => 'Stage ${ordre}';
+	@override String get depuis => 'In the stage since';
+	@override String get dateLimite => 'To finish before';
+	@override String get rythme => 'Pace';
+	@override String get dansLesTemps => 'On schedule';
+	@override String get auDelaDuPrevu => 'Past the planned time';
+}
+
+// Path: admin.ficheEleve.compte
+class _Traductions$admin$ficheEleve$compte$en extends Traductions$admin$ficheEleve$compte$fr {
+	_Traductions$admin$ficheEleve$compte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Account';
+	@override String get etat => 'Account status';
+	@override String get inscritLe => 'Signed up on';
+	@override String get accesJusquAu => 'Temporary access until';
 }
 
 // Path: admin.comptes.retrait
@@ -35821,6 +35971,68 @@ extension on TraductionsEn {
 			'admin.suppressions.retraits.refus.etatAvantInconnu' => 'This account was deleted before the app kept its previous state. It cannot be restored here.',
 			'admin.suppressions.retraits.refus.erreur' => 'The restoration could not be confirmed. Check the list before trying again.',
 			'admin.suppressions.retraits.voirPlus' => 'Show more deleted accounts',
+			'admin.ficheEleve.fil' => 'People',
+			'admin.ficheEleve.introuvable.titre' => 'This record can\'t be found',
+			'admin.ficheEleve.introuvable.phrase' => 'No student has this identifier, or the person was removed. Go back to the list to look for them.',
+			'admin.ficheEleve.introuvable.retour' => 'Back to People',
+			'admin.ficheEleve.sansDonnees' => 'This student\'s record could not be loaded',
+			'admin.ficheEleve.ouvrir' => 'Open the record',
+			'admin.ficheEleve.ouvrirDe' => ({required Object dePrenom}) => 'Open ${dePrenom}\'s record',
+			'admin.ficheEleve.identite.titre' => 'Identity',
+			'admin.ficheEleve.identite.prenom' => 'First name',
+			_ => null,
+		} ?? switch (path) {
+			'admin.ficheEleve.identite.nom' => 'Last name',
+			'admin.ficheEleve.identite.matricule' => 'ID number',
+			'admin.ficheEleve.identite.age' => 'Age',
+			'admin.ficheEleve.identite.genre' => 'Gender',
+			'admin.ficheEleve.identite.langueCours' => 'Class language',
+			'admin.ficheEleve.identite.langueCompte' => 'Account language',
+			'admin.ficheEleve.identite.masquee' => 'Identity hidden: only the ID number is shown.',
+			'admin.ficheEleve.identite.ageEnfant' => ({required Object age}) => 'Child, ${age} years old',
+			'admin.ficheEleve.famille.titre' => 'Family',
+			'admin.ficheEleve.famille.tuteur' => 'Guardian',
+			'admin.ficheEleve.famille.courriel' => 'Email',
+			'admin.ficheEleve.famille.telephone' => 'Phone',
+			'admin.ficheEleve.famille.ouvrir' => 'Open the family',
+			'admin.ficheEleve.famille.sansTuteur' => 'This adult learns for themselves: there is no guardian.',
+			'admin.ficheEleve.famille.tuteurMasque' => 'Guardian\'s identity hidden.',
+			'admin.ficheEleve.admission.titre' => 'Sign-up answers',
+			'admin.ficheEleve.admission.aucune' => 'No sign-up answers are recorded for this student.',
+			'admin.ficheEleve.admission.memorise' => 'Already memorized',
+			'admin.ficheEleve.classe.titre' => 'Class',
+			'admin.ficheEleve.classe.titrePlusieurs' => 'Classes',
+			'admin.ficheEleve.classe.aucune' => 'This student is not in any class yet.',
+			'admin.ficheEleve.classe.enseignant' => 'Teacher',
+			'admin.ficheEleve.classe.sansEnseignant' => 'Teacher not assigned yet',
+			'admin.ficheEleve.classe.horaire' => 'Schedule',
+			'admin.ficheEleve.classe.depuis' => 'In the class since',
+			'admin.ficheEleve.presences.titre' => 'Attendance',
+			'admin.ficheEleve.presences.aucune' => 'No past session yet: attendance will appear after the first session.',
+			'admin.ficheEleve.presences.seances' => 'Sessions held',
+			'admin.ficheEleve.presences.presents' => 'Present',
+			'admin.ficheEleve.presences.retards' => 'Late',
+			'admin.ficheEleve.presences.absents' => 'Absent',
+			'admin.ficheEleve.presences.excuses' => 'Excused',
+			'admin.ficheEleve.presences.dernieres' => 'Latest sessions',
+			'admin.ficheEleve.presences.presente' => 'Present',
+			'admin.ficheEleve.presences.enRetard' => 'Late',
+			'admin.ficheEleve.presences.absente' => 'Absent',
+			'admin.ficheEleve.presences.excusee' => 'Excused',
+			'admin.ficheEleve.presences.inconnue' => 'Attendance not known yet',
+			'admin.ficheEleve.progression.titre' => 'Progress',
+			'admin.ficheEleve.progression.aucune' => 'No stage yet: the student is in no class, or is waiting for the reading interview.',
+			'admin.ficheEleve.progression.etape' => 'Current stage',
+			'admin.ficheEleve.progression.ordre' => ({required Object ordre}) => 'Stage ${ordre}',
+			'admin.ficheEleve.progression.depuis' => 'In the stage since',
+			'admin.ficheEleve.progression.dateLimite' => 'To finish before',
+			'admin.ficheEleve.progression.rythme' => 'Pace',
+			'admin.ficheEleve.progression.dansLesTemps' => 'On schedule',
+			'admin.ficheEleve.progression.auDelaDuPrevu' => 'Past the planned time',
+			'admin.ficheEleve.compte.titre' => 'Account',
+			'admin.ficheEleve.compte.etat' => 'Account status',
+			'admin.ficheEleve.compte.inscritLe' => 'Signed up on',
+			'admin.ficheEleve.compte.accesJusquAu' => 'Temporary access until',
 			'admin.comptes.titre' => 'Accounts',
 			'admin.comptes.intro' => 'All the people registered, those awaiting a decision first. A teacher with no ID document submitted stays visible here: this is the only place that shows them.',
 			'admin.comptes.attenteUneAujourdhui' => 'One person awaits a decision, registered today.',
@@ -35830,8 +36042,6 @@ extension on TraductionsEn {
 			'admin.comptes.filtreTousEtats' => 'All',
 			'admin.comptes.filtreTousRoles' => 'All roles',
 			'admin.comptes.filtreRole' => 'Role',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.aucunAvecCeFiltre' => 'No account with this filter',
 			'admin.comptes.aucunAvecCeFiltreDetail' => 'Remove a filter to widen the list.',
 			'admin.comptes.erreur' => 'The accounts could not be read. Try again in a moment.',
@@ -36284,6 +36494,8 @@ extension on TraductionsEn {
 			'admin.finance.politiques' => 'Commercial policies',
 			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'admin.finance.vue.contexte' => ({required Object deMois}) => 'The figures for ${deMois}, each on its own: what is collected, what is recognized as revenue, what is owed to teachers and what stays on families\' profiles.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.vue.indicateurs' => 'Month\'s indicators',
 			'admin.finance.vue.encaisse' => 'Amount collected',
 			'admin.finance.vue.encaisseDetail' => 'Payments received this month. A collection is not yet revenue.',
@@ -36344,8 +36556,6 @@ extension on TraductionsEn {
 			'admin.finance.vue.alerte.quiClasse' => ({required Object classe}) => 'Class ${classe}',
 			'admin.finance.vue.alerte.quiInconnu' => 'A profile',
 			'admin.finance.vue.alerte.ouvrirComptes' => 'Open the accounts',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.vue.alerte.ouvrirClasses' => 'Open the classes',
 			'admin.finance.pol.contexte' => 'The academy\'s commercial rules, versioned and dated. A draft is prepared here and applies only once published, from its effective date. What protects families\' money is not set here.',
 			'admin.finance.pol.statutBrouillon' => 'Draft',
@@ -36798,6 +37008,8 @@ extension on TraductionsEn {
 			'admin.planning.videDetail' => 'Sessions appear here as soon as a class has a timetable this week. Try another week.',
 			'admin.planning.sansDonnees' => 'The planning could not be loaded',
 			'admin.planning.erreur' => 'The planning could not be read: the read may not have reached Rewayah. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planning.indisponiblePhrase' => 'The planning will be shown here once the server is connected. Until then, nothing is shown: no session is invented.',
 			'admin.planning.statutPrevue' => 'Planned',
 			'admin.planning.statutPreparation' => 'Being prepared',
@@ -36858,8 +37070,6 @@ extension on TraductionsEn {
 			'admin.incidents.sansDonnees' => 'The incidents could not be loaded',
 			'admin.incidents.erreur' => 'The incidents could not be read: the read may not have reached Rewayah. Try again in a moment.',
 			'admin.incidents.indisponiblePhrase' => 'Incidents will be shown here once the server is connected. Until then, nothing is shown: no incident is invented.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.guideCommentaires.lien' => 'Guide comments',
 			'admin.guideCommentaires.titre' => 'Guide comments',
 			'admin.guideCommentaires.intro' => 'Questions from readers of the teacher\'s guide, part by part. The least clear parts come first. Each reader only sees their own thread.',
@@ -37312,6 +37522,8 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.champs.lien' => 'Link address (https)',
 			'admin.bibliotheque.import.champs.categorie' => 'Category',
 			'admin.bibliotheque.import.champs.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.champs.langue' => 'Language',
 			'admin.bibliotheque.import.champs.niveau' => 'Level',
 			'admin.bibliotheque.import.completerDabord' => 'First enter the title, type, language and category.',
@@ -37372,8 +37584,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.simple.acces.lectureAide' => 'The document opens in the app and is not saved on the device. This is the default.',
 			'admin.bibliotheque.import.simple.acces.telechargement' => 'Download allowed',
 			'admin.bibliotheque.import.simple.acces.telechargementAide' => 'The student can save the file on their device. A file that has been downloaded cannot be taken back.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.simple.rangement.titre' => 'Shelf',
 			'admin.bibliotheque.import.simple.rangement.cours' => 'A document from the academy, useful for classes. Shelved first in the Library.',
 			'admin.bibliotheque.import.simple.rangement.plusLoin' => 'Another document. Shelved lower in the Library.',
@@ -37826,6 +38036,8 @@ extension on TraductionsEn {
 			'nav.halo.nouveauTitre' => ({required num n, required Object nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${nombre} new item to read', other: '${nombre} new items to read', ), 
 			'nav.halo.nouveauMot' => 'To read',
 			'nav.halo.lire' => 'Read',
+			_ => null,
+		} ?? switch (path) {
 			'nav.halo.salleNom' => ({required Object compte}) => '${compte}, the room is open',
 			'nav.filAriane.separateur' => '›',
 			'nav.filAriane.suite' => ({required Object libelle}) => '› ${libelle}',
@@ -37886,8 +38098,6 @@ extension on TraductionsEn {
 			'compte.reglagesDetail' => 'Appearance, notifications and accessibility',
 			'compte.profils' => 'Manage my household',
 			'compte.profilsDetail' => 'Manage your children\'s profiles',
-			_ => null,
-		} ?? switch (path) {
 			'compte.appareils' => 'Household',
 			'compte.appareilsDetail' => 'The devices and profiles linked to your household',
 			'compte.confidentialite' => 'Privacy',
@@ -38340,6 +38550,8 @@ extension on TraductionsEn {
 			'notifications.types.annonceClasse' => 'Class announcement',
 			'notifications.types.changementSeance' => 'Session change',
 			'notifications.types.decisionDossier' => 'Decision on a file',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.types.messageMetier' => 'Message',
 			'notifications.types.reponseAttendue' => 'Reply expected',
 			'notifications.types.accesFinance' => 'Access and payments',
@@ -38400,8 +38612,6 @@ extension on TraductionsEn {
 			'eleve.accueil.entreeSePrepare' => 'Your entry is getting ready. Try again in a moment.',
 			'eleve.coran.titre' => 'The Quran',
 			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.mecquoise' => 'Revealed in Makkah',
 			'eleve.coran.medinoise' => 'Revealed in Madinah',
 			'eleve.coran.reprendre' => 'Resume your reading',
@@ -38854,6 +39064,8 @@ extension on TraductionsEn {
 			'enseignant.journee.lancementPlusTard' => 'Starting opens ten minutes before the class time.',
 			'enseignant.journee.aucunCours' => 'No upcoming class',
 			'enseignant.journee.aucunCoursDetail' => 'Take on a waiting student: that is what fills your day.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.colonne' => 'The day',
 			'enseignant.journee.ligneCours' => ({required Object prenom}) => 'Class with ${prenom}',
 			'enseignant.journee.lignePause' => 'Break',
@@ -38914,8 +39126,6 @@ extension on TraductionsEn {
 			'enseignant.journee.remplirCahier' => 'Fill in the handover notebook',
 			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Fill in the handover notebook of class ${classe}',
 			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Required: the handover notebook ${classe} is filled in once a week for each student.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.cahierObligatoireSeance' => ({required Object classe}) => 'Required: the handover notebook ${classe} is filled in after each session, for each student.',
 			'enseignant.journee.voirCahier' => ({required Object classe}) => 'See the handover notebook ${classe}',
 			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'See the handover notebook of class ${classe}',
@@ -39368,6 +39578,8 @@ extension on TraductionsEn {
 			'enseignant.revenus.releveSection' => 'Statement',
 			'enseignant.revenus.releveIndisponibleTitre' => 'The statement is not available yet',
 			'enseignant.revenus.releveIndisponiblePhrase' => 'The months closed by the academy will appear here as soon as the statement is in service. Until then, only the estimate for the current month is shown.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.indisponibleTitre' => 'Your income is not published yet',
 			'enseignant.revenus.indisponiblePhrase' => 'Your estimate for the month will appear here as soon as the academy has published it. No amount is calculated on this device.',
 			'enseignant.revenus.releveVide' => 'No month closed yet',
@@ -39428,8 +39640,6 @@ extension on TraductionsEn {
 			'controleur.complement.questionMotif' => 'Why are you adding this addendum?',
 			'controleur.complement.contexteMotif' => 'Optional: the reason helps the administration read the addendum. The original report does not change.',
 			'controleur.complement.precision' => 'Clarification',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.precisionAide' => 'When a detail is missing · it completes the report without changing anything in it',
 			'controleur.complement.correction' => 'Correction',
 			'controleur.complement.correctionAide' => 'When some information in the report is inaccurate · the original stays readable, the correction appears below it',
@@ -39882,6 +40092,8 @@ extension on TraductionsEn {
 			'tc.classe.etat.absent' => 'Absent',
 			'tc.classe.fiche.niveau' => 'Level',
 			'tc.classe.fiche.objectif' => 'Current goal',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.fiche.derniereSeance' => 'Last session',
 			'tc.classe.fiche.aReprendre' => 'To resume',
 			'tc.classe.fiche.presenceRecente' => 'Recent attendance',
@@ -39942,8 +40154,6 @@ extension on TraductionsEn {
 			'tc.observation.explication.sansMediaDetail' => 'Your microphone and camera stay off so as not to interrupt the class.',
 			'tc.observation.explication.revenir' => 'If another student is reciting during your first visit, you can come back later to listen to your child.',
 			'tc.observation.explication.ecourtee' => 'A visit left before the end counts as a whole visit: unused time is not carried over.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.explication.sansIntervenir' => 'To protect concentration, you observe without intervening.',
 			'tc.observation.explication.informes' => 'Your child and their teacher are informed.',
 			'tc.observation.explication.observer' => 'Observe now',
@@ -40396,6 +40606,8 @@ extension on TraductionsEn {
 			'adulte.acceptation.impossible' => 'This account cannot join this plan at the moment.',
 			'adulte.acceptation.perimee' => 'This invitation is no longer valid.',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Reply recorded on ${date}.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.titreNeutre' => 'Family plan invitation',
 			'adulte.acceptation.sansCompteTitre' => 'Family plan invitation',
 			'adulte.acceptation.sansCompte' => 'To reply, sign in to your account, or create one. You will then read what the person inviting you will and will not see before you decide.',
@@ -40456,8 +40668,6 @@ extension on TraductionsEn {
 			'adulte.reprise.etats.deposee' => 'Submitted',
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refused by the account holder',
 			'adulte.reprise.etats.attenteAdministration' => 'Pending the administration',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.etats.validee' => 'Approved',
 			'adulte.reprise.etats.refusee' => 'Refused',
 			'adulte.reprise.phrases.deposee' => 'The household account holder has been informed. The administration will review the request.',
@@ -40910,6 +41120,8 @@ extension on TraductionsEn {
 			'argent.acces.pastilleSuspendu' => 'Suspended',
 			'argent.acces.pastilleReactive' => 'Reactivated',
 			'identiteProfil.age' => ({required Object n}) => '${n} years old',
+			_ => null,
+		} ?? switch (path) {
 			'identiteProfil.classe' => ({required Object classe}) => 'Class ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, child profile',
@@ -40970,8 +41182,6 @@ extension on TraductionsEn {
 			'com.socle.composants.etats.chargement' => 'Loading',
 			'com.socle.composants.etats.videTitre' => 'Nothing here yet',
 			'com.socle.composants.etats.erreurTitre' => 'This content could not be loaded.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.etats.erreur' => 'The request may not have reached Rewayah. Try again in a moment.',
 			'com.socle.composants.etats.reessayer' => 'Try again',
 			'com.socle.composants.etats.horsLigne' => 'You are offline. New messages cannot be refreshed.',
@@ -41424,6 +41634,8 @@ extension on TraductionsEn {
 			'com.communaute.demo.f.fonctionYoussef' => 'Teacher, Al-Kawthar class',
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
 			'com.communaute.demo.f.fonctionMariam' => 'Teacher, An-Nas class',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
 			'com.communaute.demo.f.fonctionHamza' => 'Teacher, Al-Ikhlas class',
 			'com.communaute.demo.f.memorisationTitre' => 'Ideas for memorization?',
@@ -41484,8 +41696,6 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Open in ${module}: ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.planning' => 'Planning',
 			'com.studio.aujourdhui.modules.dossiers' => 'Files',
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
@@ -41938,6 +42148,8 @@ extension on TraductionsEn {
 			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent}% compared with the previous period',
 			'comptable.graphiques.rapportsTitre' => 'Reports',
 			'comptable.graphiques.rapportsSousTitre' => 'Inflows, outflows and cash position over time.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.vide' => 'No data to draw',
 			'comptable.graphiques.videDetail' => 'Charts will appear here as soon as collections or payments have been recorded.',
 			'comptable.graphiques.erreur' => 'The charts could not be read: the request may not have reached Rewayah. Try again in a moment.',
@@ -41998,8 +42210,6 @@ extension on TraductionsEn {
 			'comptable.coffres.taxesObligations' => 'Taxes & obligations',
 			'comptable.coffres.reserveStrategique' => 'Strategic reserve',
 			'comptable.coffres.enTransit' => 'In transit',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.coffres.tresorerieLibre' => 'Free cash',
 			'comptable.statuts.paiement.aCalculer' => 'To calculate',
 			'comptable.statuts.paiement.calcule' => 'Calculated',
@@ -42452,6 +42662,8 @@ extension on TraductionsEn {
 			'comptable.encaissements.titre' => 'Collections',
 			'comptable.encaissements.sousTitre' => 'A payment is confirmed only after the provider.',
 			'comptable.encaissements.detailTitre' => 'Collection details',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rapprochementTitre' => 'Reconciliation',
 			'comptable.encaissements.rapprochementSousTitre' => 'Link each transaction to what was waiting for it.',
 			'comptable.beneficiaires.intro' => 'The payment profile of each teacher and each contractor. Only the beneficiary enters or changes their details: you can remind them, ask for an update or suspend their payments.',
@@ -42512,8 +42724,6 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.profil.motifRequis' => 'Choose a reason to continue.',
 			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'See ${nom}\'s thread',
 			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => '${nom}\'s thread could not be opened: it does not exist yet or the read did not go through. Try again in a moment.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.titre' => 'Beneficiaries',
 			'comptable.beneficiaires.sousTitre' => 'Details masked: only the beneficiary changes their own.',
 			'comptable.beneficiaires.profilTitre' => 'Payment profile',
@@ -42966,6 +43176,8 @@ extension on TraductionsEn {
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => '${dePrenom}\'s request declined.',
 			'presentationTuteur.echecReponse' => 'Your answer could not be confirmed. The request is still pending: try again.',
 			'presentationTuteur.vide' => 'No display request pending.',
+			_ => null,
+		} ?? switch (path) {
 			'presentationTuteur.erreur' => 'The requests could not be loaded. Try again.',
 			'presentationTuteur.sansDonnees' => 'the display requests',
 			'presentationTuteur.accueil.titre' => 'Display request',
@@ -43026,8 +43238,6 @@ extension on TraductionsEn {
 			'recherche.domaines.remplacements' => 'Replacements',
 			'recherche.voirDavantage' => 'See more',
 			'recherche.pageSuivante' => 'Loading more results…',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.pageEnEchec' => 'The next results could not be loaded.',
 			'recherche.etats.vide.titre' => 'No results for this search.',
 			'recherche.etats.vide.phrase' => 'Try another word or a filter.',
@@ -43480,6 +43690,8 @@ extension on TraductionsEn {
 			'courriels.admin.file.statut.annule' => 'Cancelled',
 			'courriels.admin.file.origine.auto' => 'Automatic',
 			'courriels.admin.file.origine.manuel' => 'Manual',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.messageAuto' => 'Automatic message',
 			'courriels.admin.file.champs.destinataire' => 'To',
 			'courriels.admin.file.champs.categorie' => 'Category',
@@ -43540,8 +43752,6 @@ extension on TraductionsEn {
 			'admissions.reponses.genre' => 'Gender',
 			'admissions.reponses.garcon' => 'Boy',
 			'admissions.reponses.fille' => 'Girl',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.reponses.homme' => 'Man',
 			'admissions.reponses.femme' => 'Woman',
 			'admissions.reponses.niveau' => 'Stated level',
@@ -43994,6 +44204,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'unknown mother tongue, filed under other language',
 			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'an unknown language of explanation is filed under other language',
 			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'Arabic is removed from the languages of explanation (it is not a teaching language)',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'a multiple-choice answer is not recognized',
 			'candidatsFlux.importFormulaires.avertissement.ijazaDeclareeEnG' => 'ijaza declared as memorization: memorization is for the person to fill in',
 			'candidatsFlux.importFormulaires.avertissement.experiencePretTest' => '"ready for a test" has no equivalent for experience: for the person to fill in',
@@ -44054,8 +44266,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'These answers create no application: they are used to recognize people when they sign up.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'Saved.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'Already saved: nothing changed.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'Unreadable rows: not imported.',
 			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'Replaced by a more recent one: ${n}',
 			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'Row by row',
@@ -44508,6 +44718,8 @@ extension on TraductionsEn {
 			'calendrier.dates.type.fermeture' => 'Closure',
 			'calendrier.dates.type.rencontre' => 'Recitation meeting',
 			'calendrier.dates.type.evaluation' => 'Assessment',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.type.autre' => 'Other date',
 			'calendrier.dates.categorie.ramadan' => 'Ramadan, 20 days at most',
 			'calendrier.dates.categorie.aidAlAdha' => 'Eid al-Adha, 10 days at most',
@@ -44568,8 +44780,6 @@ extension on TraductionsEn {
 			'calendrier.dates.concernees.erreur' => 'The sessions concerned could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
 			'calendrier.dates.conflits.titre' => 'Sessions that cannot be restored',
 			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Other class at the same time, ${quand}',

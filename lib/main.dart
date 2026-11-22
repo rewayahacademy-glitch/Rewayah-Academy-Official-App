@@ -18,6 +18,8 @@ import 'core/accessibilite/reponse_presentation_supabase.dart';
 import 'core/admin/bibliotheque_admin_supabase.dart';
 import 'core/admin/chiffres_academie_supabase.dart';
 import 'core/admin/classes_admin_supabase.dart';
+import 'core/admin/fiche_eleve_direction.dart';
+import 'core/admin/fiche_eleve_direction_supabase.dart';
 import 'core/admin/fondateurs_supabase.dart';
 import 'core/admin/fusion_classes_supabase.dart';
 import 'core/admin/incidents_seances_supabase.dart';
@@ -392,6 +394,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // SNT (03/11/2026) : les seances reportees et la nouvelle date que la
   // direction fixe (RPC lister_seances_reportees, fixer_nouvelle_date_seance).
+  // FICHE-ELEVE-DIRECTION (22/11/2026) : la fiche d'un eleve lue par la
+  // direction (RPC fiche_eleve_direction, migration 20261201010000).
+  portFicheEleveDirectionProvider.overrideWithValue(
+    FicheEleveDirectionSupabase(Supabase.instance.client),
+  ),
   portSeancesReporteesProvider.overrideWithValue(
     SeancesReporteesSupabase(Supabase.instance.client),
   ),

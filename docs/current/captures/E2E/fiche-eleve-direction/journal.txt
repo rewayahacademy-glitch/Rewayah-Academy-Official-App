@@ -1,0 +1,43 @@
+FICHE-ELEVE-DIRECTION, journal de verification (22/11/2026, R3). Rien ici n'est une preuve en production.
+
+CE QUI EST LIVRE (branche claude/fiche-eleve-direction) :
+- Serveur : migration 20261201010000 (additive, aucun DROP, DELETE ni TRUNCATE) : `public.fiche_eleve_direction(uuid)`, SECURITY DEFINER,
+  search_path = '', direction active seulement (comme `lister_demandes_admission`), identite masquee respectee (prenoms, noms, courriel,
+  telephone nuls ; le matricule se lit toujours). Rend en un appel : identite, tuteur (courriel, telephone si present), reponses de
+  l'admission (profil_eleve_id, sinon prenom dans la demande du foyer), classes actives (enseignant, creneaux), presences (via
+  etat_presence), progression (private.etape_eleve, private.vitesse_eleve, dates retenues pour l'eleve de 6 a 9 ans). Un non-eleve rend NULL.
+- App : `lib/core/admin/fiche_eleve_direction*.dart` (modele, port, adaptateur), `features/admin_personnes/fiche_eleve_direction_page.dart`
+  (route /admin/personnes/eleves/:eleveId), composants reutilises : SurfaceFiche, ColonnesFiche (fiche du tuteur), PhotoEleve, CarteLignes,
+  LigneCleValeur, libelles de l'inscription (reponses_admission.dart), libelleCreneauLu (heure de la personne puis La Mecque).
+- Personnes : sur ordinateur, la ligne d'un eleve ouvre la fiche ; au telephone, l'apercu garde son role et propose « Ouvrir la fiche »
+  (geste ajoute a la liste des gestes du compte : apercu_compte.dart n'est PAS modifie) ; la ligne d'une famille offre « Ouvrir la fiche de X »
+  pour chacun de ses eleves (foyer lu dans les comptes deja charges).
+- i18n fr/en/ar : admin.ficheEleve.* ; `dart run slang` regenere.
+
+VERIFIE (poste de l'agent, Postgres 16 local /usr/lib/postgresql/16/bin, Flutter /opt/flutter) :
+- stub_auth.sql puis TOUTES les migrations (dont 20261201010000) sans erreur.
+- supabase/tests/scenarios_fiche_eleve_direction.sql : OK x6 (tuteur et enseignant refuses 42501 ; anon et agent_ro sans EXECUTE ;
+  la direction lit identite, tuteur, admission liee par profil_eleve_id, classe et enseignant, creneau, presences ; un adulte n'a ni tuteur ni
+  classe inventes ; un non-eleve, un inconnu et NULL rendent NULL).
+- dart analyze --fatal-infos : aucune erreur. verifier_jetons, verifier_branchement (aucun nouveau fichier non atteint), verifier_conversations,
+  verifier_revue (cartes-collees, bouton-recompose, libelle-ambigu, mot-interne, erreur-sans-action) : aucune violation.
+- flutter test test/features/admin_personnes : 91 tests verts, dont les nouveaux (test/features/admin_personnes/fiche_eleve_direction_test.dart) :
+  lecture du serveur ; contenu a 390, 1280 et 1440 (sept sections, aucun debordement, en-tete jamais plus large que 1120, deux colonnes
+  a 1280 et 1440) ; arabe RTL texte x2 a 390 ; chargement ; introuvable ; erreur avec « Reessayer » ; hors ligne sans donnees ; identite
+  masquee ; sans classe, sans reponse, sans seance ; depuis Personnes : ligne d'un eleve (ordinateur), apercu (telephone), famille.
+- Une seule barre de defilement, celle de la page : aucun cadre de hauteur fixe autour d'un contenu qui defile (PageShell defilante).
+- Captures (test/capture/fiche_eleve_direction_capture_test.dart) : 01 a 05 dans ce dossier (390, 1280, 1440, arabe 390, adulte sans classe 1440).
+
+TEST EXISTANT MODIFIE : personnes_page_test.dart « ordinateur : toucher un eleve remplit l'apercu » devient « toucher une famille » ; la ligne
+d'un eleve ouvre desormais sa fiche, par ordre du directeur (aucun test supprime).
+
+NON VERIFIE / A SAVOIR :
+- Aucune ouverture dans un navigateur ni sur la production ; rendu juge par les tests et les captures de test (polices du depot).
+- Le scenario SQL n'est pas dans `.github/workflows/ci.yml` (`.github/` est interdit aux agents par le garde-fou) : le pilote doit ajouter
+  l'etape « psql ... -f supabase/tests/scenarios_fiche_eleve_direction.sql » a la suite de « Scenarios listes des comptes par role ».
+- Migration NON installee en production (le pilote l'installe apres fusion) ; sans elle, la page de la fiche affiche l'etat d'erreur.
+- Le telephone du tuteur vient de auth.users.phone (lu par to_jsonb pour ne pas casser la pile nue qui n'a pas cette colonne) : absent si
+  la famille n'en a pas renseigne ; aucune donnee inventee.
+- Ni photo reelle ni maquette du directeur : la disposition derive de la fiche du tuteur ; a montrer au directeur avant d'aller plus loin.
+- Pas de fiche pour la famille elle-meme : « Ouvrir la famille » ramene a Personnes, onglet Familles, sur la famille.
+- Le dossier d'un candidat enseignant et les autres onglets ne sont pas touches.
