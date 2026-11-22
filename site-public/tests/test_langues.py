@@ -171,3 +171,15 @@ class LogoDroiteAGauche(unittest.TestCase):
             rtl = re.findall(r"<path\b[^>]*/>", (assets / f"{nom}-rtl.svg").read_text(encoding="utf-8"))
             self.assertEqual(sorted(officiel), sorted(rtl))
             self.assertEqual(len(officiel), 34)
+
+
+def test_lien_francais_du_selecteur_garde_son_adresse():
+    """Directeur, 22/11/2026 : depuis la page arabe, « Français » ramenait a la page arabe."""
+    import langues as L
+    h = ('<a class="langue__lien" href="/fr/tarifs" hreflang="fr" lang="fr">Français</a>'
+         '<a href="/fr/" hreflang="fr" lang="fr">Français</a><a href="/fr/tarifs">Tarifs</a>')
+    for langue in ("ar", "en", "es", "pt"):
+        o = L.localiser(h, langue, "/fr/tarifs", "https://exemple.org", ["fr"])
+        assert 'href="/fr/tarifs" hreflang="fr"' in o
+        assert 'href="/fr/" hreflang="fr"' in o
+        assert f'<a href="/{langue}/tarifs">' in o
