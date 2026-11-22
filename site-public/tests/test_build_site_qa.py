@@ -137,6 +137,7 @@ class GeneratedSiteQA(unittest.TestCase):
                 "site.js",
                 "motion.js",
                 "avis.js",
+                "avis-plus.js",
                 "symbole.svg",
                 "symbole-white.svg",
                 "symbole-contour.svg",
@@ -439,8 +440,8 @@ class GeneratedSiteQA(unittest.TestCase):
         reduit = motion.split("if (reduit.matches) {\n      if (v.l !== v.longueur) {", 1)[1].split("return;", 1)[0]
         for etat in ("strokeDashoffset = '0'", "setAttribute('r', '0')", "--eclat-fil', '0'", "'--courbe', '0px'", "removeProperty('--eclat')"):
             self.assertIn(etat, reduit)
-        # Ce qui s'attenue : les titres de section (jamais sous le seuil WCAG AA) et les illustrations sans aucun texte.
-        self.assertIn("contenu.querySelectorAll('h2, figure, .bande-image')", motion)
+        # Ce qui s'attenue : les titres de section seulement ; les illustrations restent entieres (SITE-CORRECTIFS 5, 22/11/2026).
+        self.assertIn("contenu.querySelectorAll('h2').forEach", motion)
         self.assertIn("if (el.tagName.toLowerCase() !== 'h2' && el.textContent.trim()) return;", motion)
         self.assertIn("var seuil = (grand ? 3 : 4.5) + 0.15;", motion)
 

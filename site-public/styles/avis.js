@@ -232,6 +232,7 @@
       apercu.hidden = !assez;
       if (assez) apercu.querySelectorAll('[data-revele]').forEach(function (e) { e.classList.add('est-visible'); });
     }
+    if (typeof window.ameliorerAvis === 'function') window.ameliorerAvis();   // avis longs repliables, liste par paquets (avis-plus.js)
   }
 
   function lireMemoire(cle) {

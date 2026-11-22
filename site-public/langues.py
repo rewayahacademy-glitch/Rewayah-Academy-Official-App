@@ -173,6 +173,10 @@ _ABSOLU = re.compile(r'(https://[^"\'/<> ]+)/fr/(?!assets/)')
 _ABSOLU_RACINE = re.compile(r'(https://[^"\'/<> ]+)/fr"')
 
 
+_BLOCS_TEXTE_RTL = re.compile(
+    r'<(div|p|section)\s+class="((?:article-carte__texte|article-carte__meta|article-signature|articles__tete|entete-page__texte|entete-page__suite)(?: [^" ]+)*)"')
+
+
 def localiser(page_html: str, langue: str, route_fr: str, origin: str, disponibles: list[str], allow_indexing: bool = True) -> str:
     """Passe une page francaise rendue dans une autre langue : adresses, lang, dir, balises de langue. Les adresses des
     fichiers du site (/fr/assets/) restent communes a toutes les langues."""
@@ -185,6 +189,10 @@ def localiser(page_html: str, langue: str, route_fr: str, origin: str, disponibl
         h = _ABSOLU_RACINE.sub(lambda m: f'{m.group(1)}/{langue}"', h)
         h = h.replace('<html lang="fr"', f'<html lang="{langue}" dir="{DIRECTION[langue]}"', 1)
         h = h.replace('property="og:locale" content="fr_FR"', f'property="og:locale" content="{LOCALES[langue]}"', 1)
+        if DIRECTION[langue] == "rtl":   # titres, descriptions, cartes et signatures : lang et dir posés sur le bloc, quel que soit le CSS
+            h = _BLOCS_TEXTE_RTL.sub(lambda m: f'<{m.group(1)} lang="{langue}" dir="rtl" class="{m.group(2)}"', h)
+        if langue == "ar":   # l'academie se cherche en arabe : son nom arabe dans le partage aussi
+            h = h.replace('property="og:site_name" content="Rewayah Academy"', 'property="og:site_name" content="أكاديمية الرواية"', 1)
         if langue == "ar":   # la police arabe (37 Ko) n'est annoncee que sur les pages arabes
             h = h.replace('<link rel="stylesheet"', '<link rel="preload" href="/fr/assets/noto-sans-arabic-site.woff2" as="font" type="font/woff2" crossorigin>\n  <link rel="preload" href="/fr/assets/reem-kufi-titres.woff2" as="font" type="font/woff2" crossorigin>\n  <link rel="stylesheet"', 1)
     else:
