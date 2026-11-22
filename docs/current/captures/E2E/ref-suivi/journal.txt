@@ -1,0 +1,36 @@
+REF-SUIVI, journal des vérifications (22/11/2026). Lot sans écran : aucune capture d'image possible.
+Ce qui est vérifié ici : tests du site et scénario SQL. Non vérifié ici : dart analyze, flutter test (pas de Flutter dans la session, la CI les rejoue). Rien n'est prouvé en production.
+
+== site-public : python3 -m pytest -q tests/test_ref_suivi.py
+......                                                                   [100%]
+6 passed in 0.29s
+
+== site-public : tous les tests
+150 passed, 594 subtests passed in 11.11s
+
+== Postgres 16 nu : stub_auth.sql, puis 20261130978000_ref_suivi.sql, puis scenarios_ref_suivi.sql
+                          nom                           | etat | detail 
+--------------------------------------------------------+------+--------
+ 1 sans session : refus 28000                           | ok   | 
+ 10 anon n'execute pas la porte                         | ok   | 
+ 11 authenticated execute la porte                      | ok   | 
+ 12 la table a la RLS active                            | ok   | 
+ 13 le CHECK de format refuse une ecriture directe      | ok   | 
+ 14 la porte est SECURITY DEFINER avec search_path vide | ok   | 
+ 2a ref avec majuscule : 22023                          | ok   | 
+ 2b ref avec souligne : 22023                           | ok   | 
+ 2c ref de 49 signes : 22023                            | ok   | 
+ 2d ref vide : 22023                                    | ok   | 
+ 2e ref nul : 22023                                     | ok   | 
+ 2f ref de 48 signes accepte                            | ok   | 
+ 3 aucune ligne apres les refus pour a                  | ok   | 
+ 4 premiere pose : vrai                                 | ok   | 
+ 5 seconde pose avec une autre ref : faux               | ok   | 
+ 6 la premiere ref et sa date sont gardees              | ok   | 
+ 7 la source de b est la sienne                         | ok   | 
+ 8 authenticated ne lit pas la table (42501)            | ok   | 
+ 9 authenticated n'ecrit pas la table (42501)           | ok   | 
+(19 rows)
+
+DO
+ROLLBACK
