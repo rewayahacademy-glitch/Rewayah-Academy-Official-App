@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/candidature/fuseau_appareil.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/offres/offre_horaire.dart';
@@ -205,6 +206,7 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
   @override
   void initState() {
     super.initState();
+    _detecterFuseau();
     // « Deduit > choisi > saisi » : la langue de l'appareil est proposee.
     if (widget.etape.sorte == SorteEtape.langue &&
         widget.questionnaire.langue == null) {
@@ -217,6 +219,19 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
         });
       }
     }
+  }
+
+  /// Le fuseau lu sur l'appareil, au recapitulatif (« deduit > choisi »).
+  void _detecterFuseau() {
+    if (widget.etape.sorte != SorteEtape.recap ||
+        widget.questionnaire.fuseau != null) {
+      return;
+    }
+    final String? lu = fuseauIanaAppareil();
+    if (lu == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) _c.detecterFuseau(lu);
+    });
   }
 
   @override
@@ -964,7 +979,17 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
       case SorteEtape.chemin:
         return interludeChemin(context, _q, _ecran, _avancer);
       case SorteEtape.recap:
-        return interludeRecap(context, ref, _q, _ecran, _avancer);
+        return interludeRecap(
+          context,
+          ref,
+          _q,
+          _ecran,
+          // Sans fuseau, la demande ne part pas : jamais une valeur par
+          // defaut (directeur, 22/11/2026).
+          () => _continuer(
+            pret: ref.read(questionnaireInscriptionProvider).fuseau != null,
+          ),
+        );
     }
   }
 

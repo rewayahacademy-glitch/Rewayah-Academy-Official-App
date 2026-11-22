@@ -427,6 +427,7 @@ void main() {
             ),
           ],
           langue: 'francais',
+          fuseau: 'Europe/Paris',
         ),
       );
       expect(find.byKey(RecapitulatifEtape.cleVous), findsOneWidget);

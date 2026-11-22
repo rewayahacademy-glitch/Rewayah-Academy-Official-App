@@ -147,6 +147,9 @@ class FauxServiceDossier implements ServiceDossier {
   /// ONBOARDING-PRAXIS : la source declaree envoyee a chaque creation.
   final List<String?> sourcesEnvoyees = <String?>[];
 
+  /// ONBOARDING-PRAXIS : le fuseau envoye a chaque creation (`p_timezone`).
+  final List<String?> fuseauxEnvoyes = <String?>[];
+
   /// Vrai pour simuler le service de la demonstration.
   @override
   bool demonstration = false;
@@ -193,6 +196,7 @@ class FauxServiceDossier implements ServiceDossier {
     usages.add((usage: usage, suitDesCours: suitDesCours));
     apprenantsEnvoyes.add(apprenants);
     sourcesEnvoyees.add(source);
+    fuseauxEnvoyes.add(fuseau);
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
   }
 

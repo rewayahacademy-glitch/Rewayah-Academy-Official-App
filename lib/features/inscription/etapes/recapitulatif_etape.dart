@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/candidature/fuseau_appareil.dart';
 import '../../../core/candidature/port_inscription_candidat.dart';
 import '../../../core/candidature/port_ma_candidature.dart'
     show HorsLigneCandidature;
@@ -171,7 +170,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
               source: brouillon.titulaire
                   ? questionnaire.sourcePourServeur
                   : null,
-              fuseau: brouillon.titulaire ? fuseauIanaAppareil() : null,
+              fuseau: brouillon.titulaire ? questionnaire.fuseau : null,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
         // La demande est partie : les reponses quitteront l'appareil a

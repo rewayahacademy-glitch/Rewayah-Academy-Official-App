@@ -28623,6 +28623,21 @@ class Traductions$onboarding$recap$fr {
 	/// fr: 'Fuseau horaire : {ville} (détecté)'
 	String heure({required Object ville}) => 'Fuseau horaire : ${ville} (détecté)';
 
+	/// fr: 'Fuseau horaire : {ville}'
+	String heureChoisie({required Object ville}) => 'Fuseau horaire : ${ville}';
+
+	/// fr: 'Il est {ici} chez vous, {mecque} à La Mecque.'
+	String heures({required Object ici, required Object mecque}) => 'Il est ${ici} chez vous, ${mecque} à La Mecque.';
+
+	/// fr: 'Ce n'est pas mon fuseau'
+	String get pasMonFuseau => 'Ce n\'est pas mon fuseau';
+
+	/// fr: 'Votre fuseau horaire n'a pas pu être lu sur cet appareil. Choisissez-le : les horaires des cours vous seront montrés à votre heure.'
+	String get fuseauInconnu => 'Votre fuseau horaire n\'a pas pu être lu sur cet appareil. Choisissez-le : les horaires des cours vous seront montrés à votre heure.';
+
+	/// fr: 'Où vivez-vous ?'
+	String get fuseauChoix => 'Où vivez-vous ?';
+
 	/// fr: '{prenom} (vous)'
 	String vous({required Object prenom}) => '${prenom} (vous)';
 
@@ -74231,6 +74246,11 @@ extension on Traductions {
 			'onboarding.recap.langue' => ({required Object langue}) => 'Langue : ${langue}',
 			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '${langue}, sinon ${secours}',
 			'onboarding.recap.heure' => ({required Object ville}) => 'Fuseau horaire : ${ville} (détecté)',
+			'onboarding.recap.heureChoisie' => ({required Object ville}) => 'Fuseau horaire : ${ville}',
+			'onboarding.recap.heures' => ({required Object ici, required Object mecque}) => 'Il est ${ici} chez vous, ${mecque} à La Mecque.',
+			'onboarding.recap.pasMonFuseau' => 'Ce n\'est pas mon fuseau',
+			'onboarding.recap.fuseauInconnu' => 'Votre fuseau horaire n\'a pas pu être lu sur cet appareil. Choisissez-le : les horaires des cours vous seront montrés à votre heure.',
+			'onboarding.recap.fuseauChoix' => 'Où vivez-vous ?',
 			'onboarding.recap.vous' => ({required Object prenom}) => '${prenom} (vous)',
 			'onboarding.recap.adulte' => 'Adulte',
 			'onboarding.recap.ans' => ({required Object n}) => '${n} ans',

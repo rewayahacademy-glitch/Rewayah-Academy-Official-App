@@ -425,6 +425,8 @@ class QuestionnaireInscription {
     this.langueSecours,
     this.langueAutre = '',
     this.source,
+    this.fuseau,
+    this.fuseauDetecte = false,
   });
 
   /// « Commencer » a ete touche sur l'accueil.
@@ -451,6 +453,16 @@ class QuestionnaireInscription {
 
   /// « Comment avez-vous connu Rewayah ? », facultatif.
   final SourceConnaissance? source;
+
+  /// Le fuseau IANA de la personne (directeur, 22/11/2026 : « bien
+  /// travailler les fuseaux horaires ») : lu sur l'appareil, ou choisi. Jamais
+  /// une valeur par defaut : tant qu'il est inconnu, le recapitulatif le
+  /// demande.
+  final String? fuseau;
+
+  /// Vrai quand [fuseau] a ete lu sur l'appareil (« detecte ») ; faux quand
+  /// la personne l'a choisi.
+  final bool fuseauDetecte;
 
   /// L'usage, tel que l'inscription le connait.
   UsageInscription? get usage => switch (pourQui) {
@@ -539,10 +551,9 @@ class QuestionnaireInscription {
     SorteEtape.memorise => _apprenant(etape.rang)?.quantite != null,
     SorteEtape.objectif => _apprenant(etape.rang)?.objectif != null,
     SorteEtape.langue => langue != null,
-    SorteEtape.depart ||
-    SorteEtape.langueSecours ||
-    SorteEtape.chemin ||
-    SorteEtape.recap => true,
+    SorteEtape.depart || SorteEtape.langueSecours || SorteEtape.chemin => true,
+    // Le recapitulatif attend le fuseau : jamais une valeur par defaut.
+    SorteEtape.recap => fuseau != null,
   };
 
   /// Le premier ecran sans reponse, ou `null` quand tout est repondu.
@@ -580,6 +591,8 @@ class QuestionnaireInscription {
     String? langueAutre,
     SourceConnaissance? source,
     bool sansSource = false,
+    String? fuseau,
+    bool? fuseauDetecte,
   }) => QuestionnaireInscription(
     commence: commence ?? this.commence,
     apprendre: apprendre ?? this.apprendre,
@@ -589,6 +602,8 @@ class QuestionnaireInscription {
     langueSecours: sansSecours ? null : langueSecours ?? this.langueSecours,
     langueAutre: langueAutre ?? this.langueAutre,
     source: sansSource ? null : source ?? this.source,
+    fuseau: fuseau ?? this.fuseau,
+    fuseauDetecte: fuseauDetecte ?? this.fuseauDetecte,
   );
 
   /// Le texte garde sur l'appareil.
@@ -604,6 +619,8 @@ class QuestionnaireInscription {
     'langueSecours': langueSecours,
     'langueAutre': langueAutre,
     'source': source?.name,
+    'fuseau': fuseau,
+    'fuseauDetecte': fuseauDetecte,
   });
 
   /// Relit le texte garde ; un texte illisible, ou d'avant ce questionnaire,
@@ -638,12 +655,20 @@ class QuestionnaireInscription {
         source: SourceConnaissance.values
             .where((SourceConnaissance s) => s.name == json['source'])
             .firstOrNull,
+        fuseau: _fuseauLisible(json['fuseau']),
+        fuseauDetecte: json['fuseauDetecte'] == true,
       );
     } on Object catch (erreur) {
       journalDev('Questionnaire d inscription illisible : $erreur');
       return const QuestionnaireInscription();
     }
   }
+
+  static String? _fuseauLisible(Object? brut) =>
+      brut is String &&
+          RegExp(r'^[A-Za-z_]+(/[A-Za-z0-9_+\-]+)+$').hasMatch(brut)
+      ? brut
+      : null;
 
   static String? _codeLangue(Object? brut) =>
       brut is String && codesDesExplications.contains(brut) ? brut : null;
@@ -803,6 +828,18 @@ class QuestionnaireControleur extends Notifier<QuestionnaireInscription> {
         ? state.copier(sansSource: true)
         : state.copier(source: source),
   );
+
+  /// Le fuseau lu sur l'appareil, pose seulement s'il n'y en a pas encore
+  /// (un fuseau choisi par la personne n'est jamais remplace).
+  void detecterFuseau(String iana) {
+    if (state.fuseau == null) {
+      _poser(state.copier(fuseau: iana, fuseauDetecte: true));
+    }
+  }
+
+  /// Le fuseau choisi par la personne (« Ce n'est pas mon fuseau »).
+  void choisirFuseau(String iana) =>
+      _poser(state.copier(fuseau: iana, fuseauDetecte: false));
 
   /// Efface le questionnaire, une fois la demande envoyee.
   void effacer() {

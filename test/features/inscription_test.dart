@@ -62,6 +62,7 @@ const QuestionnaireInscription _qMoi = QuestionnaireInscription(
     ),
   ],
   langue: 'francais',
+  fuseau: 'Europe/Paris',
 );
 
 /// « Pour mon enfant », un enfant, et le parent qui suit ou non des cours.
@@ -90,6 +91,7 @@ QuestionnaireInscription _qFamille({required bool parent}) =>
           ),
       ],
       langue: 'francais',
+      fuseau: 'Europe/Paris',
       langueSecours: 'poular',
       source: SourceConnaissance.mosquee,
     );
@@ -574,6 +576,9 @@ void main() {
         },
       ]);
       expect(dossier.sourcesEnvoyees.single, isNull);
+      // Le fuseau de la personne part avec la demande (jamais Paris par
+      // defaut : ici, celui du questionnaire).
+      expect(dossier.fuseauxEnvoyes.single, 'Europe/Paris');
       // La fin, avant le depart : rien n'est redemande.
       expect(find.byKey(RecapitulatifEtape.cleFin), findsOneWidget);
       expect(find.text(t.onboarding.fin.trois), findsOneWidget);

@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/auth/service_auth.dart'
     show serviceAuthProvider;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart'
@@ -31,6 +32,7 @@ import 'package:rewayah_academy/features/connexion/ordre_entree.dart'
 import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/acces_questionnaire.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/coquille_onboarding.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/interludes_onboarding.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_donnees.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
@@ -54,6 +56,7 @@ const QuestionnaireInscription _moiComplet = QuestionnaireInscription(
     ),
   ],
   langue: 'francais',
+  fuseau: 'Europe/Paris',
 );
 
 Future<GoRouter> _monter(
@@ -506,6 +509,24 @@ void main() {
         find.byKey(const ValueKey<String>('questionnaire-source-mosquee')),
       );
       expect(find.text(t.onboarding.recap.rembourse), findsOneWidget);
+      // Le fuseau n'a pas pu etre lu (machine de test) : il est demande,
+      // jamais pose par defaut ; sans lui, la demande n'avance pas.
+      expect(
+        find.byKey(const ValueKey<String>('questionnaire-fuseau-inconnu')),
+        findsOneWidget,
+      );
+      await _continuer(tester);
+      expect(_etape(r), 'recap');
+      expect(
+        find.byKey(const Key('questionnaire-reponse-requise')),
+        findsOneWidget,
+      );
+      await _taper(
+        tester,
+        find.byKey(
+          const ValueKey<String>('questionnaire-fuseau-Africa/Conakry'),
+        ),
+      );
       await _continuer(tester);
       expect(_etape(r), codeEtapeAcces);
       expect(find.byKey(EcranAccesQuestionnaire.cle), findsOneWidget);
@@ -518,6 +539,74 @@ void main() {
       expect(q.langue, 'ha');
       expect(q.langueSecours, 'francais');
       expect(q.source, SourceConnaissance.mosquee);
+      expect(q.fuseau, 'Africa/Conakry');
+      expect(q.fuseauDetecte, isFalse);
+    });
+
+    testWidgets('le fuseau lu se dit en clair, l heure de la personne puis '
+        'celle de La Mecque ; « Ce n est pas mon fuseau » le corrige', (
+      WidgetTester tester,
+    ) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        _moiComplet
+            .copier(fuseau: 'Europe/Paris', fuseauDetecte: true)
+            .versTexte(),
+      );
+      await _monter(tester, '${Routes.commencer}?etape=recap');
+      expect(
+        find.text(
+          t.onboarding.recap.heure(ville: villeDuFuseauLibelle('Europe/Paris')),
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining(RegExp(r'\d\d:\d\d')), findsOneWidget);
+      expect(find.byKey(CarteFuseau.cleListe), findsNothing);
+      await _taper(tester, find.byKey(CarteFuseau.cleCorriger));
+      expect(find.byKey(CarteFuseau.cleListe), findsOneWidget);
+      await _taper(
+        tester,
+        find.byKey(const ValueKey<String>('questionnaire-fuseau-Africa/Lagos')),
+      );
+      final QuestionnaireInscription q = QuestionnaireInscription.depuisTexte(
+        lireMemoireAppareil(clefQuestionnaire),
+      );
+      expect(q.fuseau, 'Africa/Lagos');
+      expect(q.fuseauDetecte, isFalse);
+      expect(
+        find.text(
+          t.onboarding.recap.heureChoisie(
+            ville: villeDuFuseauLibelle('Africa/Lagos'),
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    test('sans fuseau, le questionnaire n est pas complet (jamais Paris par '
+        'defaut)', () {
+      expect(
+        QuestionnaireInscription.depuisTexte(_moiComplet.copier().versTexte())
+            .complet,
+        isTrue,
+      );
+      const QuestionnaireInscription sansFuseau = QuestionnaireInscription(
+        commence: true,
+        apprendre: true,
+        pourQui: PourQui.moi,
+        apprenants: <ApprenantQuestionnaire>[
+          ApprenantQuestionnaire(
+            prenom: 'Amina',
+            genre: Genre.femme,
+            niveau: NiveauDeclare.debutLettres,
+            objectif: ObjectifOnboarding.lire,
+            titulaire: true,
+          ),
+        ],
+        langue: 'francais',
+      );
+      expect(sansFuseau.complet, isFalse);
+      expect(sansFuseau.premiereManquante?.sorte, SorteEtape.recap);
     });
 
     testWidgets('un enfant qui a memorise : lecture (Hafs preselectionnee), '
@@ -898,6 +987,213 @@ void main() {
         verifierUnSeulBoutonPlein(tester);
       });
     }
+  });
+  // Directeur, 22/11/2026 (sur la maquette) : avec deux enfants, seul le
+  // prenom du deuxieme a ete demande, et les deux cartes « point de depart »
+  // portaient le meme prenom. Dans l'application, c'est impossible : chaque
+  // enfant passe par toutes ses questions, a son prenom ; chaque apprenant est
+  // un objet distinct ; chaque prenom est la ou il doit etre.
+  group('deux enfants : chacun ses questions, son prenom partout', () {
+    testWidgets('« Pour plusieurs enfants », ajout depuis la famille, retour '
+        'arriere : aucun ecran saute, aucun prenom melange', (
+      WidgetTester tester,
+    ) async {
+      ecrireMemoireAppareil(
+        clefQuestionnaire,
+        const QuestionnaireInscription(
+          commence: true,
+          apprendre: true,
+        ).versTexte(),
+      );
+      final GoRouter r = await _monter(
+        tester,
+        '${Routes.commencer}?etape=pourQui',
+      );
+      final List<String> vus = <String>[];
+      void noter() => vus.add(_etape(r)!);
+      Future<void> prenom(String p) async {
+        // Le champ repart vide pour chaque nouvel enfant.
+        expect(
+          tester
+              .widget<EditableText>(
+                find.descendant(
+                  of: find.byKey(const Key('questionnaire-prenom')),
+                  matching: find.byType(EditableText),
+                ),
+              )
+              .controller
+              .text,
+          isEmpty,
+        );
+        await tester.enterText(
+          find.byKey(const Key('questionnaire-prenom')),
+          p,
+        );
+        await _continuer(tester);
+      }
+
+      await _carte(tester, 'pour-qui', 'plusieurs');
+      await _continuer(tester);
+
+      // Premier enfant.
+      noter();
+      expect(_titre(tester), t.onboarding.prenom.titreEnfant);
+      await prenom('Yasmine');
+      noter();
+      expect(_titre(tester), t.onboarding.age.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'age', '9');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.genre.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'genre', 'femme');
+      await _continuer(tester);
+
+      // La famille : « Ajouter l'enfant suivant ».
+      noter();
+      expect(find.text(t.onboarding.famille.suivant), findsOneWidget);
+      await _continuer(tester);
+
+      // Deuxieme enfant : toutes ses questions, a son prenom.
+      noter();
+      expect(_titre(tester), t.onboarding.prenom.titreSuivant);
+      await prenom('Bilal');
+      noter();
+      expect(_titre(tester), t.onboarding.age.titre(prenom: 'Bilal'));
+      await _carte(tester, 'age', '12');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.genre.titre(prenom: 'Bilal'));
+      await _carte(tester, 'genre', 'homme');
+      await _continuer(tester);
+
+      // La famille : un troisieme ajoute puis abandonne par le retour.
+      noter();
+      await _taper(
+        tester,
+        find.byKey(const Key('questionnaire-famille-ajouter')),
+      );
+      expect(_etape(r), 'prenom-2');
+      expect(_titre(tester), t.onboarding.prenom.titreSuivant);
+      await _taper(tester, find.byType(DisqueRetour));
+      expect(_etape(r), 'famille');
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      await _continuer(tester);
+
+      // Le niveau de chacun.
+      noter();
+      expect(_titre(tester), t.onboarding.niveau.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'niveau', 'debut_lettres');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.objectif.titre(prenom: 'Yasmine'));
+      await _carte(tester, 'objectif', 'priere');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.niveau.titre(prenom: 'Bilal'));
+      // Un retour arriere, puis on revient : Yasmine garde ses reponses.
+      await _taper(tester, find.byType(DisqueRetour));
+      expect(_etape(r), 'objectif-0');
+      expect(_titre(tester), t.onboarding.objectif.titre(prenom: 'Yasmine'));
+      await _continuer(tester);
+      expect(_etape(r), 'niveau-1');
+      await _carte(tester, 'niveau', 'memorisation_partielle');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.lecture.titreIl(prenom: 'Bilal'));
+      await _carte(tester, 'lecture', 'warsh');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.memorise.titreIl(prenom: 'Bilal'));
+      await _carte(tester, 'memorise', 'quelques_sourates');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.detail.titreSourates);
+      await _carte(tester, 'sourates', 'fatiha');
+      await _continuer(tester);
+      noter();
+      expect(_titre(tester), t.onboarding.objectif.titre(prenom: 'Bilal'));
+      await _continuer(tester);
+
+      // Le point de depart : une carte par enfant, chacune a son prenom.
+      noter();
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      await _continuer(tester);
+      noter();
+      await _carte(tester, 'langue-plusDemandees', 'francais');
+      await _continuer(tester);
+      noter();
+      await _continuer(tester);
+
+      // Le chemin : la courbe de Yasmine (6-9 ans), la duree de Bilal plus
+      // tard.
+      noter();
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.chemin.prevues(n: 37))),
+        findsOneWidget,
+      );
+      expect(find.text(t.onboarding.chemin.precise), findsOneWidget);
+      await _continuer(tester);
+
+      // Le recapitulatif : une fiche par enfant, son prenom et son age.
+      noter();
+      expect(find.text('Yasmine'), findsOneWidget);
+      expect(find.text('Bilal'), findsOneWidget);
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.recap.ans(n: 9))),
+        findsOneWidget,
+      );
+      expect(
+        find.text(LibellesGroupe.insecable(t.onboarding.recap.ans(n: 12))),
+        findsOneWidget,
+      );
+
+      expect(vus, <String>[
+        'prenom-0',
+        'age-0',
+        'genre-0',
+        'famille',
+        'prenom-1',
+        'age-1',
+        'genre-1',
+        'famille',
+        'niveau-0',
+        'objectif-0',
+        'niveau-1',
+        'lecture-1',
+        'memorise-1',
+        'detail-1',
+        'objectif-1',
+        'depart',
+        'langue',
+        'langueSecours',
+        'chemin',
+        'recap',
+      ]);
+
+      // Deux objets distincts, chacun ses reponses.
+      final List<ApprenantQuestionnaire> a =
+          QuestionnaireInscription.depuisTexte(
+            lireMemoireAppareil(clefQuestionnaire),
+          ).apprenants;
+      expect(a, hasLength(2));
+      expect(a[0].prenom, 'Yasmine');
+      expect(a[0].age, 9);
+      expect(a[0].genre, Genre.femme);
+      expect(a[0].niveau, NiveauDeclare.debutLettres);
+      expect(a[0].objectif, ObjectifOnboarding.priere);
+      expect(a[0].sourates, isEmpty);
+      expect(a[1].prenom, 'Bilal');
+      expect(a[1].age, 12);
+      expect(a[1].genre, Genre.homme);
+      expect(a[1].niveau, NiveauDeclare.memorisationPartielle);
+      expect(a[1].lecture, LectureCoran.warsh);
+      expect(a[1].sourates, <String>['fatiha']);
+      expect(a[1].objectif, ObjectifOnboarding.memoriser);
+    });
   });
 }
 

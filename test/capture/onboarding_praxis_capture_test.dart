@@ -49,6 +49,7 @@ const QuestionnaireInscription _famille = QuestionnaireInscription(
     ),
   ],
   langue: 'francais',
+  fuseau: 'Europe/Paris',
   langueSecours: 'poular',
   source: SourceConnaissance.mosquee,
 );

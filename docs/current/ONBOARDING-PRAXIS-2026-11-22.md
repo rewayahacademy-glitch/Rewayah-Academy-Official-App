@@ -29,6 +29,8 @@ sur les champs obligatoires.
 | D9 | **Absence** : rattrapée seul avant la séance suivante, **avec les outils que l'académie met à disposition** (lecture enregistrée du programme, documents de la Bibliothèque). |
 | D10 | **Garde « Vous venez pour apprendre, ou pour enseigner ? »** : « Enseigner » commence ici la candidature d'enseignant, sans invitation, sans doublon. |
 | D11 | **Remboursement** : « remboursé dans les 14 jours, moins les séances déjà suivies ». |
+| D12 | **Fuseaux horaires** (« bien travailler les fuseaux horaires, sinon ce sera dangereux ») : le fuseau IANA de l'appareil est lu et envoyé à `inscrire_titulaire` (`p_timezone`) ; le récapitulatif le dit en clair (l'heure de la personne d'abord, celle de La Mecque en second) avec « Ce n'est pas mon fuseau » (liste des fuseaux du parcours, `fuseauxProposes`) ; **aucune valeur par défaut** : s'il ne peut pas être lu, il est demandé, et la demande ne part pas sans lui. |
+| D13 | **La maquette est abandonnée, l'application fait foi** (relayé par le pilote, 22/11) : chaque enfant passe par toutes ses questions à son prénom, chaque apprenant est un objet distinct, chaque prénom est à sa place (test « deux enfants » de `questionnaire_test.dart`). |
 
 ## 1. Quatre chapitres, quatre interludes (maquette v4)
 
@@ -85,7 +87,7 @@ scénario `supabase/tests/scenarios_onboarding_praxis.sql`.
 | Secours | `…langue_secours` | facultative, différente de la langue choisie |
 | Absente | `…langue_autre` | texte libre, 1 à 40 |
 | Source | `candidatures.source_declaree` | `mosquee`, `proche`, `reseaux`, `recherche`, `autre`, facultative |
-| Fuseau | `profiles.timezone` (`p_timezone`) | fuseau IANA de l'appareil, quand le navigateur le donne |
+| Fuseau | `profiles.timezone` (`p_timezone`) | fuseau IANA lu sur l'appareil ou choisi (D12) ; jamais Europe/Paris par défaut |
 
 `inscrire_titulaire` reçoit `p_source` (8e paramètre ; la forme à sept paramètres est mise de côté dans
 `private`, comme au lot B) ; `lister_demandes_admission` rend les nouveaux champs. `moments` quitte

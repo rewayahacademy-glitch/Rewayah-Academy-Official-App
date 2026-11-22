@@ -14256,6 +14256,11 @@ class _Traductions$onboarding$recap$ar extends Traductions$onboarding$recap$fr {
 	@override String langue({required Object langue}) => 'اللغة: ⁨${langue}⁩';
 	@override String sinon({required Object langue, required Object secours}) => '⁨${langue}⁩، وإلا ⁨${secours}⁩';
 	@override String heure({required Object ville}) => 'المنطقة الزمنية: ⁨${ville}⁩ (مكتشفة تلقائيًا)';
+	@override String heureChoisie({required Object ville}) => 'المنطقة الزمنية: ⁨${ville}⁩';
+	@override String heures({required Object ici, required Object mecque}) => 'الساعة عندك ⁨${ici}⁩، و⁨${mecque}⁩ في مكة المكرمة.';
+	@override String get pasMonFuseau => 'ليست منطقتي الزمنية';
+	@override String get fuseauInconnu => 'تعذّرت قراءة منطقتك الزمنية على هذا الجهاز. اخترها: ستظهر لك مواعيد الدروس بتوقيتك.';
+	@override String get fuseauChoix => 'أين تعيش؟';
 	@override String vous({required Object prenom}) => '⁨${prenom}⁩ (أنت)';
 	@override String get adulte => 'بالغ';
 	@override String ans({required Object n}) => '⁨${n}⁩ سنة';
@@ -45792,6 +45797,11 @@ extension on TraductionsAr {
 			'onboarding.recap.langue' => ({required Object langue}) => 'اللغة: ⁨${langue}⁩',
 			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '⁨${langue}⁩، وإلا ⁨${secours}⁩',
 			'onboarding.recap.heure' => ({required Object ville}) => 'المنطقة الزمنية: ⁨${ville}⁩ (مكتشفة تلقائيًا)',
+			'onboarding.recap.heureChoisie' => ({required Object ville}) => 'المنطقة الزمنية: ⁨${ville}⁩',
+			'onboarding.recap.heures' => ({required Object ici, required Object mecque}) => 'الساعة عندك ⁨${ici}⁩، و⁨${mecque}⁩ في مكة المكرمة.',
+			'onboarding.recap.pasMonFuseau' => 'ليست منطقتي الزمنية',
+			'onboarding.recap.fuseauInconnu' => 'تعذّرت قراءة منطقتك الزمنية على هذا الجهاز. اخترها: ستظهر لك مواعيد الدروس بتوقيتك.',
+			'onboarding.recap.fuseauChoix' => 'أين تعيش؟',
 			'onboarding.recap.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
 			'onboarding.recap.adulte' => 'بالغ',
 			'onboarding.recap.ans' => ({required Object n}) => '⁨${n}⁩ سنة',

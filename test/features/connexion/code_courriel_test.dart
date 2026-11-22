@@ -34,6 +34,7 @@ class _Repondu extends QuestionnaireControleur {
       ),
     ],
     langue: 'francais',
+    fuseau: 'Europe/Paris',
   );
 }
 

@@ -346,5 +346,6 @@ class _QuestionnaireTuteur extends QuestionnaireControleur {
       ),
     ],
     langue: 'francais',
+    fuseau: 'Europe/Paris',
   );
 }

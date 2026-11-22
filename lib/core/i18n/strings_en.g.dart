@@ -13723,6 +13723,11 @@ class _Traductions$onboarding$recap$en extends Traductions$onboarding$recap$fr {
 	@override String langue({required Object langue}) => 'Language: ${langue}';
 	@override String sinon({required Object langue, required Object secours}) => '${langue}, otherwise ${secours}';
 	@override String heure({required Object ville}) => 'Time zone: ${ville} (detected)';
+	@override String heureChoisie({required Object ville}) => 'Time zone: ${ville}';
+	@override String heures({required Object ici, required Object mecque}) => 'It is ${ici} where you are, ${mecque} in Makkah.';
+	@override String get pasMonFuseau => 'This is not my time zone';
+	@override String get fuseauInconnu => 'Your time zone could not be read on this device. Choose it: class times will be shown at your time.';
+	@override String get fuseauChoix => 'Where do you live?';
 	@override String vous({required Object prenom}) => '${prenom} (you)';
 	@override String get adulte => 'Adult';
 	@override String ans({required Object n}) => '${n} years';
@@ -44772,6 +44777,11 @@ extension on TraductionsEn {
 			'onboarding.recap.langue' => ({required Object langue}) => 'Language: ${langue}',
 			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '${langue}, otherwise ${secours}',
 			'onboarding.recap.heure' => ({required Object ville}) => 'Time zone: ${ville} (detected)',
+			'onboarding.recap.heureChoisie' => ({required Object ville}) => 'Time zone: ${ville}',
+			'onboarding.recap.heures' => ({required Object ici, required Object mecque}) => 'It is ${ici} where you are, ${mecque} in Makkah.',
+			'onboarding.recap.pasMonFuseau' => 'This is not my time zone',
+			'onboarding.recap.fuseauInconnu' => 'Your time zone could not be read on this device. Choose it: class times will be shown at your time.',
+			'onboarding.recap.fuseauChoix' => 'Where do you live?',
 			'onboarding.recap.vous' => ({required Object prenom}) => '${prenom} (you)',
 			'onboarding.recap.adulte' => 'Adult',
 			'onboarding.recap.ans' => ({required Object n}) => '${n} years',

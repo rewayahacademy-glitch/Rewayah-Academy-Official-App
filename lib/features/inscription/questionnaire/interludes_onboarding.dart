@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/accessibilite/mode_accessibilite.dart';
-import '../../../core/candidature/fuseau_appareil.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/i18n/villes_fuseau.dart';
@@ -20,10 +19,13 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/avatar_nom.dart';
+import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../../parcours_offres/libelles_parcours.dart'
+    show FuseauPropose, fuseauxProposes;
 import 'coquille_onboarding.dart';
 import 'onboarding_donnees.dart';
 import 'questionnaire_inscription.dart';
@@ -726,11 +728,7 @@ CoquilleOnboarding interludeRecap(
   final String langues = q.langueSecours == null
       ? langue
       : r.sinon(langue: langue, secours: nomLangue(q.langueSecours!));
-  final String? fuseau = fuseauIanaAppareil();
-  final String sous = <String>[
-    r.langue(langue: langues),
-    if (fuseau != null) r.heure(ville: villeDuFuseauLibelle(fuseau)),
-  ].join(' · ');
+  final String sous = r.langue(langue: langues);
   final QuestionnaireControleur c = ref.read(
     questionnaireInscriptionProvider.notifier,
   );
@@ -748,6 +746,7 @@ CoquilleOnboarding interludeRecap(
         children: <Widget>[
           for (final ApprenantQuestionnaire a in q.apprenants)
             _FicheRecap(apprenant: a),
+          const CarteFuseau(),
           AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -925,6 +924,135 @@ class _LigneRecap extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Le fuseau de la personne, au recapitulatif (directeur, 22/11/2026 : « bien
+/// travailler les fuseaux horaires, sinon ce sera dangereux »). Lu sur
+/// l'appareil, il se dit en clair, avec l'heure de la personne d'abord et
+/// l'heure de La Mecque en second ; « Ce n'est pas mon fuseau » ouvre la liste
+/// des fuseaux du parcours (`fuseauxProposes`). S'il n'a pas pu etre lu, la
+/// liste est ouverte d'emblee : jamais une valeur par defaut.
+class CarteFuseau extends ConsumerStatefulWidget {
+  /// Cree la carte.
+  const CarteFuseau({super.key});
+
+  /// La cle de la liste des fuseaux.
+  static const Key cleListe = ValueKey<String>('questionnaire-fuseaux');
+
+  /// La cle du lien « Ce n'est pas mon fuseau ».
+  static const Key cleCorriger = ValueKey<String>(
+    'questionnaire-fuseau-corriger',
+  );
+
+  @override
+  ConsumerState<CarteFuseau> createState() => _EtatCarteFuseau();
+}
+
+class _EtatCarteFuseau extends ConsumerState<CarteFuseau> {
+  bool _ouverte = false;
+
+  static String _hhmm(DateTime d) =>
+      '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.onboarding.recap;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final QuestionnaireInscription q = ref.watch(
+      questionnaireInscriptionProvider,
+    );
+    final String? fuseau = q.fuseau;
+    final bool liste = _ouverte || fuseau == null;
+    // L'heure de l'appareil n'est juste que pour le fuseau lu sur lui.
+    final DateTime maintenant = DateTime.now();
+    // La Mecque : UTC+3, sans heure d'ete.
+    final DateTime mecque = maintenant.toUtc().add(const Duration(hours: 3));
+    final bool horsListe =
+        fuseau != null &&
+        !fuseauxProposes.any((FuseauPropose f) => f.iana == fuseau);
+    return AppCard(
+      key: const ValueKey<String>('questionnaire-fuseau'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (fuseau == null)
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                r.fuseauInconnu,
+                key: const ValueKey<String>('questionnaire-fuseau-inconnu'),
+                style: palette.inkAlert.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            )
+          else ...<Widget>[
+            Text(
+              q.fuseauDetecte
+                  ? r.heure(ville: villeDuFuseauLibelle(fuseau))
+                  : r.heureChoisie(ville: villeDuFuseauLibelle(fuseau)),
+              key: const ValueKey<String>('questionnaire-fuseau-ville'),
+              style: textes.titleSmall,
+            ),
+            if (q.fuseauDetecte) ...<Widget>[
+              Ecart.vXs,
+              Text(
+                r.heures(ici: _hhmm(maintenant), mecque: _hhmm(mecque)),
+                style: palette.inkMuted.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+            if (!_ouverte) ...<Widget>[
+              Ecart.vSm,
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: LienFleche(
+                  key: CarteFuseau.cleCorriger,
+                  libelle: r.pasMonFuseau,
+                  fleche: false,
+                  onPress: () => setState(() => _ouverte = true),
+                ),
+              ),
+            ],
+          ],
+          if (liste) ...<Widget>[
+            Ecart.vMd,
+            Text(r.fuseauChoix, style: textes.titleSmall),
+            Ecart.vSm,
+            ChoiceCardGroup(
+              key: CarteFuseau.cleListe,
+              autoriserSaisieLibre: false,
+              compacte: true,
+              valeurInitiale: fuseau == null
+                  ? null
+                  : ReponseChoix(valeurs: <String>{fuseau}),
+              options: <OptionChoix>[
+                if (horsListe)
+                  OptionChoix(
+                    valeur: fuseau,
+                    libelle: villeDuFuseauLibelle(fuseau),
+                  ),
+                for (final FuseauPropose f in fuseauxProposes)
+                  OptionChoix(
+                    cle: ValueKey<String>('questionnaire-fuseau-${f.iana}'),
+                    valeur: f.iana,
+                    libelle: f.libelle,
+                  ),
+              ],
+              onChange: (ReponseChoix choix) {
+                if (choix.valeurs.isEmpty) return;
+                ref
+                    .read(questionnaireInscriptionProvider.notifier)
+                    .choisirFuseau(choix.valeurs.first);
+              },
+            ),
+          ],
+        ],
       ),
     );
   }

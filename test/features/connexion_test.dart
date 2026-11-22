@@ -203,6 +203,7 @@ void main() {
             ),
           ],
           langue: 'francais',
+          fuseau: 'Europe/Paris',
         ).versTexte(),
       );
       addTearDown(() => effacerMemoireAppareil(clefQuestionnaire));
