@@ -1,11 +1,13 @@
-// Admission, lot C (fiche du 30/10/2026, ecart dit au pilote) : apres
-// l'acceptation, les enfants de la demande recoivent leur profil d'eleve. Un
-// profil d'eleve exige un utilisateur d'authentification, que seule la
-// fonction Edge `creer-profil-enfant` sait creer (cle de service) : la base ne
-// peut donc pas le faire dans la transaction de l'acceptation. L'application
-// du tuteur le fait a sa premiere ouverture de l'Accueil, puis lie chaque
-// profil a son enfant de la demande (`lier_apprenant_profil`), qui range le
-// genre, le niveau, l'objectif et la langue du cours.
+// Admission, lot C (fiche du 30/10/2026), puis ADMISSION-FICHES-AUTO
+// (directeur, 22/11/2026) : les fiches des eleves naissent maintenant dans la
+// transaction de l'acceptation (`accepter_admission` appelle
+// `private.admission_fiches_auto`, migration 20261130989000), a partir des
+// reponses de la demande ; la famille ne ressaisit rien et l'Accueil montre
+// les enfants deja crees. Ce qui suit n'est plus que la reprise : un enfant
+// que la base n'a pas pu creer (refus journalise `admission_fiche_auto_echec`)
+// est cree a la premiere ouverture de l'Accueil par la fonction Edge
+// `creer-profil-enfant`, puis lie (`lier_apprenant_profil`). Quand tout est
+// deja lie, la passe ne fait rien.
 //
 // MINEUR-FANTOME (07/11/2026, correctif du garde-cap) : le genre de l'enfant
 // saisi dans la demande (questionnaire) part a `creer-profil-enfant`, qui le
