@@ -37,7 +37,7 @@ change ni permission, ni état serveur, ni règle métier (§4.3).
 
 ## Ce qui n'est pas prouvé
 
-- Rien n'a été vu par le directeur en production. La migration `20261130978000_onboarding_praxis.sql`
+- Rien n'a été vu par le directeur en production. La migration `20261130979000_onboarding_praxis.sql`
   n'est pas installée : elle doit l'être **avant** la fusion (sinon une source choisie ou l'objectif
   « prière » ferait échouer l'envoi de la demande).
 - Captures R3 : `docs/current/captures/E2E/onboarding-praxis/`, rendues par les tests de widgets

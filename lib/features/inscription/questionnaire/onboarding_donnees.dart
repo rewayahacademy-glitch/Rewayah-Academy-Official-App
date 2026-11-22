@@ -1,6 +1,6 @@
 // ONBOARDING-PRAXIS (directeur, 22/11/2026) : les valeurs fermees du
 // questionnaire avant le compte, et ce que le programme en deduit. Les codes
-// sont ceux de la base (`supabase/migrations/20261130978000_onboarding_praxis.sql`) ;
+// sont ceux de la base (`supabase/migrations/20261130979000_onboarding_praxis.sql`) ;
 // les libelles sont des cles i18n (`onboarding.*`).
 library;
 

@@ -74,7 +74,7 @@ compte candidat) n'est **pas** codé : lot de suite.
 
 ## 5. Où va chaque réponse
 
-Migration `supabase/migrations/20261130978000_onboarding_praxis.sql` (additive, aucun mot d'effacement) ;
+Migration `supabase/migrations/20261130979000_onboarding_praxis.sql` (additive, aucun mot d'effacement) ;
 scénario `supabase/tests/scenarios_onboarding_praxis.sql`.
 
 | Réponse | Colonne | Valeurs |
