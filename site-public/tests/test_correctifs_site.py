@@ -65,5 +65,55 @@ class ArabeDeDroiteAGauche(unittest.TestCase):
         self.assertIn('[dir="rtl"] :is(.articles__tete, .article-carte__texte', css)
 
 
+class ReferencementArabe(unittest.TestCase):
+    NOM = "أكاديمية الرواية"
+
+    def test_chaque_page_arabe_porte_le_nom_arabe_dans_son_titre_et_sa_description(self) -> None:
+        pages = sorted((sortie() / "ar").rglob("*.html"))
+        self.assertGreaterEqual(len(pages), 20)
+        for page in pages:
+            h = page.read_text(encoding="utf-8")
+            titre = re.search(r"<title>([^<]*)</title>", h).group(1)
+            description = re.search(r'<meta name="description" content="([^"]*)"', h).group(1)
+            self.assertIn(self.NOM, titre, page.name)
+            self.assertIn(self.NOM, description, page.name)
+
+    def test_le_partage_arabe_est_localise(self) -> None:
+        h = lire("ar/index.html")
+        self.assertIn(f'property="og:site_name" content="{self.NOM}"', h)
+        self.assertIn('property="og:locale" content="ar_AR"', h)
+        self.assertRegex(h, r'property="og:title" content="[^"]*' + self.NOM)
+        self.assertIn('property="og:site_name" content="Rewayah Academy"', lire("fr/index.html"))
+
+    def test_hreflang_des_cinq_langues_et_x_default_sur_chaque_page(self) -> None:
+        for dossier in ("fr", "ar", "en", "es", "pt"):
+            for page in sorted((sortie() / dossier).rglob("*.html")):
+                h = page.read_text(encoding="utf-8")
+                if "noindex" in h:   # pages utilitaires (désinscription) : hors des langues, jamais indexées
+                    continue
+                langues = set(re.findall(r'<link rel="alternate" hreflang="([\w-]+)"', h))
+                self.assertEqual(langues, {"fr", "ar", "en", "es", "pt", "x-default"}, str(page))
+
+    def test_le_plan_du_site_liste_toutes_les_langues(self) -> None:
+        plan = lire("sitemap.xml")
+        for langue in ("fr", "ar", "en", "es", "pt"):
+            self.assertIn(f"<loc>{ORIGINE}/{langue}/</loc>", plan)
+            self.assertIn(f"<loc>{ORIGINE}/{langue}/tarifs</loc>", plan)
+            self.assertIn(f'hreflang="{langue}"', plan)
+        self.assertIn('hreflang="x-default"', plan)
+
+    def test_donnees_structurees_de_l_organisation(self) -> None:
+        for dossier in ("fr", "ar"):
+            blocs = re.findall(r'<script type="application/ld\+json">(.*?)</script>', lire(f"{dossier}/index.html"), re.S)
+            graphe = [n for b in blocs for n in json.loads(b).get("@graph", [])]
+            org = next(n for n in graphe if n["@type"] == "EducationalOrganization")
+            self.assertEqual(org["name"], "Rewayah Academy")
+            self.assertEqual(org["alternateName"], ["أكاديمية الرواية", "Académie Rewayah"])
+            self.assertTrue(org["url"].startswith(ORIGINE))
+            self.assertTrue(org["logo"].startswith(ORIGINE))
+            site = next(n for n in graphe if n["@type"] == "WebSite")
+            self.assertEqual(site["inLanguage"], dossier)
+
+
 if __name__ == "__main__":
     unittest.main()

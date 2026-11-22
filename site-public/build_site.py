@@ -1503,6 +1503,10 @@ def output_file(output: Path, route: str) -> Path:
     return output / f"{route.lstrip('/')}.html"
 
 
+# Les noms sous lesquels on cherche l'academie : arabe et francais (SITE-CORRECTIFS 3, directeur, 22/11/2026).
+NOMS_ALTERNATIFS = ["أكاديمية الرواية", "Académie Rewayah"]
+
+
 def donnees_structurees(origin: str) -> str:
     """Organisation educative et site : seulement des faits publies (M-19, M-27). Aucun avis, aucune note, aucune
     adresse e-mail (anti-spam : un robot lit ces donnees comme la page)."""
@@ -1514,7 +1518,7 @@ def donnees_structurees(origin: str) -> str:
                 "@type": "EducationalOrganization",
                 "@id": base + "/#organisation",
                 "name": "Rewayah Academy",
-                "alternateName": "أكاديمية الرواية",
+                "alternateName": NOMS_ALTERNATIFS,
                 "legalName": "REWAYAH ACADEMY LTD",
                 "url": base + "/fr/",
                 "logo": base + f"{ASSETS}/logo-horizontal.svg",
@@ -1528,8 +1532,9 @@ def donnees_structurees(origin: str) -> str:
                 "@type": "WebSite",
                 "@id": base + "/#site",
                 "name": "Rewayah Academy",
+                "alternateName": NOMS_ALTERNATIFS,
                 "url": base + "/fr/",
-                "inLanguage": "fr",
+                "inLanguage": _LANGUE["code"],
                 "publisher": {"@id": base + "/#organisation"},
             },
         ],
