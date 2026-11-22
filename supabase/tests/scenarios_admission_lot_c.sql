@@ -43,6 +43,16 @@ SELECT public.inscrire_titulaire('famille', 'Fixture', 'Refusee', 'female', 'Eur
      "objectif": "indecis", "moments": ["matin"], "langue": "francais"}]'::jsonb);
 RESET ROLE;
 
+-- ADMISSION-FICHES-AUTO (22/11/2026) : la famille a deja cree a la main le
+-- profil de son enfant (role student, meme foyer, meme prenom) avant
+-- l'acceptation ; l'acceptation le lie au lieu d'en creer un second.
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status)
+SELECT 'ad000000-0000-4000-8000-000000000004', 'ADMCENFANT000004', 'student', p.household_id,
+       'Enfant Un', 'Famille', 'active'
+  FROM public.profiles p WHERE p.id = 'ad000000-0000-4000-8000-000000000002';
+INSERT INTO public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
+VALUES ('ad000000-0000-4000-8000-000000000004', 'minor', 'child', 'forbidden');
+
 -- La direction.
 SELECT set_config('request.jwt.claim.sub', 'ad000000-0000-4000-8000-000000000001', true);
 SELECT set_config('test.uid', 'ad000000-0000-4000-8000-000000000001', true);
@@ -169,18 +179,11 @@ BEGIN
 END
 $direction$;
 
--- La famille acceptee lit sa demande et lie son enfant au profil cree.
+-- La famille acceptee lit sa demande ; son enfant est deja lie.
 SELECT set_config('request.jwt.claim.sub', 'ad000000-0000-4000-8000-000000000002', true);
 SELECT set_config('test.uid', 'ad000000-0000-4000-8000-000000000002', true);
 SELECT set_config('request.jwt.claims', '{}', true);
 SELECT set_config('test.jwt', '{}', true);
--- Le profil que la fonction Edge cree (role student, meme foyer).
-INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status)
-SELECT 'ad000000-0000-4000-8000-000000000004', 'ADMCENFANT000004', 'student', p.household_id,
-       'Enfant Un', 'Famille', 'active'
-  FROM public.profiles p WHERE p.id = 'ad000000-0000-4000-8000-000000000002';
-INSERT INTO public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
-VALUES ('ad000000-0000-4000-8000-000000000004', 'minor', 'child', 'forbidden');
 SET LOCAL ROLE authenticated;
 DO $famille$
 DECLARE
@@ -193,14 +196,11 @@ BEGIN
   IF (v_apprenants #>> '{0,nom_famille}') IS DISTINCT FROM 'Famille' THEN
     RAISE EXCEPTION 'ADM-C ROUGE : le nom de famille n''est pas rendu : %', v_apprenants;
   END IF;
-  -- Un profil au meme prenom existe deja dans le foyer (une creation dont la
-  -- reponse s'est perdue) : il est propose, pour ne pas creer de doublon.
-  IF (v_apprenants #>> '{0,profil_probable}') IS DISTINCT FROM 'ad000000-0000-4000-8000-000000000004' THEN
-    RAISE EXCEPTION 'ADM-C ROUGE : le profil probable n''est pas propose : %', v_apprenants;
-  END IF;
-  PERFORM public.lier_apprenant_profil(v_id, 'ad000000-0000-4000-8000-000000000004');
-  IF (public.mes_apprenants_demande() #>> '{0,profil_probable}') IS NOT NULL THEN
-    RAISE EXCEPTION 'ADM-C ROUGE : un apprenant lie propose encore un profil';
+  -- Un profil au meme prenom existait deja dans le foyer : l'acceptation l'a
+  -- lie (ADMISSION-FICHES-AUTO), sans doublon, et plus rien n'est propose.
+  IF (v_apprenants #>> '{0,profil_eleve_id}') IS DISTINCT FROM 'ad000000-0000-4000-8000-000000000004'
+     OR (v_apprenants #>> '{0,profil_probable}') IS NOT NULL THEN
+    RAISE EXCEPTION 'ADM-C ROUGE : l''acceptation n''a pas lie le profil existant : %', v_apprenants;
   END IF;
   -- Une seconde fois, au meme profil : sans effet ; a un autre : refus.
   PERFORM public.lier_apprenant_profil(v_id, 'ad000000-0000-4000-8000-000000000004');

@@ -1,0 +1,44 @@
+ADMISSION-FICHES-AUTO, journal (22/11/2026)
+
+Ordre du directeur (22/11/2026, sans discussion) : quand la direction accepte une
+demande (accepter_admission), les fiches des eleves naissent automatiquement des
+reponses de l'onboarding ; la famille ne ressaisit jamais ses enfants.
+
+Ce qui est faux, bloque ou non prouve, d'abord
+- Non prouve en production : la migration n'est pas installee (le pilote l'installe
+  apres fusion). Le directeur n'a rien essaye.
+- Le scenario scenarios_admission_fiches_auto.sql ne tourne PAS en CI tant que le
+  pilote n'ajoute pas son pas dans .github/workflows/ci.yml (dossier interdit aux
+  agents, refus du garde-fou). Il passe en local.
+- Le compte d'identite d'un enfant est cree en SQL (auth.users + auth.identities),
+  plus par la fonction Edge (auth.admin.createUser). Les colonnes posees sont celles
+  que createUser pose pour les enfants existants (releve en lecture du 22/11) ;
+  sans mot de passe utilisable (encrypted_password vide). Non prouve : l'appairage
+  d'un enfant cree ainsi (session-enfant, generateLink par courriel) n'a pas ete
+  essaye ; il ne lit que l'id et le courriel du compte.
+
+Constat en production (lecture seule, 22/11/2026)
+- CAND-00645 (famille, confirmee, en_cours) : Safiatou (titulaire apprenante) et
+  Abdoul Gadiri, 12 ans, sans fiche liee ; aucun profil eleve dans son foyer.
+- CAND-00001 (famille) : l'enfant Thierno Amadou deja lie (fait a la main) ; le
+  titulaire Thierno non lie a sa fiche autonome (qui existe).
+- CAND-00002 (eleve adulte) : le titulaire Abdallah non lie a sa fiche autonome.
+- CAND-00628 (eleve adulte, confirmee) : titulaire supprime le 22/11 (compte
+  desactive) : hors rattrapage et hors postflight.
+- Rattrapage attendu en production : 1 fiche creee (Abdoul Gadiri, CAND-00645),
+  3 titulaires lies a leur fiche existante (CAND-00001, CAND-00002, CAND-00645),
+  0 doublon.
+
+Preuves locales (Postgres 16.15, grappe neuve, stub_auth.sql puis toutes les migrations)
+- MIGRATIONS OK (dont 20261130989000).
+- scenarios_admission_fiches_auto.sql : 6 blocs verts (famille a 2 enfants + parent
+  apprenant = 3 fiches liees ; rejeu sans doublon ; eleve adulte ; refus de la regle
+  journalise sans bloquer ni laisser de compte orphelin ; rattrapage avec creation et
+  avec liaison d'un enfant fait a la main ; droits).
+- Les 202 scenarios nommes dans ci.yml, dans l'ordre, puis celui-ci : 203 OK.
+- Simulation de production : migrations jusqu'a 20261130988000, deux familles
+  acceptees avec l'ancien accepter_admission (forme CAND-00645 et CAND-00001), puis
+  la migration : « 2 apprenant(s) lie(s) pour CAND-00001 », « 1 pour CAND-00002 »,
+  postflight vert, 2 profils eleves au total (aucun doublon).
+- Mots d'effacement (drop, delete, truncate, mot entier) dans la migration : 0.
+- flutter test test/core/admission/profils_demande_test.dart : vert.
