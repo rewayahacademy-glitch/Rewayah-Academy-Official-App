@@ -720,7 +720,11 @@ declare
     -- ecriture), plus la reference de la candidature enseignante du compte.
     -- Volatile parce qu'elle appelle dossiers_en_attente, qui ecrit ce journal ;
     -- n'ecrit rien d'autre. Relue par l'agent du lot le 21/11/2026.
-    'dossiers_en_attente_references()'
+    'dossiers_en_attente_references()',
+    -- REF-SUIVI (22/11/2026) : note une seule fois, pour auth.uid() seulement,
+    -- l'organisation qui a envoye la famille (private.sources_inscription) ;
+    -- premiere pose gagnante, n'ecrit rien d'autre.
+    'noter_source_inscription(text)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

@@ -86,7 +86,7 @@
           "id": "suivi",
           "title": "Suivre son parcours, même à distance.",
           "paragraphs": [
-            "Retrouvez les séances et le travail à préparer dans votre espace familial, et chaque fin de semaine le compte rendu de l’enseignant.",
+            "Retrouvez les séances et le travail à préparer dans votre espace familial, et après chaque séance le compte rendu de l’enseignant.",
             "Lorsque la classe est ouverte à l’observation, vous pouvez écouter une séance de votre enfant : deux visites de deux minutes au plus par séance, soit quatre minutes au plus. Une visite quittée avant la fin compte. Votre micro et votre caméra restent coupés ; votre enfant et l’enseignant sont prévenus, les autres élèves ne voient rien."
           ],
           "links": [
@@ -230,7 +230,7 @@
           "id": "suivi",
           "title": "Suivre le parcours de votre enfant",
           "paragraphs": [
-            "Chaque fin de semaine, vous recevez dans l’application le compte rendu de l’enseignant. Les informations des autres élèves de la classe ne vous sont jamais montrées."
+            "Après chaque séance, vous recevez dans l’application le compte rendu de l’enseignant. Les informations des autres élèves de la classe ne vous sont jamais montrées."
           ]
         },
         {
@@ -533,7 +533,7 @@
           "id": "famille",
           "title": "La famille fait partie du parcours",
           "paragraphs": [
-            "Dans votre espace familial, vous retrouvez le profil de chaque élève, son étape, sa date limite, son travail à préparer et, chaque fin de semaine, le compte rendu de l’enseignant.",
+            "Dans votre espace familial, vous retrouvez le profil de chaque élève, son étape, sa date limite, son travail à préparer et, après chaque séance, le compte rendu de l’enseignant.",
             "Un enfant est toujours inscrit par un adulte autorisé, qui en reste responsable."
           ]
         },
@@ -1514,7 +1514,7 @@
           "paragraphs": [
             "C’est sur ce principe que Rewayah Academy a construit ses classes. Chaque élève rejoint une classe stable, avec le même enseignant et le même horaire chaque semaine. La classe progresse ensemble, étape par étape, et chaque étape a une durée prévue et une date limite : le programme avance, il ne s’étire pas sans fin.",
             "Pour les enfants et les adolescents, de 6 à 17 ans : trois séances d’une heure par semaine, dont cinq minutes de pause, dans une classe de 3 à 5 élèves. Pour les adultes : trois séances d’une heure trente par semaine, dont dix minutes de pause, dans une classe de 3 à 6 élèves. Une classe ouvre dès trois inscrits.",
-            "Le débutant commence par les bases : les lettres, la lecture avec les voyelles, la lecture dans le Coran, puis les sourates courtes, d’Al-Fatiha à Az-Zalzalah. Pour un enfant, le parent peut entrer dans la séance en observateur silencieux, lorsque la classe est ouverte à l’observation : deux visites de deux minutes au plus par séance, soit quatre minutes au plus. Il reçoit chaque fin de semaine le compte rendu de l’enseignant.",
+            "Le débutant commence par les bases : les lettres, la lecture avec les voyelles, la lecture dans le Coran, puis les sourates courtes, d’Al-Fatiha à Az-Zalzalah. Pour un enfant, le parent peut entrer dans la séance en observateur silencieux, lorsque la classe est ouverte à l’observation : deux visites de deux minutes au plus par séance, soit quatre minutes au plus. Il reçoit après chaque séance le compte rendu de l’enseignant.",
             "Si cette manière ne vous convient pas, d’autres existent, tenues par d’autres personnes."
           ],
           "links": [
