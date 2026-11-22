@@ -25756,8 +25756,8 @@ class Traductions$admissions$reponses$fr {
 	/// fr: 'Niveau déclaré'
 	String get niveau => 'Niveau déclaré';
 
-	/// fr: 'Objectif'
-	String get objectif => 'Objectif';
+	/// fr: 'Objectif d'apprentissage'
+	String get objectif => 'Objectif d\'apprentissage';
 
 	/// fr: 'Moments de la journée'
 	String get moments => 'Moments de la journée';
@@ -71628,7 +71628,7 @@ extension on Traductions {
 			'admissions.reponses.homme' => 'Homme',
 			'admissions.reponses.femme' => 'Femme',
 			'admissions.reponses.niveau' => 'Niveau déclaré',
-			'admissions.reponses.objectif' => 'Objectif',
+			'admissions.reponses.objectif' => 'Objectif d\'apprentissage',
 			'admissions.reponses.moments' => 'Moments de la journée',
 			'admissions.reponses.langue' => 'Langue du cours',
 			'admissions.reponses.titulaireLigne' => 'Titulaire de la demande',
