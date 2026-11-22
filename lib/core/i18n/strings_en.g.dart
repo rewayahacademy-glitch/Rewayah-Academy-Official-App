@@ -2068,6 +2068,7 @@ class _Traductions$admissions$en extends Traductions$admissions$fr {
 	@override String feuilleTitre({required Object deNom}) => '${deNom}\'s request';
 	@override String ouvrir({required Object deNom}) => 'Open ${deNom}\'s request';
 	@override String get recueLe => 'Received on';
+	@override late final _Traductions$admissions$reponses$en reponses = _Traductions$admissions$reponses$en._(_root);
 	@override String get reference => 'Reference';
 	@override String get courriel => 'Email address';
 	@override String get etatLibelle => 'Status';
@@ -12191,6 +12192,37 @@ class _Traductions$courriels$admin$en extends Traductions$courriels$admin$fr {
 	@override late final _Traductions$courriels$admin$ecrire$en ecrire = _Traductions$courriels$admin$ecrire$en._(_root);
 	@override late final _Traductions$courriels$admin$file$en file = _Traductions$courriels$admin$file$en._(_root);
 	@override late final _Traductions$courriels$admin$adresses$en adresses = _Traductions$courriels$admin$adresses$en._(_root);
+}
+
+// Path: admissions.reponses
+class _Traductions$admissions$reponses$en extends Traductions$admissions$reponses$fr {
+	_Traductions$admissions$reponses$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaireTitre => 'Request holder';
+	@override String get nom => 'Name';
+	@override String apprenantsTitre({required Object n}) => 'Learners (${n})';
+	@override String get aucunApprenant => 'No learner is attached to this request.';
+	@override String get titulaireRole => 'Request holder';
+	@override String get enfantRole => 'Child of the family';
+	@override String get age => 'Age';
+	@override String ageValeur({required Object age}) => '${age}';
+	@override String get adulte => 'Adult';
+	@override String get genre => 'Gender';
+	@override String get garcon => 'Boy';
+	@override String get fille => 'Girl';
+	@override String get homme => 'Man';
+	@override String get femme => 'Woman';
+	@override String get niveau => 'Stated level';
+	@override String get objectif => 'Goal';
+	@override String get moments => 'Times of day';
+	@override String get langue => 'Course language';
+	@override String get titulaireLigne => 'Request holder';
+	@override String get oui => 'Yes';
+	@override String get non => 'No';
+	@override String get nonRenseigne => 'Not provided';
 }
 
 // Path: admissions.etat
@@ -42720,6 +42752,30 @@ extension on TraductionsEn {
 			'admissions.feuilleTitre' => ({required Object deNom}) => '${deNom}\'s request',
 			'admissions.ouvrir' => ({required Object deNom}) => 'Open ${deNom}\'s request',
 			'admissions.recueLe' => 'Received on',
+			'admissions.reponses.titulaireTitre' => 'Request holder',
+			'admissions.reponses.nom' => 'Name',
+			'admissions.reponses.apprenantsTitre' => ({required Object n}) => 'Learners (${n})',
+			'admissions.reponses.aucunApprenant' => 'No learner is attached to this request.',
+			'admissions.reponses.titulaireRole' => 'Request holder',
+			'admissions.reponses.enfantRole' => 'Child of the family',
+			'admissions.reponses.age' => 'Age',
+			'admissions.reponses.ageValeur' => ({required Object age}) => '${age}',
+			'admissions.reponses.adulte' => 'Adult',
+			'admissions.reponses.genre' => 'Gender',
+			'admissions.reponses.garcon' => 'Boy',
+			'admissions.reponses.fille' => 'Girl',
+			_ => null,
+		} ?? switch (path) {
+			'admissions.reponses.homme' => 'Man',
+			'admissions.reponses.femme' => 'Woman',
+			'admissions.reponses.niveau' => 'Stated level',
+			'admissions.reponses.objectif' => 'Goal',
+			'admissions.reponses.moments' => 'Times of day',
+			'admissions.reponses.langue' => 'Course language',
+			'admissions.reponses.titulaireLigne' => 'Request holder',
+			'admissions.reponses.oui' => 'Yes',
+			'admissions.reponses.non' => 'No',
+			'admissions.reponses.nonRenseigne' => 'Not provided',
 			'admissions.reference' => 'Reference',
 			'admissions.courriel' => 'Email address',
 			'admissions.etatLibelle' => 'Status',
@@ -42732,8 +42788,6 @@ extension on TraductionsEn {
 			'admissions.etat.retiree' => 'Withdrawn',
 			'admissions.accepter' => ({required Object deNom}) => 'Accept ${deNom}\'s request',
 			'admissions.accepterConsequence' => 'Their account opens and a "Your request is accepted" email goes out straight away. The children\'s profiles are created on their first sign-in, with the answers of the request.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.demanderPrecisions' => 'Ask for clarification',
 			'admissions.contacter' => ({required Object nom}) => 'Write to ${nom}',
 			'admissions.refuser' => 'Refuse the request',
@@ -43224,6 +43278,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'Import another file',
 			'candidatsFlux.prevenir.lien' => 'Notify by email',
 			'candidatsFlux.prevenir.titre' => 'Notify by email',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.prevenir.contexte' => 'The sign-up link is sent by email to the people in the imported forms who left an address and do not have an account yet. The same address never receives the message twice.',
 			'candidatsFlux.prevenir.lecture' => 'Counting the people to notify.',
 			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person to notify', other: '${n} people to notify', ), 
@@ -43246,8 +43302,6 @@ extension on TraductionsEn {
 			'candidatsFlux.prevenir.resultat.pasDeuxFois' => 'The same address never receives the message twice, even if you send again.',
 			'candidatsFlux.prevenir.erreurs.titre' => 'Sending not confirmed',
 			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'The sending may not have reached Rewayah. Try again: no address will receive the message twice.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.erreurs.generique' => 'The sending did not go through and nothing is confirmed. Try again: no address will receive the message twice.',
 			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'No form answer is imported yet. Import the forms first: without them, the codes would find no answer, and no sending is possible.',
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'including ${n} person who received the end-of-October waiting email', other: 'including ${n} people who received the end-of-October waiting email', ), 
@@ -43738,6 +43792,8 @@ extension on TraductionsEn {
 			'calendrier.pauses.decisionsRecentes' => 'Recent decisions',
 			'calendrier.pauses.decisionsVide' => 'No decision for now.',
 			'calendrier.pauses.statut.demandee' => 'Pending',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.statut.acceptee' => 'Accepted',
 			'calendrier.pauses.statut.refusee' => 'Refused',
 			'calendrier.pauses.statut.annulee' => 'Cancelled',
@@ -43760,8 +43816,6 @@ extension on TraductionsEn {
 			'calendrier.pauses.exceptionFin' => 'Last day of the break',
 			'calendrier.pauses.exceptionEnregistrer' => 'Grant the break',
 			'calendrier.pauses.terminerAction' => 'End the break',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.terminerTitre' => 'End the exceptional break',
 			'calendrier.pauses.terminerPhrase' => 'The student resumes classes after the last day chosen. The original end and your action are kept; days already past stay counted in the deadline.',
 			'calendrier.pauses.terminerChamp' => 'Last day of the break',
