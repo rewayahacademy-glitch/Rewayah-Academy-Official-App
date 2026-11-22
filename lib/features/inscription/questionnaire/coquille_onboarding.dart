@@ -561,7 +561,10 @@ class _EtatPraxisGuide extends State<PraxisGuide>
         ? 1 / 60
         : (d - _avant).inMicroseconds / 1e6;
     _avant = d;
-    _corps.pas(dt.clamp(0, 0.05));
+    // Deux images au meme instant (dt nul) : le pas du corps diviserait par
+    // zero ; rien n'a bouge, on attend l'image suivante.
+    if (dt <= 0) return;
+    _corps.pas(dt.clamp(0.001, 0.05));
     _joue += dt;
     setState(() => _version++);
     if (_joue >= PraxisGuide.momentEveille.inMicroseconds / 1e6) {
