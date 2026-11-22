@@ -1,5 +1,5 @@
 -- AUDIT-FAMILLE (directeur, 22/11/2026) : les correctifs 1, 2, 3, 4, 6 (cote serveur), 7 et 8 de
--- docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md. Migrations 20261130995000 a 20261130995400.
+-- docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md. Migrations 20261201011000 a 20261201015000.
 --   1. le canal d'aide existe et se lit SANS compte (anon) ;
 --   2. la langue de l'interface passe a inscrire_titulaire : compte et demande ; une langue inconnue est ignoree ;
 --      les courriels de la famille partent dans sa langue ;

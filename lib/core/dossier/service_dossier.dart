@@ -179,7 +179,7 @@ class ServiceDossierSupabase implements ServiceDossier {
           },
         );
       } on PostgrestException catch (e) {
-        // Serveur d'avant la migration 20261130995000 : la fonction n'a pas
+        // Serveur d'avant la migration 20261201011000 : la fonction n'a pas
         // encore le parametre. La demande part sans langue plutot que de ne
         // pas partir (PGRST202 : fonction introuvable avec ces parametres).
         if (e.code != 'PGRST202') rethrow;
