@@ -25868,6 +25868,36 @@ class Traductions$admissions$reponses$fr {
 
 	/// fr: 'Non renseigné'
 	String get nonRenseigne => 'Non renseigné';
+
+	/// fr: 'Lecture du Coran'
+	String get lecture => 'Lecture du Coran';
+
+	/// fr: 'Une autre lecture : {nom}'
+	String autreLecture({required Object nom}) => 'Une autre lecture : ${nom}';
+
+	/// fr: 'Déjà mémorisé'
+	String get memorise => 'Déjà mémorisé';
+
+	/// fr: 'Juz indiqués'
+	String get juz => 'Juz indiqués';
+
+	/// fr: 'Sourates indiquées'
+	String get sourates => 'Sourates indiquées';
+
+	/// fr: 'Langue de secours'
+	String get langueSecours => 'Langue de secours';
+
+	/// fr: 'Autre langue demandée'
+	String get langueAutre => 'Autre langue demandée';
+
+	/// fr: 'Autre langue'
+	String get langueHorsListe => 'Autre langue';
+
+	/// fr: 'Connu grâce à'
+	String get source => 'Connu grâce à';
+
+	/// fr: 'Lien de suivi'
+	String get suivi => 'Lien de suivi';
 }
 
 // Path: admissions.etat
@@ -73101,6 +73131,16 @@ extension on Traductions {
 			'admissions.reponses.oui' => 'Oui',
 			'admissions.reponses.non' => 'Non',
 			'admissions.reponses.nonRenseigne' => 'Non renseigné',
+			'admissions.reponses.lecture' => 'Lecture du Coran',
+			'admissions.reponses.autreLecture' => ({required Object nom}) => 'Une autre lecture : ${nom}',
+			'admissions.reponses.memorise' => 'Déjà mémorisé',
+			'admissions.reponses.juz' => 'Juz indiqués',
+			'admissions.reponses.sourates' => 'Sourates indiquées',
+			'admissions.reponses.langueSecours' => 'Langue de secours',
+			'admissions.reponses.langueAutre' => 'Autre langue demandée',
+			'admissions.reponses.langueHorsListe' => 'Autre langue',
+			'admissions.reponses.source' => 'Connu grâce à',
+			'admissions.reponses.suivi' => 'Lien de suivi',
 			'admissions.reference' => 'Référence',
 			'admissions.courriel' => 'Adresse e‑mail',
 			'admissions.etatLibelle' => 'État',
@@ -73593,6 +73633,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'Ces réponses ne créent aucune candidature : elles servent à reconnaître les personnes quand elles s\'inscrivent.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'Enregistrées.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'Déjà enregistrées : rien n\'a changé.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'Lignes illisibles : non importées.',
 			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'Remplacées par une plus récente : ${n}',
 			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'Ligne par ligne',
@@ -73603,8 +73645,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'Importer un autre fichier',
 			'candidatsFlux.prevenir.lien' => 'Prévenir par e-mail',
 			'candidatsFlux.prevenir.titre' => 'Prévenir par e-mail',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.contexte' => 'Le lien d\'inscription part par e-mail aux personnes des formulaires importés qui ont laissé une adresse et n\'ont pas encore de compte. Une même adresse ne reçoit jamais le message deux fois.',
 			'candidatsFlux.prevenir.lecture' => 'Comptage des personnes à prévenir en cours.',
 			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne à prévenir', other: '${n} personnes à prévenir', ), 
@@ -74107,6 +74147,8 @@ extension on Traductions {
 			'calendrier.dates.concernees.erreur' => 'Les séances concernées n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.conflits.titre' => 'Séances qui ne peuvent pas être rétablies',
 			'calendrier.dates.conflits.intro' => 'Ces séances ont été mises de côté par la fermeture, mais l\'enseignant a pris un autre cours à la même heure. Libérez l\'enseignant puis réessayez, ou confirmez l\'abandon de ces séances : elles ne seront jamais rétablies. Les heures sont celles de La Mecque.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Autre cours : ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Autre cours à la même heure, ${quand}',
@@ -74117,8 +74159,6 @@ extension on Traductions {
 			'calendrier.dates.refus.retraitConflits' => 'La fermeture n\'est pas retirée : des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l\'enseignant ou confirmez l\'abandon de ces séances.',
 			'calendrier.dates.refus.raccourcissementConflits' => 'La fermeture n\'est pas modifiée : des séances mises de côté ne pourraient pas être rétablies. Retirez la fermeture entière ou libérez l\'enseignant.',
 			'calendrier.dates.refus.datesInvalides' => 'Le dernier jour doit venir après le premier, à moins d\'un an.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.refus.porteeInvalide' => 'Choisissez la tranche d\'âge ou la classe visée.',
 			'calendrier.dates.refus.evenementInvalide' => 'Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.',
 			'calendrier.dates.refus.introuvable' => 'Cette date n\'existe plus. Rechargez la liste.',

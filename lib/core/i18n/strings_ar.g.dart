@@ -12451,6 +12451,16 @@ class _Traductions$admissions$reponses$ar extends Traductions$admissions$reponse
 	@override String get oui => 'نعم';
 	@override String get non => 'لا';
 	@override String get nonRenseigne => 'غير مذكور';
+	@override String get lecture => 'رواية القرآن';
+	@override String autreLecture({required Object nom}) => 'رواية أخرى: ⁨${nom}⁩';
+	@override String get memorise => 'المحفوظ سابقًا';
+	@override String get juz => 'الأجزاء المذكورة';
+	@override String get sourates => 'السور المذكورة';
+	@override String get langueSecours => 'لغة بديلة';
+	@override String get langueAutre => 'لغة أخرى مطلوبة';
+	@override String get langueHorsListe => 'لغة أخرى';
+	@override String get source => 'عرف الأكاديمية عن طريق';
+	@override String get suivi => 'رابط المتابعة';
 }
 
 // Path: admissions.etat
@@ -44368,6 +44378,16 @@ extension on TraductionsAr {
 			'admissions.reponses.oui' => 'نعم',
 			'admissions.reponses.non' => 'لا',
 			'admissions.reponses.nonRenseigne' => 'غير مذكور',
+			'admissions.reponses.lecture' => 'رواية القرآن',
+			'admissions.reponses.autreLecture' => ({required Object nom}) => 'رواية أخرى: ⁨${nom}⁩',
+			'admissions.reponses.memorise' => 'المحفوظ سابقًا',
+			'admissions.reponses.juz' => 'الأجزاء المذكورة',
+			'admissions.reponses.sourates' => 'السور المذكورة',
+			'admissions.reponses.langueSecours' => 'لغة بديلة',
+			'admissions.reponses.langueAutre' => 'لغة أخرى مطلوبة',
+			'admissions.reponses.langueHorsListe' => 'لغة أخرى',
+			'admissions.reponses.source' => 'عرف الأكاديمية عن طريق',
+			'admissions.reponses.suivi' => 'رابط المتابعة',
 			'admissions.reference' => 'المرجع',
 			'admissions.courriel' => 'عنوان البريد الإلكتروني',
 			'admissions.etatLibelle' => 'الحالة',
@@ -44540,6 +44560,8 @@ extension on TraductionsAr {
 			'i1.familles.etat.envoyee' => 'أُرسلت',
 			'i1.familles.etat.echec' => 'لم تُرسَل',
 			'i1.familles.etat.compteCree' => 'المساحة مفتوحة',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.envoyeeLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
 			'i1.familles.envoyer' => 'إرسال الدعوة',
 			'i1.familles.envoyerPour' => ({required Object email}) => 'إرسال الدعوة إلى ⁨${email}⁩',
@@ -44550,8 +44572,6 @@ extension on TraductionsAr {
 			'i1.familles.toutesConsequence' => 'تتلقى كل أسرة بريدًا فورًا. والبريد المرسَل لا يُسترجَع.',
 			'i1.familles.toutesConfirmer' => ({required Object n}) => 'نعم، الإرسال إلى كل الأسر (⁨${n}⁩)',
 			'i1.familles.enFile' => ({required Object email}) => 'تُرسَل الدعوة إلى ⁨${email}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.dejaEnFile' => ({required Object email}) => 'أُرسلت دعوة إلى ⁨${email}⁩ أو هي قيد الإرسال: لا يُرسَل شيء إضافي.',
 			'i1.familles.compteCree' => 'فتحت هذه الأسرة مساحتها من قبل: لا يُرسَل شيء.',
 			'i1.familles.introuvable' => 'لم تعد هذه الأسرة في انتظار الدعوة. حدّث القائمة.',
@@ -45054,6 +45074,8 @@ extension on TraductionsAr {
 			'push1.gestes.examiner' => 'دراسة',
 			'push1.gestes.verifierPiece' => 'التحقق من الوثيقة',
 			'push1.gestes.traiterSignalement' => 'معالجة البلاغ',
+			_ => null,
+		} ?? switch (path) {
 			'push1.gestes.traiterDemande' => 'معالجة الطلب',
 			'push1.gestes.trouverRemplacant' => 'البحث عن بديل',
 			'push1.gestes.voirPaiement' => 'عرض الدفعة',
@@ -45064,8 +45086,6 @@ extension on TraductionsAr {
 			'push1.reglages.lien' => 'الإشعارات على هذا الجهاز',
 			'push1.reglages.titre' => 'الإشعارات على هذا الجهاز',
 			'push1.reglages.contexte' => 'استقبلوا تنبيهًا على هذا الهاتف أو الحاسوب، حتى والتطبيق مغلق. لا يذكر التنبيه أي اسم: التفاصيل تُقرأ في التطبيق.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.categoriesTitre' => 'ما تستقبلونه',
 			'push1.reglages.categoriesContexte' => 'أوقفوا فئة كي لا تصلكم على أجهزتكم. تبقى في صفحة الإشعارات.',
 			'push1.reglages.classes' => 'الفصول والحصص',
@@ -45568,6 +45588,8 @@ extension on TraductionsAr {
 			'motifs.refusDemande.exceptionnel' => 'تغيير المعلّم يبقى استثنائيًا',
 			'motifs.refusDemande.reglePlateforme' => 'تسري قاعدة المنصة',
 			'motifs.refusDemande.plafond' => 'بلوغ الحد الأقصى للطلاب',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.refusDemande.insuffisant' => 'معلومات غير كافية للبتّ',
 			'motifs.poserRegle.famille' => 'طلب الأسرة مقبول',
 			'motifs.poserRegle.pedagogique' => 'حاجة تعليمية للطالب',
@@ -45578,8 +45600,6 @@ extension on TraductionsAr {
 			'motifs.cloreSurcharge.famille' => 'طلب الأسرة',
 			'motifs.cloreSurcharge.changement' => 'تغيير الفصل أو المعلّم',
 			'motifs.cloreSurcharge.parErreur' => 'قاعدة وُضعت بالخطأ',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.annulationEvaluation.absenceEleve' => 'غياب الطالب',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'غياب المعلّم',
 			'motifs.annulationEvaluation.pasPret' => 'الطالب غير جاهز بعد',

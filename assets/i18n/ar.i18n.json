@@ -17016,7 +17016,17 @@
       "titulaireLigne": "صاحب الطلب",
       "oui": "نعم",
       "non": "لا",
-      "nonRenseigne": "غير مذكور"
+      "nonRenseigne": "غير مذكور",
+      "lecture": "رواية القرآن",
+      "autreLecture": "رواية أخرى: ⁨{nom}⁩",
+      "memorise": "المحفوظ سابقًا",
+      "juz": "الأجزاء المذكورة",
+      "sourates": "السور المذكورة",
+      "langueSecours": "لغة بديلة",
+      "langueAutre": "لغة أخرى مطلوبة",
+      "langueHorsListe": "لغة أخرى",
+      "source": "عرف الأكاديمية عن طريق",
+      "suivi": "رابط المتابعة"
     },
     "reference": "المرجع",
     "courriel": "عنوان البريد الإلكتروني",

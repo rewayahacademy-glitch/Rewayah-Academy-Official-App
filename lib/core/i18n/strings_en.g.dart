@@ -12291,6 +12291,16 @@ class _Traductions$admissions$reponses$en extends Traductions$admissions$reponse
 	@override String get oui => 'Yes';
 	@override String get non => 'No';
 	@override String get nonRenseigne => 'Not provided';
+	@override String get lecture => 'Quran reading';
+	@override String autreLecture({required Object nom}) => 'Another reading: ${nom}';
+	@override String get memorise => 'Already memorised';
+	@override String get juz => 'Juz given';
+	@override String get sourates => 'Surahs given';
+	@override String get langueSecours => 'Backup language';
+	@override String get langueAutre => 'Other language requested';
+	@override String get langueHorsListe => 'Other language';
+	@override String get source => 'Heard about us through';
+	@override String get suivi => 'Tracking link';
 }
 
 // Path: admissions.etat
@@ -43542,6 +43552,16 @@ extension on TraductionsEn {
 			'admissions.reponses.oui' => 'Yes',
 			'admissions.reponses.non' => 'No',
 			'admissions.reponses.nonRenseigne' => 'Not provided',
+			'admissions.reponses.lecture' => 'Quran reading',
+			'admissions.reponses.autreLecture' => ({required Object nom}) => 'Another reading: ${nom}',
+			'admissions.reponses.memorise' => 'Already memorised',
+			'admissions.reponses.juz' => 'Juz given',
+			'admissions.reponses.sourates' => 'Surahs given',
+			'admissions.reponses.langueSecours' => 'Backup language',
+			'admissions.reponses.langueAutre' => 'Other language requested',
+			'admissions.reponses.langueHorsListe' => 'Other language',
+			'admissions.reponses.source' => 'Heard about us through',
+			'admissions.reponses.suivi' => 'Tracking link',
 			'admissions.reference' => 'Reference',
 			'admissions.courriel' => 'Email address',
 			'admissions.etatLibelle' => 'Status',
@@ -44034,6 +44054,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'These answers create no application: they are used to recognize people when they sign up.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'Saved.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'Already saved: nothing changed.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'Unreadable rows: not imported.',
 			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'Replaced by a more recent one: ${n}',
 			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'Row by row',
@@ -44044,8 +44066,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'Import another file',
 			'candidatsFlux.prevenir.lien' => 'Notify by email',
 			'candidatsFlux.prevenir.titre' => 'Notify by email',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.contexte' => 'The sign-up link is sent by email to the people in the imported forms who left an address and do not have an account yet. The same address never receives the message twice.',
 			'candidatsFlux.prevenir.lecture' => 'Counting the people to notify.',
 			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person to notify', other: '${n} people to notify', ), 
@@ -44548,6 +44568,8 @@ extension on TraductionsEn {
 			'calendrier.dates.concernees.erreur' => 'The sessions concerned could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
 			'calendrier.dates.conflits.titre' => 'Sessions that cannot be restored',
 			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Other class at the same time, ${quand}',
@@ -44558,8 +44580,6 @@ extension on TraductionsEn {
 			'calendrier.dates.refus.retraitConflits' => 'The closure is not removed: sessions set aside cannot be restored. Read the list, then free the teacher or confirm abandoning these sessions.',
 			'calendrier.dates.refus.raccourcissementConflits' => 'The closure is not changed: sessions set aside could not be restored. Remove the whole closure or free the teacher.',
 			'calendrier.dates.refus.datesInvalides' => 'The last day must come after the first, within a year.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.refus.porteeInvalide' => 'Choose the age group or class concerned.',
 			'calendrier.dates.refus.evenementInvalide' => 'The title is missing or the kind of date is unreadable. Check them, then try again.',
 			'calendrier.dates.refus.introuvable' => 'This date no longer exists. Reload the list.',
