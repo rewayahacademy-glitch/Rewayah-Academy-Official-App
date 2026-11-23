@@ -21,4 +21,18 @@ class FicheEleveDirectionSupabase implements PortFicheEleveDirection {
           params: <String, dynamic>{'p_eleve_id': eleveId},
         ),
       );
+
+  @override
+  Future<ResultatDemandePaiement> demanderPaiement(String eleveId) async {
+    final Object? r = await _client.rpc<Object?>(
+      'demander_paiement_maintenant',
+      params: <String, dynamic>{'p_profil': eleveId},
+    );
+    final int avertis = r is Map && r['avertis'] is num
+        ? (r['avertis'] as num).toInt()
+        : 0;
+    return avertis > 0
+        ? ResultatDemandePaiement.demandee
+        : ResultatDemandePaiement.rienAPayer;
+  }
 }
