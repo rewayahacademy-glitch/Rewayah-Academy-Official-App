@@ -15,7 +15,12 @@ INSERT INTO auth.users (id, email) VALUES
  ('5a1e0000-0000-0000-0000-000000000011','sg-e1@test.invalid'),
  ('5a1e0000-0000-0000-0000-000000000012','sg-e2@test.invalid'),
  ('5a1e0000-0000-0000-0000-000000000013','sg-e3@test.invalid');
-INSERT INTO public.households (id, timezone) VALUES ('5a1e00ff-0000-0000-0000-00000000000a','Europe/Paris');
+-- AUDIT-FAMILLE-8 (22/11/2026) : deux enfants d'un meme foyer ne sont jamais dans la meme classe ; E1, E2 et E3
+-- ont chacun leur foyer (la direction ajoute E2 a la classe de E1).
+INSERT INTO public.households (id, timezone) VALUES
+ ('5a1e00ff-0000-0000-0000-00000000000a','Europe/Paris'),
+ ('5a1e00ff-0000-0000-0000-00000000000b','Europe/Paris'),
+ ('5a1e00ff-0000-0000-0000-00000000000c','Europe/Paris');
 INSERT INTO public.profiles
  (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES
@@ -23,8 +28,8 @@ VALUES
  ('5a1e0000-0000-0000-0000-000000000002','SG-T2','teacher',NULL,'Enseignant','Deux','provisional_active','male'),
  ('5a1e0000-0000-0000-0000-000000000003','SG-ADM','admin',NULL,'Direction','A','active','female'),
  ('5a1e0000-0000-0000-0000-000000000011','SG-E1','student','5a1e00ff-0000-0000-0000-00000000000a','Eleve','Un','active','male'),
- ('5a1e0000-0000-0000-0000-000000000012','SG-E2','student','5a1e00ff-0000-0000-0000-00000000000a','Eleve','Deux','active','male'),
- ('5a1e0000-0000-0000-0000-000000000013','SG-E3','student','5a1e00ff-0000-0000-0000-00000000000a','Eleve','Trois','active','male');
+ ('5a1e0000-0000-0000-0000-000000000012','SG-E2','student','5a1e00ff-0000-0000-0000-00000000000b','Eleve','Deux','active','male'),
+ ('5a1e0000-0000-0000-0000-000000000013','SG-E3','student','5a1e00ff-0000-0000-0000-00000000000c','Eleve','Trois','active','male');
 INSERT INTO public.teacher_profiles (profile_id, kyc_status) VALUES
  ('5a1e0000-0000-0000-0000-000000000001','approved'),
  ('5a1e0000-0000-0000-0000-000000000002','approved');

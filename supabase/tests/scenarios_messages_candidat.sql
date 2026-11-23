@@ -14,7 +14,7 @@
 --   4. un candidat n'obtient RIEN d'autre : aucun fil classe, eleve, dossier,
 --      remplacement ni profilPaiement ; ses capacites n'ouvrent ni annonce ni
 --      programmation ; les annonces lui sont fermees ;
---   5. une demande de famille (pending_kyc) n'ouvre rien ;
+--   5. une demande de famille (pending_kyc) n'ouvre que son propre fil (AUDIT-FAMILLE-3, 22/11/2026 : avant, rien) ;
 --   6. lecture seule : refusee, retiree, en pause, confirmee : le candidat et
 --      la direction lisent, personne n'ecrit ;
 --   7. le plafond de l'auteur candidat : 30 messages par 24 heures et par fil,
@@ -257,16 +257,33 @@ BEGIN
 END
 $rien$;
 
--- 5. Une demande de famille (pending_kyc) n'ouvre rien.
+-- 5. Une demande de famille (pending_kyc) n'ouvre que son propre fil (AUDIT-FAMILLE-3).
 DO $famille$
+DECLARE
+  v_fil uuid;
 BEGIN
   PERFORM pg_temp.en_tant_que('7c400000-0000-4000-8000-0000000000c4', 'guardian');
+  v_fil := (public.com_ouvrir_conversation('candidature', '7c400000-0000-4000-8000-000000000104', 'administration') ->> 'id')::uuid;
+  PERFORM pg_temp.vrai(v_fil IS NOT NULL
+    AND (public.com_lire_fil(v_fil) ->> 'peut_ecrire')::boolean,
+    '5. une demande de famille ouvre SON fil et peut y ecrire');
+  PERFORM public.com_envoyer_message(v_fil, 'Bonjour, une question.', '7c400000-0000-4000-8000-00000000f001');
+  PERFORM pg_temp.vrai(pg_temp.nb_fils() = 1 AND pg_temp.nb_fils_cand() = 1,
+    '5. elle ne liste que ce fil');
+  PERFORM pg_temp.vrai(public.com_ma_candidature() = '7c400000-0000-4000-8000-000000000104'::uuid,
+    '5. com_ma_candidature rend la demande de la famille');
   PERFORM pg_temp.vrai(
-    pg_temp.refus('SELECT public.com_lister_fils()') = '42501'
-    AND pg_temp.refus($q$SELECT public.com_ouvrir_conversation('candidature', '7c400000-0000-4000-8000-000000000104', 'administration')$q$) = '42501',
-    '5. une demande de famille (pending_kyc, candidature famille) n''ouvre aucune messagerie');
-  PERFORM pg_temp.vrai(pg_temp.refus('SELECT public.com_ma_candidature()') = '42501',
-    '5. com_ma_candidature est refusee a une demande de famille');
+    pg_temp.refus($q$SELECT public.com_ouvrir_conversation('candidature', '7c400000-0000-4000-8000-000000000101', 'administration')$q$) IS NOT NULL
+    OR public.com_ouvrir_conversation('candidature', '7c400000-0000-4000-8000-000000000101', 'administration') IS NULL,
+    '5. elle n''ouvre pas le fil d''un candidat enseignant');
+  PERFORM pg_temp.vrai(pg_temp.refus($q$SELECT public.com_annonces_cibles(NULL)$q$) = '42501',
+    '5. les annonces lui restent fermees');
+  PERFORM pg_temp.en_tant_que('7c400000-0000-4000-8000-0000000000b1', 'admin');
+  PERFORM pg_temp.vrai(jsonb_array_length(public.com_conversations_pour_objet('candidature', '7c400000-0000-4000-8000-000000000104')) = 1,
+    '5. toute direction active lit la demande d''une famille, quel que soit son cote');
+  PERFORM pg_temp.en_tant_que('7c400000-0000-4000-8000-0000000000e1', 'guardian');
+  PERFORM pg_temp.vrai(jsonb_array_length(public.com_conversations_pour_objet('candidature', '7c400000-0000-4000-8000-000000000104')) = 0,
+    '5. un autre tuteur ne lit pas la demande');
   -- Un candidat enseignant dont le jeton porte un autre role est refuse.
   PERFORM pg_temp.en_tant_que('7c400000-0000-4000-8000-0000000000c1', 'guardian');
   PERFORM pg_temp.vrai(pg_temp.refus('SELECT public.com_lister_fils()') = '42501',

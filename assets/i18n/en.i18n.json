@@ -1189,10 +1189,16 @@
     "demandePour": "Your request concerns: {liste}.",
     "demandeRefuseeTitre": "We cannot proceed",
     "demandeRefuseeMessage": "The management has read your request and cannot proceed with it for now.",
-    "demandeRefuseeDetail": "The email we sent you gives the reason. You can reply to it with any question.",
+    "demandeRefuseeDetail": "You can write to the management below with any question.",
+    "motifRefus": {
+      "general": "We cannot proceed with your request for now.",
+      "niveau": "The level you asked for is not offered yet.",
+      "besoins": "Our classes do not yet match what you are looking for.",
+      "sansReponse": "We did not receive an answer to our last message."
+    },
     "precisionsTitre": "We are missing some information",
     "precisionsMessage": "To review your request, the management needs a clarification:",
-    "precisionsReponse": "Simply reply to the email we sent you. The management resumes your request as soon as you reply.",
+    "precisionsReponse": "Reply here, in the app, by writing to the management below, or to the email we sent you. The management resumes your request as soon as you reply.",
     "actualiserCompte": "Reload",
     "lireEtAccepter": "Read and accept our terms",
     "nosConditions": "Our terms, to read and accept",
@@ -1327,6 +1333,7 @@
       "horsLigne": "The check cannot be done right now. Try again when the connection is back."
     },
     "probleme": "Link expired or never received?",
+    "aideEntree": "Trouble signing in? Write to {adresse}",
     "recuperation": {
       "titre": "Get back into my account",
       "intro": "There is no password to reset: enter your address and we send you a new sign-in link.",
@@ -5899,6 +5906,7 @@
         "abandonConfirmer": "Abandon the new class",
         "abandonContinuer": "Continue editing",
         "eleveDejaEnClasse": "this student is already in an active class. First remove them from that class, or transfer them, then press again.",
+        "fratrieMemeClasse": "two children of the same household never share a class. Choose another class for this child, then press again.",
         "eleveInvalide": "this student's account no longer exists or is not active. Choose another student from the list.",
         "eleveNonMembre": "this student is no longer in this class. Reload the list to see its members.",
         "classeDejaClose": "this class is already closed. Reload the classes list.",
@@ -6351,6 +6359,7 @@
       "nomDetail": "Deduced from the gender, audience, days and time.",
       "dejaCreee": "Another member of the management has just created this class: nothing was created twice. Close this sheet to see the up-to-date list.",
       "refusee": "The class was not created: {motif}. Check the requests, then press again.",
+      "fratrieMotif": "two children of the same household are in this group, and they never share a class",
       "nonConfirmee": "The creation is not confirmed: the server's answer did not arrive. Press again: the same request will be resumed, with no duplicate class.",
       "creee": {
         "one": "Class {libelle} created: {n} student placed.",

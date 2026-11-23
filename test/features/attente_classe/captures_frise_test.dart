@@ -138,6 +138,7 @@ void main() {
                     ? IssueDemandeFamille.aCompleter
                     : IssueDemandeFamille.enCours,
                 precisions: aCompleter ? 'Quel niveau ?' : null,
+                motif: null,
               ),
             ),
             lectureDatesAdmissionProvider.overrideWithValue(

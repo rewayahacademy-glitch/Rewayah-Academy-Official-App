@@ -193,9 +193,9 @@ BEGIN
     RAISE EXCEPTION 'ONB-PRAXIS ROUGE : la forme a sept parametres est encore dans public';
   END IF;
   IF pg_catalog.has_function_privilege('anon',
-       'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text)', 'EXECUTE')
+       'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text,text)', 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated',
-       'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text)', 'EXECUTE')
+       'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text,text)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated',
        'private.inscrire_titulaire_avant_onboarding(text,text,text,public.gender,text,boolean,jsonb)', 'EXECUTE') THEN
     RAISE EXCEPTION 'ONB-PRAXIS ROUGE : droits d''execution faux';

@@ -36,6 +36,9 @@ void main() {
         final Map<String, String> attendus = <String, String>{
           "cet eleve n'existe pas ou son compte n'est pas valide":
               c1.eleveInvalide,
+          // AUDIT-FAMILLE-8 (22/11/2026) : freres et soeurs, classes differentes.
+          'deux enfants du meme foyer : jamais dans la meme classe':
+              c1.fratrieMemeClasse,
           "cet eleve n'est pas membre actif de ce groupe": c1.eleveNonMembre,
           'groupe introuvable ou deja cloture': c1.classeDejaClose,
           'un motif est requis pour cloturer un groupe': c1.motifManquant,

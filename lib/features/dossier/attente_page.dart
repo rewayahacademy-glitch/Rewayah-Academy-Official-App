@@ -29,6 +29,7 @@ import '../candidature/pays_versement_portail.dart';
 import '../candidature/portail_candidature.dart';
 import '../com_annonces/annonces_recues.dart';
 import '../com_messages/entree_messages_candidature.dart';
+import '../connexion/aide_entree.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../inscription/brouillon_inscription.dart';
@@ -350,6 +351,20 @@ class _AttentePageState extends ConsumerState<AttentePage> {
               // messages non lus de la candidature.
               if (candidature != null)
                 const EntreeMessagesCandidature(ecartAvant: Ecart.vLg),
+              // AUDIT-FAMILLE-3 (22/11/2026) : la famille ou l'eleve adulte
+              // dont la demande attend, est a completer ou refusee ecrit a la
+              // direction par la messagerie existante (fil « candidature »),
+              // sans nouvel ecran. Le candidat enseignant a la sienne.
+              if (lu != null &&
+                  lu.estTuteur &&
+                  lu.etape == EtapeDossier.accesEnPreparation)
+                const EntreeMessagesCandidature(ecartAvant: Ecart.vLg),
+              // AUDIT-FAMILLE-1 : l'aide, pour qui n'arrive pas a joindre la
+              // direction autrement (courriel perdu, compte suspendu).
+              if (candidature == null) ...<Widget>[
+                Ecart.vLg,
+                const AideEntree(),
+              ],
             ],
           ),
         ),
@@ -639,16 +654,27 @@ class _DemandeFamille extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         switch (demande) {
-          (issue: IssueDemandeFamille.refusee, precisions: _) => _Bloc(
-            key: const Key('attente-demande-refusee'),
-            titre: t.attente.demandeRefuseeTitre,
-            message: t.attente.demandeRefuseeMessage,
-            detail: t.attente.demandeRefuseeDetail,
-            icone: AppIcons.foyer,
-          ),
+          (
+            issue: IssueDemandeFamille.refusee,
+            precisions: _,
+            motif: final String? motif,
+          ) =>
+            _Bloc(
+              key: const Key('attente-demande-refusee'),
+              titre: t.attente.demandeRefuseeTitre,
+              message: t.attente.demandeRefuseeMessage,
+              // AUDIT-FAMILLE-7 : la raison se lit ici, sans dependre d'un
+              // courriel perdu ou classe en pourriel.
+              detail: <String>[
+                ?_phraseMotifRefus(motif),
+                t.attente.demandeRefuseeDetail,
+              ].join('\n'),
+              icone: AppIcons.foyer,
+            ),
           (
             issue: IssueDemandeFamille.aCompleter,
             precisions: final String precisions,
+            motif: _,
           ) =>
             Column(
               key: const Key('attente-demande-precisions'),
@@ -681,6 +707,15 @@ class _DemandeFamille extends ConsumerWidget {
     );
   }
 }
+
+/// La phrase du modele de refus que la direction a choisi, ou `null` : le refus
+/// general dit deja « ne peut pas y donner suite pour le moment ».
+String? _phraseMotifRefus(String? modele) => switch (modele) {
+  'refus_niveau' => t.attente.motifRefus.niveau,
+  'refus_besoins' => t.attente.motifRefus.besoins,
+  'refus_sans_reponse' => t.attente.motifRefus.sansReponse,
+  _ => null,
+};
 
 /// Admission, lot B (fiche du 29/10, §4) : qui la demande concerne, relu
 /// sur le serveur. Sans lecture (en cours, en echec, aucune ligne), rien :

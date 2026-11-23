@@ -45,7 +45,7 @@ Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
     'admission_acceptee', 'admission_refusee', 'admission_precisions', 'compte_enseignant_valide', 'retenu_entretien',
     'invitation_enseignant', 'invitation_famille_importee', 'invitation_candidat_importe', 'message_libre', 'nouvelles',
-    'message_candidat_recu']) {
+    'message_candidat_recu', 'admission_reprise', 'horaire_ouvert']) {
     assert(modelesConnus.includes(e), e)
   }
 })
@@ -848,5 +848,28 @@ Deno.test('PE-A1 : sujets Auth, une ligne par message ramifiee par langue, fichi
     // Hors des balises, rien que html/template echapperait.
     assert(!/['&<>]/.test(s.replace(/\{\{[^}]*\}\}/g, '')), `${nom} : caractere echappe`)
     assertEquals((s.match(/\{\{ if /g) ?? []).length, (s.match(/\{\{ end \}\}/g) ?? []).length, nom)
+  }
+})
+
+// AUDIT-FAMILLE (22/11/2026) : l'acceptation dit la suite concrete, la reprise et l'horaire ouvert existent dans les
+// trois langues ecrites, sans traduction ; l'espagnol et le portugais partent traduits du francais.
+Deno.test('audit famille : acceptation avec la suite, reprise, horaire ouvert (fr, en, ar)', () => {
+  const rendu = (modele: string, langue: string, donnees: Record<string, unknown> = {}) =>
+    rendre({ modele, categorie: 'inscription', essentielle: true, donnees }, langue)
+  for (const l of ['fr', 'en', 'ar']) {
+    for (const m of ['admission_acceptee', 'admission_reprise', 'horaire_ouvert']) {
+      assertEquals(rendu(m, l, { cas: 'acceptation' }).traduireDepuis, undefined, `${l} ${m} : ecrit a la main`)
+    }
+    const texte = composer(rendu('admission_acceptee', l).contenu).texte
+    assert(texte.includes('1.') && texte.includes('2.') && texte.includes('3.'), `${l} : les trois etapes`)
+  }
+  assert(composer(rendu('admission_acceptee', 'fr').contenu).texte.includes('Le premier paiement se fait au début'))
+  assert(composer(rendu('admission_acceptee', 'en').contenu).texte.includes('The first payment is made at the start'))
+  assert(composer(rendu('admission_acceptee', 'ar').contenu).texte.includes('الدفعة الأولى'))
+  const refus = composer(rendu('admission_reprise', 'fr', { cas: 'refus' }).contenu).texte
+  const acceptation = composer(rendu('admission_reprise', 'fr', { cas: 'acceptation' }).contenu).texte
+  assert(refus.includes('qu’elle avait refusée') && !acceptation.includes('refusée') && acceptation.includes('Votre espace est fermé'))
+  for (const l of ['es', 'pt']) {
+    for (const m of ['admission_reprise', 'horaire_ouvert']) assertEquals(rendu(m, l).traduireDepuis, 'fr', `${l} ${m}`)
   }
 })

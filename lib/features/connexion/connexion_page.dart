@@ -31,6 +31,7 @@ import '../inscription/invitation_en_cours.dart';
 import '../inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import '../juridique/textes_juridiques.dart';
+import 'aide_entree.dart';
 import 'coquille_entree.dart';
 import 'coquille_praxis.dart';
 import 'feuille_appareil_eleve.dart';
@@ -696,6 +697,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                 onPress: () => unawaited(_entreeEleve()),
               ),
             ],
+            // AUDIT-FAMILLE-1 (22/11/2026) : une sortie pour qui n'arrive pas
+            // a entrer, avec l'adresse d'aide lue sur le serveur.
+            const AideEntree(),
+            Ecart.vSm,
             // Sur une ligne quand elle tient ; a texte agrandi, le second lien
             // passe dessous plutot que de deborder.
             Wrap(
