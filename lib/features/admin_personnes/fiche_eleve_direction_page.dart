@@ -303,7 +303,9 @@ String? _libelleTranche(FicheEleveDirection f) {
     'enfant' =>
       age == null
           ? t.admin.comptes.trancheEnfant
-          : t.admin.ficheEleve.identite.ageEnfant(age: age),
+          : LibellesGroupe.insecable(
+              t.admin.ficheEleve.identite.ageEnfant(age: age),
+            ),
     'adulte' => t.admin.comptes.trancheAdulte,
     _ => null,
   };
