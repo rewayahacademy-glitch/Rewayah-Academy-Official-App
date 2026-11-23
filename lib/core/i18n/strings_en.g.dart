@@ -2605,9 +2605,9 @@ class _Traductions$whatsapp$en extends Traductions$whatsapp$fr {
 
 	// Translations
 	@override String get etiquette => 'Your WhatsApp number';
-	@override String get pourquoi => 'So the school can reach you quickly after you sign up.';
+	@override String get pourquoi => 'So the management can reach you quickly after you sign up.';
 	@override String get accueilLigne => 'Add your WhatsApp number';
-	@override String get accueilPourquoi => 'The school will be able to reach you quickly.';
+	@override String get accueilPourquoi => 'The management will be able to reach you quickly.';
 	@override String get titreFeuille => 'Your WhatsApp number';
 	@override String get enregistrer => 'Save my number';
 	@override String get echec => 'Your number was not saved. Please try again in a moment.';
@@ -45262,9 +45262,9 @@ extension on TraductionsEn {
 			'onboarding.fin.fratrie' => 'Each child will have their own class and their own teacher: if a teacher is absent, the others continue, and one tablet is enough, taking turns.',
 			'onboarding.fin.suivre' => 'Follow my request',
 			'whatsapp.etiquette' => 'Your WhatsApp number',
-			'whatsapp.pourquoi' => 'So the school can reach you quickly after you sign up.',
+			'whatsapp.pourquoi' => 'So the management can reach you quickly after you sign up.',
 			'whatsapp.accueilLigne' => 'Add your WhatsApp number',
-			'whatsapp.accueilPourquoi' => 'The school will be able to reach you quickly.',
+			'whatsapp.accueilPourquoi' => 'The management will be able to reach you quickly.',
 			'whatsapp.titreFeuille' => 'Your WhatsApp number',
 			'whatsapp.enregistrer' => 'Save my number',
 			'whatsapp.echec' => 'Your number was not saved. Please try again in a moment.',

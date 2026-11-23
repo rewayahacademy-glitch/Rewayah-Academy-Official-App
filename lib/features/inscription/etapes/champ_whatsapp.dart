@@ -112,6 +112,7 @@ class _ChampWhatsappState extends State<ChampWhatsapp> {
           textDirection: TextDirection.ltr,
           child: ChampNumeroTelephone(
             cle: ChampWhatsapp.numeroKey,
+            sansIndice: true,
             controleur: _numero,
             focus: _focus,
             pays: _pays,

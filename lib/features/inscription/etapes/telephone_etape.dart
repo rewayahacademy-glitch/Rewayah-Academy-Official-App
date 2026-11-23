@@ -320,6 +320,7 @@ class ChampNumeroTelephone extends StatelessWidget {
   /// Cree le champ ; [cle] remplace la cle des tests de l'etape du candidat.
   const ChampNumeroTelephone({
     this.cle,
+    this.sansIndice = false,
     super.key,
     required this.controleur,
     required this.focus,
@@ -332,6 +333,10 @@ class ChampNumeroTelephone extends StatelessWidget {
   });
 
   final Key? cle;
+
+  /// Vrai : pas de mot « Numero » dans le champ vide (l'etiquette est au-dessus ;
+  /// a 320 de large en texte x2, le mot serait coupe).
+  final bool sansIndice;
   final TextEditingController controleur;
   final FocusNode focus;
   final String? pays;
@@ -355,7 +360,7 @@ class ChampNumeroTelephone extends StatelessWidget {
       textInputAction: TextInputAction.done,
       autofillHints: const <String>[AutofillHints.telephoneNumberNational],
       decoration: InputDecoration(
-        hintText: t.inscription.telephone.numeroCourt,
+        hintText: sansIndice ? null : t.inscription.telephone.numeroCourt,
         prefixText: indicatif == null
             ? null
             : '${indicatifAffiche(indicatif!)} ',
