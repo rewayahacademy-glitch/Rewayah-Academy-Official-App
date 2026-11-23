@@ -338,20 +338,24 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('ordinateur : toucher un eleve remplit l\'apercu, sans quitter '
-      'la page ; la personne choisie est dans l\'adresse', (
+  testWidgets('ordinateur : toucher une famille remplit l\'apercu, sans '
+      'quitter la page ; la personne choisie est dans l\'adresse (la ligne '
+      'd\'un eleve, elle, ouvre sa fiche : FICHE-ELEVE-DIRECTION)', (
     WidgetTester tester,
   ) async {
-    await _monter(tester, adresse: '/admin/personnes?onglet=eleves');
+    await _monter(tester, adresse: '/admin/personnes?onglet=familles');
     expect(find.text(t.admin.personnesPage.apercuVide), findsOneWidget);
 
-    await tester.tap(find.text('Bilal Essai').first);
+    await tester.tap(find.text('Driss Essai').first);
     await tester.pumpAndSettle();
 
-    expect(_adresse, contains('element=RA-26-412'));
+    expect(_adresse, contains('element=RA-26-414'));
     final Finder apercu = find.byKey(PersonnesPage.cleApercu);
     expect(
-      find.descendant(of: apercu, matching: find.text('Enfant')),
+      find.descendant(
+        of: apercu,
+        matching: find.text(t.admin.comptes.colonneElevesRattaches),
+      ),
       findsOneWidget,
     );
     // Aucune feuille : l'apercu est dans la page.

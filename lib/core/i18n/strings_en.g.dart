@@ -1066,6 +1066,7 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	@override late final _Traductions$admin$journal$en journal = _Traductions$admin$journal$en._(_root);
 	@override late final _Traductions$admin$observations$en observations = _Traductions$admin$observations$en._(_root);
 	@override late final _Traductions$admin$suppressions$en suppressions = _Traductions$admin$suppressions$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$en ficheEleve = _Traductions$admin$ficheEleve$en._(_root);
 	@override late final _Traductions$admin$comptes$en comptes = _Traductions$admin$comptes$en._(_root);
 	@override late final _Traductions$admin$agents$en agents = _Traductions$admin$agents$en._(_root);
 	@override late final _Traductions$admin$praxis$en praxis = _Traductions$admin$praxis$en._(_root);
@@ -7001,6 +7002,27 @@ class _Traductions$admin$suppressions$en extends Traductions$admin$suppressions$
 	@override String get echec => 'The decision could not be confirmed. Check the list before trying again.';
 	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it returns.';
 	@override late final _Traductions$admin$suppressions$retraits$en retraits = _Traductions$admin$suppressions$retraits$en._(_root);
+}
+
+// Path: admin.ficheEleve
+class _Traductions$admin$ficheEleve$en extends Traductions$admin$ficheEleve$fr {
+	_Traductions$admin$ficheEleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fil => 'People';
+	@override late final _Traductions$admin$ficheEleve$introuvable$en introuvable = _Traductions$admin$ficheEleve$introuvable$en._(_root);
+	@override String get sansDonnees => 'This student\'s record could not be loaded';
+	@override String get ouvrir => 'Open the record';
+	@override String ouvrirDe({required Object dePrenom}) => 'Open ${dePrenom}\'s record';
+	@override late final _Traductions$admin$ficheEleve$identite$en identite = _Traductions$admin$ficheEleve$identite$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$famille$en famille = _Traductions$admin$ficheEleve$famille$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$admission$en admission = _Traductions$admin$ficheEleve$admission$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$classe$en classe = _Traductions$admin$ficheEleve$classe$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$presences$en presences = _Traductions$admin$ficheEleve$presences$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$progression$en progression = _Traductions$admin$ficheEleve$progression$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$compte$en compte = _Traductions$admin$ficheEleve$compte$en._(_root);
 }
 
 // Path: admin.comptes
@@ -17865,6 +17887,134 @@ class _Traductions$admin$suppressions$retraits$en extends Traductions$admin$supp
 	);
 	@override late final _Traductions$admin$suppressions$retraits$refus$en refus = _Traductions$admin$suppressions$retraits$refus$en._(_root);
 	@override String get voirPlus => 'Show more deleted accounts';
+}
+
+// Path: admin.ficheEleve.introuvable
+class _Traductions$admin$ficheEleve$introuvable$en extends Traductions$admin$ficheEleve$introuvable$fr {
+	_Traductions$admin$ficheEleve$introuvable$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This record can\'t be found';
+	@override String get phrase => 'No student has this identifier, or the person was removed. Go back to the list to look for them.';
+	@override String get retour => 'Back to People';
+}
+
+// Path: admin.ficheEleve.identite
+class _Traductions$admin$ficheEleve$identite$en extends Traductions$admin$ficheEleve$identite$fr {
+	_Traductions$admin$ficheEleve$identite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Identity';
+	@override String get prenom => 'First name';
+	@override String get nom => 'Last name';
+	@override String get matricule => 'ID number';
+	@override String get age => 'Age';
+	@override String get genre => 'Gender';
+	@override String get langueCours => 'Class language';
+	@override String get langueCompte => 'Account language';
+	@override String get masquee => 'Identity hidden: only the ID number is shown.';
+	@override String ageEnfant({required Object age}) => 'Child, ${age} years old';
+}
+
+// Path: admin.ficheEleve.famille
+class _Traductions$admin$ficheEleve$famille$en extends Traductions$admin$ficheEleve$famille$fr {
+	_Traductions$admin$ficheEleve$famille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Family';
+	@override String get tuteur => 'Guardian';
+	@override String get courriel => 'Email';
+	@override String get telephone => 'Phone';
+	@override String get ouvrir => 'Open the family';
+	@override String get sansTuteur => 'This adult learns for themselves: there is no guardian.';
+	@override String get tuteurMasque => 'Guardian\'s identity hidden.';
+}
+
+// Path: admin.ficheEleve.admission
+class _Traductions$admin$ficheEleve$admission$en extends Traductions$admin$ficheEleve$admission$fr {
+	_Traductions$admin$ficheEleve$admission$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sign-up answers';
+	@override String get aucune => 'No sign-up answers are recorded for this student.';
+	@override String get memorise => 'Already memorized';
+}
+
+// Path: admin.ficheEleve.classe
+class _Traductions$admin$ficheEleve$classe$en extends Traductions$admin$ficheEleve$classe$fr {
+	_Traductions$admin$ficheEleve$classe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Class';
+	@override String get titrePlusieurs => 'Classes';
+	@override String get aucune => 'This student is not in any class yet.';
+	@override String get enseignant => 'Teacher';
+	@override String get sansEnseignant => 'Teacher not assigned yet';
+	@override String get horaire => 'Schedule';
+	@override String get depuis => 'In the class since';
+}
+
+// Path: admin.ficheEleve.presences
+class _Traductions$admin$ficheEleve$presences$en extends Traductions$admin$ficheEleve$presences$fr {
+	_Traductions$admin$ficheEleve$presences$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Attendance';
+	@override String get aucune => 'No past session yet: attendance will appear after the first session.';
+	@override String get seances => 'Sessions held';
+	@override String get presents => 'Present';
+	@override String get retards => 'Late';
+	@override String get absents => 'Absent';
+	@override String get excuses => 'Excused';
+	@override String get dernieres => 'Latest sessions';
+	@override String get presente => 'Present';
+	@override String get enRetard => 'Late';
+	@override String get absente => 'Absent';
+	@override String get excusee => 'Excused';
+	@override String get inconnue => 'Attendance not known yet';
+}
+
+// Path: admin.ficheEleve.progression
+class _Traductions$admin$ficheEleve$progression$en extends Traductions$admin$ficheEleve$progression$fr {
+	_Traductions$admin$ficheEleve$progression$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Progress';
+	@override String get aucune => 'No stage yet: the student is in no class, or is waiting for the reading interview.';
+	@override String get etape => 'Current stage';
+	@override String ordre({required Object ordre}) => 'Stage ${ordre}';
+	@override String get depuis => 'In the stage since';
+	@override String get dateLimite => 'To finish before';
+	@override String get rythme => 'Pace';
+	@override String get dansLesTemps => 'On schedule';
+	@override String get auDelaDuPrevu => 'Past the planned time';
+}
+
+// Path: admin.ficheEleve.compte
+class _Traductions$admin$ficheEleve$compte$en extends Traductions$admin$ficheEleve$compte$fr {
+	_Traductions$admin$ficheEleve$compte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Account';
+	@override String get etat => 'Account status';
+	@override String get inscritLe => 'Signed up on';
+	@override String get accesJusquAu => 'Temporary access until';
 }
 
 // Path: admin.comptes.retrait
@@ -35846,10 +35996,70 @@ extension on TraductionsEn {
 			'admin.suppressions.retraits.refus.etatAvantInconnu' => 'This account was deleted before the app kept its previous state. It cannot be restored here.',
 			'admin.suppressions.retraits.refus.erreur' => 'The restoration could not be confirmed. Check the list before trying again.',
 			'admin.suppressions.retraits.voirPlus' => 'Show more deleted accounts',
-			'admin.comptes.titre' => 'Accounts',
-			'admin.comptes.intro' => 'All the people registered, those awaiting a decision first. A teacher with no ID document submitted stays visible here: this is the only place that shows them.',
+			'admin.ficheEleve.fil' => 'People',
+			'admin.ficheEleve.introuvable.titre' => 'This record can\'t be found',
 			_ => null,
 		} ?? switch (path) {
+			'admin.ficheEleve.introuvable.phrase' => 'No student has this identifier, or the person was removed. Go back to the list to look for them.',
+			'admin.ficheEleve.introuvable.retour' => 'Back to People',
+			'admin.ficheEleve.sansDonnees' => 'This student\'s record could not be loaded',
+			'admin.ficheEleve.ouvrir' => 'Open the record',
+			'admin.ficheEleve.ouvrirDe' => ({required Object dePrenom}) => 'Open ${dePrenom}\'s record',
+			'admin.ficheEleve.identite.titre' => 'Identity',
+			'admin.ficheEleve.identite.prenom' => 'First name',
+			'admin.ficheEleve.identite.nom' => 'Last name',
+			'admin.ficheEleve.identite.matricule' => 'ID number',
+			'admin.ficheEleve.identite.age' => 'Age',
+			'admin.ficheEleve.identite.genre' => 'Gender',
+			'admin.ficheEleve.identite.langueCours' => 'Class language',
+			'admin.ficheEleve.identite.langueCompte' => 'Account language',
+			'admin.ficheEleve.identite.masquee' => 'Identity hidden: only the ID number is shown.',
+			'admin.ficheEleve.identite.ageEnfant' => ({required Object age}) => 'Child, ${age} years old',
+			'admin.ficheEleve.famille.titre' => 'Family',
+			'admin.ficheEleve.famille.tuteur' => 'Guardian',
+			'admin.ficheEleve.famille.courriel' => 'Email',
+			'admin.ficheEleve.famille.telephone' => 'Phone',
+			'admin.ficheEleve.famille.ouvrir' => 'Open the family',
+			'admin.ficheEleve.famille.sansTuteur' => 'This adult learns for themselves: there is no guardian.',
+			'admin.ficheEleve.famille.tuteurMasque' => 'Guardian\'s identity hidden.',
+			'admin.ficheEleve.admission.titre' => 'Sign-up answers',
+			'admin.ficheEleve.admission.aucune' => 'No sign-up answers are recorded for this student.',
+			'admin.ficheEleve.admission.memorise' => 'Already memorized',
+			'admin.ficheEleve.classe.titre' => 'Class',
+			'admin.ficheEleve.classe.titrePlusieurs' => 'Classes',
+			'admin.ficheEleve.classe.aucune' => 'This student is not in any class yet.',
+			'admin.ficheEleve.classe.enseignant' => 'Teacher',
+			'admin.ficheEleve.classe.sansEnseignant' => 'Teacher not assigned yet',
+			'admin.ficheEleve.classe.horaire' => 'Schedule',
+			'admin.ficheEleve.classe.depuis' => 'In the class since',
+			'admin.ficheEleve.presences.titre' => 'Attendance',
+			'admin.ficheEleve.presences.aucune' => 'No past session yet: attendance will appear after the first session.',
+			'admin.ficheEleve.presences.seances' => 'Sessions held',
+			'admin.ficheEleve.presences.presents' => 'Present',
+			'admin.ficheEleve.presences.retards' => 'Late',
+			'admin.ficheEleve.presences.absents' => 'Absent',
+			'admin.ficheEleve.presences.excuses' => 'Excused',
+			'admin.ficheEleve.presences.dernieres' => 'Latest sessions',
+			'admin.ficheEleve.presences.presente' => 'Present',
+			'admin.ficheEleve.presences.enRetard' => 'Late',
+			'admin.ficheEleve.presences.absente' => 'Absent',
+			'admin.ficheEleve.presences.excusee' => 'Excused',
+			'admin.ficheEleve.presences.inconnue' => 'Attendance not known yet',
+			'admin.ficheEleve.progression.titre' => 'Progress',
+			'admin.ficheEleve.progression.aucune' => 'No stage yet: the student is in no class, or is waiting for the reading interview.',
+			'admin.ficheEleve.progression.etape' => 'Current stage',
+			'admin.ficheEleve.progression.ordre' => ({required Object ordre}) => 'Stage ${ordre}',
+			'admin.ficheEleve.progression.depuis' => 'In the stage since',
+			'admin.ficheEleve.progression.dateLimite' => 'To finish before',
+			'admin.ficheEleve.progression.rythme' => 'Pace',
+			'admin.ficheEleve.progression.dansLesTemps' => 'On schedule',
+			'admin.ficheEleve.progression.auDelaDuPrevu' => 'Past the planned time',
+			'admin.ficheEleve.compte.titre' => 'Account',
+			'admin.ficheEleve.compte.etat' => 'Account status',
+			'admin.ficheEleve.compte.inscritLe' => 'Signed up on',
+			'admin.ficheEleve.compte.accesJusquAu' => 'Temporary access until',
+			'admin.comptes.titre' => 'Accounts',
+			'admin.comptes.intro' => 'All the people registered, those awaiting a decision first. A teacher with no ID document submitted stays visible here: this is the only place that shows them.',
 			'admin.comptes.attenteUneAujourdhui' => 'One person awaits a decision, registered today.',
 			'admin.comptes.attenteUneUnJour' => 'One person has been awaiting a decision for 1 day.',
 			'admin.comptes.roleIllisibleUn' => 'The role of a pending account could not be read: it is not counted anywhere and its nature is not confirmed. Reload the page to try again.',
@@ -36302,6 +36512,8 @@ extension on TraductionsEn {
 			'admin.praxis.objectifs.aucun' => 'Praxis has not set any goal yet.',
 			'admin.praxis.objectifs.aucunDetail' => 'Its goals for the day and the week will appear here.',
 			'admin.praxis.objectifs.erreur' => 'Praxis\'s goals could not be read. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.praxis.objectifs.horsLigne' => 'Praxis\'s goals are not loaded yet. Reload them.',
 			'admin.notifications.titre' => 'Notifications',
 			'admin.notifications.vide' => 'No notification',
@@ -36362,8 +36574,6 @@ extension on TraductionsEn {
 			'admin.finance.vue.alerte.aRegulariserMontant' => ({required Object qui, required Object montant}) => '${qui}: ${montant} is missing to fund the current period.',
 			'admin.finance.vue.alerte.aRegulariserSansMontant' => ({required Object qui}) => '${qui}: the current period is not funded.',
 			'admin.finance.vue.alerte.confirmation' => 'Payment awaiting confirmation',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.vue.alerte.confirmationMontant' => ({required Object qui, required Object montant}) => '${qui}: a payment of ${montant} awaits confirmation.',
 			'admin.finance.vue.alerte.confirmationSansMontant' => ({required Object qui}) => '${qui}: a payment awaits confirmation.',
 			'admin.finance.vue.alerte.sousMinimum' => 'Class below the opening minimum',
@@ -36816,6 +37026,8 @@ extension on TraductionsEn {
 			'admin.planning.semaineSemantique' => ({required Object date}) => 'Week of ${date}',
 			'admin.planning.precedente' => 'Previous week',
 			'admin.planning.suivante' => 'Next week',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planning.cetteSemaine' => 'Back to this week',
 			'admin.planning.horaire' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
 			'admin.planning.sansEnseignant' => 'No teacher',
@@ -36876,8 +37088,6 @@ extension on TraductionsEn {
 			'admin.incidents.sousTitre' => 'Sessions that went into technical incident, teacher absent or student absent in the last 24 hours: what the "Incidents (24 h)" tile counts.',
 			'admin.incidents.liste' => 'Sessions in incident',
 			'admin.incidents.natureTechnique' => 'Technical incident',
-			_ => null,
-		} ?? switch (path) {
 			'admin.incidents.natureEnseignantAbsent' => 'Teacher absent',
 			'admin.incidents.natureEleveAbsent' => 'Student absent',
 			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '${date}, ${heure}',
@@ -37330,6 +37540,8 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.completer' => 'Complete the document',
 			'admin.bibliotheque.import.sections.ressource' => 'Resource',
 			'admin.bibliotheque.import.sections.fichier' => 'File',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.sections.droits' => 'Rights and access',
 			'admin.bibliotheque.import.champs.titre' => 'Title',
 			'admin.bibliotheque.import.champs.description' => 'Short description (shown on the card)',
@@ -37390,8 +37602,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.simple.lienALaPlace' => 'Add a link instead',
 			'admin.bibliotheque.import.simple.fichierALaPlace' => 'Upload a file instead',
 			'admin.bibliotheque.import.simple.nom' => 'Name',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.simple.nomVide' => 'Give the document a name.',
 			'admin.bibliotheque.import.simple.description' => 'Description (optional)',
 			'admin.bibliotheque.import.simple.descriptionLien' => 'An external link needs a description: say in one sentence where it leads.',
@@ -37844,6 +38054,8 @@ extension on TraductionsEn {
 			'nav.replier' => 'Collapse navigation',
 			'nav.deplier' => 'Expand navigation',
 			'nav.halo.enCeMoment' => 'Right now',
+			_ => null,
+		} ?? switch (path) {
 			'nav.halo.monCompte' => 'My account',
 			'nav.halo.urgentNom' => ({required Object compte}) => '${compte}, one urgent alert',
 			'nav.halo.urgentMot' => 'Urgent',
@@ -37904,8 +38116,6 @@ extension on TraductionsEn {
 			'compte.donnees.suppression.horsLigne' => 'Your request was not sent. Make it again as soon as the network is back.',
 			'compte.donnees.suppression.refuse' => 'This account cannot request its deletion here.',
 			'compte.titre' => 'My account',
-			_ => null,
-		} ?? switch (path) {
 			'compte.intro' => 'Your information, your preferences and your access, in one place.',
 			'compte.informations' => 'Information',
 			'compte.profil' => 'Profile',
@@ -38358,6 +38568,8 @@ extension on TraductionsEn {
 			'notifications.gesteRecharger' => 'Reload',
 			'notifications.ecartNonConfirme' => 'The dismissal is not yet confirmed. Try again in a moment.',
 			'notifications.repetitions' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} time', other: '${n} times', ), 
+			_ => null,
+		} ?? switch (path) {
 			'notifications.nonLue' => 'Unread',
 			'notifications.nonLueSemantique' => 'unread',
 			'notifications.lectureNonConfirmee' => 'Reading is not yet confirmed. Try again in a moment.',
@@ -38418,8 +38630,6 @@ extension on TraductionsEn {
 			'eleve.accueil.prochainAujourdhui' => 'Your next class is later today.',
 			'eleve.accueil.prochainDemain' => 'Your next class is tomorrow.',
 			'eleve.accueil.annulee' => 'This class will not take place',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.accueil.horsLigne' => 'Entry pending',
 			'eleve.accueil.horsLigneDetail' => 'You will be able to enter as soon as the network is back.',
 			'eleve.accueil.pausePriere' => 'Prayer break',
@@ -38872,6 +39082,8 @@ extension on TraductionsEn {
 			'enseignant.journee.coursEnCours' => 'Live session',
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'In ${heures} h ${minutes}',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'In ${minutes} min',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.minuteurImminent' => 'Starting',
 			'enseignant.journee.minuteurDemain' => ({required Object heure}) => 'Tomorrow at ${heure}',
 			'enseignant.journee.minuteurJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'In ${jours} day', other: 'In ${jours} days', ), 
@@ -38932,8 +39144,6 @@ extension on TraductionsEn {
 			'enseignant.journee.heure' => 'Time',
 			'enseignant.journee.eleves' => 'Students',
 			'enseignant.journee.classe' => 'Class',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.preparerSeance' => 'Prepare the session',
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Prepare the session ${classe}',
 			'enseignant.journee.derniereSeance' => 'Last session',
@@ -39386,6 +39596,8 @@ extension on TraductionsEn {
 			'enseignant.revenus.attenteDirectionDetail' => 'The management must confirm the length of this session: no amount is set yet.',
 			'enseignant.revenus.seancesVide' => 'No session held this month.',
 			'enseignant.revenus.calculSection' => 'How it is calculated',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.autresSection' => 'Other income',
 			'enseignant.revenus.autresDetail' => 'Internet allowance, bonuses and missions that the management assigns you for this month, paid with the pay.',
 			'enseignant.revenus.autresVide' => 'No Internet allowance, bonus or mission this month.',
@@ -39446,8 +39658,6 @@ extension on TraductionsEn {
 			'controleur.historique.cleDuree' => 'Time observed',
 			'controleur.historique.cleElevesPresents' => 'Present',
 			'controleur.historique.cleReponse' => 'Reply',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.sansComplement' => 'No addendum.',
 			'controleur.historique.faitsIndisponibles' => 'The automatic log of this visit (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. It will appear here as soon as it is received. The rest of the report remains reliable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Reason: ${motif}',
@@ -39900,6 +40110,8 @@ extension on TraductionsEn {
 			'tc.classe.etat.inconnu' => 'Attendance not known yet',
 			'tc.classe.etat.attendu' => 'Expected',
 			'tc.classe.etat.enConnexion' => 'Connecting',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.etat.present' => 'Present',
 			'tc.classe.etat.enRetard' => 'Late',
 			'tc.classe.etat.deconnecte' => 'Disconnected',
@@ -39960,8 +40172,6 @@ extension on TraductionsEn {
 			'tc.observation.entree.retourClasse' => 'Back to the class',
 			'tc.observation.explication.titre' => 'A glimpse of their learning',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visit of ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
 			'tc.observation.explication.regleDetail' => 'Per session and per parent, even if several of your children are in the class.',
 			'tc.observation.explication.ecoute' => 'Listen to the teacher and the students',
@@ -40414,6 +40624,8 @@ extension on TraductionsEn {
 			'adulte.acceptation.accepter' => 'Accept the invitation',
 			'adulte.acceptation.horsLigne' => 'Nothing is sent. You can reply yourself when the connection is back.',
 			'adulte.acceptation.acceptationEchecTitre' => 'The acceptance was not confirmed.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.refusEchecTitre' => 'The refusal was not confirmed.',
 			'adulte.acceptation.echecPhrase' => 'Check before trying again.',
 			'adulte.acceptation.accepteeTitre' => 'Invitation accepted',
@@ -40474,8 +40686,6 @@ extension on TraductionsEn {
 			'adulte.reprise.deposerConsequence' => 'The household account holder will be informed and can refuse it. The administration will then review the request and decide.',
 			'adulte.reprise.horsLigne' => 'Nothing is sent. You can submit the request yourself when the connection is back.',
 			'adulte.reprise.depotEchecTitre' => 'The request was not confirmed.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.echecPhrase' => 'Check before trying again.',
 			'adulte.reprise.motif' => 'Reason',
 			'adulte.reprise.motifDeces' => 'Reported death of the account holder',
@@ -40928,6 +41138,8 @@ extension on TraductionsEn {
 			'argent.acces.suspenduAdulteSansDate' => 'Your place was released. Your space stays open to see your profile, your history and to pay.',
 			'argent.acces.reactiveTitre' => 'Access reactivated',
 			'argent.acces.reactiveTuteur' => ({required Object prenom, required Object date}) => '${prenom} can join their sessions again since ${date}.',
+			_ => null,
+		} ?? switch (path) {
 			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} can join their sessions again.',
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'You can join your sessions again since ${date}.',
 			'argent.acces.reactiveAdulteSansDate' => 'You can join your sessions again.',
@@ -40988,8 +41200,6 @@ extension on TraductionsEn {
 			'com.socle.composants.composer.reessayer' => 'Try again',
 			'com.socle.composants.composer.auteurSoi' => 'You',
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'New message from ${auteur}: ${texte}',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Draft restored',
 			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
@@ -41442,6 +41652,8 @@ extension on TraductionsEn {
 			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
 			'com.communaute.demo.f.samira' => 'Samira Belkacem',
 			'com.communaute.demo.f.fonctionSamira' => 'Teacher, An-Nour class',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Teacher, Al-Fajr class',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
@@ -41502,8 +41714,6 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'No mention or reply pending.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'No decision pending.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'No upcoming deadline.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
 			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'In ${nom}',
@@ -41956,6 +42166,8 @@ extension on TraductionsEn {
 			'comptable.graphiques.legendeSorties' => 'Outflows',
 			'comptable.graphiques.legendeEncaissements' => 'Collections',
 			'comptable.graphiques.legendeDecaissements' => 'Disbursements',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.legendeDetenue' => 'Cash held',
 			'comptable.graphiques.kpiTitre' => 'Inflows and outflows',
 			'comptable.graphiques.kpiEntrees' => 'Inflows',
@@ -42016,8 +42228,6 @@ extension on TraductionsEn {
 			'comptable.commun.activiteReference' => ({required Object reference}) => 'Ref. ${reference}',
 			'comptable.commun.relancePreparee' => 'Reminder prepared (demo)',
 			'comptable.commun.prestataireDemonstration' => ({required Object nom}) => '${nom} (demo)',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.date' => ({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}',
 			'comptable.commun.aucuneValeur' => 'Not provided',
 			'comptable.coffres.fondsClientsEngages' => 'Client funds committed',
@@ -42470,6 +42680,8 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.executerLecteur' => ({required Object beneficiaire}) => 'Execute ${beneficiaire}\'s refund',
 			'comptable.encaissements.rap.executerTitre' => 'Execute this refund?',
 			'comptable.encaissements.rap.executerPhrase' => 'The amount and conditions come from the Finance policy. The provider will confirm the execution.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.remboursementsVideTitre' => 'No refund or credit in progress.',
 			'comptable.encaissements.rap.journalRemboursement' => 'Refund log',
 			'comptable.encaissements.rap.journalRemboursementVide' => 'No operation recorded for this refund.',
@@ -42530,8 +42742,6 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspend ${nom}\'s payments?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'No payment will go to this beneficiary until you resume them. Their details do not change. Choose the reason: it will be written in the profile log.',
 			'comptable.beneficiaires.profil.motifVerifier' => 'Details to verify',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.motifVerifierDetail' => 'The method seems incorrect or could not be confirmed.',
 			'comptable.beneficiaires.profil.motifAnomalie' => 'Anomaly reported',
 			'comptable.beneficiaires.profil.motifAnomalieDetail' => 'A recent payment failed or a discrepancy was reported.',
@@ -42984,6 +43194,8 @@ extension on TraductionsEn {
 			'comptable.paiementsFamilles.entree' => 'Family payments',
 			'presentationTuteur.titre' => 'Display requests',
 			'presentationTuteur.contexte' => 'A child in your household is asking for the standard display. You decide.',
+			_ => null,
+		} ?? switch (path) {
 			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} is asking for the standard display.',
 			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'Requested on ${date} at ${heure}',
 			'presentationTuteur.accepter' => 'Accept',
@@ -43044,8 +43256,6 @@ extension on TraductionsEn {
 			'recherche.domaines.classes' => 'Classes',
 			'recherche.domaines.supports' => 'Documents',
 			'recherche.domaines.personnes' => 'People',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.domaines.enseignants' => 'Teachers',
 			'recherche.domaines.pedagogie' => 'Students',
 			'recherche.domaines.controle' => 'Review',
@@ -43498,6 +43708,8 @@ extension on TraductionsEn {
 			'courriels.admin.file.filtre.envoi' => 'Being sent',
 			'courriels.admin.file.filtre.envoye' => 'Sent',
 			'courriels.admin.file.filtre.echec' => 'Not sent',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.filtre.annule' => 'Cancelled',
 			'courriels.admin.file.statut.enAttente' => 'Queued',
 			'courriels.admin.file.statut.envoi' => 'Being sent',
@@ -43558,8 +43770,6 @@ extension on TraductionsEn {
 			'admissions.reponses.nom' => 'Name',
 			'admissions.reponses.apprenantsTitre' => ({required Object n}) => 'Learners (${n})',
 			'admissions.reponses.aucunApprenant' => 'No learner is attached to this request.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.reponses.titulaireRole' => 'Request holder',
 			'admissions.reponses.enfantRole' => 'Child of the family',
 			'admissions.reponses.age' => 'Age',
@@ -44012,6 +44222,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.motif.inconnu' => 'a point in this row needs checking',
 			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'the phone is unreadable',
 			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'the phone has no country code',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.indicatifInconnu' => 'the phone\'s country code is unknown',
 			'candidatsFlux.importFormulaires.avertissement.longueurImplausible' => 'the phone\'s length is unusual',
 			'candidatsFlux.importFormulaires.avertissement.indicatifAConfirmer' => 'the phone\'s country code needs confirming',
@@ -44072,8 +44284,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.confirmation.cleReutilisee' => 'This request cannot be replayed as it is. Run the analysis again to start cleanly.',
 			'candidatsFlux.importFormulaires.confirmation.refus' => 'The server refuses this import. Check that you are signed in with two-step verification, then try again.',
 			'candidatsFlux.importFormulaires.confirmation.titreNonConfirme' => 'Import not confirmed',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.titreARefaire' => 'The analysis must be redone',
 			'candidatsFlux.importFormulaires.confirmation.relancer' => 'Run the analysis again',
 			'candidatsFlux.importFormulaires.rapport.titre' => 'Import finished',
@@ -44526,6 +44736,8 @@ extension on TraductionsEn {
 			'calendrier.sections.pauses' => 'Breaks',
 			'calendrier.indisponible' => 'The calendar could not be opened: the request may not have reached Rewayah. Try again in a moment.',
 			'calendrier.refusNouvelleDateFermee' => 'The date is not set: the class is closed that day. Choose another day, or remove the closure for this class.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.intro' => 'The dates of the year, entered by the management each year. Only published dates take effect: a closure moves back the deadline of the stages concerned and sets aside the sessions that have not yet started on those days. Days are counted in Makkah time.',
 			'calendrier.dates.ajouter' => 'Add a date',
 			'calendrier.dates.erreur' => 'The dates could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
@@ -44586,8 +44798,6 @@ extension on TraductionsEn {
 			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'The academy\'s closure is removed, but the session of ${quand} will not take place.',
 			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed, but some sessions will not take place: ${n}, including the one of ${quand}.',
 			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'The academy\'s closure is removed. Sessions restored: ${retablies}. Sessions that will not take place: ${abandonnees}. Open the class to see them.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.concernees.titre' => 'Sessions concerned',
 			'calendrier.dates.concernees.heureMecque' => 'Days and times are Makkah time.',
 			'calendrier.dates.concernees.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',

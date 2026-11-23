@@ -94,6 +94,8 @@ import '../../features/admin_pedagogie_progression/progression_page.dart'
     deferred as d_progression_page;
 import '../../features/admin_pedagogie_qualite/qualite_page.dart'
     deferred as d_qualite_page;
+import '../../features/admin_personnes/fiche_eleve_direction_page.dart'
+    deferred as d_fiche_eleve_direction_page;
 import '../../features/admin_personnes/personnes_page.dart'
     deferred as d_personnes_page;
 import '../../features/admin_pilotage/pilotage_page.dart'
@@ -359,6 +361,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_travail_praxis_page', d_travail_praxis_page.loadLibrary),
   ('d_enseignants_page', d_enseignants_page.loadLibrary),
   ('d_personnes_page', d_personnes_page.loadLibrary),
+  ('d_fiche_eleve_direction_page', d_fiche_eleve_direction_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
   ('d_chiffres_page', d_chiffres_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
@@ -2412,6 +2415,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               // BE-SUIVANT : la file d'ou l'on vient (filtre, tri).
               requete: etat.uri.queryParameters,
             ),
+          ),
+        ),
+      ),
+      // FICHE-ELEVE-DIRECTION (22/11/2026) : la fiche d'un eleve, lue par la
+      // direction. Chemin distinct de `candidatures/:reference` (aucune
+      // collision) ; l'identifiant est une demande, le serveur decide.
+      GoRouteSure(
+        path: Routes.adminPersonnesEleve,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_fiche_eleve_direction_page',
+            charger: d_fiche_eleve_direction_page.loadLibrary,
+            construire: () =>
+                d_fiche_eleve_direction_page.FicheEleveDirectionPage(
+                  eleveId: etat.pathParameters['eleveId'] ?? '',
+                ),
           ),
         ),
       ),
