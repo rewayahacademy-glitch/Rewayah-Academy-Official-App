@@ -7030,6 +7030,7 @@ class _Traductions$admin$comptes$en extends Traductions$admin$comptes$fr {
 	@override String get erreur => 'The accounts could not be read. Try again in a moment.';
 	@override String get colonnePersonne => 'Person';
 	@override String get colonneIdentifiant => 'Identifier';
+	@override String get colonneCourriel => 'Email';
 	@override String get colonneRole => 'Role';
 	@override String get colonneEtat => 'Status';
 	@override String get colonnePiece => 'ID document';
@@ -36047,6 +36048,7 @@ extension on TraductionsEn {
 			'admin.comptes.erreur' => 'The accounts could not be read. Try again in a moment.',
 			'admin.comptes.colonnePersonne' => 'Person',
 			'admin.comptes.colonneIdentifiant' => 'Identifier',
+			'admin.comptes.colonneCourriel' => 'Email',
 			'admin.comptes.colonneRole' => 'Role',
 			'admin.comptes.colonneEtat' => 'Status',
 			'admin.comptes.colonnePiece' => 'ID document',
@@ -36493,9 +36495,9 @@ extension on TraductionsEn {
 			'admin.finance.vueGlobale' => 'Overview',
 			'admin.finance.politiques' => 'Commercial policies',
 			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
-			'admin.finance.vue.contexte' => ({required Object deMois}) => 'The figures for ${deMois}, each on its own: what is collected, what is recognized as revenue, what is owed to teachers and what stays on families\' profiles.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.vue.contexte' => ({required Object deMois}) => 'The figures for ${deMois}, each on its own: what is collected, what is recognized as revenue, what is owed to teachers and what stays on families\' profiles.',
 			'admin.finance.vue.indicateurs' => 'Month\'s indicators',
 			'admin.finance.vue.encaisse' => 'Amount collected',
 			'admin.finance.vue.encaisseDetail' => 'Payments received this month. A collection is not yet revenue.',
@@ -37007,9 +37009,9 @@ extension on TraductionsEn {
 			'admin.planning.vide' => 'No session this week',
 			'admin.planning.videDetail' => 'Sessions appear here as soon as a class has a timetable this week. Try another week.',
 			'admin.planning.sansDonnees' => 'The planning could not be loaded',
-			'admin.planning.erreur' => 'The planning could not be read: the read may not have reached Rewayah. Try again in a moment.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.planning.erreur' => 'The planning could not be read: the read may not have reached Rewayah. Try again in a moment.',
 			'admin.planning.indisponiblePhrase' => 'The planning will be shown here once the server is connected. Until then, nothing is shown: no session is invented.',
 			'admin.planning.statutPrevue' => 'Planned',
 			'admin.planning.statutPreparation' => 'Being prepared',
@@ -37521,9 +37523,9 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.champs.ordre' => 'Display order (optional)',
 			'admin.bibliotheque.import.champs.lien' => 'Link address (https)',
 			'admin.bibliotheque.import.champs.categorie' => 'Category',
-			'admin.bibliotheque.import.champs.type' => 'Type',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.import.champs.type' => 'Type',
 			'admin.bibliotheque.import.champs.langue' => 'Language',
 			'admin.bibliotheque.import.champs.niveau' => 'Level',
 			'admin.bibliotheque.import.completerDabord' => 'First enter the title, type, language and category.',
@@ -38035,9 +38037,9 @@ extension on TraductionsEn {
 			'nav.halo.nouveauNom' => ({required num n, required Object compte, required Object nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${compte}, ${nombre} new item to read', other: '${compte}, ${nombre} new items to read', ), 
 			'nav.halo.nouveauTitre' => ({required num n, required Object nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${nombre} new item to read', other: '${nombre} new items to read', ), 
 			'nav.halo.nouveauMot' => 'To read',
-			'nav.halo.lire' => 'Read',
 			_ => null,
 		} ?? switch (path) {
+			'nav.halo.lire' => 'Read',
 			'nav.halo.salleNom' => ({required Object compte}) => '${compte}, the room is open',
 			'nav.filAriane.separateur' => '›',
 			'nav.filAriane.suite' => ({required Object libelle}) => '› ${libelle}',
@@ -38549,9 +38551,9 @@ extension on TraductionsEn {
 			'notifications.detail.ouvrir' => 'Open the page concerned',
 			'notifications.types.annonceClasse' => 'Class announcement',
 			'notifications.types.changementSeance' => 'Session change',
-			'notifications.types.decisionDossier' => 'Decision on a file',
 			_ => null,
 		} ?? switch (path) {
+			'notifications.types.decisionDossier' => 'Decision on a file',
 			'notifications.types.messageMetier' => 'Message',
 			'notifications.types.reponseAttendue' => 'Reply expected',
 			'notifications.types.accesFinance' => 'Access and payments',
@@ -39063,9 +39065,9 @@ extension on TraductionsEn {
 			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '${jour}, at ${heure}',
 			'enseignant.journee.lancementPlusTard' => 'Starting opens ten minutes before the class time.',
 			'enseignant.journee.aucunCours' => 'No upcoming class',
-			'enseignant.journee.aucunCoursDetail' => 'Take on a waiting student: that is what fills your day.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.aucunCoursDetail' => 'Take on a waiting student: that is what fills your day.',
 			'enseignant.journee.colonne' => 'The day',
 			'enseignant.journee.ligneCours' => ({required Object prenom}) => 'Class with ${prenom}',
 			'enseignant.journee.lignePause' => 'Break',
@@ -39577,9 +39579,9 @@ extension on TraductionsEn {
 			'enseignant.revenus.autresResume' => 'Other income for the month',
 			'enseignant.revenus.releveSection' => 'Statement',
 			'enseignant.revenus.releveIndisponibleTitre' => 'The statement is not available yet',
-			'enseignant.revenus.releveIndisponiblePhrase' => 'The months closed by the academy will appear here as soon as the statement is in service. Until then, only the estimate for the current month is shown.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.revenus.releveIndisponiblePhrase' => 'The months closed by the academy will appear here as soon as the statement is in service. Until then, only the estimate for the current month is shown.',
 			'enseignant.revenus.indisponibleTitre' => 'Your income is not published yet',
 			'enseignant.revenus.indisponiblePhrase' => 'Your estimate for the month will appear here as soon as the academy has published it. No amount is calculated on this device.',
 			'enseignant.revenus.releveVide' => 'No month closed yet',
@@ -40091,9 +40093,9 @@ extension on TraductionsEn {
 			'tc.classe.etat.sorti' => 'Left',
 			'tc.classe.etat.absent' => 'Absent',
 			'tc.classe.fiche.niveau' => 'Level',
-			'tc.classe.fiche.objectif' => 'Current goal',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.fiche.objectif' => 'Current goal',
 			'tc.classe.fiche.derniereSeance' => 'Last session',
 			'tc.classe.fiche.aReprendre' => 'To resume',
 			'tc.classe.fiche.presenceRecente' => 'Recent attendance',
@@ -40605,9 +40607,9 @@ extension on TraductionsEn {
 			'adulte.acceptation.refuseeTitre' => 'Invitation declined',
 			'adulte.acceptation.impossible' => 'This account cannot join this plan at the moment.',
 			'adulte.acceptation.perimee' => 'This invitation is no longer valid.',
-			'adulte.acceptation.recu' => ({required Object date}) => 'Reply recorded on ${date}.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.recu' => ({required Object date}) => 'Reply recorded on ${date}.',
 			'adulte.acceptation.titreNeutre' => 'Family plan invitation',
 			'adulte.acceptation.sansCompteTitre' => 'Family plan invitation',
 			'adulte.acceptation.sansCompte' => 'To reply, sign in to your account, or create one. You will then read what the person inviting you will and will not see before you decide.',
@@ -41119,9 +41121,9 @@ extension on TraductionsEn {
 			'argent.acces.suspenduPaiementAdulte' => 'This month\'s payment has not been received. You can no longer join your sessions. Your space stays open to see your profile, your history and to pay.',
 			'argent.acces.pastilleSuspendu' => 'Suspended',
 			'argent.acces.pastilleReactive' => 'Reactivated',
-			'identiteProfil.age' => ({required Object n}) => '${n} years old',
 			_ => null,
 		} ?? switch (path) {
+			'identiteProfil.age' => ({required Object n}) => '${n} years old',
 			'identiteProfil.classe' => ({required Object classe}) => 'Class ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, child profile',
@@ -41633,9 +41635,9 @@ extension on TraductionsEn {
 			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
 			'com.communaute.demo.f.fonctionYoussef' => 'Teacher, Al-Kawthar class',
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
-			'com.communaute.demo.f.fonctionMariam' => 'Teacher, An-Nas class',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.fonctionMariam' => 'Teacher, An-Nas class',
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
 			'com.communaute.demo.f.fonctionHamza' => 'Teacher, Al-Ikhlas class',
 			'com.communaute.demo.f.memorisationTitre' => 'Ideas for memorization?',
@@ -42147,9 +42149,9 @@ extension on TraductionsEn {
 			'comptable.graphiques.kpiPeriode' => 'Last 30 days',
 			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent}% compared with the previous period',
 			'comptable.graphiques.rapportsTitre' => 'Reports',
-			'comptable.graphiques.rapportsSousTitre' => 'Inflows, outflows and cash position over time.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.graphiques.rapportsSousTitre' => 'Inflows, outflows and cash position over time.',
 			'comptable.graphiques.vide' => 'No data to draw',
 			'comptable.graphiques.videDetail' => 'Charts will appear here as soon as collections or payments have been recorded.',
 			'comptable.graphiques.erreur' => 'The charts could not be read: the request may not have reached Rewayah. Try again in a moment.',
@@ -42661,9 +42663,9 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.remboursementsVidePhrase' => 'Refund requests will appear here with their reason and status.',
 			'comptable.encaissements.titre' => 'Collections',
 			'comptable.encaissements.sousTitre' => 'A payment is confirmed only after the provider.',
-			'comptable.encaissements.detailTitre' => 'Collection details',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.detailTitre' => 'Collection details',
 			'comptable.encaissements.rapprochementTitre' => 'Reconciliation',
 			'comptable.encaissements.rapprochementSousTitre' => 'Link each transaction to what was waiting for it.',
 			'comptable.beneficiaires.intro' => 'The payment profile of each teacher and each contractor. Only the beneficiary enters or changes their details: you can remind them, ask for an update or suspend their payments.',
@@ -43175,9 +43177,9 @@ extension on TraductionsEn {
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Standard display turned on for ${prenom}.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => '${dePrenom}\'s request declined.',
 			'presentationTuteur.echecReponse' => 'Your answer could not be confirmed. The request is still pending: try again.',
-			'presentationTuteur.vide' => 'No display request pending.',
 			_ => null,
 		} ?? switch (path) {
+			'presentationTuteur.vide' => 'No display request pending.',
 			'presentationTuteur.erreur' => 'The requests could not be loaded. Try again.',
 			'presentationTuteur.sansDonnees' => 'the display requests',
 			'presentationTuteur.accueil.titre' => 'Display request',
@@ -43689,9 +43691,9 @@ extension on TraductionsEn {
 			'courriels.admin.file.statut.echec' => 'Not sent',
 			'courriels.admin.file.statut.annule' => 'Cancelled',
 			'courriels.admin.file.origine.auto' => 'Automatic',
-			'courriels.admin.file.origine.manuel' => 'Manual',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.file.origine.manuel' => 'Manual',
 			'courriels.admin.file.messageAuto' => 'Automatic message',
 			'courriels.admin.file.champs.destinataire' => 'To',
 			'courriels.admin.file.champs.categorie' => 'Category',
@@ -44203,9 +44205,9 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.avertissement.courrielMalforme' => 'the email is badly written: it must be obtained',
 			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'unknown mother tongue, filed under other language',
 			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'an unknown language of explanation is filed under other language',
-			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'Arabic is removed from the languages of explanation (it is not a teaching language)',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'Arabic is removed from the languages of explanation (it is not a teaching language)',
 			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'a multiple-choice answer is not recognized',
 			'candidatsFlux.importFormulaires.avertissement.ijazaDeclareeEnG' => 'ijaza declared as memorization: memorization is for the person to fill in',
 			'candidatsFlux.importFormulaires.avertissement.experiencePretTest' => '"ready for a test" has no equivalent for experience: for the person to fill in',
@@ -44717,9 +44719,9 @@ extension on TraductionsEn {
 			'calendrier.dates.videDetail' => 'Add the year\'s closures, recitation meetings and assessment dates.',
 			'calendrier.dates.type.fermeture' => 'Closure',
 			'calendrier.dates.type.rencontre' => 'Recitation meeting',
-			'calendrier.dates.type.evaluation' => 'Assessment',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.dates.type.evaluation' => 'Assessment',
 			'calendrier.dates.type.autre' => 'Other date',
 			'calendrier.dates.categorie.ramadan' => 'Ramadan, 20 days at most',
 			'calendrier.dates.categorie.aidAlAdha' => 'Eid al-Adha, 10 days at most',

@@ -1609,6 +1609,7 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
           ouvrirApercuCompte(
             context,
             nom: l.nom,
+            profilId: c.profilId,
             informations: informationsDuCompte(c, _onglet.vue!),
             // Les gestes du menu de la ligne, sauf celui qui efface (il reste
             // dans le menu « ... », avec sa confirmation).

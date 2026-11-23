@@ -11158,5 +11158,6 @@
   "admin.ficheEleve.compte.titre": "directeur, 22/11/2026 : « la direction doit avoir une fiche élève complète, ouverte depuis Personnes, car les inscriptions commencent » ; lot FICHE-ELEVE-DIRECTION ; mots de l'inscription repris de `reponses_admission.dart`.",
   "admin.ficheEleve.compte.etat": "directeur, 22/11/2026 : « la direction doit avoir une fiche élève complète, ouverte depuis Personnes, car les inscriptions commencent » ; lot FICHE-ELEVE-DIRECTION ; mots de l'inscription repris de `reponses_admission.dart`.",
   "admin.ficheEleve.compte.inscritLe": "directeur, 22/11/2026 : « la direction doit avoir une fiche élève complète, ouverte depuis Personnes, car les inscriptions commencent » ; lot FICHE-ELEVE-DIRECTION ; mots de l'inscription repris de `reponses_admission.dart`.",
-  "admin.ficheEleve.compte.accesJusquAu": "directeur, 22/11/2026 : « la direction doit avoir une fiche élève complète, ouverte depuis Personnes, car les inscriptions commencent » ; lot FICHE-ELEVE-DIRECTION ; mots de l'inscription repris de `reponses_admission.dart`."
+  "admin.ficheEleve.compte.accesJusquAu": "directeur, 22/11/2026 : « la direction doit avoir une fiche élève complète, ouverte depuis Personnes, car les inscriptions commencent » ; lot FICHE-ELEVE-DIRECTION ; mots de l'inscription repris de `reponses_admission.dart`.",
+  "admin.comptes.colonneCourriel": "directeur, 22/11/2026 : « l'e-mail qui s'affichait ne s'affiche plus » (aperçu d'un compte, page Personnes) ; mot « Courriel » du lexique."
 }

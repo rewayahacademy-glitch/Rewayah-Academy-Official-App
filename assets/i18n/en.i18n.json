@@ -7147,6 +7147,7 @@
       "erreur": "The accounts could not be read. Try again in a moment.",
       "colonnePersonne": "Person",
       "colonneIdentifiant": "Identifier",
+      "colonneCourriel": "Email",
       "colonneRole": "Role",
       "colonneEtat": "Status",
       "colonnePiece": "ID document",
