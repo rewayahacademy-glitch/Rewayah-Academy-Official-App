@@ -65,3 +65,40 @@ Seules exceptions : D6 et D7.
 4. D7 (frais de contestation à la famille).
 5. D2 et D3 (« dette + avance », et l'explication du montant).
 6. S3 (transfert de solde par la direction) et S12, si le directeur le veut.
+
+## 6. Décisions du directeur et du pilote (23/11/2026, soir) — EN VIGUEUR
+
+Directeur : « Je te donne le feu vert et carte blanche pour travailler cette question de paiement du début à la fin
+avec tous les scénarios […] Il ne faut jamais permettre aux gens de frauder ou bien de faire des erreurs qui vont
+coûter ni à la famille, ni à l'académie, ni aux enseignants. »
+
+1. **L'interface explique toujours (directeur, règle UX).** « Il faut dire quoi, quand et pourquoi. » Pour chaque
+   profil, l'écran de paiement montre la synthèse ligne par ligne, lue dans le serveur, jamais calculée par l'écran :
+   prix du mois, remises **appliquées** (laquelle, combien, pourquoi), remises **non appliquées** et pourquoi
+   (« pas de remise famille : 1ᵉʳ inscrit », « plafond de 25 % atteint », « prix spécial : non cumulable »), prorata
+   (« entré le 12/11 : 4 séances sur 8 »), et toute dette d'abord : « vous payez d'abord 25,30 $ de novembre, puis
+   2 mois d'avance (décembre, janvier) ». Un montant qui peut surprendre a toujours sa phrase.
+2. **Remise du 3ᵉ inscrit et suivants : 15 % au lieu de 17 %** (directeur : « peut-être il faut revenir à 15 […]
+   c'est à toi de voir » ; pilote : 15 %, marge préservée). Le 2ᵉ reste à −8 %, le plafond cumulé reste à 25 %.
+   Se fait par une nouvelle version de la politique commerciale (une version publiée est immuable), puis
+   `DECISION-TARIFS`, `tarifs-2026-10-18.json` et le site public le même jour. Les factures déjà émises ne changent pas.
+3. **Accès offert, prix spécial, bourse (pilote, « pour le bien de l'académie et de la famille »)** : un tel profil
+   **ne prend pas de rang** dans la famille. Il ne reçoit pas de remise famille (non cumulable, règle existante) et
+   ne fait pas descendre les autres : les payants gardent leur rang entre eux. Ainsi la famille ne perd rien et
+   l'académie ne donne pas deux fois.
+4. **Pas de transfert de solde entre profils** (directeur : « l'application va risquer de devenir une wallet […] des
+   questions juridiques »). Le solde reste par élève. Un paiement groupé n'est qu'un seul passage en caisse.
+   S3 : refusé.
+5. **Payer de 1 à 12 mois, librement** (directeur : « 1 mois, 2 mois, 3 mois, ainsi de suite »). Remise de
+   prépaiement : 1 et 2 mois sans remise ; **3 à 11 mois −5 %** ; **12 mois −10 %** (valeurs de la politique en
+   vigueur, jamais en dur). Le plafond cumulé de 25 % s'applique. Une dette est toujours payée d'abord et affichée
+   à part. Remboursement : règle existante (mois commencés au prix normal, sans la remise de la formule, le reste
+   rendu).
+6. **Pas d'avance sans classe** : un profil sans classe ni créneau choisi ne se voit rien proposer. Avant son
+   premier mois réel de cours : un mois seulement.
+7. **Un compte = une personne** (directeur : « que personne ne puisse utiliser le compte de l'autre »). L'accès à
+   une séance se juge sur le profil connecté et sa propre place dans la classe, jamais sur « quelqu'un de la
+   famille ». Un tuteur assiste à la classe de son enfant seulement en accompagnant, sans compter comme élève, et
+   jamais si l'enfant n'a pas payé. Une seule connexion à la fois par profil dans une séance.
+8. **Frais de contestation bancaire perdue : à la famille (le payeur), jamais sur le solde d'un enfant.** Ils
+   bloquent les nouveaux achats et inscriptions de la famille, jamais les cours déjà payés.
