@@ -127,6 +127,15 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// La phrase sur les frais d'une contestation bancaire (FN-115).
   static const Key fraisContestationKey = Key('recharge.fraisContestation');
 
+  /// P6 : pourquoi payer avant le premier cours.
+  static const Key pourquoiPayerKey = Key('recharge.pourquoiPayer');
+
+  /// P6 : les jours pour annuler.
+  static const Key annulerKey = Key('recharge.annuler');
+
+  /// P6 : la devise et la taxe.
+  static const Key prixEtTaxesKey = Key('recharge.prixEtTaxes');
+
   /// « Suivre le paiement », une fois la commande rendue.
   static const Key suivreKey = Key('recharge.suivre');
 
@@ -439,6 +448,17 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         onRetour: _retour,
         child: _corps(context, horsLigne),
       ),
+    );
+  }
+
+  /// La phrase des jours pour annuler : le nombre vient de la politique en
+  /// vigueur ; non lu (lecture en cours, en erreur, ou aucune duree), la phrase
+  /// sans nombre, jamais un nombre invente.
+  static String _phraseAnnuler(AsyncValue<int?> delai) {
+    final int? jours = delai.asData?.value;
+    if (jours == null || jours <= 0) return t.adulte.recharge.annulerSansDuree;
+    return LibellesGroupe.insecable(
+      t.adulte.recharge.annulerDansDelai(jours: jours),
     );
   }
 
@@ -1171,6 +1191,25 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         // remboursement et de contestation AVANT de payer, juste sous « Payer » ; sans cela, les
         // frais d'une contestation ne lui sont pas opposables.
         if (commande == null && !arrete) ...<Widget>[
+          // PAIEMENT-UNIFIE P6 (directeur, 23/11/2026) : pourquoi payer avant le
+          // premier cours, les jours pour annuler (lus de la politique, jamais
+          // en dur), la devise et la taxe, dits avant de payer.
+          Ecart.vLg,
+          _Note(
+            key: RechargeFoyerPage.pourquoiPayerKey,
+            texte: t.adulte.recharge.pourquoiPayer,
+          ),
+          Ecart.vSm,
+          _Note(
+            key: RechargeFoyerPage.annulerKey,
+            texte: _phraseAnnuler(ref.watch(delaiRetractationProvider)),
+          ),
+          Ecart.vSm,
+          _Note(
+            key: RechargeFoyerPage.prixEtTaxesKey,
+            texte: t.adulte.recharge.prixEtTaxes,
+            attenuee: true,
+          ),
           Ecart.vLg,
           Align(
             alignment: AlignmentDirectional.centerStart,

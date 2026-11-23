@@ -42,7 +42,7 @@ import '../dossier/apprenants_demande.dart';
 import 'frise_attente.dart' show LigneFrise;
 import 'libelles_attente.dart' show libelleEtatEtape;
 
-/// Les sept etapes, dans l'ordre.
+/// Les huit etapes, dans l'ordre.
 enum CleEtapeInscription {
   /// La demande est partie.
   envoyee,
@@ -58,6 +58,9 @@ enum CleEtapeInscription {
 
   /// La classe est confirmee.
   confirmee,
+
+  /// Le premier paiement, avant le premier cours (PAIEMENT-UNIFIE P6).
+  paiement,
 
   /// L'enseignant est affecte.
   enseignant,
@@ -90,7 +93,7 @@ class EtapeInscription {
 }
 
 /// Le nombre d'etapes de la frise de l'inscription.
-const int nombreEtapesInscription = 7;
+const int nombreEtapesInscription = 8;
 
 /// Les etapes d'une demande **en cours ou a completer** (une demande refusee a
 /// son propre ecran, sans frise). Pur : ne calcule rien que le serveur n'ait
@@ -119,6 +122,7 @@ List<EtapeInscription> etapesInscription({
     for (final CleEtapeInscription c in <CleEtapeInscription>[
       CleEtapeInscription.formation,
       CleEtapeInscription.confirmee,
+      CleEtapeInscription.paiement,
       CleEtapeInscription.enseignant,
       CleEtapeInscription.pret,
     ])
@@ -134,6 +138,7 @@ String _nom(EtapeInscription e) {
     CleEtapeInscription.decision => e.precision ? n.aCompleter : n.acceptee,
     CleEtapeInscription.formation => n.formation,
     CleEtapeInscription.confirmee => n.confirmee,
+    CleEtapeInscription.paiement => n.paiement,
     CleEtapeInscription.enseignant => n.enseignant,
     CleEtapeInscription.pret => n.pret,
   };
@@ -150,6 +155,7 @@ String? _dit(EtapeInscription e) {
       e.precision ? d.aCompleter : d.accepteeAVenir,
     CleEtapeInscription.formation => a.formationAVenir,
     CleEtapeInscription.confirmee => a.confirmeeAVenir,
+    CleEtapeInscription.paiement => d.paiementAVenir,
     CleEtapeInscription.enseignant => a.enseignantAVenir,
     CleEtapeInscription.pret => a.pretAVenir,
   };

@@ -281,6 +281,147 @@ class AdmissionFiche {
       source == null;
 }
 
+/// L'etat de paiement d'un eleve, tel que le serveur le deduit (PAIEMENT-UNIFIE
+/// P4/P5) : quatre mots, jamais calcules ici.
+enum EtatPaiementEleve {
+  /// Une facture attend, ou rien n'a encore ete paye.
+  aPayer,
+
+  /// Le mois est regle.
+  paye,
+
+  /// L'acces est ferme faute de paiement.
+  enRetard,
+
+  /// L'acces est offert (remise de 100 %).
+  exonere;
+
+  /// Lit le mot du serveur ; `aPayer` quand il est inconnu (jamais un faux
+  /// « paye »).
+  static EtatPaiementEleve depuis(Object? v) => switch (v) {
+    'paye' => EtatPaiementEleve.paye,
+    'en_retard' => EtatPaiementEleve.enRetard,
+    'exonere' => EtatPaiementEleve.exonere,
+    _ => EtatPaiementEleve.aPayer,
+  };
+}
+
+/// La derniere facture non annulee de l'eleve.
+@immutable
+class FactureFiche {
+  /// Cree la facture.
+  const FactureFiche({
+    required this.mois,
+    required this.totalMineur,
+    required this.devise,
+    required this.statut,
+  });
+
+  /// Le mois facture (premier jour).
+  final DateTime mois;
+
+  /// Le total, en unites mineures de [devise].
+  final int totalMineur;
+
+  /// La devise (ISO 4217).
+  final String devise;
+
+  /// `a_financer` ou `financee`, tel que le serveur le dit.
+  final String statut;
+
+  /// Vrai quand la facture attend son paiement.
+  bool get attendPaiement => statut == 'a_financer' && totalMineur > 0;
+}
+
+/// La remise en cours : acces offert, prix special ou bourse.
+@immutable
+class RemiseFiche {
+  /// Cree la remise.
+  const RemiseFiche({
+    required this.nature,
+    required this.moisFin,
+    this.pourMille,
+    this.montantMineur,
+    this.devise,
+  });
+
+  /// `acces_offert`, `prix_special` ou `bourse`.
+  final String nature;
+
+  /// Le dernier mois couvert (premier jour).
+  final DateTime moisFin;
+
+  /// La reduction en pour mille, quand elle se dit ainsi.
+  final int? pourMille;
+
+  /// Le prix du mois, quand c'est un montant.
+  final int? montantMineur;
+
+  /// La devise du montant.
+  final String? devise;
+}
+
+/// Le paiement de l'eleve, lu avec la fiche.
+@immutable
+class PaiementFiche {
+  /// Cree le paiement.
+  const PaiementFiche({
+    required this.etat,
+    required this.dejaPaye,
+    this.facture,
+    this.remise,
+  });
+
+  /// Lit le bloc `paiement` ; nul quand le serveur ne le rend pas (serveur
+  /// d'avant le lot : la section n'existe pas).
+  static PaiementFiche? depuisJson(Object? json) {
+    if (json is! Map) return null;
+    DateTime? mois(Object? v) => v is String ? DateTime.tryParse(v) : null;
+    final Object? f = json['facture'];
+    final Object? r = json['remise'];
+    FactureFiche? facture;
+    if (f is Map && mois(f['mois']) != null && f['total_mineur'] is num) {
+      facture = FactureFiche(
+        mois: mois(f['mois'])!,
+        totalMineur: (f['total_mineur'] as num).toInt(),
+        devise: _texte(f['devise']) ?? 'USD',
+        statut: _texte(f['statut']) ?? '',
+      );
+    }
+    RemiseFiche? remise;
+    if (r is Map && mois(r['mois_fin']) != null && _texte(r['nature']) != null) {
+      remise = RemiseFiche(
+        nature: _texte(r['nature'])!,
+        moisFin: mois(r['mois_fin'])!,
+        pourMille: r['pour_mille'] is num ? (r['pour_mille'] as num).toInt() : null,
+        montantMineur: r['montant_mineur'] is num
+            ? (r['montant_mineur'] as num).toInt()
+            : null,
+        devise: _texte(r['devise']),
+      );
+    }
+    return PaiementFiche(
+      etat: EtatPaiementEleve.depuis(json['etat']),
+      dejaPaye: json['deja_paye'] == true,
+      facture: facture,
+      remise: remise,
+    );
+  }
+
+  /// L'etat, deduit par le serveur.
+  final EtatPaiementEleve etat;
+
+  /// Vrai quand un paiement confirme a deja credite l'eleve (le delai de
+  /// remboursement de 14 jours part de ce premier paiement).
+  final bool dejaPaye;
+
+  /// La derniere facture non annulee, s'il y en a une.
+  final FactureFiche? facture;
+
+  /// La remise en cours, s'il y en a une.
+  final RemiseFiche? remise;
+}
+
 /// La fiche d'un eleve.
 @immutable
 class FicheEleveDirection {
@@ -304,6 +445,7 @@ class FicheEleveDirection {
     this.tuteur,
     this.admission,
     this.progression,
+    this.paiement,
   });
 
   /// Lit la fiche rendue par `fiche_eleve_direction` ; nulle quand le serveur
@@ -320,6 +462,7 @@ class FicheEleveDirection {
     final Object? p = json['presences'];
     final Object? g = json['progression'];
     return FicheEleveDirection(
+      paiement: PaiementFiche.depuisJson(json['paiement']),
       id: i['id'] as String,
       matricule: _texte(i['matricule']) ?? '',
       etatCompte: _texte(i['etat_compte']) ?? '',
@@ -488,6 +631,9 @@ class FicheEleveDirection {
   /// La progression, quand l'eleve a une etape.
   final ProgressionFiche? progression;
 
+  /// Le paiement (etat, facture, remise) ; nul sur un serveur d'avant le lot.
+  final PaiementFiche? paiement;
+
   /// Prenom et nom, ou vide.
   String get libelle => <String?>[
     prenom,
@@ -501,10 +647,25 @@ String? _texte(Object? v) {
   return s.isEmpty ? null : s;
 }
 
-/// La lecture de la fiche.
+/// Ce que rend « Demander maintenant » (PAIEMENT-UNIFIE P5).
+enum ResultatDemandePaiement {
+  /// La facture du mois est emise et la famille prevenue.
+  demandee,
+
+  /// Aucune facture ne reste a payer (deja payee, ou couverte par une remise).
+  rienAPayer,
+}
+
+/// La lecture de la fiche, et le seul geste de paiement qui n'avait pas de
+/// fonction : demander le paiement maintenant.
 abstract interface class PortFicheEleveDirection {
   /// La fiche de l'eleve [eleveId] ; `null` quand le serveur n'en connait pas.
   Future<FicheEleveDirection?> lire(String eleveId);
+
+  /// Emet la facture du mois de [eleveId] et previent sa famille
+  /// (`demander_paiement_maintenant`). Leve si le serveur refuse ou ne
+  /// repond pas : l'ecran dit alors « non confirmee », jamais « non envoyee ».
+  Future<ResultatDemandePaiement> demanderPaiement(String eleveId);
 }
 
 /// La source de la fiche, posee par `main.dart` ; `null` hors production.

@@ -83,10 +83,11 @@ Future<void> _injecter() {
 /// route, jamais la barre laterale du role (DEFINITION-PAGE-ORDINATEUR B1,
 /// B9) : un clic dans la barre change de route et ferme la page.
 ///
-/// LINK-CHOIX (directeur, 06/11/2026 : « donner le choix aux users ») : en
-/// [FormeFormulaire.elements], les boutons de Link et des portefeuilles en
-/// haut (Express Checkout Element), puis la carte (Payment Element) et le
-/// bouton « Payer » ; aucune adresse n'est donnee a Stripe avant le paiement.
+/// LINK-CHOIX (directeur, 06/11/2026 : « donner le choix aux users ») : les
+/// boutons de Link et des portefeuilles en haut (Express Checkout Element),
+/// puis la carte (Payment Element) et le bouton « Payer » ; aucune adresse
+/// n'est donnee a Stripe avant le paiement. PAIEMENT-UNIFIE P3 (23/11/2026) :
+/// c'est la seule forme ; le formulaire complet (`embedded_page`) est retire.
 class FormulaireStripe extends StatefulWidget {
   /// Cree le formulaire.
   const FormulaireStripe({
@@ -219,7 +220,6 @@ class _FormulaireStripeState extends State<FormulaireStripe>
     // serveur a donne le meme fond au formulaire de Stripe (plus de cadre).
     final ColorScheme couleurs = couleursFormulairePaiement();
     final bool droiteAGauche = Directionality.of(context) == TextDirection.rtl;
-    final bool elements = widget.formulaire.forme == FormeFormulaire.elements;
     final String langue = Localizations.localeOf(context).languageCode;
 
     // Les deux colonnes a partir de 1200 px : une regle de la page seule,
@@ -363,25 +363,14 @@ class _FormulaireStripeState extends State<FormulaireStripe>
       await _chargerStripe();
       if (_ferme) return;
       final JSFunction constructeur = globalContext['Stripe']! as JSFunction;
-      if (elements) {
-        final JSObject stripe =
-            constructeur.callAsFunction(
-                  null,
-                  widget.formulaire.clePublique.toJS,
-                  JSObject()..['locale'] = (langue == 'ar' ? 'ar' : 'fr').toJS,
-                )!
-                as JSObject;
-        await _monterElements(stripe, zone, couleurs, page, debut);
-      } else {
-        final JSObject stripe =
-            constructeur.callAsFunction(
-                  null,
-                  widget.formulaire.clePublique.toJS,
-                )!
-                as JSObject;
-        await _monterIntegre(stripe, zone);
-        _noterPret(page, debut);
-      }
+      final JSObject stripe =
+          constructeur.callAsFunction(
+                null,
+                widget.formulaire.clePublique.toJS,
+                JSObject()..['locale'] = (langue == 'ar' ? 'ar' : 'fr').toJS,
+              )!
+              as JSObject;
+      await _monterElements(stripe, zone, couleurs, page, debut);
     } on Object {
       if (_ferme) return;
       _fermerPage();
@@ -403,33 +392,6 @@ class _FormulaireStripeState extends State<FormulaireStripe>
       'info'.toJS,
       'paiement : formulaire utilisable en $ms ms'.toJS,
     );
-  }
-
-  Future<void> _monterIntegre(JSObject stripe, JSObject zone) async {
-    // `createEmbeddedCheckoutPage` depuis la version dahlia ;
-    // `initEmbeddedCheckout` avant elle.
-    final String methode = stripe.has('createEmbeddedCheckoutPage')
-        ? 'createEmbeddedCheckoutPage'
-        : 'initEmbeddedCheckout';
-    final String secret = widget.formulaire.secretClient;
-    final JSObject options = JSObject()
-      ..['fetchClientSecret'] = (() => Future<JSString>.value(
-        secret.toJS,
-      ).toJS).toJS
-      ..['onComplete'] = (() {
-        if (_ferme) return;
-        _fermerPage();
-        widget.onTermine();
-      }).toJS;
-    final JSObject checkout = await stripe
-        .callMethod<JSPromise<JSObject>>(methode.toJS, options)
-        .toDart;
-    if (_ferme) {
-      checkout.callMethod<JSAny?>('destroy'.toJS);
-      return;
-    }
-    _checkout = checkout;
-    checkout.callMethod<JSAny?>('mount'.toJS, zone);
   }
 
   /// LINK-CHOIX : les boutons (Link, portefeuilles), puis la carte et

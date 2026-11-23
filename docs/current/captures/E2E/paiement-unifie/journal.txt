@@ -1,0 +1,21 @@
+PAIEMENT-UNIFIE, journal de verification (23/11/2026, R3). Rien ici n'est une preuve en production.
+
+CAPTURES (test/capture/paiement_unifie_capture_test.dart, fixtures synthetiques) :
+01 fiche a payer 390 ; 02 1280 ; 03 1440 ; 04 exonere 1440 ; 05 feuille « Reporter » 1440 ; 06 arabe 390.
+Section « Paiement » de la fiche eleve : etat, premier paiement, derniere facture, remise ; quatre gestes
+(Prix special, Exonerer, Reporter, Demander maintenant) qui reutilisent les feuilles de la Finance.
+
+VERIFIE (poste de l'agent, Postgres 16 local, Flutter /opt/flutter, Deno 2.1.4) :
+- stub_auth.sql puis toutes les migrations (dont 20261202000000) sans erreur.
+- scenarios_paiement_unifie.sql vert (reglages eteints par defaut, porte « jamais paye », delai de 3 jours,
+  entree en classe, demander maintenant idempotent, fiche, taxe : refus hors reglage, total + 20 % credite au prix HT).
+- Les 388 scenarios du depot rejoues : 377 verts + af_liste_blanche (corrige) ; les 10 autres rouges le sont AUSSI
+  avant la migration (be_s1, calendrier_pauses, cand_*, messages_candidat, nouveau_liste, priere_serveur) : non lies.
+- scenarios_fac_f adapte (premiere facture emise il y a 10 jours : la suspension attend 3 jours sinon).
+- dart analyze --fatal-infos propre ; verifier_jetons, verifier_branchement, verifier_conversations, verifier_revue
+  (regles de la CI) verts ; tests Flutter cibles (fiche, frise, recharge, notifications, acces_finance, capacites) verts ;
+  Deno : stripe_test (20), courriel (51) verts ; site-public : 175 tests verts.
+- NON rejoue en entier : `flutter test` complet (interrompu), la CI le fait.
+
+NON PROUVE : aucun paiement Stripe reel (P1) ; `billing_address_collection` avec `ui_mode: elements` a verifier chez
+Stripe avant d'allumer la taxe ; le test `recharge-payer` « chauffe » fuit un timer dans cet environnement (aussi sur HEAD).

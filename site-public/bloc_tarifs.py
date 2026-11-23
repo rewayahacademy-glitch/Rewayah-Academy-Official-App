@@ -413,8 +413,10 @@ def notes_prix(tarifs: dict, aujourdhui: date) -> list[str]:
     Les monnaies sont celles de la décision (mentions_sous_la_grille), pas « votre monnaie »."""
     p = politique_affichee(tarifs)
     hors_taxes = "hors taxes" if p["horsTaxes"] else "taxes comprises"
-    notes = [f"Prix en {NOMS_DEVISES.get(p['devise'], p['devise'])}, {hors_taxes}. La taxe de votre pays et le montant"
-             " en euros, livres ou dollars canadiens s’affichent au paiement."]
+    # PAIEMENT-UNIFIE (directeur, 23/11/2026) : une seule devise, les dollars americains ; la banque convertit
+    # si besoin ; les taxes eventuelles sont calculees a l'achat selon le pays.
+    notes = [f"Prix en {NOMS_DEVISES.get(p['devise'], p['devise'])}, {hors_taxes}. Votre banque convertit si besoin ;"
+             " les taxes éventuelles sont calculées à l’achat selon votre pays."]
     date_note = note_date_effet(tarifs, aujourdhui)
     return [date_note] + notes if date_note else notes
 

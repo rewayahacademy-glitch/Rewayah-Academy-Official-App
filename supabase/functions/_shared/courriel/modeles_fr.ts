@@ -385,6 +385,12 @@ export const MODELES: Record<string, Fabrique> = {
   controle_mission_non_controlee: (d) => avis(d, 'Une mission est restée sans vérification', 'Mission sans vérification',
     'Une mission de contrôle est restée sans vérification.', 'Voir les tirages', '/admin/securite-audit/tirages'),
   paiement_relance: (d) => {
+    if (d.premier === true) {
+      const jours = typeof d.remboursement_jours === 'number' && d.remboursement_jours > 0 ? `${d.remboursement_jours} jours` : 'jours'
+      return avis(d, 'Dernière étape : payer pour réserver la place', 'Dernière étape : payer',
+        `Vos classes sont prêtes. Il ne reste que l’affectation de l’enseignant. Nous recevons beaucoup de faux comptes, de spam et d’arnaques, et nous ne pouvons pas engager un enseignant pour un compte venu par curiosité. Payer avant le premier cours nous montre que vous êtes sérieux. Vous pouvez annuler dans les ${jours} qui suivent votre premier paiement : nous remboursons ce qui n’a pas été suivi.`,
+        'Payer', '/tuteur/foyer/recharge')
+    }
     const j = typeof d.jours_avant === 'number' ? d.jours_avant : null
     const quand = j === null ? 'bientôt' : j === 0 ? 'aujourd’hui' : j === 1 ? 'demain' : `dans ${j} jours`
     return avis(d, `Un paiement arrive à échéance ${quand}`, 'Un paiement arrive à échéance',

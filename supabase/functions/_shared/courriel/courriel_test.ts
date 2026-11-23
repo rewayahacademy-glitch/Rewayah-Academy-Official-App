@@ -275,6 +275,23 @@ Deno.test('jours_avant, dates et message libre suivent la langue', () => {
   assertEquals(libre.contenu.blocs.length, 2)
 })
 
+Deno.test('PAIEMENT-UNIFIE P6 : la premiere demande de paiement dit « derniere etape » et les jours de la politique', () => {
+  const p = (l: string, donnees: Record<string, unknown>) => {
+    const c = rendre({ modele: 'paiement_relance', categorie: 'facturation', essentielle: true, donnees }, l).contenu
+    return c.sujet + ' ' + composer(c).texte
+  }
+  const premier = { premier: true, delai_jours: 3, remboursement_jours: 14 }
+  assert(p('fr', premier).includes('Dernière étape') && p('fr', premier).includes('14 jours'))
+  assert(p('fr', premier).includes('faux comptes') && p('fr', premier).includes('sérieux'))
+  assert(p('en', premier).includes('Last step') && p('en', premier).includes('14 days'))
+  assert(p('ar', premier).includes('الخطوة الأخيرة') && p('ar', premier).includes('14'))
+  assert(p('es', premier).includes('Último paso') && p('pt', premier).includes('Último passo'))
+  // Sans nombre lu de la politique : jamais un nombre invente.
+  assert(!/\d/.test(p('fr', { premier: true }).replace(/https?:\S+/g, '')))
+  // Une relance ordinaire ne change pas.
+  assert(p('fr', { jours_avant: 3 }).includes('dans 3 jours') && !p('fr', { jours_avant: 3 }).includes('Dernière étape'))
+})
+
 Deno.test('langue non ecrite : traduite du francais ; francais inchange', () => {
   const l = { modele: 'classe_validee', categorie: 'inscription', essentielle: true, donnees: { prenom: 'Awa' } }
   assertEquals(rendre(l, 'ff').traduireDepuis, 'fr')

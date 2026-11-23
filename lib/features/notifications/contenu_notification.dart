@@ -238,7 +238,11 @@ NotificationContenu contenuNotificationPour(
     'controle_mission_attribuee' => evenements.controleMissionAttribuee,
     'controle_mission_non_controlee' => evenements.controleMissionNonControlee,
     'classe_changee' => evenements.classeChangee,
-    'paiement_relance' => evenements.paiementRelance,
+    // PAIEMENT-UNIFIE P6 : la premiere demande de paiement dit « derniere etape ».
+    'paiement_relance' =>
+      params['premier'] == true
+          ? evenements.paiementPremier
+          : evenements.paiementRelance,
     // FN-115b : la suspension dit sa cause quand ce n'est pas un impaye.
     'acces_suspendu_paiement' => switch (params['cause']) {
       'remboursement' => evenements.accesSuspenduRemboursement,

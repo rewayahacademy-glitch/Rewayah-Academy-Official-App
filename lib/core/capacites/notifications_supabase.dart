@@ -553,7 +553,9 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};
-  const Set<String> clesDrapeaux = <String>{'cahier_depose'};
+  // PAIEMENT-UNIFIE P6 : `premier` dit que la demande de paiement est la
+  // premiere (« derniere etape »), un drapeau, jamais un montant.
+  const Set<String> clesDrapeaux = <String>{'cahier_depose', 'premier'};
   final Map<String, dynamic> valeurs = <String, dynamic>{};
   for (final MapEntry<dynamic, dynamic> entree in bruts.entries) {
     final Object? cle = entree.key;

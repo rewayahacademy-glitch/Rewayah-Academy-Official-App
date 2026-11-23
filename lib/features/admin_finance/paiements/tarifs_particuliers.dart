@@ -159,12 +159,16 @@ class BlocTarifsParticuliers extends ConsumerWidget {
 
 /// Ouvre la fiche « Accès offert ou prix spécial » pour un eleve ; rend vrai
 /// si la liste des remises est a relire. [devise] : celle des factures de
-/// l'eleve, pour un prix special en montant.
+/// l'eleve, pour un prix special en montant. [report] (PAIEMENT-UNIFIE P5) :
+/// « Reporter » est le meme geste que l'acces offert, pose en un seul choix :
+/// le dernier mois sans paiement, et une raison deja ecrite.
 Future<bool> ouvrirTarifParticulier(
   BuildContext context, {
   required String profilId,
   required String prenom,
-  required String devise,
+  required String? devise,
+  bool report = false,
+  NatureTarif? nature,
 }) async {
   final ProviderContainer portee = ProviderScope.containerOf(
     context,
@@ -172,13 +176,17 @@ Future<bool> ouvrirTarifParticulier(
   );
   final bool? change = await AppBottomSheet.ouvrir<bool>(
     context,
-    titre: t.admin.finance.tarifs.feuilleTitre(prenom: prenom),
+    titre: report
+        ? t.admin.finance.tarifs.reporterTitre(dePrenom: deDevant(prenom))
+        : t.admin.finance.tarifs.feuilleTitre(prenom: prenom),
     constructeur: (BuildContext _) => UncontrolledProviderScope(
       container: portee,
       child: FeuilleTarifParticulier(
         profilId: profilId,
         prenom: prenom,
         devise: devise,
+        report: report,
+        natureInitiale: nature,
       ),
     ),
   );
@@ -229,8 +237,18 @@ class FeuilleTarifParticulier extends ConsumerStatefulWidget {
     required this.prenom,
     this.devise,
     this.retrait,
+    this.report = false,
+    this.natureInitiale,
     super.key,
   });
+
+  /// Vrai pour « Reporter » : un acces offert, sans choix de nature, avec
+  /// une raison deja ecrite (PAIEMENT-UNIFIE P5).
+  final bool report;
+
+  /// La nature proposee d'abord (acces offert par defaut) ; la fiche de
+  /// l'eleve ouvre « Prix special » ou « Exonerer » directement.
+  final NatureTarif? natureInitiale;
 
   /// L'eleve.
   final String profilId;
@@ -270,14 +288,24 @@ class _FeuilleTarifParticulierState
   String? _erreurMontant;
   final TextEditingController _raison = TextEditingController();
   late final List<DateTime> _mois = moisDeFin(DateTime.now());
-  NatureTarif _nature = NatureTarif.accesOffert;
-  late DateTime _moisFin = _mois[2];
+  late NatureTarif _nature = widget.report
+      ? NatureTarif.accesOffert
+      : widget.natureInitiale ?? NatureTarif.accesOffert;
+  late DateTime _moisFin = widget.report ? _mois[0] : _mois[2];
   _Phase _phase = _Phase.saisie;
   String? _erreurReduction;
   String? _erreurRaison;
   MotifRefusTarif? _refus;
 
   bool get _retrait => widget.retrait != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.report) {
+      _raison.text = t.admin.finance.tarifs.reporterRaison;
+    }
+  }
 
   @override
   void dispose() {
@@ -368,7 +396,27 @@ class _FeuilleTarifParticulierState
           ),
           Ecart.vLg,
         ],
-        if (saisie && r == null) ...<Widget>[
+        if (saisie && r == null && widget.report) ...<Widget>[
+          Text(
+            p.reporterPhrase,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vLg,
+          Text(p.reporterMois, style: textes.titleSmall ?? const TextStyle()),
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: SelecteurMois(
+              mois: _mois,
+              choisi: _moisFin,
+              onChoix: (DateTime m) => setState(() => _moisFin = m),
+            ),
+          ),
+          Ecart.vLg,
+        ],
+        if (saisie && r == null && !widget.report) ...<Widget>[
           ControleSegmente<NatureTarif>(
             segments: <Segment<NatureTarif>>[
               Segment<NatureTarif>(
