@@ -26,3 +26,12 @@ SUITE 23/11 (Dart et i18n, meme PR)
 - scenarios_cand_l2a2_gestes_direction.sql rejoue sur origin/main propre (597 migrations, sans la migration de ce lot) : MEME ECHEC
   (empreinte de lister_candidatures). Il est donc anterieur a ce lot.
 - Capture a 1280/1440 non faite (aucun navigateur ici) : la largeur est bornee a 840 par le test, pas vue a l'ecran.
+
+SUITE 23/11, SALLE-SECOND-APPAREIL (meme PR)
+- supabase/tests/scenarios_salle_second_appareil.sql : verts (demande, acceptation, refus, premier appareil silencieux 30 s, sans reponse 45 s,
+  annulation, demande d'un autre profil refusee x6, tuteur pour son enfant, enseignant, administration hors perimetre, droits, empreintes F86).
+- scenarios_af_liste_blanche_volatiles.sql : 4 lignes ajoutees (salle_*).
+- test/features/salle/passage_second_appareil_test.dart : 19 verts (deux dialogues, battement, service de jeton : accepte, refuse, sans reponse,
+  silencieux, annule, hors ligne ; etiquette sans adresse ; fr/en/ar).
+- NON PROUVE : la fonction Edge create-room-token modifiee n'a pas ete executee (pas de Deno/Supabase ici) ; aucune capture a l'ecran ;
+  aucun essai avec deux vrais appareils ; LiveKit non rejoue.

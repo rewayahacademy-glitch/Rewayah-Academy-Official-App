@@ -102,3 +102,14 @@ coûter ni à la famille, ni à l'académie, ni aux enseignants. »
    jamais si l'enfant n'a pas payé. Une seule connexion à la fois par profil dans une séance.
 8. **Frais de contestation bancaire perdue : à la famille (le payeur), jamais sur le solde d'un enfant.** Ils
    bloquent les nouveaux achats et inscriptions de la famille, jamais les cours déjà payés.
+9. **L'interface donne toujours un retour (directeur, 23/11/2026) : jamais de coupure brusque ; un second appareil demande la
+   permission au premier.** Un profil dans une séance a un seul appareil à la fois. Si un second appareil demande à entrer avec le
+   même compte, le serveur ne rend pas le jeton tout de suite : il crée une demande que le premier appareil voit (« Quelqu'un essaie
+   d'entrer dans la classe avec votre compte sur un autre appareil (Chrome · Android). Laisser passer ? », Accepter / Refuser). Accepté :
+   le premier sort proprement (« Vous continuez sur l'autre appareil ») et le second reçoit son jeton. Refusé : le second lit « L'entrée a
+   été refusée depuis l'appareil déjà connecté. » Pendant ce temps le second voit « Votre compte est déjà dans la classe sur un autre
+   appareil. Nous lui demandons de confirmer… », avec Annuler. Premier appareil silencieux depuis 30 s (plantage, onglet fermé) : le
+   second entre tout de suite (« L'autre appareil ne répondait plus : vous continuez ici »). Premier appareil vivant sans réponse en 45 s :
+   « Pas de réponse de l'autre appareil », on peut recommencer. L'enseignant suit la même règle. **Hors périmètre : l'identité visible de
+   l'administration** (`admin_visible`, identité partagée « Administration Rewayah ») ; un compte administrateur n'est pas suivi. Migration
+   `20261203200000_salle_second_appareil.sql`, scénario `supabase/tests/scenarios_salle_second_appareil.sql`.

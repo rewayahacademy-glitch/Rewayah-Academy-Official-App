@@ -136,6 +136,7 @@ import 'annuaire_seance.dart';
 import 'camarades_salle.dart';
 import 'fiche_seance.dart';
 import 'memoire_page_classe.dart';
+import 'passage_second_appareil.dart';
 import 'position_reprise.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
@@ -820,6 +821,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // SYNCHRO-SESSION : la seance de l'appel vient de naitre (ou reste la
     // meme) ; la page s'y abonne tout de suite.
     _raccorderSeance(redessiner: true);
+  }
+
+  /// SALLE-SECOND-APPAREIL : cet appareil accepte de ceder la place a un autre
+  /// appareil du meme compte. Il sort proprement (annonce de sortie, puis
+  /// deconnexion) et le dit : « Vous continuez sur l'autre appareil ».
+  Future<void> _cederLaPlace() async {
+    await _quitterAppel();
+    if (mounted) {
+      setState(() => _impasse = CauseImpasse.cedeAutreAppareil);
+    }
   }
 
   /// La sortie de l'appel : par le controleur quand il le tient (annonce,
@@ -2765,11 +2776,21 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           },
           // TRANSITIONS-SALLE : le passage d'une etape a l'autre (l'arche
           // passe la main, la sortie), sans jamais retarder l'ecran.
-          child: PassageSalle(
-            etape: _etape(),
-            arrivee: _depuisIle ? FaconPassage.depuisIle : FaconPassage.aucune,
-            choisir: _passage,
-            child: _construireSalle(context),
+          // SALLE-SECOND-APPAREIL : le battement qui garde la place, le
+          // dialogue du premier appareil et l'attente du second.
+          child: SurveillanceSecondAppareil(
+            seanceId: widget.seanceId,
+            profilId: widget.eleveId ?? ref.read(sessionProvider).profileId,
+            actif: _acces != null && _aEteConnecte && _impasse == null,
+            onCeder: _cederLaPlace,
+            child: PassageSalle(
+              etape: _etape(),
+              arrivee: _depuisIle
+                  ? FaconPassage.depuisIle
+                  : FaconPassage.aucune,
+              choisir: _passage,
+              child: _construireSalle(context),
+            ),
           ),
         ),
       );
@@ -5290,6 +5311,24 @@ class _Impasse extends StatelessWidget {
       CauseImpasse.ouverteAilleurs => (
         t.salle.ouverteAilleurs,
         t.salle.ouverteAilleursDetail,
+      ),
+      // SALLE-SECOND-APPAREIL (directeur, 23/11/2026) : jamais de coupure
+      // brusque ; chaque issue dit ce qui s'est passe et quoi faire.
+      CauseImpasse.cedeAutreAppareil => (
+        t.salle.passage.cede,
+        t.salle.passage.cedeDetail,
+      ),
+      CauseImpasse.passageRefuse => (
+        t.salle.passage.refuse,
+        t.salle.passage.refuseDetail,
+      ),
+      CauseImpasse.passageSansReponse => (
+        t.salle.passage.sansReponse,
+        t.salle.passage.sansReponseDetail,
+      ),
+      CauseImpasse.passageAnnule => (
+        t.salle.passage.annule,
+        t.salle.passage.annuleDetail,
       ),
     };
 
