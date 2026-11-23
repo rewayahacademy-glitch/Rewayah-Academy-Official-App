@@ -1197,7 +1197,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get horsLigne => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.';
 	@override late final _Traductions$connexion$controle$ar controle = _Traductions$connexion$controle$ar._(_root);
 	@override String get probleme => 'انتهت صلاحية الرابط أو لم يصل؟';
-	@override String aideEntree({required Object adresse}) => 'صعوبة في الدخول؟ اكتب إلى ${adresse}';
+	@override String aideEntree({required Object adresse}) => 'صعوبة في الدخول؟ اكتب إلى ⁨${adresse}⁩';
 	@override late final _Traductions$connexion$recuperation$ar recuperation = _Traductions$connexion$recuperation$ar._(_root);
 	@override late final _Traductions$connexion$feuilleAppareil$ar feuilleAppareil = _Traductions$connexion$feuilleAppareil$ar._(_root);
 	@override String get sessionTermineeTitre => 'تم تسجيل خروجك';
@@ -41144,7 +41144,7 @@ extension on TraductionsAr {
 			'connexion.controle.rechargerPage' => 'إعادة تحميل الصفحة',
 			'connexion.controle.horsLigne' => 'لا يمكن إجراء التحقق الآن. أعد المحاولة عند عودة الاتصال.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
-			'connexion.aideEntree' => ({required Object adresse}) => 'صعوبة في الدخول؟ اكتب إلى ${adresse}',
+			'connexion.aideEntree' => ({required Object adresse}) => 'صعوبة في الدخول؟ اكتب إلى ⁨${adresse}⁩',
 			'connexion.recuperation.titre' => 'استعادة الوصول',
 			'connexion.recuperation.intro' => 'لا كلمة مرور لإعادة تعيينها: أدخل عنوانك، ونرسل لك رابط دخول جديدًا.',
 			'connexion.recuperation.lienExpireTitre' => 'هذا الرابط لم يعد صالحًا',
