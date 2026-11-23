@@ -356,7 +356,7 @@
      "title": "4. Receive your class",
      "paragraphs": [
       "When the class is created, your student is enrolled in it. The app then tells you who their teacher is, then the date and time of the first class.",
-      "The price, your country’s tax and the amount in euros, pounds or Canadian dollars are shown when you pay."
+      "The price is in US dollars: your bank converts if needed. Any taxes are calculated at purchase according to your country."
      ]
     },
     {
@@ -419,7 +419,7 @@
       "A session cancelled by the academy is replaced."
      ],
      "paragraphs": [
-      "Your country’s tax and the amount in euros, pounds or Canadian dollars are shown when you pay. The full terms of sale are on the Terms page.",
+      "Prices are in US dollars: your bank converts if needed. Any taxes are calculated at purchase according to your country. The full terms of sale are on the Terms page.",
       "For a question about an invoice or billing, write to invoices@rewayahacademy.com."
      ],
      "links": [
@@ -2102,7 +2102,7 @@
      "id": "s4",
      "title": "Prices and payment",
      "paragraphs": [
-      "Prices are shown on the Prices page and in the app, when you choose a plan. They are in US dollars and before tax. The tax due in your country is added at payment.",
+      "Prices are shown on the Prices page and in the app, when you choose a plan. They are in US dollars and before tax. Your bank converts if needed. Any taxes are calculated at purchase according to your country.",
       "The subscription renews every month. Discounts are calculated by the system on the household’s invoice.",
       "Payment goes through a payment provider.",
       "There is no free trial. You pay at the start. If the class is not right for you, you can stop within 14 days of payment: we refund what you paid, minus the sessions already attended.",

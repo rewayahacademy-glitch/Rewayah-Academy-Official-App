@@ -235,6 +235,23 @@ Tous lus de la politique (nombre de jours, prix) ; jamais écrits en dur.
 | D11 | Reçu | Reçu Stripe + page « Paiements » |
 | D12 | Textes du §4.6 | À relire |
 
+### Décisions prises le 23/11/2026 (directeur et pilote)
+
+| # | Décision |
+|---|---|
+| D1 | **Une seule règle** : dans les 14 jours du premier paiement, annulation et remboursement de ce qui n'a pas été suivi ; ensuite, arrêt possible à la fin du mois en cours. La règle du 07/11 est retirée ; `fn115c` reste. |
+| D2 | Les 14 jours partent du **premier paiement confirmé** (webhook Stripe). |
+| D3 | **Stripe Tax préparé, éteint** : réglage `paiement.taxe_stripe_active` ; à allumer après l'enregistrement TVA (société au Royaume-Uni, pas encore enregistrée). Le contrôle de montant du webhook accepte un total supérieur au prix (30 % au plus). |
+| D4 | **USD seulement** ; le site dit « en dollars américains ; votre banque convertit si besoin » et « taxes éventuelles calculées à l'achat selon votre pays ». |
+| D5 | **Plus de premier cours sans paiement** : réglage `paiement.premier_avant_cours` (éteint par défaut tant que le circuit Stripe n'est pas prouvé en réel, P1). |
+| D6 | Délai avant que la place soit libérée : **3 jours** (`paiement.delai_jours`). |
+| D7 | « Demander maintenant » : `demander_paiement_maintenant`, sans table. |
+| D8 | « Reporter » : accès offert jusqu'au mois choisi (même geste, une seule saisie). |
+| D9 | Espace du comptable : inchangé (P8 non lancé). |
+| D10 | **Forme du formulaire : `elements`** (celle que l'application monte depuis le 06/11) ; les deux autres sont retirées (P3). |
+| D11 | Reçu : celui de Stripe. |
+| D12 | Textes du §4.6 : remplacés par le texte du directeur du 23/11 (voir DECISION-TARIFS). |
+
 ## 7. Plan de lots (petits, ordonnés)
 
 Une étape, une pull request. La preuve finale est celle du directeur en production.
