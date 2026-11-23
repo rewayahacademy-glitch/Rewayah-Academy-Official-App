@@ -7046,7 +7046,7 @@
         "retirerPhrase": "ستعود فواتير ⁨{dePrenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.",
         "retirer": "إزالة",
         "retireTitre": "تمت الإزالة",
-        "reporterTitre": "تأجيل دفعة \u2068{prenom}\u2069",
+        "reporterTitre": "تأجيل دفعة \u2068{dePrenom}\u2069",
         "reporterRaison": "تأجيل الدفع",
         "reporterMois": "آخر شهر دون دفع",
         "reporterPhrase": "يُمنح الوصول حتى نهاية هذا الشهر دون فاتورة، ثم يستأنف الدفع من تلقاء نفسه."

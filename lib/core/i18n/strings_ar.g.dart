@@ -19756,7 +19756,7 @@ class _Traductions$admin$finance$tarifs$ar extends Traductions$admin$finance$tar
 	@override String retirerPhrase({required Object dePrenom}) => 'ستعود فواتير ⁨${dePrenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.';
 	@override String get retirer => 'إزالة';
 	@override String get retireTitre => 'تمت الإزالة';
-	@override String reporterTitre({required Object prenom}) => 'تأجيل دفعة ⁨${prenom}⁩';
+	@override String reporterTitre({required Object dePrenom}) => 'تأجيل دفعة ⁨${dePrenom}⁩';
 	@override String get reporterRaison => 'تأجيل الدفع';
 	@override String get reporterMois => 'آخر شهر دون دفع';
 	@override String get reporterPhrase => 'يُمنح الوصول حتى نهاية هذا الشهر دون فاتورة، ثم يستأنف الدفع من تلقاء نفسه.';
@@ -36917,7 +36917,7 @@ extension on TraductionsAr {
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'ستعود فواتير ⁨${dePrenom}⁩ القادمة إلى السعر العادي. لا تتغير الفواتير الصادرة.',
 			'admin.finance.tarifs.retirer' => 'إزالة',
 			'admin.finance.tarifs.retireTitre' => 'تمت الإزالة',
-			'admin.finance.tarifs.reporterTitre' => ({required Object prenom}) => 'تأجيل دفعة ⁨${prenom}⁩',
+			'admin.finance.tarifs.reporterTitre' => ({required Object dePrenom}) => 'تأجيل دفعة ⁨${dePrenom}⁩',
 			'admin.finance.tarifs.reporterRaison' => 'تأجيل الدفع',
 			'admin.finance.tarifs.reporterMois' => 'آخر شهر دون دفع',
 			'admin.finance.tarifs.reporterPhrase' => 'يُمنح الوصول حتى نهاية هذا الشهر دون فاتورة، ثم يستأنف الدفع من تلقاء نفسه.',

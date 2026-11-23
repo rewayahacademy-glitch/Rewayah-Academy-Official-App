@@ -8317,7 +8317,7 @@
         "retirerPhrase": "Les prochaines factures {dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.",
         "retirer": "Retirer",
         "retireTitre": "C'est retiré",
-        "reporterTitre": "Reporter le paiement de {prenom}",
+        "reporterTitre": "Reporter le paiement {dePrenom}",
         "reporterRaison": "Paiement reporté",
         "reporterMois": "Dernier mois sans paiement",
         "reporterPhrase": "L'accès est offert jusqu'à la fin de ce mois, sans facture. Le paiement reprend de lui-même ensuite."

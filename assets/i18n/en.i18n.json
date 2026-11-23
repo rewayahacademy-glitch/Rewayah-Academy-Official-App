@@ -8224,7 +8224,7 @@
         "retirerPhrase": "{dePrenom}'s next invoices will return to the normal price. Invoices already issued do not change.",
         "retirer": "Remove",
         "retireTitre": "Removed",
-        "reporterTitre": "Postpone {prenom}'s payment",
+        "reporterTitre": "Postpone {dePrenom}'s payment",
         "reporterRaison": "Payment postponed",
         "reporterMois": "Last month without payment",
         "reporterPhrase": "Access is offered until the end of this month, with no invoice. Payment resumes by itself afterwards."

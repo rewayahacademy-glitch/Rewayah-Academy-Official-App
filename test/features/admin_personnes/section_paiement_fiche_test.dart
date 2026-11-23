@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/fiche_eleve_direction.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -292,7 +293,7 @@ void main() {
       await tester.tap(find.byKey(SectionPaiementFiche.cleGeste('reporter')));
       await tester.pumpAndSettle();
       expect(
-        find.text(t.admin.finance.tarifs.reporterTitre(prenom: 'Yasmine')),
+        find.text(t.admin.finance.tarifs.reporterTitre(dePrenom: deDevant('Yasmine'))),
         findsWidgets,
       );
       expect(find.text(t.admin.finance.tarifs.reporterMois), findsOneWidget);

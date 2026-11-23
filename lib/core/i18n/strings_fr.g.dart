@@ -39220,8 +39220,8 @@ class Traductions$admin$finance$tarifs$fr {
 	/// fr: 'C'est retiré'
 	String get retireTitre => 'C\'est retiré';
 
-	/// fr: 'Reporter le paiement de {prenom}'
-	String reporterTitre({required Object prenom}) => 'Reporter le paiement de ${prenom}';
+	/// fr: 'Reporter le paiement {dePrenom}'
+	String reporterTitre({required Object dePrenom}) => 'Reporter le paiement ${dePrenom}';
 
 	/// fr: 'Paiement reporté'
 	String get reporterRaison => 'Paiement reporté';
@@ -66934,7 +66934,7 @@ extension on Traductions {
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => 'Les prochaines factures ${dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.',
 			'admin.finance.tarifs.retirer' => 'Retirer',
 			'admin.finance.tarifs.retireTitre' => 'C\'est retiré',
-			'admin.finance.tarifs.reporterTitre' => ({required Object prenom}) => 'Reporter le paiement de ${prenom}',
+			'admin.finance.tarifs.reporterTitre' => ({required Object dePrenom}) => 'Reporter le paiement ${dePrenom}',
 			'admin.finance.tarifs.reporterRaison' => 'Paiement reporté',
 			'admin.finance.tarifs.reporterMois' => 'Dernier mois sans paiement',
 			'admin.finance.tarifs.reporterPhrase' => 'L\'accès est offert jusqu\'à la fin de ce mois, sans facture. Le paiement reprend de lui-même ensuite.',

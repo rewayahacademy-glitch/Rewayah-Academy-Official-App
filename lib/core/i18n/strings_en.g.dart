@@ -18855,7 +18855,7 @@ class _Traductions$admin$finance$tarifs$en extends Traductions$admin$finance$tar
 	@override String retirerPhrase({required Object dePrenom}) => '${dePrenom}\'s next invoices will return to the normal price. Invoices already issued do not change.';
 	@override String get retirer => 'Remove';
 	@override String get retireTitre => 'Removed';
-	@override String reporterTitre({required Object prenom}) => 'Postpone ${prenom}\'s payment';
+	@override String reporterTitre({required Object dePrenom}) => 'Postpone ${dePrenom}\'s payment';
 	@override String get reporterRaison => 'Payment postponed';
 	@override String get reporterMois => 'Last month without payment';
 	@override String get reporterPhrase => 'Access is offered until the end of this month, with no invoice. Payment resumes by itself afterwards.';
@@ -37056,7 +37056,7 @@ extension on TraductionsEn {
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => '${dePrenom}\'s next invoices will return to the normal price. Invoices already issued do not change.',
 			'admin.finance.tarifs.retirer' => 'Remove',
 			'admin.finance.tarifs.retireTitre' => 'Removed',
-			'admin.finance.tarifs.reporterTitre' => ({required Object prenom}) => 'Postpone ${prenom}\'s payment',
+			'admin.finance.tarifs.reporterTitre' => ({required Object dePrenom}) => 'Postpone ${dePrenom}\'s payment',
 			'admin.finance.tarifs.reporterRaison' => 'Payment postponed',
 			'admin.finance.tarifs.reporterMois' => 'Last month without payment',
 			'admin.finance.tarifs.reporterPhrase' => 'Access is offered until the end of this month, with no invoice. Payment resumes by itself afterwards.',

@@ -177,7 +177,7 @@ Future<bool> ouvrirTarifParticulier(
   final bool? change = await AppBottomSheet.ouvrir<bool>(
     context,
     titre: report
-        ? t.admin.finance.tarifs.reporterTitre(prenom: prenom)
+        ? t.admin.finance.tarifs.reporterTitre(dePrenom: deDevant(prenom))
         : t.admin.finance.tarifs.feuilleTitre(prenom: prenom),
     constructeur: (BuildContext _) => UncontrolledProviderScope(
       container: portee,
