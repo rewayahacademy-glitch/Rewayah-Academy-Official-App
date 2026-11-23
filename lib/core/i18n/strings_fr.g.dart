@@ -5495,8 +5495,8 @@ class Traductions$salle$passage$fr {
 	/// fr: 'Refuser'
 	String get refuser => 'Refuser';
 
-	/// fr: 'Votre réponse n'a pas pu être envoyée. Vérifiez votre connexion, puis réessayez.'
-	String get echecReponse => 'Votre réponse n\'a pas pu être envoyée. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Votre réponse n'a pas pu être envoyée. Réessayez dans un instant.'
+	String get echecReponse => 'Votre réponse n\'a pas pu être envoyée. Réessayez dans un instant.';
 
 	/// fr: 'Votre compte est déjà dans la classe'
 	String get attenteTitre => 'Votre compte est déjà dans la classe';
@@ -5507,8 +5507,8 @@ class Traductions$salle$passage$fr {
 	/// fr: 'Appareil déjà connecté : {appareil}'
 	String surAppareil({required Object appareil}) => 'Appareil déjà connecté : ${appareil}';
 
-	/// fr: 'Votre connexion est coupée. Votre demande reste posée : nous reprenons dès qu'elle revient.'
-	String get horsLigne => 'Votre connexion est coupée. Votre demande reste posée : nous reprenons dès qu\'elle revient.';
+	/// fr: 'Votre demande reste posée : nous reprenons dès que cet appareil retrouve Rewayah.'
+	String get horsLigne => 'Votre demande reste posée : nous reprenons dès que cet appareil retrouve Rewayah.';
 
 	/// fr: 'L'autre appareil ne répondait plus : vous continuez ici'
 	String get ancienSilencieux => 'L\'autre appareil ne répondait plus : vous continuez ici';
@@ -5528,8 +5528,8 @@ class Traductions$salle$passage$fr {
 	/// fr: 'Pas de réponse de l'autre appareil'
 	String get sansReponse => 'Pas de réponse de l\'autre appareil';
 
-	/// fr: 'Il est peut-être occupé ou sans connexion. Vous pouvez réessayer.'
-	String get sansReponseDetail => 'Il est peut-être occupé ou sans connexion. Vous pouvez réessayer.';
+	/// fr: 'Il est peut-être occupé. Vous pouvez réessayer.'
+	String get sansReponseDetail => 'Il est peut-être occupé. Vous pouvez réessayer.';
 
 	/// fr: 'Entrée annulée'
 	String get annule => 'Entrée annulée';
@@ -60543,18 +60543,18 @@ extension on Traductions {
 			'salle.passage.demandeSansNom' => 'Quelqu\'un essaie d\'entrer dans la classe avec votre compte sur un autre appareil. Laisser passer ?',
 			'salle.passage.accepter' => 'Accepter',
 			'salle.passage.refuser' => 'Refuser',
-			'salle.passage.echecReponse' => 'Votre réponse n\'a pas pu être envoyée. Vérifiez votre connexion, puis réessayez.',
+			'salle.passage.echecReponse' => 'Votre réponse n\'a pas pu être envoyée. Réessayez dans un instant.',
 			'salle.passage.attenteTitre' => 'Votre compte est déjà dans la classe',
 			'salle.passage.attente' => 'Votre compte est déjà dans la classe sur un autre appareil. Nous lui demandons de confirmer…',
 			'salle.passage.surAppareil' => ({required Object appareil}) => 'Appareil déjà connecté : ${appareil}',
-			'salle.passage.horsLigne' => 'Votre connexion est coupée. Votre demande reste posée : nous reprenons dès qu\'elle revient.',
+			'salle.passage.horsLigne' => 'Votre demande reste posée : nous reprenons dès que cet appareil retrouve Rewayah.',
 			'salle.passage.ancienSilencieux' => 'L\'autre appareil ne répondait plus : vous continuez ici',
 			'salle.passage.cede' => 'Vous continuez sur l\'autre appareil',
 			'salle.passage.cedeDetail' => 'Cet appareil a laissé la place à l\'autre. Vous pouvez revenir dans la classe quand vous le voulez : l\'autre appareil sera prévenu.',
 			'salle.passage.refuse' => 'L\'entrée a été refusée depuis l\'appareil déjà connecté.',
 			'salle.passage.refuseDetail' => 'Votre compte reste dans la classe sur l\'autre appareil. Si c\'est bien vous, acceptez la demande depuis cet appareil, puis réessayez.',
 			'salle.passage.sansReponse' => 'Pas de réponse de l\'autre appareil',
-			'salle.passage.sansReponseDetail' => 'Il est peut-être occupé ou sans connexion. Vous pouvez réessayer.',
+			'salle.passage.sansReponseDetail' => 'Il est peut-être occupé. Vous pouvez réessayer.',
 			'salle.passage.annule' => 'Entrée annulée',
 			'salle.passage.annuleDetail' => 'Vous n\'êtes pas entré dans la classe depuis cet appareil. Vous pouvez réessayer.',
 			'salle.sonBloque' => 'Le son est coupé par le navigateur',
