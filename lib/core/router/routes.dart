@@ -928,6 +928,15 @@ abstract final class Routes {
           queryParameters: requete,
         ).toString();
 
+  /// FICHE-ELEVE-DIRECTION (22/11/2026) : la fiche complete d'un eleve, lue
+  /// par la direction, ouverte depuis « Personnes ». L'identifiant est celui
+  /// du profil de l'eleve.
+  static const String adminPersonnesEleve = '/admin/personnes/eleves/:eleveId';
+
+  /// Le chemin de la fiche de l'eleve [eleveId].
+  static String adminPersonnesElevePour(String eleveId) =>
+      '/admin/personnes/eleves/${Uri.encodeComponent(eleveId)}';
+
   /// Le chemin de la candidature de reference [reference].
   ///
   /// BE-SUIVANT : [fileDeLaListe] est l'adresse de la liste d'ou l'on ouvre le
