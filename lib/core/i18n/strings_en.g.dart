@@ -7063,6 +7063,7 @@ class _Traductions$admin$ficheEleve$en extends Traductions$admin$ficheEleve$fr {
 	@override late final _Traductions$admin$ficheEleve$presences$en presences = _Traductions$admin$ficheEleve$presences$en._(_root);
 	@override late final _Traductions$admin$ficheEleve$progression$en progression = _Traductions$admin$ficheEleve$progression$en._(_root);
 	@override late final _Traductions$admin$ficheEleve$compte$en compte = _Traductions$admin$ficheEleve$compte$en._(_root);
+	@override late final _Traductions$admin$ficheEleve$paiement$en paiement = _Traductions$admin$ficheEleve$paiement$en._(_root);
 }
 
 // Path: admin.comptes
@@ -8393,6 +8394,7 @@ class _Traductions$notifications$evenements$en extends Traductions$notifications
 	@override String get controleMissionNonControlee => 'A review mission was left without a check.';
 	@override String get classeChangee => 'A student in the family has joined another class, at the same time.';
 	@override String get paiementRelance => 'A payment is coming due. It is paid in Payments.';
+	@override String get paiementPremier => 'Last step: pay to reserve the place before the first lesson. It is paid in Payments.';
 	@override String get accesSuspenduPaiement => 'Access is suspended: this month\'s payment has not been received.';
 	@override String get accesRetabliPaiement => 'Access is restored: the payment has been received.';
 	@override String get paiementRecu => 'The payment has been received. The balance is up to date.';
@@ -10279,6 +10281,13 @@ class _Traductions$adulte$recharge$en extends Traductions$adulte$recharge$fr {
 	@override String get payerSeul => 'Pay';
 	@override String get conditionsRemboursement => 'Refund and dispute: read the terms';
 	@override String get fraisContestation => 'If you dispute a payment with your bank, the dispute fees are added to your household balance.';
+	@override String get pourquoiPayer => 'We receive a lot of fake accounts, spam and scams. We cannot hire a teacher for an account that came out of curiosity. Paying before the first lesson shows us that you are serious.';
+	@override String annulerDansDelai({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'You can cancel within ${jours} day of your first payment: we refund what was not attended.',
+		other: 'You can cancel within ${jours} days of your first payment: we refund what was not attended.',
+	);
+	@override String get annulerSansDuree => 'You can cancel in the days that follow your first payment: we refund what was not attended. The length is that of the pricing policy in force (Prices page).';
+	@override String get prixEtTaxes => 'Prices are in US dollars, excluding tax; your bank converts if needed. Any tax for your country is calculated when you pay, and you see it before you confirm.';
 	@override String ajouter({required Object prenom}) => 'Add ${prenom} to the top-up';
 	@override String regularisationDe({required Object prenom, required Object message}) => '${prenom}: ${message}';
 	@override String get commandeRendue => 'The payment has been sent. Do not pay a second time: follow its status.';
@@ -13033,6 +13042,7 @@ class _Traductions$friseInscription$etapes$en extends Traductions$friseInscripti
 	@override String get aCompleter => 'To complete';
 	@override String get formation => 'Class being formed';
 	@override String get confirmee => 'Class confirmed';
+	@override String get paiement => 'Payment';
 	@override String get enseignant => 'Teacher assigned';
 	@override String get pret => 'All set';
 }
@@ -13044,6 +13054,7 @@ class _Traductions$friseInscription$dit$en extends Traductions$friseInscription$
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String get paiementAVenir => 'Before the first lesson, you pay to reserve the place. After paying, you can cancel: we refund what was not attended.';
 	@override String get envoyee => 'Your request has reached the academy.';
 	@override String get lueEnCours => 'The management is reading your request. You are notified as soon as it has decided.';
 	@override String get lueFait => 'The management has read your request.';
@@ -18057,6 +18068,44 @@ class _Traductions$admin$ficheEleve$compte$en extends Traductions$admin$ficheEle
 	@override String get accesJusquAu => 'Temporary access until';
 }
 
+// Path: admin.ficheEleve.paiement
+class _Traductions$admin$ficheEleve$paiement$en extends Traductions$admin$ficheEleve$paiement$fr {
+	_Traductions$admin$ficheEleve$paiement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Payment';
+	@override String get etat => 'Payment status';
+	@override String get aPayer => 'To pay';
+	@override String get paye => 'Paid';
+	@override String get enRetard => 'Late: access is closed';
+	@override String get exonere => 'Exempt';
+	@override String get premier => 'First payment';
+	@override String get premierRecu => 'Received';
+	@override String get premierPasEncore => 'Not yet';
+	@override String get facture => 'Latest invoice';
+	@override String facAPayer({required Object montant, required Object mois}) => '${montant} for ${mois}, to pay';
+	@override String facPayee({required Object montant, required Object mois}) => '${montant} for ${mois}, paid';
+	@override String get remise => 'Discount in force';
+	@override String get prixSpecial => 'Special price';
+	@override String get prixSpecialAide => 'Set a reduced price for this student. A reason and an end month are required.';
+	@override String get exonerer => 'Exempt';
+	@override String get exonererAide => 'Offer access: nothing to pay until the chosen month. Access closed for non-payment is restored right away.';
+	@override String get reporter => 'Postpone';
+	@override String get reporterAide => 'Access is offered until the chosen month, with no invoice. Payment resumes by itself afterwards.';
+	@override String get demander => 'Request now';
+	@override String get demanderAide => 'Issues the month\'s invoice and notifies the family. Use it when payment must arrive before the first lesson.';
+	@override String get retirer => 'Remove the discount';
+	@override String get retirerAide => 'The normal price applies again.';
+	@override String get demandeTitre => 'Payment requested';
+	@override String get demandePhrase => 'The month\'s invoice is issued and the family is notified.';
+	@override String get rienTitre => 'Nothing to pay';
+	@override String get rienPhrase => 'No invoice remains to be paid this month.';
+	@override String get echecTitre => 'Request not confirmed';
+	@override String get echecPhrase => 'We could not confirm the request. This often comes from the connection. Check the invoice in Finance before trying again.';
+}
+
 // Path: admin.comptes.retrait
 class _Traductions$admin$comptes$retrait$en extends Traductions$admin$comptes$retrait$fr {
 	_Traductions$admin$comptes$retrait$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -18846,6 +18895,10 @@ class _Traductions$admin$finance$tarifs$en extends Traductions$admin$finance$tar
 	@override String retirerPhrase({required Object dePrenom}) => '${dePrenom}\'s next invoices will return to the normal price. Invoices already issued do not change.';
 	@override String get retirer => 'Remove';
 	@override String get retireTitre => 'Removed';
+	@override String reporterTitre({required Object dePrenom}) => 'Postpone ${dePrenom}\'s payment';
+	@override String get reporterRaison => 'Payment postponed';
+	@override String get reporterMois => 'Last month without payment';
+	@override String get reporterPhrase => 'Access is offered until the end of this month, with no invoice. Payment resumes by itself afterwards.';
 }
 
 // Path: admin.finance.fac
@@ -36117,6 +36170,35 @@ extension on TraductionsEn {
 			'admin.ficheEleve.compte.etat' => 'Account status',
 			'admin.ficheEleve.compte.inscritLe' => 'Signed up on',
 			'admin.ficheEleve.compte.accesJusquAu' => 'Temporary access until',
+			'admin.ficheEleve.paiement.titre' => 'Payment',
+			'admin.ficheEleve.paiement.etat' => 'Payment status',
+			'admin.ficheEleve.paiement.aPayer' => 'To pay',
+			'admin.ficheEleve.paiement.paye' => 'Paid',
+			'admin.ficheEleve.paiement.enRetard' => 'Late: access is closed',
+			'admin.ficheEleve.paiement.exonere' => 'Exempt',
+			'admin.ficheEleve.paiement.premier' => 'First payment',
+			'admin.ficheEleve.paiement.premierRecu' => 'Received',
+			'admin.ficheEleve.paiement.premierPasEncore' => 'Not yet',
+			'admin.ficheEleve.paiement.facture' => 'Latest invoice',
+			'admin.ficheEleve.paiement.facAPayer' => ({required Object montant, required Object mois}) => '${montant} for ${mois}, to pay',
+			'admin.ficheEleve.paiement.facPayee' => ({required Object montant, required Object mois}) => '${montant} for ${mois}, paid',
+			'admin.ficheEleve.paiement.remise' => 'Discount in force',
+			'admin.ficheEleve.paiement.prixSpecial' => 'Special price',
+			'admin.ficheEleve.paiement.prixSpecialAide' => 'Set a reduced price for this student. A reason and an end month are required.',
+			'admin.ficheEleve.paiement.exonerer' => 'Exempt',
+			'admin.ficheEleve.paiement.exonererAide' => 'Offer access: nothing to pay until the chosen month. Access closed for non-payment is restored right away.',
+			'admin.ficheEleve.paiement.reporter' => 'Postpone',
+			'admin.ficheEleve.paiement.reporterAide' => 'Access is offered until the chosen month, with no invoice. Payment resumes by itself afterwards.',
+			'admin.ficheEleve.paiement.demander' => 'Request now',
+			'admin.ficheEleve.paiement.demanderAide' => 'Issues the month\'s invoice and notifies the family. Use it when payment must arrive before the first lesson.',
+			'admin.ficheEleve.paiement.retirer' => 'Remove the discount',
+			'admin.ficheEleve.paiement.retirerAide' => 'The normal price applies again.',
+			'admin.ficheEleve.paiement.demandeTitre' => 'Payment requested',
+			'admin.ficheEleve.paiement.demandePhrase' => 'The month\'s invoice is issued and the family is notified.',
+			'admin.ficheEleve.paiement.rienTitre' => 'Nothing to pay',
+			'admin.ficheEleve.paiement.rienPhrase' => 'No invoice remains to be paid this month.',
+			'admin.ficheEleve.paiement.echecTitre' => 'Request not confirmed',
+			'admin.ficheEleve.paiement.echecPhrase' => 'We could not confirm the request. This often comes from the connection. Check the invoice in Finance before trying again.',
 			'admin.comptes.titre' => 'Accounts',
 			'admin.comptes.intro' => 'All the people registered, those awaiting a decision first. A teacher with no ID document submitted stays visible here: this is the only place that shows them.',
 			'admin.comptes.attenteUneAujourdhui' => 'One person awaits a decision, registered today.',
@@ -36523,6 +36605,8 @@ extension on TraductionsEn {
 			'admin.praxis.avis.confiance' => ({required Object niveau}) => 'Confidence: ${niveau}',
 			'admin.praxis.avis.confiances.faible' => 'low',
 			'admin.praxis.avis.confiances.moyenne' => 'medium',
+			_ => null,
+		} ?? switch (path) {
 			'admin.praxis.avis.confiances.forte' => 'high',
 			'admin.praxis.avis.criteres' => 'Criteria rated',
 			'admin.praxis.avis.critere.maitrise' => 'Mastery',
@@ -36552,8 +36636,6 @@ extension on TraductionsEn {
 			'admin.praxis.avis.rangeLe' => ({required Object date, required Object heure}) => 'Sorted on ${date} at ${heure}',
 			'admin.praxis.avis.pasRange' => 'Praxis has not sorted this file yet.',
 			'admin.praxis.avis.erreur' => 'Praxis\'s opinion could not be read. Try again in a moment.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.praxis.avis.horsLigne' => 'Praxis\'s opinion is not loaded yet. Reload it.',
 			'admin.praxis.objectifs.titre' => 'Praxis\'s goals',
 			'admin.praxis.objectifs.intro' => 'The goals Praxis sets itself for the day and for the week. It sets and closes them itself.',
@@ -37033,6 +37115,12 @@ extension on TraductionsEn {
 			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => '${dePrenom}\'s next invoices will return to the normal price. Invoices already issued do not change.',
 			'admin.finance.tarifs.retirer' => 'Remove',
 			'admin.finance.tarifs.retireTitre' => 'Removed',
+			'admin.finance.tarifs.reporterTitre' => ({required Object dePrenom}) => 'Postpone ${dePrenom}\'s payment',
+			'admin.finance.tarifs.reporterRaison' => 'Payment postponed',
+			'admin.finance.tarifs.reporterMois' => 'Last month without payment',
+			'admin.finance.tarifs.reporterPhrase' => 'Access is offered until the end of this month, with no invoice. Payment resumes by itself afterwards.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.fac.factures' => 'Month\'s invoices',
 			'admin.finance.fac.ligne' => ({required Object deMois}) => '${deMois} invoices',
 			'admin.finance.fac.moisCourant' => 'The current month.',
@@ -37066,8 +37154,6 @@ extension on TraductionsEn {
 			'admin.finance.autres.libelleAide' => 'What the teacher will read, for example "Replacement of 12 November".',
 			'admin.finance.autres.montant' => ({required Object devise}) => 'Amount in ${devise}',
 			'admin.finance.autres.montantAide' => 'For example 25 or 12.50.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.autres.confirmer' => ({required Object montant}) => 'Grant ${montant}',
 			'admin.finance.autres.confirmerSansMontant' => 'Grant',
 			'admin.finance.autres.erreurLibelle' => 'Write a label of 120 characters at most: the teacher will read it.',
@@ -37547,6 +37633,8 @@ extension on TraductionsEn {
 			'admin.bibliotheque.fiche.actions.retirer' => 'Withdraw from the catalogue',
 			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'New version created as a draft.',
 			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'The new version could not be confirmed. Try again.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Published on ${date}',
 			'admin.bibliotheque.fiche.version.empreinte' => ({required Object valeur}) => 'Fingerprint ${valeur}',
 			'admin.bibliotheque.fiche.version.sansFichier' => 'No file',
@@ -37580,8 +37668,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.classement.tranchesAucune' => 'Tick at least one age group.',
 			'admin.bibliotheque.import.classement.etapesTitre' => 'Programme stages',
 			'admin.bibliotheque.import.classement.etapesAide' => 'Link the document to the stages where it is used (optional).',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.classement.etapesVide' => 'The stages will appear when the programme is published.',
 			'admin.bibliotheque.import.classement.etapesIndisponible' => 'The stages could not be read for now. The document can be saved without a stage.',
 			'admin.bibliotheque.import.classement.lectureTitre' => 'Quran recitation style',
@@ -38061,6 +38147,8 @@ extension on TraductionsEn {
 			'nav.eleve.maClasse' => 'My class',
 			'nav.eleve.coran' => 'Quran',
 			'nav.eleve.monEspace' => 'My space',
+			_ => null,
+		} ?? switch (path) {
 			'nav.eleve.suivi' => 'Progress',
 			'nav.eleve.compte' => 'Account',
 			'nav.eleve.aujourdhui' => 'Today',
@@ -38094,8 +38182,6 @@ extension on TraductionsEn {
 			'nav.admin.personnes' => 'People',
 			'nav.admin.pedagogie' => 'Teaching',
 			'nav.admin.finance' => 'Finance',
-			_ => null,
-		} ?? switch (path) {
 			'nav.admin.configuration' => 'Settings',
 			'nav.admin.securite' => 'Security and audit',
 			'nav.admin.direction' => 'Management',
@@ -38534,6 +38620,7 @@ extension on TraductionsEn {
 			'notifications.evenements.controleMissionNonControlee' => 'A review mission was left without a check.',
 			'notifications.evenements.classeChangee' => 'A student in the family has joined another class, at the same time.',
 			'notifications.evenements.paiementRelance' => 'A payment is coming due. It is paid in Payments.',
+			'notifications.evenements.paiementPremier' => 'Last step: pay to reserve the place before the first lesson. It is paid in Payments.',
 			'notifications.evenements.accesSuspenduPaiement' => 'Access is suspended: this month\'s payment has not been received.',
 			'notifications.evenements.accesRetabliPaiement' => 'Access is restored: the payment has been received.',
 			'notifications.evenements.paiementRecu' => 'The payment has been received. The balance is up to date.',
@@ -38574,6 +38661,8 @@ extension on TraductionsEn {
 			'notifications.evenements.changementHeureMecque' => 'The class stays at the same time in Makkah: it is your city\'s time that changes.',
 			'notifications.evenements.conversionRefusee' => ({required Object classe, required Object raison}) => 'Class ${classe} could not move to Makkah time: ${raison} It will be retried tonight.',
 			'notifications.evenements.conversionRefuseeProche' => 'a time change is approaching (less than 28 days).',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.conversionRefuseeDemiHeure' => 'one of its slots has no whole hour in Makkah.',
 			'notifications.evenements.conversionRefuseeAutre' => 'a check failed, see the class.',
 			'notifications.evenements.changementHeureLigne' => ({required Object jour, required Object avant, required Object apres}) => 'on ${jour} from ${avant} to ${apres}',
@@ -38608,8 +38697,6 @@ extension on TraductionsEn {
 			'notifications.evenements.seanceTermineePhrases' => ({required Object premiere, required Object suite}) => '${premiere} ${suite}',
 			'notifications.evenements.inconnu' => 'This notification needs a more recent version of the app. Reload the page to read it.',
 			'notifications.filtres.libelle' => 'Filter notifications',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.filtres.toutes' => 'All',
 			'notifications.filtres.nonLues' => 'Unread',
 			'notifications.filtreVideTitre' => 'No notification in this filter',
@@ -39088,6 +39175,8 @@ extension on TraductionsEn {
 			'enseignant.demo.intro' => 'Choose a screen of Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Screens',
 			'enseignant.demo.etats' => 'Situations',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.demo.etatNominal' => 'Ordinary day',
 			'enseignant.demo.etatVide' => 'No session',
 			'enseignant.demo.etatHorsLigne' => 'Offline',
@@ -39122,8 +39211,6 @@ extension on TraductionsEn {
 			'enseignant.photo.titre' => 'Professional photo',
 			'enseignant.photo.aide' => 'Your photo is required: families do not entrust their children to a stranger on the internet. It is visible to the families of your students.',
 			'enseignant.photo.obligatoireLecteur' => 'Photo required',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.voile' => 'A photo wearing the niqab is accepted.',
 			'enseignant.photo.notice' => 'Do not use your ID document.',
 			'enseignant.photo.choisir' => 'Choose a photo',
@@ -39602,6 +39689,8 @@ extension on TraductionsEn {
 			'enseignant.revue.typeTransfert' => 'Transfer proposal',
 			'enseignant.revue.typeReorientation' => 'Reorientation proposal',
 			'enseignant.revenus.titre' => 'My income',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.intro' => 'What your sessions of the chosen month earn you, student by student.',
 			'enseignant.revenus.introSansChoix' => 'What your sessions of the current month earn you, student by student.',
 			'enseignant.revenus.estimation' => 'Estimate',
@@ -39636,8 +39725,6 @@ extension on TraductionsEn {
 			'enseignant.revenus.remplacement' => 'Replacement',
 			'enseignant.revenus.tauxMoyen' => 'Average hourly rate',
 			'enseignant.revenus.total' => 'Total',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '${date} at ${heure}',
 			'enseignant.revenus.seanceDuree' => 'Paid length',
 			'enseignant.revenus.seanceDureeNonPrecisee' => 'See the academy statement',
@@ -40116,6 +40203,8 @@ extension on TraductionsEn {
 			'tc.outils.dock.deplacer' => 'Move the tools',
 			'tc.outils.dock.position.bas' => 'At the bottom',
 			'tc.outils.dock.position.gauche' => 'On the left',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.position.droite' => 'On the right',
 			'tc.outils.dock.bibliotheque' => 'Library',
 			'tc.outils.dock.focus' => 'Focus',
@@ -40150,8 +40239,6 @@ extension on TraductionsEn {
 			'tc.outils.revision.creer' => 'Set the work',
 			'tc.outils.revision.posee' => 'Work to prepare set',
 			'tc.outils.masquer.reveler' => 'Reveal',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.masquer.refermer' => 'Hide again',
 			'tc.outils.masquer.tout' => 'Unhide all',
 			'tc.outils.focus.quitter' => 'Exit focus',
@@ -40510,6 +40597,10 @@ extension on TraductionsEn {
 			'adulte.recharge.payerSeul' => 'Pay',
 			'adulte.recharge.conditionsRemboursement' => 'Refund and dispute: read the terms',
 			'adulte.recharge.fraisContestation' => 'If you dispute a payment with your bank, the dispute fees are added to your household balance.',
+			'adulte.recharge.pourquoiPayer' => 'We receive a lot of fake accounts, spam and scams. We cannot hire a teacher for an account that came out of curiosity. Paying before the first lesson shows us that you are serious.',
+			'adulte.recharge.annulerDansDelai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'You can cancel within ${jours} day of your first payment: we refund what was not attended.', other: 'You can cancel within ${jours} days of your first payment: we refund what was not attended.', ), 
+			'adulte.recharge.annulerSansDuree' => 'You can cancel in the days that follow your first payment: we refund what was not attended. The length is that of the pricing policy in force (Prices page).',
+			'adulte.recharge.prixEtTaxes' => 'Prices are in US dollars, excluding tax; your bank converts if needed. Any tax for your country is calculated when you pay, and you see it before you confirm.',
 			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Add ${prenom} to the top-up',
 			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom}: ${message}',
 			'adulte.recharge.commandeRendue' => 'The payment has been sent. Do not pay a second time: follow its status.',
@@ -40626,6 +40717,8 @@ extension on TraductionsEn {
 			'adulte.invitation.courrielInvalide' => 'Check the email address: it should look like name@example.com.',
 			'adulte.invitation.verifier' => 'Continue',
 			'adulte.invitation.verifierTitre' => 'Check and send',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.verifierPhrase' => 'Read this information again. The invitation will go to this address.',
 			'adulte.invitation.nonRenseigne' => 'Not provided',
 			'adulte.invitation.modifier' => 'Edit',
@@ -40664,8 +40757,6 @@ extension on TraductionsEn {
 			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.',
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will see',
 			'adulte.acceptation.verraElle' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. She will also know if you leave the family plan.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.verraLui' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. He will also know if you leave the family plan.',
 			'adulte.acceptation.verraPasTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will not see',
 			'adulte.acceptation.verraPas' => 'Your class. Your level. Your sessions and your attendance. Your progress. Your messages. Your notifications. Your personal payment methods. Your ID documents.',
@@ -41140,6 +41231,8 @@ extension on TraductionsEn {
 			'argent.transparence.postes.applicationHebergement' => 'Application and hosting',
 			'argent.transparence.postes.emails' => 'Emails',
 			'argent.transparence.postes.stockage' => 'File storage',
+			_ => null,
+		} ?? switch (path) {
 			'argent.transparence.postes.comptabilite' => 'Accounting',
 			'argent.transparence.postes.developpement' => 'Application development',
 			'argent.transparence.postes.administration' => 'Academy administration',
@@ -41178,8 +41271,6 @@ extension on TraductionsEn {
 			'argent.soldes.totalDetail' => 'A read-only view: each balance stays that of its profile.',
 			'argent.soldes.aPayer' => 'To pay this month',
 			'argent.soldes.profilsFinances' => 'Funded profiles',
-			_ => null,
-		} ?? switch (path) {
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} of ${total}',
 			'argent.soldes.paiements' => 'Payments this month',
 			'argent.acces.enfantTitre' => 'Access to this class temporarily unavailable',
@@ -41654,6 +41745,8 @@ extension on TraductionsEn {
 			'com.communaute.reponses.signaler' => 'Report the reply',
 			'com.communaute.reponses.signalee' => 'You reported this reply.',
 			'com.communaute.signalement.politique.publicite' => 'Advertising is not allowed in the Teachers community.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.signalement.politique.sollicitation' => 'Commercial solicitation is not allowed in this space.',
 			'com.communaute.signalement.motifManquant' => 'Choose a reason to send the report.',
 			'com.communaute.composer.nouvelle' => 'New post',
@@ -41692,8 +41785,6 @@ extension on TraductionsEn {
 			'com.communaute.demo.avertissement' => 'Post to review: advertising',
 			'com.communaute.demo.lienAffilie' => 'Affiliate link blocked',
 			'com.communaute.demo.vente' => 'Sale blocked',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.signalementNonConfirme' => 'Report not confirmed',
 			'com.communaute.demo.choisir' => 'Choose a situation to try, seen by a teacher.',
 			'com.communaute.demo.aujourdhui' => 'Today, with the shortcut',
@@ -42168,6 +42259,8 @@ extension on TraductionsEn {
 			'com.annonces.demo.roles.enseignant' => 'Teacher',
 			'com.annonces.demo.roles.adulte' => 'Adult student',
 			'com.annonces.demo.roles.admin' => 'Management',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.roles.controleur' => 'Reviewer',
 			'com.annonces.demo.classeNour' => 'An-Nour class',
 			'com.annonces.demo.classeFajr' => 'Al-Fajr class',
@@ -42206,8 +42299,6 @@ extension on TraductionsEn {
 			'com.annonces.demo.f.controleurChangement' => 'Your Thursday mission is moved to 6 pm',
 			'com.annonces.demo.f.controleurReponse' => 'Administration\'s reply to your report',
 			'com.annonces.titre' => 'Announcements',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.nav.aujourdhui' => 'Today',
 			'comptable.nav.paiements' => 'Payments',
 			'comptable.nav.tresorerie' => 'Cash position',
@@ -42682,6 +42773,8 @@ extension on TraductionsEn {
 			'comptable.encaissements.fraisSource' => 'Fees and exchange supplied by the provider, never recalculated here.',
 			'comptable.encaissements.reference' => 'Reference',
 			'comptable.encaissements.prestataire' => 'Provider',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.moyen' => 'Payment method',
 			'comptable.encaissements.foyer' => 'Household',
 			'comptable.encaissements.date' => 'Date',
@@ -42720,8 +42813,6 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.rapprocher' => 'Reconcile',
 			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Reconcile with ${libelle}',
 			'comptable.encaissements.rap.doublonTitre' => 'Potential duplicate',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.doublonPhrase' => 'This transaction looks like another already received. Check before reconciling: a duplicate is never validated silently.',
 			'comptable.encaissements.rap.marquerDoublon' => 'Mark as duplicate',
 			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'Status returned by the source: ${etat}',
@@ -43196,6 +43287,8 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · goes out on ${date}',
 			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Cancel',
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Cancel ${beneficiaire}\'s outflow',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Cancel this outflow?',
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => '${beneficiaire}\'s outflow will not go out. The cancellation is written in the log.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Cancel the outflow',
@@ -43234,8 +43327,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Beneficiary linked to the operator',
 			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'A payment to a person linked to the payment operator.',
 			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Provider unavailable',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'A payment whose payment provider is unavailable.',
 			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Manual obligation not approved',
 			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'An obligation entered by hand and not yet approved.',
@@ -43710,6 +43801,8 @@ extension on TraductionsEn {
 			'avis.admin.liens.etat.ouvert' => 'Open',
 			'avis.admin.liens.etat.ferme' => 'Closed',
 			'avis.admin.liens.etat.expire' => 'Expired',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.etat.plein' => 'Full',
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Reviews received: ${recus} of ${max}',
 			'avis.admin.liens.fin' => ({required Object date}) => 'Ends on ${date}',
@@ -43748,8 +43841,6 @@ extension on TraductionsEn {
 			'courriels.admin.ecrire.corps' => 'Message',
 			'courriels.admin.ecrire.corpsAide' => 'Plain text, 5000 characters at most. An empty line makes a new paragraph.',
 			'courriels.admin.ecrire.traduction' => 'Each recipient receives it in their language: the message is translated automatically when sent.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.envoyer' => 'Send the message',
 			'courriels.admin.ecrire.erreurCategories' => 'The categories could not be loaded. Try again.',
 			'courriels.admin.ecrire.sansDonneesCategories' => 'The categories could not be loaded',
@@ -44224,6 +44315,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.apercu.aideMarques' => '"Email to obtain": no valid email, the person cannot be invited. "Country code to confirm": the phone has no recognized country code. "Ignored": empty or repeated row.',
 			'candidatsFlux.importFormulaires.issue.nouvelle' => 'New',
 			'candidatsFlux.importFormulaires.issue.corrigee' => 'Corrected',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.issue.dejaConnue' => 'Already known',
 			'candidatsFlux.importFormulaires.issue.ignoree' => 'Ignored',
 			'candidatsFlux.importFormulaires.issue.aCorriger' => 'To correct',
@@ -44262,8 +44355,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.controle.aucune' => 'No error or warning in this file.',
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'Every row could be read.',
 			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'To correct',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'These rows will not be imported.',
 			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'To look at',
 			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'These rows are imported, with a point to check.',
@@ -44602,8 +44693,10 @@ extension on TraductionsEn {
 			'friseInscription.etapes.aCompleter' => 'To complete',
 			'friseInscription.etapes.formation' => 'Class being formed',
 			'friseInscription.etapes.confirmee' => 'Class confirmed',
+			'friseInscription.etapes.paiement' => 'Payment',
 			'friseInscription.etapes.enseignant' => 'Teacher assigned',
 			'friseInscription.etapes.pret' => 'All set',
+			'friseInscription.dit.paiementAVenir' => 'Before the first lesson, you pay to reserve the place. After paying, you can cancel: we refund what was not attended.',
 			'friseInscription.dit.envoyee' => 'Your request has reached the academy.',
 			'friseInscription.dit.lueEnCours' => 'The management is reading your request. You are notified as soon as it has decided.',
 			'friseInscription.dit.lueFait' => 'The management has read your request.',
@@ -44736,6 +44829,8 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.aucune' => 'No family in this class can receive a message right now.',
 			'suiviAttente.mePresenter.echec' => 'The message is not confirmed for some families: it may not have reached them. Try again: those who received it do not receive it twice.',
 			'suiviAttente.mePresenter.chargement' => 'Loading the families of the class',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.mePresenter.erreur' => 'The families of the class could not be loaded. Try again in a moment.',
 			'suiviAttente.mePresenter.vide' => 'Write a message before sending it.',
 			'journalSorties.texte.titre' => 'Leaving the app during class',
@@ -44776,8 +44871,6 @@ extension on TraductionsEn {
 			'journalSorties.rapport.dureeTotale' => 'Total duration',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'From ${debut} to ${fin}',
 			'journalSorties.rapport.sortieSalle' => 'Left the room after the delay',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
 			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
 			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
@@ -45250,6 +45343,8 @@ extension on TraductionsEn {
 			'onboarding.recap.niveaux.aide' => 'Recognises the letters',
 			'onboarding.recap.niveaux.lente' => 'Reads slowly',
 			'onboarding.recap.niveaux.courante' => 'Already reads the Quran',
+			_ => null,
+		} ?? switch (path) {
 			'onboarding.recap.niveaux.memo' => 'Has memorised a part',
 			'onboarding.recap.quantites.quelques' => 'a few surahs',
 			'onboarding.recap.quantites.unACinq' => '1 to 5 juz',
@@ -45290,8 +45385,6 @@ extension on TraductionsEn {
 			'onboarding.vous.nom' => 'Your family name',
 			'onboarding.vous.vousEtes' => 'You are…',
 			'onboarding.vous.envoyer' => 'Send my request',
-			_ => null,
-		} ?? switch (path) {
 			'onboarding.fin.dit' => 'It is sent. Thank you for your trust, the administration will read your request.',
 			'onboarding.fin.titre' => 'Your request is in progress',
 			'onboarding.fin.maintenant' => 'What happens now?',

@@ -253,6 +253,27 @@ void main() {
           'lu_le': null,
         }, titrePour: contenuNotificationPour);
 
+    test('la premiere demande de paiement dit « derniere etape »', () {
+      final NotificationTuteur premiere = notificationDepuis(<String, dynamic>{
+        'id': 'n2',
+        'evenement': 'paiement_relance',
+        'params': <String, dynamic>{
+          'premier': true,
+          'delai_jours': 3,
+          'remboursement_jours': 14,
+        },
+        'destination': '/tuteur/foyer/recharge',
+        'cree_le': '2026-11-23T05:15:00Z',
+        'lu_le': null,
+      }, titrePour: contenuNotificationPour);
+      expect(premiere.titre, t.notifications.evenements.paiementPremier);
+      expect(
+        t.notifications.evenements.paiementPremier,
+        isNot(t.notifications.evenements.paiementRelance),
+      );
+      expect(premiere.destination, '/tuteur/foyer/recharge');
+    });
+
     test('la relance, la suspension et le retablissement', () {
       final NotificationTuteur relance = depuis('paiement_relance');
       expect(relance.titre, t.notifications.evenements.paiementRelance);

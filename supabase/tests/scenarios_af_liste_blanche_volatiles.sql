@@ -58,6 +58,8 @@ declare
     -- private.praxis_reglages (actif, autonome, plafond par heure) plus une ligne d'audit. Ce qu'elles n'ecrivent
     -- jamais : un compte, un role, un message, une annonce. Les outils de Praxis (praxis_*) ne sont executables que par
     -- service_role : hors de cette liste.
+    -- PAIEMENT-UNIFIE P5 (23/11) : demander le paiement d'un eleve maintenant ; garde private.fac_direction().
+    'demander_paiement_maintenant(uuid)',
     'direction_praxis_emettre_cle(text,text,timestamp with time zone,uuid)',
     'direction_praxis_regler(boolean,boolean,integer)',
     -- PX-4 (17/11) : MODE ESSAI, la porte du directeur (administrateur valide, aal2) qui nomme les conversations d'essai

@@ -2,7 +2,7 @@
 // l'inscription, de la demande envoyee a l'enseignant affecte.
 //
 // Ce que le test prouve :
-// - les sept etapes, dans l'ordre, et seulement des etats du serveur : rien
+// - les huit etapes (dont le paiement avant le premier cours), dans l'ordre, et seulement des etats du serveur : rien
 //   n'est franchi que le serveur n'ait dit (les etapes de la classe restent
 //   « a venir » avant l'acceptation) ;
 // - « a completer » remplace « acceptee » quand la direction demande une
@@ -98,6 +98,7 @@ void main() {
         EtatEtapeAttente.aVenir,
         EtatEtapeAttente.aVenir,
         EtatEtapeAttente.aVenir,
+        EtatEtapeAttente.aVenir,
       ]);
       expect(e.first.quand, DateTime.utc(2026, 11, 20, 9));
       expect(e[2].precision, isFalse);
@@ -132,7 +133,7 @@ void main() {
   });
 
   group('la frise rendue', () {
-    testWidgets('en cours : sept etapes dans l\'ordre, aucune barre', (
+    testWidgets('en cours : huit etapes dans l\'ordre, aucune barre', (
       WidgetTester tester,
     ) async {
       await _monter(tester, demande: _enCours);
@@ -143,6 +144,7 @@ void main() {
         f.acceptee,
         f.formation,
         f.confirmee,
+        f.paiement,
         f.enseignant,
         f.pret,
       ]) {
@@ -162,6 +164,21 @@ void main() {
         _etat(tester, CleEtapeInscription.enseignant),
         EtatEtapeAttente.aVenir,
       );
+      // P6 : le paiement est avant l'enseignant, a venir tant que la
+      // demande n'est pas acceptee, et il dit pourquoi.
+      expect(
+        _etat(tester, CleEtapeInscription.paiement),
+        EtatEtapeAttente.aVenir,
+      );
+      expect(
+        y(CleEtapeInscription.confirmee),
+        lessThan(y(CleEtapeInscription.paiement)),
+      );
+      expect(
+        y(CleEtapeInscription.paiement),
+        lessThan(y(CleEtapeInscription.enseignant)),
+      );
+      expect(find.text(t.friseInscription.dit.paiementAVenir), findsOneWidget);
       expect(find.byType(LinearProgressIndicator), findsNothing);
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
@@ -260,7 +277,7 @@ void main() {
           ('1280 clair', 1280, ThemeMode.light),
           ('1440 sombre', 1440, ThemeMode.dark),
         ]) {
-      testWidgets('$nom : rien ne deborde, les sept etapes sont la', (
+      testWidgets('$nom : rien ne deborde, les huit etapes sont la', (
         WidgetTester tester,
       ) async {
         await _monter(
@@ -291,7 +308,7 @@ void main() {
         await LocaleSettings.setLocale(AppLocale.fr);
       });
 
-      testWidgets('mots traduits, sept etapes', (WidgetTester tester) async {
+      testWidgets('mots traduits, huit etapes', (WidgetTester tester) async {
         await _monter(
           tester,
           demande: _enCours,

@@ -182,15 +182,10 @@ class RechargeFoyerSupabase
         'recapitulatifId': recapitulatifId,
         'cle': cle,
         'retour': adresseRetour(),
-        // PAY-UX : le fond de la page du formulaire, que Stripe reprend, et
-        // la langue des lignes de paiement.
-        'fond': fondFormulairePaiement(),
+        // PAY-UX : la langue des lignes de paiement.
         'langue': LocaleSettings.instance.currentLocale == AppLocale.ar
             ? 'ar'
             : 'fr',
-        // LINK-CHOIX : l'element de paiement, ou la personne choisit entre la
-        // carte, Link et les portefeuilles.
-        'forme': 'elements',
       }),
       'paiement',
     );
@@ -204,7 +199,6 @@ class RechargeFoyerSupabase
       _formulaires[commande] = FormulairePaiement(
         clePublique: clePublique,
         secretClient: secretClient,
-        forme: FormeFormulaire.depuis(texteNullableJson(j, 'forme')),
         email: texteNullableJson(j, 'email'),
       );
       return commande;

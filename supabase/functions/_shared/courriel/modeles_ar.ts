@@ -332,6 +332,12 @@ const MODELES: Record<string, Fabrique> = {
   controle_mission_non_controlee: (d) => avis(d, 'بقيت مهمة دون تحقق', 'مهمة دون تحقق',
     'بقيت مهمة مراقبة دون تحقق.', 'عرض السحوبات', '/admin/securite-audit/tirages'),
   paiement_relance: (d) => {
+    if (d.premier === true) {
+      const jours = typeof d.remboursement_jours === 'number' && d.remboursement_jours > 0 ? `${d.remboursement_jours} يومًا` : 'الأيام التي تلي دفعتكم الأولى'
+      return avis(d, 'الخطوة الأخيرة: سدّدوا لحجز المكان', 'الخطوة الأخيرة: السداد',
+        `فصولكم جاهزة، ولم يبق إلا تعيين المعلّم. نتلقى كثيرًا من الحسابات الوهمية والرسائل المزعجة وعمليات الاحتيال، ولا يمكننا تكليف معلّم بحساب جاء من باب الفضول. والدفع قبل الحصة الأولى يُظهر لنا أنكم جادّون. يمكنكم الإلغاء خلال ${jours} من دفعتكم الأولى: نرد ما لم تتابعوه.`,
+        'سداد الدفعة', '/tuteur/foyer/recharge')
+    }
     const j = typeof d.jours_avant === 'number' ? d.jours_avant : null
     const quand = j === null ? 'قريبًا' : j === 0 ? 'اليوم' : j === 1 ? 'غدًا' : j === 2 ? 'بعد يومين' : `بعد ${j} أيام`
     return avis(d, `يحين موعد دفعة ${quand}`, 'يحين موعد دفعة',

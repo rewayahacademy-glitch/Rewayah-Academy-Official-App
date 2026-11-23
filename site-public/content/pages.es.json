@@ -356,7 +356,7 @@
      "title": "4. Recibir su clase",
      "paragraphs": [
       "Cuando se crea la clase, su alumno queda inscrito en ella. La aplicación le anuncia luego su profesor y, después, la fecha y la hora de la primera sesión.",
-      "El precio, el impuesto de su país y el importe en euros, libras o dólares canadienses se muestran en el momento del pago."
+      "El precio es en dólares estadounidenses: su banco convierte si hace falta. Los impuestos eventuales se calculan en la compra según su país."
      ]
     },
     {
@@ -419,7 +419,7 @@
       "Una sesión cancelada por la academia se sustituye."
      ],
      "paragraphs": [
-      "El impuesto de su país y el importe en euros, libras o dólares canadienses se muestran al pagar. Las condiciones de venta completas están en la página Condiciones.",
+      "Los precios son en dólares estadounidenses: su banco convierte si hace falta. Los impuestos eventuales se calculan en la compra según su país. Las condiciones de venta completas están en la página Condiciones.",
       "Para una pregunta sobre una factura o la facturación, escriba a invoices@rewayahacademy.com."
      ],
      "links": [
@@ -2102,7 +2102,7 @@
      "id": "s4",
      "title": "Precio y pago",
      "paragraphs": [
-      "Los precios figuran en la página Precios y en la aplicación, en el momento de elegir una fórmula. Están en dólares estadounidenses y sin impuestos. El impuesto aplicable según su país se añade al pagar.",
+      "Los precios figuran en la página Precios y en la aplicación, en el momento de elegir una fórmula. Están en dólares estadounidenses y sin impuestos. Su banco convierte si hace falta. Los impuestos eventuales se calculan en la compra según su país.",
       "La suscripción se renueva cada mes. El sistema calcula los descuentos en la factura del hogar.",
       "El pago se realiza a través de un proveedor de pagos.",
       "No hay prueba gratuita. Usted paga al principio. Si el curso no le conviene, puede dejarlo dentro de los 14 días siguientes al pago: le reembolsamos lo que pagó, menos las sesiones ya cursadas.",

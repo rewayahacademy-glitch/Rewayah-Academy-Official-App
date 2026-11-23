@@ -119,8 +119,10 @@ SELECT CASE WHEN p.immutable_id IN ('FF-ELV-0005','FF-ELV-0006')
 -- paiement attendant sa validation. e7 : une facture de decembre sous la v1
 -- (sans jours de relance ni de suspension).
 SELECT private.fac_portefeuille(h.id, 'USD') FROM public.households h WHERE h.id::text LIKE 'f6000000-%';
-INSERT INTO public.factures_mensuelles(profile_id, household_id, mois, politique_version, devise, rang_familial, lignes, total_mineur)
-SELECT p.id, p.household_id, DATE '2026-11-01', 'v2.0.0', 'USD', 1, '[]'::jsonb, 5500
+-- PAIEMENT-UNIFIE (23/11/2026) : une premiere facture emise depuis moins de `paiement.delai_jours`
+-- n'est pas suspendue la nuit ; ces factures sont donc emises il y a dix jours.
+INSERT INTO public.factures_mensuelles(profile_id, household_id, mois, politique_version, devise, rang_familial, lignes, total_mineur, emise_le)
+SELECT p.id, p.household_id, DATE '2026-11-01', 'v2.0.0', 'USD', 1, '[]'::jsonb, 5500, clock_timestamp() - interval '10 days'
   FROM public.profiles p WHERE p.immutable_id IN ('FF-ELV-0001','FF-ELV-0002','FF-ELV-0003','FF-ELV-0004','FF-ELV-0005','FF-ELV-0006');
 INSERT INTO public.factures_mensuelles(profile_id, household_id, mois, politique_version, devise, rang_familial, lignes, total_mineur)
 VALUES ('f6000000-0000-4000-8000-0000000000e7','f6000000-0000-4000-8000-0000000000f1', DATE '2026-12-01', 'v1.0.0', 'USD', 1, '[]'::jsonb, 5000);

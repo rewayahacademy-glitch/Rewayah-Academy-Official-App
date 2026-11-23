@@ -347,6 +347,38 @@ void main() {
       tester.getTopLeft(conditions).dy,
       greaterThan(tester.getBottomLeft(payer).dy),
     );
+    // PAIEMENT-UNIFIE P6 : pourquoi payer avant le premier cours, les jours
+    // pour annuler (sans nombre quand la politique n'est pas lue : jamais un
+    // nombre invente) et la devise et la taxe, juste sous « Payer ».
+    expect(
+      find.descendant(
+        of: find.byKey(RechargeFoyerPage.pourquoiPayerKey),
+        matching: find.text(t.adulte.recharge.pourquoiPayer),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(RechargeFoyerPage.annulerKey),
+        matching: find.text(t.adulte.recharge.annulerSansDuree),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(RechargeFoyerPage.prixEtTaxesKey),
+        matching: find.text(t.adulte.recharge.prixEtTaxes),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      tester.getTopLeft(find.byKey(RechargeFoyerPage.pourquoiPayerKey)).dy,
+      greaterThan(tester.getBottomLeft(payer).dy),
+    );
+    expect(
+      tester.getTopLeft(find.byKey(RechargeFoyerPage.pourquoiPayerKey)).dy,
+      lessThan(tester.getTopLeft(conditions).dy),
+    );
     // Les frais d'une contestation se lisent sur la page, avant de payer.
     expect(
       find.descendant(

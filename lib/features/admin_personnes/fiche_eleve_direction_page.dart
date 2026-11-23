@@ -51,6 +51,7 @@ import '../inscription/questionnaire/interludes_onboarding.dart'
 import '../inscription/questionnaire/onboarding_donnees.dart'
     show QuantiteMemorisee;
 import '../parcours_offres/libelles_parcours.dart';
+import 'section_paiement_fiche.dart';
 
 /// La fiche d'un eleve, lue par la direction (`/admin/personnes/eleves/:id`).
 class FicheEleveDirectionPage extends ConsumerWidget {
@@ -143,6 +144,15 @@ class _Corps extends ConsumerWidget {
       children: <Widget>[
         _SectionIdentite(fiche: f),
         Ecart.vXxl,
+        if (f.paiement case final PaiementFiche paiement) ...<Widget>[
+          SectionPaiementFiche(
+            eleveId: f.id,
+            prenom: f.prenom ?? '',
+            nom: f.libelle.isEmpty ? isolerSens(f.matricule) : f.libelle,
+            paiement: paiement,
+          ),
+          Ecart.vXxl,
+        ],
         _SectionAdmission(fiche: f),
         Ecart.vXxl,
         _SectionProgression(fiche: f),

@@ -180,10 +180,11 @@ void main() {
     expect(pages.single.host, 'checkout.stripe.com');
   });
 
-  // PAY-UX (02/11/2026) : le fond de la page du formulaire et la langue des
-  // lignes partent avec la demande ; un ancien formulaire non ferme se dit.
+  // PAY-UX (02/11/2026) : la langue des lignes part avec la demande ; un
+  // ancien formulaire non ferme se dit. P3 : plus de fond ni de forme (une
+  // seule forme, l'element de paiement).
   test(
-    'PAY-UX : le fond clair du formulaire et la langue partent au serveur',
+    'PAY-UX : la langue part au serveur, ni fond ni forme (une seule forme)',
     () async {
       final List<Map<String, dynamic>> corps = <Map<String, dynamic>>[];
       await _port(
@@ -191,8 +192,8 @@ void main() {
         corps: corps,
         pages: <Uri>[],
       ).payer(recapitulatifId: 'r1', cle: 'k1');
-      expect(corps.single['fond'], fondFormulairePaiement());
-      expect(corps.single['fond'], matches(RegExp(r'^#[0-9a-f]{6}$')));
+      expect(corps.single.containsKey('fond'), isFalse);
+      expect(corps.single.containsKey('forme'), isFalse);
       expect(corps.single['langue'], anyOf('fr', 'ar'));
     },
   );
@@ -217,36 +218,25 @@ void main() {
     },
   );
 
-  test('LINK-CHOIX : la forme elements est demandee au serveur', () async {
-    final List<Map<String, dynamic>> corps = <Map<String, dynamic>>[];
-    await _port(
-      fonction: <String, dynamic>{'commandeId': 'c1', 'url': null},
-      corps: corps,
-      pages: <Uri>[],
-    ).payer(recapitulatifId: 'r1', cle: 'k1');
-    expect(corps.single['forme'], 'elements');
-  });
-
-  test('LINK-CHOIX : forme et adresse rendues, gardees pour la page', () async {
+  test('LINK-CHOIX : l adresse rendue est gardee pour la page', () async {
     final RechargeFoyerSupabase port = _port(
       fonction: <String, dynamic>{
         'commandeId': 'c1',
         'url': null,
         'secretClient': 'cs_test_1_secret_x',
         'clePublique': 'pk_test_x',
-        'forme': 'elements',
         'email': 'famille@exemple.test',
       },
       pages: <Uri>[],
     );
     await port.payer(recapitulatifId: 'r1', cle: 'k1');
     final FormulairePaiement? f = port.formulairePour('c1');
-    expect(f?.forme, FormeFormulaire.elements);
+    expect(f?.secretClient, 'cs_test_1_secret_x');
     expect(f?.email, 'famille@exemple.test');
   });
 
   test(
-    'LINK-CHOIX : un serveur pas encore deploye garde l ancien formulaire',
+    'LINK-CHOIX : sans adresse rendue, le formulaire se monte quand meme',
     () async {
       final RechargeFoyerSupabase port = _port(
         fonction: <String, dynamic>{
@@ -259,10 +249,8 @@ void main() {
       );
       await port.payer(recapitulatifId: 'r1', cle: 'k1');
       final FormulairePaiement? f = port.formulairePour('c1');
-      expect(f?.forme, FormeFormulaire.integre);
+      expect(f?.secretClient, 'cs_test_1_secret_x');
       expect(f?.email, isNull);
-      expect(FormeFormulaire.depuis('embedded_page'), FormeFormulaire.integre);
-      expect(FormeFormulaire.depuis(null), FormeFormulaire.integre);
     },
   );
 

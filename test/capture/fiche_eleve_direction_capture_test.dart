@@ -28,6 +28,10 @@ class _Port implements PortFicheEleveDirection {
 
   @override
   Future<FicheEleveDirection?> lire(String eleveId) async => _fiche;
+
+  @override
+  Future<ResultatDemandePaiement> demanderPaiement(String eleveId) async =>
+      ResultatDemandePaiement.demandee;
 }
 
 final FicheEleveDirection _enfant = FicheEleveDirection.depuisJson(

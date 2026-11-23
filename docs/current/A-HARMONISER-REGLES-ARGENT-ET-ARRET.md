@@ -15,7 +15,14 @@ alors ce sera au prochain moi que l'arrêt pourra être effectif. toutes ces rè
 harmonisées après car il y'a eu trop de bricolage, alors tu le mentions où on ne l'oubliera
 jamais. »
 
-## Règles décidées le 07/11 (à appliquer dans le lot d'harmonisation)
+> **Mise à jour du 23/11/2026 (directeur et pilote, PAIEMENT-UNIFIE).** La règle 1 ci-dessous (« mois réservé non
+> remboursable ») et le « point de départ à fixer » de la règle 2 sont **tranchés** : une seule règle de
+> remboursement, dans les 14 jours qui suivent le premier paiement confirmé, ce qui n'a pas été suivi est remboursé ;
+> ensuite l'arrêt est possible à la fin du mois en cours. Le calcul est `private.fn115c_montant_propose` (inchangé).
+> Voir `DECISION-TARIFS-2026-10-18.md`, « Décisions du 23/11/2026 ». Les règles 3 et 4 (suppression encadrée, arrêt
+> temporaire effectif le mois suivant) restent à harmoniser.
+
+## Règles décidées le 07/11 (la règle 1 est retirée le 23/11, voir ci-dessus)
 
 1. **Suppression d'un profil d'élève et argent.** Quand un mois est réservé (payé pour une
    place), l'argent de ce mois n'est plus remboursable. Supprimer le profil ne rembourse pas ce

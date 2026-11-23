@@ -103,6 +103,10 @@ class _Port implements PortFicheEleveDirection {
 
   @override
   Future<FicheEleveDirection?> lire(String eleveId) => _reponse();
+
+  @override
+  Future<ResultatDemandePaiement> demanderPaiement(String eleveId) async =>
+      ResultatDemandePaiement.demandee;
 }
 
 Future<void> _monter(
