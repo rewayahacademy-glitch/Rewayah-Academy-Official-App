@@ -2018,6 +2018,18 @@
     "aucunDetail": "First add a student profile from the Household."
   },
   "foyer": {
+    "dette": {
+      "titre": "Household debt: {montant}",
+      "ligne": "{montant}: {motif}, on {date}.",
+      "blocage": "Until it is settled, you cannot add a student profile, request a new class or pay in advance. Classes already paid for are not affected. Contact the management to settle it.",
+      "motifs": {
+        "fraisContestation": "fees from a lost bank dispute",
+        "autre": "household debt"
+      },
+      "sansDonnees": "The household debt could not be loaded. Check your connection, then try again.",
+      "indisponibleTitre": "The household debt could not be loaded",
+      "achatBloque": "Purchase blocked: a household debt is still to be settled (it is detailed in the Household). Until it is settled, you cannot add a student profile, request a new class or pay in advance. Contact the management."
+    },
     "titre": "Household",
     "ajouterProfil": "Add a student profile",
     "sousTitre": "The student profiles of your household",
@@ -10496,6 +10508,8 @@
       "minutesSecondes": "{minutes} min {secondes} s",
       "secondes": "{secondes} s",
       "motif": {
+        "placeEleve": "You have your own place in this session: join it with your student profile, not as an observer.",
+        "accesSuspendu": "Observation is closed: none of the students you accompany has paid access to this session. Settle the payment from the Household, or contact the management.",
         "visitesEpuisees": "You have used your visits for this session.",
         "tempsEpuise": "Your observation time is used up for this session.",
         "seanceNonCommencee": "Observation opens when the session starts.",
@@ -12092,6 +12106,10 @@
         "aucuneRestante": "No visit left for this session"
       },
       "disponibilite": {
+        "placeEleveTitre": "Your student place",
+        "placeEleve": "You have your own place in this session: join it with your student profile, not as an observer.",
+        "accesSuspenduTitre": "Access suspended for payment",
+        "accesSuspendu": "Observation is closed: none of the students you accompany has paid access to this session. Settle the payment from the Household, or contact the management.",
         "visitesEpuiseesTitre": "No visit left for this session",
         "visitesEpuisees": "You have used your visits. You can observe the next session.",
         "tempsEpuiseTitre": "Observation time used up",
@@ -12141,6 +12159,8 @@
         "minutesSecondes": "{m} min {s} s"
       },
       "refus": {
+        "placeEleve": "You have your own place in this session: join it with your student profile, not as an observer.",
+        "accesSuspendu": "Access to this session is suspended for payment: none of the students you accompany has paid access. Settle the payment from the Household, or contact the management.",
         "politiqueDesactivee": "Observation is turned off for this class.",
         "quotaVisites": "You have already used your visits for this session.",
         "tempsEpuise": "Your observation time is used up for this session.",

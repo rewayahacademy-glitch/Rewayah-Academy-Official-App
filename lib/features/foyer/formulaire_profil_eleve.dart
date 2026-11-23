@@ -521,6 +521,7 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
     MotifRefusCreation.titulaire => t.foyer.ajout.refus.titulaire,
     MotifRefusCreation.adulte => t.foyer.ajout.refus.adulte,
     MotifRefusCreation.genreRequis => t.foyer.ajout.erreurs.genreRequis,
+    MotifRefusCreation.detteFamille => t.foyer.dette.achatBloque,
     MotifRefusCreation.refuse => t.foyer.ajout.refus.refuse,
   };
 

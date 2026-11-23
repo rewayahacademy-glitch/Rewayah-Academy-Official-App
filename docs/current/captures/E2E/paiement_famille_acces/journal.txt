@@ -13,3 +13,16 @@ Lot SQL seul : aucun ecran. Rejeu sur Postgres 16 nu (stub_auth.sql, les 597 fic
   (redefinie par 20261130968000), a verifier sur main.
 - Non prouve : LiveKit reel (un second appareil du meme profil coupe le premier : comportement documente de LiveKit, pas rejoue) ;
   production ; aucun ecran n'affiche la dette.
+
+SUITE 23/11 (Dart et i18n, meme PR)
+- Refus serveur dits en fr/en/ar : `place_eleve` et `acces_suspendu` (observation : MotifRefusObservation, MotifIndisponibilite, libelles et bloc de la Classe du tuteur),
+  `DETTE_FAMILLE` a la creation d'un profil eleve (MotifRefusCreation.detteFamille). NON FAIT : le meme refus a la demande d'une classe
+  (parcours_offres_page.dart, zone interdite par le garde-fou : il tombe sur le message d'erreur generique) et a la recharge
+  (recharge_foyer*.dart, autre agent).
+- Dette de la famille : `CarteDetteFamille` en tete du Foyer (lib/features/foyer/carte_dette_famille.dart), port `PortDetteFamille` + adaptateur
+  `DetteFamilleSupabase` (ma_dette_famille), branche dans main.dart. Etats : chargement, vide (rien), erreur, hors ligne, source absente (rien).
+- test/features/foyer/carte_dette_famille_test.dart : 9 verts. dart analyze --fatal-infos : propre. verifier_jetons : 0 violation.
+  verifier_branchement : aucun nouveau fichier non atteint. Tests teaching_core, tc_observation, classe_tuteur, foyer : tous verts (2142).
+- scenarios_cand_l2a2_gestes_direction.sql rejoue sur origin/main propre (597 migrations, sans la migration de ce lot) : MEME ECHEC
+  (empreinte de lister_candidatures). Il est donc anterieur a ce lot.
+- Capture a 1280/1440 non faite (aucun navigateur ici) : la largeur est bornee a 840 par le test, pas vue a l'ecran.

@@ -319,7 +319,9 @@ class MoteurVisiteObservation {
         MotifRefusObservation.seanceNonActive ||
         MotifRefusObservation.horsFenetre => FinDeVisite.seanceTerminee,
         MotifRefusObservation.policyDesactivee ||
-        MotifRefusObservation.lienTuteurAbsent => FinDeVisite.revocationServeur,
+        MotifRefusObservation.lienTuteurAbsent ||
+        MotifRefusObservation.placeEleve ||
+        MotifRefusObservation.accesSuspendu => FinDeVisite.revocationServeur,
         MotifRefusObservation.quotaVisitesAtteint ||
         MotifRefusObservation.tempsEpuise ||
         null => null,
