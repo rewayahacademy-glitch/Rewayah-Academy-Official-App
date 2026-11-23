@@ -232,6 +232,12 @@ const MODELES: Record<string, Fabrique> = {
   controle_mission_non_controlee: (d) => avis(d, 'Una misión se ha quedado sin verificar', 'Misión sin verificar',
     'Una misión de control se ha quedado sin verificar.', 'Ver los sorteos', '/admin/securite-audit/tirages'),
   paiement_relance: (d) => {
+    if (d.premier === true) {
+      const dias = typeof d.remboursement_jours === 'number' && d.remboursement_jours > 0 ? `${d.remboursement_jours} días` : 'días'
+      return avis(d, 'Último paso: pagar para reservar la plaza', 'Último paso: pagar',
+        `Sus clases están listas. Solo falta asignar al profesor. Recibimos muchas cuentas falsas, spam y estafas, y no podemos contratar a un profesor para una cuenta creada por curiosidad. Pagar antes de la primera clase nos muestra que van en serio. Pueden cancelar dentro de los ${dias} siguientes a su primer pago: reembolsamos lo que no se haya seguido.`,
+        'Pagar', '/tuteur/foyer/recharge')
+    }
     const j = typeof d.jours_avant === 'number' ? d.jours_avant : null
     const quand = j === null ? 'pronto' : j === 0 ? 'hoy' : j === 1 ? 'mañana' : `dentro de ${j} días`
     return avis(d, `Un pago vence ${quand}`, 'Un pago está por vencer',

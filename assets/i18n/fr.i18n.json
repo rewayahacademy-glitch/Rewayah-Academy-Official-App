@@ -7232,6 +7232,37 @@
         "etat": "État du compte",
         "inscritLe": "Inscrit le",
         "accesJusquAu": "Accès provisoire jusqu'au"
+      },
+      "paiement": {
+        "titre": "Paiement",
+        "etat": "État du paiement",
+        "aPayer": "À payer",
+        "paye": "Payé",
+        "enRetard": "En retard\u00a0: l'accès est fermé",
+        "exonere": "Exonéré",
+        "premier": "Premier paiement",
+        "premierRecu": "Reçu",
+        "premierPasEncore": "Pas encore",
+        "facture": "Dernière facture",
+        "facAPayer": "{montant} pour {mois}, à payer",
+        "facPayee": "{montant} pour {mois}, payée",
+        "remise": "Remise en cours",
+        "prixSpecial": "Prix spécial",
+        "prixSpecialAide": "Fixer un prix réduit pour cet élève. Une raison et un mois de fin sont demandés.",
+        "exonerer": "Exonérer",
+        "exonererAide": "Offrir l'accès\u00a0: plus rien à payer jusqu'au mois choisi. Un accès fermé faute de paiement est rendu tout de suite.",
+        "reporter": "Reporter",
+        "reporterAide": "L'accès est offert jusqu'au mois choisi, sans facture. Le paiement reprend de lui-même ensuite.",
+        "demander": "Demander maintenant",
+        "demanderAide": "Émet la facture du mois et prévient la famille. À utiliser quand le paiement doit arriver avant le premier cours.",
+        "retirer": "Retirer la remise",
+        "retirerAide": "Le prix normal s'applique de nouveau.",
+        "demandeTitre": "Paiement demandé",
+        "demandePhrase": "La facture du mois est émise et la famille est prévenue.",
+        "rienTitre": "Rien à payer",
+        "rienPhrase": "Aucune facture ne reste à payer ce mois-ci.",
+        "echecTitre": "Demande non confirmée",
+        "echecPhrase": "Nous n'avons pas pu confirmer la demande. Cela vient souvent de la connexion. Vérifiez la facture dans Finance avant de réessayer."
       }
     },
     "comptes": {
@@ -8285,7 +8316,11 @@
         "retirerTitre": "Retirer pour {prenom}",
         "retirerPhrase": "Les prochaines factures {dePrenom} reprendront le prix normal. Les factures déjà émises ne changent pas.",
         "retirer": "Retirer",
-        "retireTitre": "C'est retiré"
+        "retireTitre": "C'est retiré",
+        "reporterTitre": "Reporter le paiement de {prenom}",
+        "reporterRaison": "Paiement reporté",
+        "reporterMois": "Dernier mois sans paiement",
+        "reporterPhrase": "L'accès est offert jusqu'à la fin de ce mois, sans facture. Le paiement reprend de lui-même ensuite."
       },
       "fac": {
         "factures": "Factures du mois",
@@ -10006,6 +10041,7 @@
       "controleMissionNonControlee": "Une mission de contrôle est restée sans vérification.",
       "classeChangee": "Un élève de la famille a rejoint une autre classe, au même horaire.",
       "paiementRelance": "Un paiement arrive à échéance. Il se règle dans Paiements.",
+      "paiementPremier": "Dernière étape\u00a0: payer pour réserver la place avant le premier cours. Il se règle dans Paiements.",
       "accesSuspenduPaiement": "Un accès est suspendu\u00a0: le paiement du mois n'est pas reçu.",
       "accesRetabliPaiement": "L'accès est rétabli\u00a0: le paiement est reçu.",
       "paiementRecu": "Le paiement est reçu. Le solde est à jour.",
@@ -12391,6 +12427,13 @@
       "payerSeul": "Payer",
       "conditionsRemboursement": "Remboursement et contestation\u00a0: lire les conditions",
       "fraisContestation": "Si vous contestez un paiement auprès de votre banque, les frais de la contestation sont ajoutés au solde de votre foyer.",
+      "pourquoiPayer": "Nous recevons beaucoup de faux comptes, de spam et d'arnaques. Nous ne pouvons pas engager un enseignant pour un compte venu par curiosité. Payer avant le premier cours nous montre que vous êtes sérieux.",
+      "annulerDansDelai(param=jours)": {
+        "one": "Vous pouvez annuler dans le {jours}\u00a0jour qui suit votre premier paiement\u00a0: nous remboursons ce qui n'a pas été suivi.",
+        "other": "Vous pouvez annuler dans les {jours}\u00a0jours qui suivent votre premier paiement\u00a0: nous remboursons ce qui n'a pas été suivi."
+      },
+      "annulerSansDuree": "Vous pouvez annuler dans les jours qui suivent votre premier paiement\u00a0: nous remboursons ce qui n'a pas été suivi. La durée est celle de la politique tarifaire en vigueur (page Tarifs).",
+      "prixEtTaxes": "Les prix sont en dollars américains, hors taxes\u00a0; votre banque convertit si besoin. La taxe de votre pays, s'il y en a une, est calculée au moment de payer et vous la voyez avant de confirmer.",
       "ajouter": "Ajouter {prenom} à la recharge",
       "regularisationDe": "{prenom}\u00a0: {message}",
       "commandeRendue": "Le paiement est envoyé. Ne payez pas une seconde fois\u00a0: suivez son état.",
@@ -17654,10 +17697,12 @@
       "aCompleter": "À compléter",
       "formation": "Classe en formation",
       "confirmee": "Classe confirmée",
+      "paiement": "Paiement",
       "enseignant": "Enseignant affecté",
       "pret": "Tout est prêt"
     },
     "dit": {
+      "paiementAVenir": "Avant le premier cours, vous payez pour réserver la place. Après le paiement, vous pouvez annuler\u00a0: nous remboursons ce qui n'a pas été suivi.",
       "envoyee": "Votre demande est arrivée à l'académie.",
       "lueEnCours": "La direction lit votre demande. Vous êtes prévenu dès qu'elle a décidé.",
       "lueFait": "La direction a lu votre demande.",

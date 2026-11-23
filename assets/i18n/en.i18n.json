@@ -7139,6 +7139,37 @@
         "etat": "Account status",
         "inscritLe": "Signed up on",
         "accesJusquAu": "Temporary access until"
+      },
+      "paiement": {
+        "titre": "Payment",
+        "etat": "Payment status",
+        "aPayer": "To pay",
+        "paye": "Paid",
+        "enRetard": "Late: access is closed",
+        "exonere": "Exempt",
+        "premier": "First payment",
+        "premierRecu": "Received",
+        "premierPasEncore": "Not yet",
+        "facture": "Latest invoice",
+        "facAPayer": "{montant} for {mois}, to pay",
+        "facPayee": "{montant} for {mois}, paid",
+        "remise": "Discount in force",
+        "prixSpecial": "Special price",
+        "prixSpecialAide": "Set a reduced price for this student. A reason and an end month are required.",
+        "exonerer": "Exempt",
+        "exonererAide": "Offer access: nothing to pay until the chosen month. Access closed for non-payment is restored right away.",
+        "reporter": "Postpone",
+        "reporterAide": "Access is offered until the chosen month, with no invoice. Payment resumes by itself afterwards.",
+        "demander": "Request now",
+        "demanderAide": "Issues the month's invoice and notifies the family. Use it when payment must arrive before the first lesson.",
+        "retirer": "Remove the discount",
+        "retirerAide": "The normal price applies again.",
+        "demandeTitre": "Payment requested",
+        "demandePhrase": "The month's invoice is issued and the family is notified.",
+        "rienTitre": "Nothing to pay",
+        "rienPhrase": "No invoice remains to be paid this month.",
+        "echecTitre": "Request not confirmed",
+        "echecPhrase": "We could not confirm the request. This often comes from the connection. Check the invoice in Finance before trying again."
       }
     },
     "comptes": {
@@ -8192,7 +8223,11 @@
         "retirerTitre": "Remove for {prenom}",
         "retirerPhrase": "{dePrenom}'s next invoices will return to the normal price. Invoices already issued do not change.",
         "retirer": "Remove",
-        "retireTitre": "Removed"
+        "retireTitre": "Removed",
+        "reporterTitre": "Postpone {prenom}'s payment",
+        "reporterRaison": "Payment postponed",
+        "reporterMois": "Last month without payment",
+        "reporterPhrase": "Access is offered until the end of this month, with no invoice. Payment resumes by itself afterwards."
       },
       "fac": {
         "factures": "Month's invoices",
@@ -10009,6 +10044,7 @@
       "controleMissionNonControlee": "A review mission was left without a check.",
       "classeChangee": "A student in the family has joined another class, at the same time.",
       "paiementRelance": "A payment is coming due. It is paid in Payments.",
+      "paiementPremier": "Last step: pay to reserve the place before the first lesson. It is paid in Payments.",
       "accesSuspenduPaiement": "Access is suspended: this month's payment has not been received.",
       "accesRetabliPaiement": "Access is restored: the payment has been received.",
       "paiementRecu": "The payment has been received. The balance is up to date.",
@@ -12403,6 +12439,13 @@
       "payerSeul": "Pay",
       "conditionsRemboursement": "Refund and dispute: read the terms",
       "fraisContestation": "If you dispute a payment with your bank, the dispute fees are added to your household balance.",
+      "pourquoiPayer": "We receive a lot of fake accounts, spam and scams. We cannot hire a teacher for an account that came out of curiosity. Paying before the first lesson shows us that you are serious.",
+      "annulerDansDelai(param=jours)": {
+        "one": "You can cancel within {jours} day of your first payment: we refund what was not attended.",
+        "other": "You can cancel within {jours} days of your first payment: we refund what was not attended."
+      },
+      "annulerSansDuree": "You can cancel in the days that follow your first payment: we refund what was not attended. The length is that of the pricing policy in force (Prices page).",
+      "prixEtTaxes": "Prices are in US dollars, excluding tax; your bank converts if needed. Any tax for your country is calculated when you pay, and you see it before you confirm.",
       "ajouter": "Add {prenom} to the top-up",
       "regularisationDe": "{prenom}: {message}",
       "commandeRendue": "The payment has been sent. Do not pay a second time: follow its status.",
@@ -17666,10 +17709,12 @@
       "aCompleter": "To complete",
       "formation": "Class being formed",
       "confirmee": "Class confirmed",
+      "paiement": "Payment",
       "enseignant": "Teacher assigned",
       "pret": "All set"
     },
     "dit": {
+      "paiementAVenir": "Before the first lesson, you pay to reserve the place. After paying, you can cancel: we refund what was not attended.",
       "envoyee": "Your request has reached the academy.",
       "lueEnCours": "The management is reading your request. You are notified as soon as it has decided.",
       "lueFait": "The management has read your request.",
