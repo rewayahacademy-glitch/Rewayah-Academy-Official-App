@@ -166,6 +166,7 @@ class RechargeFoyerSupabase
               'profilId': c.beneficiaireId,
               'mineur': c.montant.mineur,
               'devise': c.montant.devise,
+              if (c.nbMois case final int n) 'nbMois': n,
             },
         ],
       },
@@ -225,27 +226,172 @@ class RechargeFoyerSupabase
 /// Un beneficiaire de `recharge_beneficiaires`.
 BeneficiaireRecharge beneficiaireRechargeJson(Object? brut) {
   final Map<String, dynamic> j = objetJson(brut, 'beneficiaire');
+  final List<OptionPaiement> options = <OptionPaiement>[
+    for (final Object? o in listeJson(j['options'] ?? <Object?>[], 'options'))
+      optionPaiementJson(o),
+  ];
   return BeneficiaireRecharge(
     id: texteJson(j, 'id'),
     prenom: texteJson(j, 'prenom'),
     cleAvatar: texteNullableJson(j, 'cleAvatar'),
     solde: montantNullableJson(j['solde'], 'solde'),
+    etat: j['etat'] == null ? null : etatRechargeJson(j['etat']),
+    options: options,
+    dette: j['dette'] == null ? null : detteRechargeJson(j['dette']),
+    tarif: montantNullableJson(j['tarif'], 'tarif'),
+    rang: j['rang'] is int ? j['rang'] as int : null,
     montantsProposes: <Montant>[
       for (final Object? m in listeJson(j['montantsProposes'], 'montants'))
         montantJson(m, 'montantPropose'),
     ],
     montantSuggere: montantNullableJson(j['montantSuggere'], 'suggere'),
-    montantsRediges: <Montant, String>{
-      for (final Object? f in listeJson(
-        j['formules'] ?? <Object?>[],
-        'formules',
+    montantsRediges: options.isNotEmpty
+        ? <Montant, String>{
+            for (final OptionPaiement o in options) o.montant: libelleOption(o),
+          }
+        : <Montant, String>{
+            for (final Object? f in listeJson(
+              j['formules'] ?? <Object?>[],
+              'formules',
+            ))
+              if (_formuleRedigee(objetJson(f, 'formule')) case (
+                final Montant m,
+                final String texte,
+              ))
+                m: texte,
+          },
+  );
+}
+
+/// L'etat d'un profil rendu par le serveur.
+EtatRecharge etatRechargeJson(Object? v) => switch (v) {
+  'en_classe' => EtatRecharge.enClasse,
+  'avant_premier_mois' => EtatRecharge.avantPremierMois,
+  'aucun_creneau' => EtatRecharge.aucunCreneau,
+  _ => throw FormatException('etat de recharge inconnu: $v'),
+};
+
+/// Une offre de `recharge_beneficiaires` (dette + N mois d'avance).
+OptionPaiement optionPaiementJson(Object? brut) {
+  final Map<String, dynamic> j = objetJson(brut, 'option');
+  final String formule = texteJson(j, 'formule');
+  if (!const <String>{
+    'libre',
+    'mois',
+    'avance',
+    'trimestriel',
+    'annuel',
+  }.contains(formule)) {
+    throw FormatException('formule inconnue: $formule');
+  }
+  return OptionPaiement(
+    nbMois: entierJson(j, 'nbMois'),
+    formule: formule,
+    montant: montantJson(j['montant'], 'montant'),
+    dette: montantJson(j['dette'], 'dette'),
+    avance: montantJson(j['avance'], 'avance'),
+    moisCouverts: moisCouvertsJson(j['moisCouverts']),
+    lignes: <LigneOption>[
+      for (final Object? l in listeJson(j['lignes'] ?? <Object?>[], 'lignes'))
+        _ligneOption(objetJson(l, 'ligne')),
+    ],
+    nonAppliquees: <RemiseNonAppliquee>[
+      for (final Object? n in listeJson(
+        j['nonAppliquees'] ?? <Object?>[],
+        'nonAppliquees',
       ))
-        if (_formuleRedigee(objetJson(f, 'formule')) case (
-          final Montant m,
-          final String texte,
-        ))
-          m: texte,
-    },
+        _nonAppliquee(objetJson(n, 'nonAppliquee')),
+    ],
+  );
+}
+
+/// Les mois couverts rendus par le serveur, ou `null`.
+MoisCouverts? moisCouvertsJson(Object? v) {
+  if (v == null) return null;
+  final Map<String, dynamic> j = objetJson(v, 'moisCouverts');
+  return MoisCouverts(
+    debut: dateJson(j['debut'], 'debut'),
+    fin: dateJson(j['fin'], 'fin'),
+    nbMois: entierJson(j, 'nbMois'),
+  );
+}
+
+int? _entierNullable(Map<String, dynamic> j, String cle) =>
+    j[cle] == null ? null : entierJson(j, cle);
+
+LigneOption _ligneOption(Map<String, dynamic> l) => LigneOption(
+  code: texteJson(l, 'code'),
+  montant: montantNullableJson(l['montant'], 'montant'),
+  pourMille: _entierNullable(l, 'pourMille'),
+  rang: _entierNullable(l, 'rang'),
+  nbMois: _entierNullable(l, 'nbMois'),
+);
+
+RemiseNonAppliquee _nonAppliquee(Map<String, dynamic> n) => RemiseNonAppliquee(
+  type: texteJson(n, 'type'),
+  code: texteJson(n, 'code'),
+  montant: montantNullableJson(n['montant'], 'montant'),
+  pourMille: _entierNullable(n, 'pourMille'),
+);
+
+/// La dette d'un profil, mois par mois.
+DetteRecharge detteRechargeJson(Object? brut) {
+  final Map<String, dynamic> j = objetJson(brut, 'dette');
+  return DetteRecharge(
+    total: montantJson(j['total'], 'total'),
+    solde: montantJson(j['solde'], 'solde'),
+    mois: <MoisDu>[
+      for (final Object? m in listeJson(j['mois'] ?? <Object?>[], 'mois'))
+        _moisDu(objetJson(m, 'moisDu')),
+    ],
+  );
+}
+
+MoisDu _moisDu(Map<String, dynamic> m) => MoisDu(
+  mois: dateJson(m['mois'], 'mois'),
+  montant: montantJson(m['montant'], 'montant'),
+  apercu: booleenJson(m, 'apercu'),
+  lignes: <LigneDue>[
+    for (final Object? l in listeJson(m['lignes'] ?? <Object?>[], 'lignes'))
+      _ligneDue(objetJson(l, 'ligneDue')),
+  ],
+  prorata: m['prorata'] == null
+      ? null
+      : _prorata(objetJson(m['prorata'], 'prorata')),
+);
+
+LigneDue _ligneDue(Map<String, dynamic> l) => LigneDue(
+  nature: texteJson(l, 'nature'),
+  montant: montantJson(l['montant'], 'montant'),
+  rang: _entierNullable(l, 'rang'),
+);
+
+ProrataExplique _prorata(Map<String, dynamic> p) => ProrataExplique(
+  entreeLe: dateJson(p['entreeLe'], 'entreeLe'),
+  seancesRestantes: entierJson(p, 'seancesRestantes'),
+  seancesDuMois: entierJson(p, 'seancesDuMois'),
+);
+
+/// Le libelle d'une offre au pas du « moins / plus » : le montant que le
+/// serveur rend, dit en mots (la dette seule, la dette et N mois d'avance, N
+/// mois d'avance). Aucun chiffre n'est calcule ici.
+String libelleOption(OptionPaiement o) {
+  final String montant = sansAncre(formaterMontant(o.montant));
+  if (o.formule == 'mois' && o.moisCouverts == null) {
+    return t.adulte.recharge.explication.libelleUnMois(montant: montant);
+  }
+  if (o.nbMois == 0) {
+    return t.adulte.recharge.explication.libelleDette(montant: montant);
+  }
+  if (!o.dette.estNul) {
+    return t.adulte.recharge.explication.libelleDetteEtMois(
+      n: o.nbMois,
+      montant: montant,
+    );
+  }
+  return t.adulte.recharge.explication.libelleMois(
+    n: o.nbMois,
+    montant: montant,
   );
 }
 
@@ -264,7 +410,7 @@ BeneficiaireRecharge beneficiaireRechargeJson(Object? brut) {
       m,
       t.adulte.recharge.formules.annuel(montant: sansAncre(formaterMontant(m))),
     ),
-    'mois' || 'libre' => null,
+    'mois' || 'libre' || 'avance' => null,
     final String autre => throw FormatException('formule inconnue: $autre'),
   };
 }
@@ -291,6 +437,8 @@ LigneRecapitulatif _ligne(Map<String, dynamic> l) {
     montantPaye: formaterMontant(m),
     soldeAttribue: formaterMontant(m, signe: true),
     statut: t.adulte.recharge.source.avantPaiement,
+    moisCouverts: moisCouvertsJson(l['moisCouverts']),
+    nbMois: _entierNullable(l, 'nbMois'),
   );
 }
 

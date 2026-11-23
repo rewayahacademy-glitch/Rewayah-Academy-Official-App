@@ -12424,6 +12424,76 @@
         "trimestriel": "{montant} for 3 months, paid in advance",
         "annuel": "{montant} for 12 months, paid in advance"
       },
+      "explication": {
+        "libelleDette": "{montant}: the month due",
+        "libelleMois(plural, param=n)": {
+          "one": "{montant} for {n} month paid ahead",
+          "other": "{montant} for {n} months paid ahead"
+        },
+        "libelleDetteEtMois(plural, param=n)": {
+          "one": "{montant}: the month due and {n} month ahead",
+          "other": "{montant}: the month due and {n} months ahead"
+        },
+        "libelleUnMois": "{montant} for one month",
+        "synthese": {
+          "detteSeule": "You pay {montant} for the month due ({mois}).",
+          "detteEtAvance(plural, param=n)": {
+            "one": "You first pay {dette} ({moisDus}), then {n} month ahead ({moisCouverts}): {montant} in total.",
+            "other": "You first pay {dette} ({moisDus}), then {n} months ahead ({moisCouverts}): {montant} in total."
+          },
+          "avanceSeule(plural, param=n)": {
+            "one": "You pay {n} month ahead ({moisCouverts}): {montant}.",
+            "other": "You pay {n} months ahead ({moisCouverts}): {montant}."
+          },
+          "moisSansDate": "You pay one month, {montant}. It counts from the start of your classes.",
+          "aucunCreneau": "No payment is possible yet. Choose a time slot first, then you can pay.",
+          "avantPremierMois": "Before classes start, only one month can be paid."
+        },
+        "mois": {
+          "separateur": ", ",
+          "et": "{liste} and {dernier}",
+          "plage": "{debut} to {fin}"
+        },
+        "ligne": {
+          "prix(plural, param=n)": {
+            "one": "Price for the month",
+            "other": "Price for {n} months"
+          },
+          "remiseFamille": "Family discount, member no. {rang} ({taux})",
+          "remisePrepaiement": "Discount for paying ahead ({taux})",
+          "plafond": "Discounts capped at {taux} of the price",
+          "arrondi": "Rounded to the dollar",
+          "bourse": "Scholarship",
+          "prixSpecial": "Special price",
+          "accesOffert": "Free access",
+          "total": "Total to pay"
+        },
+        "nonAppliquee": {
+          "premierInscrit": "No family discount: first enrolled.",
+          "familleSpecial": "No family discount: a special price cannot be combined with a discount.",
+          "familleOffert": "No family discount: free access cannot be combined with a discount.",
+          "familleBourse": "No family discount: a scholarship cannot be combined with a discount.",
+          "prepaiementMoinsDeTrois": "No discount for paying ahead under 3 months.",
+          "prepaiementSpecial": "No discount for paying ahead: a special price cannot be combined with a discount.",
+          "prepaiementOffert": "No discount for paying ahead: free access cannot be combined with a discount.",
+          "prepaiementBourse": "No discount for paying ahead: a scholarship cannot be combined with a discount.",
+          "plafondAtteint": "Cap reached: discounts are limited to {taux} of the price ({montant} less discount)."
+        },
+        "dette": {
+          "titre": "To settle first",
+          "moisApercu": "{mois}, not yet invoiced",
+          "prorata(plural, param=restantes)": {
+            "one": "Start on {date}: {restantes} session out of {total} this month",
+            "other": "Start on {date}: {restantes} sessions out of {total} this month"
+          },
+          "solde": "Profile balance",
+          "factureTarif": "Price for the month",
+          "factureRemiseRang": "Family discount, member no. {rang}",
+          "factureProrata": "In proportion to the month's sessions",
+          "facturePrepaiement": "Share of the payment made ahead"
+        },
+        "moisCouverts": "Months covered"
+      },
       "revenirPaiements": "Back to the household payments",
       "phraseUnique": "Tick the profile, then choose the amount.",
       "profils": "Profiles to top up",

@@ -184,10 +184,10 @@ abstract final class DonneesFinanceDemo {
     essaisMax: 0,
     essaiActif: false,
     // Foyer, en pour mille du tarif de chaque membre payant : 8 % des le
-    // deuxieme, 17 % des le troisieme.
+    // deuxieme, 15 % des le troisieme.
     remisesParRang: const <RemiseRang>[
       RemiseRang(aPartirDuRang: 2, pourMille: 80),
-      RemiseRang(aPartirDuRang: 3, pourMille: 170),
+      RemiseRang(aPartirDuRang: 3, pourMille: 150),
     ],
     // Anciens champs de base et de plafond horaires : la v2.0.0 les garde
     // (6 $ et 9 $), la paie se lit dans les taux par eleve present.

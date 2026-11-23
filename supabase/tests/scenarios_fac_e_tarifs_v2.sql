@@ -29,8 +29,8 @@ UPDATE public.politiques_commerciales
 -- REMB-14 (migration 20261106100000) : ce scenario eprouve la v2 en
 -- vigueur ; la v2.1.0 (copie de la v2, delai de 14 jours) est retiree le
 -- temps du scenario, annule a la fin.
-DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.1.0';
-DELETE FROM public.politiques_commerciales WHERE version = 'v2.1.0';
+DELETE FROM public.repartitions_paiement WHERE politique_version IN ('v2.1.0', 'v2.2.0');
+DELETE FROM public.politiques_commerciales WHERE version IN ('v2.1.0', 'v2.2.0');
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL)
@@ -276,9 +276,9 @@ SELECT pg_temp.vrai((pg_temp.fac('e4', pg_temp.mois())).total_mineur + (pg_temp.
   AND (pg_temp.fac('e5', pg_temp.mois())).total_mineur = 5980,
   'couple d''adultes : 65 + 59,80 = 124,80 USD');
 SELECT pg_temp.vrai((pg_temp.fac('e7', pg_temp.mois())).total_mineur = 3850
-  AND (pg_temp.fac('e7', pg_temp.mois())).rang_familial = 2
+  AND (pg_temp.fac('e7', pg_temp.mois())).rang_familial IS NULL
   AND (pg_temp.fac('e7', pg_temp.mois())).lignes = '[{"nature":"tarif","montant":{"mineur":5500,"devise":"USD"},"rang":null},{"nature":"bourse","montant":{"mineur":-1650,"devise":"USD"},"rang":null}]'::jsonb,
-  'bourse : 55 - 30 % = 38,50 USD, jamais cumulee avec la remise du 2e membre');
+  'bourse : 55 - 30 % = 38,50 USD, jamais cumulee avec la remise du 2e membre, et sans rang (PAIEMENT-FAMILLE-PRIX)');
 
 -- ------------------------------------------------------------------
 -- 5 bis. Le premier mois du filleul est finance : les deux foyers recoivent 20 USD
@@ -318,8 +318,10 @@ SELECT pg_temp.vrai(private.fac_prix_prepaiement('fe000000-0000-4000-8000-000000
 -- ------------------------------------------------------------------
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui('fe000000-0000-4000-8000-0000000000d2', 'guardian', 'fe000000-0000-4000-8000-0000000000f2');
-SELECT pg_temp.vrai(pg_temp.formules('e4') = '[{"montant":{"mineur":6500,"devise":"USD"},"formule":"mois"}]'::jsonb,
-  'recharge : mois non regle, seul le mois est propose');
+-- PAIEMENT-FAMILLE-PRIX (23/11/2026) : la dette est toujours payee d'abord ; chaque offre = dette + N mois.
+SELECT pg_temp.vrai(pg_temp.formules('e4') -> 0 = '{"montant":{"mineur":6500,"devise":"USD"},"formule":"libre"}'::jsonb
+  AND (SELECT count(*) FROM jsonb_array_elements(pg_temp.formules('e4')) f WHERE (f -> 'montant' ->> 'mineur')::bigint > 6500) = 12,
+  'recharge : mois non regle, la dette (6500) est proposee d''abord, puis dette + 1 a 12 mois');
 SELECT set_config('test.r1', public.recharge_verifier_montants(jsonb_build_array(jsonb_build_object(
   'profilId', 'fe000000-0000-4000-8000-0000000000e4', 'mineur', 6500, 'devise', 'USD')))::text, true);
 SELECT set_config('test.c1', (public.recharge_payer((current_setting('test.r1')::jsonb ->> 'id')::uuid,
@@ -338,9 +340,11 @@ SELECT pg_temp.vrai((pg_temp.fac('e4', pg_temp.mois())).statut = 'financee'
 
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui('fe000000-0000-4000-8000-0000000000d2', 'guardian', 'fe000000-0000-4000-8000-0000000000f2');
-SELECT pg_temp.vrai(pg_temp.formules('e4') = '[{"montant":{"mineur":6500,"devise":"USD"},"formule":"mois"},{"montant":{"mineur":18500,"devise":"USD"},"formule":"trimestriel"},{"montant":{"mineur":70200,"devise":"USD"},"formule":"annuel"}]'::jsonb
-  AND NOT (pg_temp.formules('e5') @> '[{"formule":"trimestriel"}]'::jsonb),
-  'recharge : mois regle, trimestre 185 et annee 702 USD proposes ; pas a qui doit encore son mois');
+SELECT pg_temp.vrai(pg_temp.formules('e4') @> '[{"montant":{"mineur":6500,"devise":"USD"},"formule":"avance"},{"montant":{"mineur":18500,"devise":"USD"},"formule":"trimestriel"},{"montant":{"mineur":70200,"devise":"USD"},"formule":"annuel"}]'::jsonb
+  AND jsonb_array_length(pg_temp.formules('e4')) = 12
+  AND pg_temp.formules('e5') -> 0 ->> 'formule' = 'libre'
+  AND (pg_temp.formules('e5') -> 1 -> 'montant' ->> 'mineur')::bigint > 5980,
+  'recharge : mois regle, 1 a 12 mois proposes (trimestre 185, annee 702 USD) ; qui doit encore son mois paie d''abord sa dette');
 SELECT set_config('test.r2', public.recharge_verifier_montants(jsonb_build_array(jsonb_build_object(
   'profilId', 'fe000000-0000-4000-8000-0000000000e4', 'mineur', 18500, 'devise', 'USD')))::text, true);
 SELECT pg_temp.vrai(current_setting('test.r2')::jsonb #>> '{lignes,0,formule}' = 'trimestriel',

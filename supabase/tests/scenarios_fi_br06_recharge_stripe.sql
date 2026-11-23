@@ -20,8 +20,8 @@ DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.0.0';
 DELETE FROM public.politiques_commerciales WHERE version = 'v2.0.0';
 -- REMB-14 (migration 20261106100000) : la v2.1.0, copie de la v2 avec le
 -- delai de 14 jours, s'en va aussi.
-DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.1.0';
-DELETE FROM public.politiques_commerciales WHERE version = 'v2.1.0';
+DELETE FROM public.repartitions_paiement WHERE politique_version IN ('v2.1.0', 'v2.2.0');
+DELETE FROM public.politiques_commerciales WHERE version IN ('v2.1.0', 'v2.2.0');
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL)
@@ -128,19 +128,28 @@ RESET ROLE;
 -- ------------------------------------------------------------------
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui('f6000000-0000-4000-8000-0000000000d1', 'guardian', 'f6000000-0000-4000-8000-0000000000f1');
+-- PAIEMENT-FAMILLE-PRIX (23/11/2026) : les offres viennent du serveur (dette, puis N mois) ; le montant d'un
+-- profil se lit dans ses offres, jamais d'un tarif suppose.
+CREATE FUNCTION pg_temp.offre(p_profil text, p_nb integer) RETURNS bigint LANGUAGE sql AS
+  $$ SELECT (o -> 'montant' ->> 'mineur')::bigint
+       FROM jsonb_array_elements(public.recharge_beneficiaires()) x, jsonb_array_elements(x -> 'options') o
+      WHERE x ->> 'id' = 'f6000000-0000-4000-8000-0000000000' || p_profil AND (o ->> 'nbMois')::int = p_nb $$;
+GRANT EXECUTE ON FUNCTION pg_temp.offre(text, integer) TO authenticated;
 SELECT pg_temp.vrai(jsonb_array_length(public.recharge_beneficiaires()) = 2
-  AND (SELECT bool_and(x -> 'montantsProposes' @> jsonb_build_array(jsonb_build_object(
-         'mineur', current_setting('test.tarif')::bigint, 'devise', current_setting('test.devise'))))
-         FROM jsonb_array_elements(public.recharge_beneficiaires()) x),
-  'beneficiaires : les deux enfants du foyer, un mois au tarif publie propose');
+  AND pg_temp.offre('e1', 1) = current_setting('test.tarif')::bigint
+  AND pg_temp.offre('e2', 2) IS NOT NULL,
+  'beneficiaires : les deux enfants du foyer (politique avec essai : pas de dette), un mois au tarif publie puis des mois d''avance');
+SELECT set_config('test.m1', pg_temp.offre('e1', 1)::text, true);
+SELECT set_config('test.m2', pg_temp.offre('e2', 2)::text, true);
+SELECT set_config('test.total', (pg_temp.offre('e1', 1) + pg_temp.offre('e2', 2))::text, true);
 SELECT pg_temp.refus(format($q$SELECT public.recharge_verifier_montants('[{"profilId": "%s", "mineur": 1234, "devise": "%s"}]')$q$,
   'f6000000-0000-4000-8000-0000000000e1', current_setting('test.devise')), '22023', 'recapitulatif : un montant non propose est refuse');
 SELECT pg_temp.refus(format($q$SELECT public.recharge_verifier_montants('[{"profilId": "%s", "mineur": %s, "devise": "%s"}]')$q$,
   'f6000000-0000-4000-8000-0000000000e3', current_setting('test.tarif'), current_setting('test.devise')), '42501', 'recapitulatif : un enfant d''un autre foyer est refuse');
 SELECT set_config('test.r1', public.recharge_verifier_montants(jsonb_build_array(
   jsonb_build_object('profilId', 'f6000000-0000-4000-8000-0000000000e1', 'mineur', current_setting('test.tarif')::bigint, 'devise', current_setting('test.devise')),
-  jsonb_build_object('profilId', 'f6000000-0000-4000-8000-0000000000e2', 'mineur', 2 * current_setting('test.tarif')::bigint, 'devise', current_setting('test.devise'))))::text, true);
-SELECT pg_temp.vrai((current_setting('test.r1')::jsonb #>> '{total,mineur}')::bigint = 3 * current_setting('test.tarif')::bigint
+  jsonb_build_object('profilId', 'f6000000-0000-4000-8000-0000000000e2', 'mineur', current_setting('test.m2')::bigint, 'devise', current_setting('test.devise'))))::text, true);
+SELECT pg_temp.vrai((current_setting('test.r1')::jsonb #>> '{total,mineur}')::bigint = current_setting('test.total')::bigint
   AND jsonb_array_length(current_setting('test.r1')::jsonb -> 'lignes') = 2,
   'recapitulatif : total arrete par le serveur, une ligne par profil');
 
@@ -185,29 +194,29 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.wallet_entries WHERE benefi
 SET LOCAL ROLE service_role;
 SELECT pg_temp.vrai(public.recharge_evenement_stripe('evt_1', 'checkout.session.completed', 'test',
   current_setting('test.cid')::uuid, 'cs_test_1', 'pi_1', 'unpaid',
-  3 * current_setting('test.tarif')::bigint, lower(current_setting('test.devise'))) = 'paiement_en_attente',
+  current_setting('test.total')::bigint, lower(current_setting('test.devise'))) = 'paiement_en_attente',
   'prestataire : un paiement pas encore encaisse ne credite rien');
 SELECT pg_temp.vrai(public.recharge_evenement_stripe('evt_2', 'checkout.session.async_payment_succeeded', 'live',
   current_setting('test.cid')::uuid, 'cs_test_1', 'pi_1', 'paid',
-  3 * current_setting('test.tarif')::bigint, lower(current_setting('test.devise'))) = 'environnement_different',
+  current_setting('test.total')::bigint, lower(current_setting('test.devise'))) = 'environnement_different',
   'prestataire : un evenement d''un autre environnement ne credite rien');
 SELECT pg_temp.vrai(public.recharge_evenement_stripe('evt_3', 'checkout.session.async_payment_succeeded', 'test',
   current_setting('test.cid')::uuid, 'cs_test_1', 'pi_1', 'paid',
-  3 * current_setting('test.tarif')::bigint, lower(current_setting('test.devise'))) = 'credite',
+  current_setting('test.total')::bigint, lower(current_setting('test.devise'))) = 'credite',
   'prestataire : paiement encaisse, chaque profil credite de sa part');
 SELECT pg_temp.vrai(public.recharge_evenement_stripe('evt_3', 'checkout.session.async_payment_succeeded', 'test',
   current_setting('test.cid')::uuid, 'cs_test_1', 'pi_1', 'paid',
-  3 * current_setting('test.tarif')::bigint, lower(current_setting('test.devise'))) = 'doublon',
+  current_setting('test.total')::bigint, lower(current_setting('test.devise'))) = 'doublon',
   'idempotence : le meme evenement recu deux fois ne fait rien');
 SELECT pg_temp.vrai(public.recharge_evenement_stripe('evt_4', 'checkout.session.completed', 'test',
   current_setting('test.cid')::uuid, 'cs_test_1', 'pi_1', 'paid',
-  3 * current_setting('test.tarif')::bigint, lower(current_setting('test.devise'))) = 'deja_credite',
+  current_setting('test.total')::bigint, lower(current_setting('test.devise'))) = 'deja_credite',
   'double confirmation : un seul credit');
 RESET ROLE;
 SELECT pg_temp.vrai((SELECT count(*) FROM public.wallet_entries WHERE reference_id = current_setting('test.cid')::uuid
                       AND reference_type = 'credit' AND confirme_par_prestataire_le IS NOT NULL) = 2
   AND (SELECT amount_minor FROM public.wallet_entries WHERE reference_id = current_setting('test.cid')::uuid
-        AND beneficiaire_id = 'f6000000-0000-4000-8000-0000000000e2') = 2 * current_setting('test.tarif')::bigint,
+        AND beneficiaire_id = 'f6000000-0000-4000-8000-0000000000e2') = current_setting('test.m2')::bigint,
   'credit : deux ecritures, chacune au nom de son profil');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui('f6000000-0000-4000-8000-0000000000d1', 'guardian', 'f6000000-0000-4000-8000-0000000000f1');
@@ -228,7 +237,7 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.notifications
                         AND destinataire = 'f6000000-0000-4000-8000-0000000000d1') = 1
   AND (SELECT (params ->> 'montant_mineur')::bigint FROM public.notifications
         WHERE evenement = 'paiement_recu' AND destinataire = 'f6000000-0000-4000-8000-0000000000d1')
-      = 3 * current_setting('test.tarif')::bigint
+      = current_setting('test.total')::bigint
   AND (SELECT params ->> 'devise' FROM public.notifications
         WHERE evenement = 'paiement_recu' AND destinataire = 'f6000000-0000-4000-8000-0000000000d1')
       = current_setting('test.devise')
@@ -244,7 +253,7 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.courriels_sortants
                         AND destinataire_adresse = 'f6-tit@test.invalid'
                         AND destinataire_profil = 'f6000000-0000-4000-8000-0000000000d1'
                         AND cle_idempotence LIKE 'notification:%'
-                        AND (donnees ->> 'montant_mineur')::bigint = 3 * current_setting('test.tarif')::bigint
+                        AND (donnees ->> 'montant_mineur')::bigint = current_setting('test.total')::bigint
                         AND donnees ->> 'devise' = current_setting('test.devise')) = 1,
   'paiement recu : un e-mail de facturation au tuteur, avec le montant');
 

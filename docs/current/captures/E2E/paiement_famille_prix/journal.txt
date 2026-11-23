@@ -1,0 +1,75 @@
+PAIEMENT-FAMILLE-PRIX, journal de verification (23/11/2026, R3). Rien ici n'est une preuve en production.
+
+CE QUI A ETE EXECUTE (poste de l'agent, Postgres 16.15 local ; la CI utilise Postgres 17) :
+- stub_auth.sql, puis les migrations du depot (dont 20261203000000_paiement_famille_prix.sql) sans erreur ; la migration
+  rejouee une seconde fois sur la meme base sans erreur (remplacements de texte idempotents).
+- supabase/tests/scenarios_paiement_famille.sql : 50 controles verts (liste ci-dessous).
+- Les 202 scenarios que la CI rejoue (liste lue dans le workflow, non modifie) : voir la ligne « CI » en fin de fichier.
+- Scenarios adaptes parce que le serveur propose maintenant la DETTE d'abord, au prix exact (et aucune offre sans classe) :
+  fi_br06_recharge_stripe, fn115b_remboursements, fn115c_rembourser, remb14_delai, pay_ux_session_neuve,
+  pub_tarifs_publics, fac_e_tarifs_v2, paiement_unifie, profil_titulaire_foyer ; les versions v2.1.0 et v2.2.0 sont
+  retirees avec v2.0.0 quand le scenario eprouve une politique plus ancienne.
+- Flutter : dart analyze --fatal-infos propre ; tests cibles recharge, capacites, finance, foyer (voir « Flutter » en fin
+  de fichier) ; verifier_jetons, verifier_branchement, verifier_conversations verts.
+- site-public : 174 tests unittest verts (152,35 USD pour trois enfants).
+- Production, LECTURE SEULE (execute_sql, SELECT sur pg_proc) : les empreintes des fonctions remplacees
+  (fac_mensualite, fac_rang_attendu, fac_prix_prepaiement, fac_emettre_facture, rch_offres, recharge_beneficiaires,
+  recharge_verifier_montants, recharge_payer, recharge_evenement_stripe) sont IDENTIQUES a celles d'un rejeu local
+  sans la migration. EXCEPTION : fn115c_montant_propose differe (production 3 493 caracteres, rejeu 3 930) : une
+  migration du depot qui la retouche n'est pas encore installee. L'ancre que la migration remplace y est presente.
+
+NON FAIT / NON PROUVE : aucun vrai paiement Stripe ; Deno absent du poste (stripe.ts et stripe_test.ts modifies, non
+executes) ; aucune capture d'ecran produite (les tests mesurent la largeur de l'explication a 1280 et 1440, pas un rendu
+regarde par un humain) ; l'arabe est verifie par test de phrases, pas par un arabophone.
+
+LES 50 CONTROLES DE scenarios_paiement_famille.sql :
+OK 1 : le mois compte plus de seances que les trois seances existantes apres l'entree
+OK 1 : l'horaire de la classe donne ses seances sur le mois entier, creees ou non
+OK 1 : la premiere facture de k31 est emise
+OK 1 : D1, entre en cours de mois, k31 ne paie pas le mois plein : 55 x seances restantes / seances du mois
+OK 1 : la ligne de prorata garde la date d'entree et « x seances sur y »
+OK 2 : acces offert : k22 sans rang, k23 2e inscrit payant (et non 3e)
+OK 2 : les trois factures du mois sont emises, le profil offert au milieu
+OK 2 : la facture du profil offert n'a pas de rang ; les deux payants ont les rangs 1 et 2, jamais 3
+OK 2 : l'offre d'un mois suit ce rang : 55 USD pour le 1er, 50,60 USD (8 %) pour le 2e payant
+OK 3 : la politique du mois suivant : 8 % au 2e, 15 % au 3e et suivants, cumul 25 %
+OK 3 : trois enfants : rangs 1, 2, 3 dans l'ordre d'inscription
+OK 3 : trois enfants = 55 + 50,60 + 46,75 = 152,35 USD
+OK 3 : le 3e enfant : 3 mois 132 USD (15 % + 5 %), 12 mois 495 USD (15 % + 10 % = le plafond de 25 %)
+OK 3 : v2.1.0 garde ses 17 % (une version publiee ne change pas)
+OK 4 : 17 % + 10 % = 27 % : ramene a 25 %, 495 USD, une ligne « plafond » de 13,20 USD
+OK 4 : la remise non accordee dit « plafond atteint » avec son montant
+OK 4 : les lignes s'additionnent exactement au total
+OK 5 : une dette : treize offres, la dette seule (0), puis dette + 1 a 12 mois
+OK 5 : l'offre 0 est la dette, au prix de la facture
+OK 5 : dette + 2 mois = la dette + 110 USD, la dette montree a part
+OK 5 : 1 et 2 mois : aucune remise de prepaiement, dite « moins de trois mois » ; 1er inscrit : pas de remise famille, dite
+OK 5 : 3 a 11 mois : le taux trimestriel de la politique (5 %) ; 12 mois : le taux annuel (10 %), 594 USD
+OK 5 : les mois couverts commencent le mois suivant (deux mois : debut et fin) ; la dette seule n'en couvre aucun
+OK 5 : la dette dit son mois, la date d'entree et « x seances sur y »
+OK 5 : avant l'emission, la premiere facture est montree au prorata (apercu)
+OK 5 : la facture emise ensuite est exactement l'apercu
+OK 6 : sans classe ni creneau choisi : aucune offre, aucun montant propose
+OK 6 : un montant pour un profil sans offre est refuse
+OK 6 : creneau choisi, pas encore de classe : un mois seulement, au prix du mois
+OK 6 : deux mois avant le premier mois reel : refuse
+OK 6 : trois mois avant le premier mois reel : refuse
+OK 7 : un montant forge (un cent de plus) est refuse
+OK 7 : un montant forge (un dollar de moins) est refuse
+OK 7 : le bon montant avec un mauvais nombre de mois est refuse
+OK 7 : aucun montant libre
+OK 7 : le meme profil deux fois dans un recapitulatif est refuse
+OK 7 : un profil d'un autre foyer est refuse
+OK 7 : une offre du serveur passe ; les lignes suivent l'ordre d'inscription et gardent le nombre de mois
+OK 7 : le recapitulatif enregistre le nombre de mois, le premier mois couvert et la dette
+OK 8 : mois regle : douze offres (1 a 12 mois), pas de dette ; 3 mois = 157 USD
+OK 8 : le paiement ouvre l'engagement de 3 mois au mois suivant, pour le prix payé
+OK 8 : l'offre suivante commence apres l'engagement en cours
+OK 8 : remboursement apres le delai : le trimestre moins les mois commences au prix normal (55 USD), le reste rendu
+OK 8 : une dette de 55 USD : l'offre 3 mois = 55 (dette) + 157 USD, la dette est le montant suggere
+OK 8 : la dette finance la facture du mois ; l'engagement porte 157 USD (3 mois), sans la dette ; 157 USD restent en solde
+OK 8 : dette + 3 mois, rembourse apres le delai : calcule sur les 157 USD d'avance seulement, jamais sur la dette de 55 USD
+OK 8 bis : acces offert : aucune offre pour k22 ; k23 garde un rang de payant (1 ou 2), jamais 3
+OK 9 : les aides de prix restent privees ; la recharge reste au titulaire connecte
+OK 9 : un enfant ne lit pas les offres
+OK au moins 49 controles ont passe (50 avec celui-ci)

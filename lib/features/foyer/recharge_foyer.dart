@@ -171,6 +171,10 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   static Key ajouterDe(String beneficiaire) =>
       Key('recharge.ajouter.$beneficiaire');
 
+  /// L'explication du montant choisi pour un beneficiaire (PAIEMENT-FAMILLE-PRIX).
+  static Key explicationDe(String beneficiaire) =>
+      Key('recharge.explication.$beneficiaire');
+
   @override
   ConsumerState<RechargeFoyerPage> createState() => _RechargeFoyerPageState();
 }
@@ -257,7 +261,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         for (final BeneficiaireRecharge b in liste)
           if (_selection.contains(b.id))
             if (_montantDe(b) case final Montant m)
-              MontantRecharge(beneficiaireId: b.id, montant: m),
+              MontantRecharge(
+                beneficiaireId: b.id,
+                montant: m,
+                nbMois: b.optionPour(m)?.nbMois,
+              ),
       ];
 
   /// Au moins un beneficiaire coche, et un montant pour chacun.
@@ -855,31 +863,69 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       coche: coche,
       modifiable: coche && !_engage,
     );
+    final Widget ligne = enLigne
+        ? Row(
+            children: <Widget>[
+              // Sur bureau, l'identite prend les deux tiers : un partage
+              // egal laissait au solde et au montant suggere une colonne
+              // de quelques mots (six lignes a 1440, FI-VAGUE-CORR).
+              Expanded(flex: large ? 2 : 1, child: identite),
+              Ecart.hMd,
+              Flexible(child: montant),
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              identite,
+              Ecart.vSm,
+              Align(alignment: AlignmentDirectional.centerEnd, child: montant),
+            ],
+          );
+    // PAIEMENT-FAMILLE-PRIX : chaque montant a sa phrase, lue du serveur.
+    final Widget? explication = _explication(b, coche: coche);
     return KeyedSubtree(
       key: RechargeFoyerPage.profilDe(b.id),
-      child: enLigne
-          ? Row(
-              children: <Widget>[
-                // Sur bureau, l'identite prend les deux tiers : un partage
-                // egal laissait au solde et au montant suggere une colonne
-                // de quelques mots (six lignes a 1440, FI-VAGUE-CORR).
-                Expanded(flex: large ? 2 : 1, child: identite),
-                Ecart.hMd,
-                Flexible(child: montant),
-              ],
-            )
+      child: explication == null
+          ? ligne
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                identite,
-                Ecart.vSm,
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: montant,
-                ),
-              ],
+              children: <Widget>[ligne, Ecart.vSm, explication],
             ),
+    );
+  }
+
+  /// Ce que le serveur dit de ce profil : la phrase de l'offre choisie et son
+  /// detail (prix, remises accordees et non accordees, prorata, dette), ou la
+  /// raison pour laquelle rien n'est propose. `null` quand la source ne
+  /// l'explique pas (demonstration d'avant).
+  Widget? _explication(BeneficiaireRecharge b, {required bool coche}) {
+    final String? vide = phraseEtat(b);
+    if (vide != null) {
+      return _Note(
+        key: RechargeFoyerPage.explicationDe(b.id),
+        texte: vide,
+        attenuee: true,
+      );
+    }
+    final Montant? m = _montantDe(b);
+    final OptionPaiement? option = m == null ? null : b.optionPour(m);
+    if (!coche || option == null) {
+      final String? avant = phraseAvantPremierMois(b);
+      return avant == null
+          ? null
+          : _Note(
+              key: RechargeFoyerPage.explicationDe(b.id),
+              texte: avant,
+              attenuee: true,
+            );
+    }
+    return _ExplicationProfil(
+      key: RechargeFoyerPage.explicationDe(b.id),
+      beneficiaire: b,
+      option: option,
     );
   }
 
@@ -1267,6 +1313,12 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           ),
           if (l.remise case final RemiseRendue r)
             LigneCleValeur(cle: r.libelle, valeur: r.valeur, valeurEnFin: true),
+          if (l.moisCouverts case final MoisCouverts c)
+            LigneCleValeur(
+              cle: t.adulte.recharge.explication.moisCouverts,
+              valeur: moisCouvertsEnLettres(c),
+              valeurEnFin: true,
+            ),
           LigneCleValeur(
             cle: t.adulte.recharge.statut,
             valeur: l.statut,
@@ -1274,4 +1326,46 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           ),
         ],
       );
+}
+
+/// Le bloc d'explication d'un profil : la phrase de l'offre choisie, puis le
+/// detail ligne par ligne (le meme mot pour le meme fait que partout, K-58).
+/// Tout vient du serveur ; rien n'est calcule ici (FI6).
+class _ExplicationProfil extends StatelessWidget {
+  const _ExplicationProfil({
+    required this.beneficiaire,
+    required this.option,
+    super.key,
+  });
+
+  final BeneficiaireRecharge beneficiaire;
+  final OptionPaiement option;
+
+  @override
+  Widget build(BuildContext context) {
+    final List<LigneExplication> lignes = detailOption(beneficiaire, option);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _Note(texte: phraseSynthese(beneficiaire, option)),
+        Ecart.vSm,
+        for (final LigneExplication l in lignes)
+          if (l.valeur == null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+              child: _Note(texte: l.cle, attenuee: l.note),
+            )
+          else
+            LigneCleValeur(
+              cle: l.cle,
+              valeur: l.valeur!,
+              detailCle: l.detail,
+              chiffres: true,
+              valeurEnFin: true,
+              valeurForte: l.fort,
+            ),
+      ],
+    );
+  }
 }
