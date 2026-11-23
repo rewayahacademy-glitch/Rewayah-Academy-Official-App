@@ -93,6 +93,10 @@ abstract interface class ServiceDossier {
   /// [source] et [fuseau] (ONBOARDING-PRAXIS, 22/11/2026) : « Comment
   /// avez-vous connu Rewayah ? » (`p_source`, facultatif) et le fuseau IANA
   /// de l'appareil, montre au recapitulatif (`p_timezone`, quand il est connu).
+  ///
+  /// [whatsapp] (WHATSAPP-FAMILLE, 23/11/2026) : le numero WhatsApp du
+  /// titulaire, au format international (`+33612345678`), pour que la direction
+  /// puisse le joindre vite apres l'inscription (`p_whatsapp`).
   Future<void> creerProfil({
     required AppRole role,
     required String prenom,
@@ -104,6 +108,7 @@ abstract interface class ServiceDossier {
     List<Map<String, Object?>>? apprenants,
     String? source,
     String? fuseau,
+    String? whatsapp,
   });
 
   /// Ou en est le dossier.
@@ -155,6 +160,7 @@ class ServiceDossierSupabase implements ServiceDossier {
     List<Map<String, Object?>>? apprenants,
     String? source,
     String? fuseau,
+    String? whatsapp,
   }) async {
     if (role == AppRole.guardian && usage != null) {
       final Map<String, dynamic> params = <String, dynamic>{
@@ -167,23 +173,30 @@ class ServiceDossierSupabase implements ServiceDossier {
         'p_source': ?source,
         'p_timezone': ?fuseau,
       };
-      try {
-        // AUDIT-FAMILLE-2 (22/11/2026, R27) : la langue de l'interface au
-        // moment de la demande devient celle du compte : les courriels
-        // partent dans la langue de la famille.
-        await _client.rpc<Object?>(
-          'inscrire_titulaire',
-          params: <String, dynamic>{
+      // Serveur d'avant une migration : la fonction n'a pas encore le
+      // parametre (PGRST202 : fonction introuvable avec ces parametres). La
+      // demande part sans lui plutot que de ne pas partir : d'abord sans le
+      // numero WhatsApp (20261201018500), puis sans la langue (20261201011000).
+      final String langue = LocaleSettings.currentLocale.languageCode;
+      final List<Map<String, dynamic>> essais = <Map<String, dynamic>>[
+        if (whatsapp != null)
+          <String, dynamic>{
             ...params,
-            'p_langue': LocaleSettings.currentLocale.languageCode,
+            'p_langue': langue,
+            'p_whatsapp': whatsapp,
           },
-        );
-      } on PostgrestException catch (e) {
-        // Serveur d'avant la migration 20261201011000 : la fonction n'a pas
-        // encore le parametre. La demande part sans langue plutot que de ne
-        // pas partir (PGRST202 : fonction introuvable avec ces parametres).
-        if (e.code != 'PGRST202') rethrow;
-        await _client.rpc<Object?>('inscrire_titulaire', params: params);
+        <String, dynamic>{...params, 'p_langue': langue},
+        params,
+      ];
+      for (int i = 0; i < essais.length; i++) {
+        try {
+          // AUDIT-FAMILLE-2 (22/11/2026, R27) : la langue de l'interface au
+          // moment de la demande devient celle du compte.
+          await _client.rpc<Object?>('inscrire_titulaire', params: essais[i]);
+          break;
+        } on PostgrestException catch (e) {
+          if (e.code != 'PGRST202' || i == essais.length - 1) rethrow;
+        }
       }
       return;
     }

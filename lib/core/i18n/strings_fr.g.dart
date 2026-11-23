@@ -134,6 +134,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$calendrier$fr calendrier = Traductions$calendrier$fr.internal(_root);
 	late final Traductions$pause$fr pause = Traductions$pause$fr.internal(_root);
 	late final Traductions$onboarding$fr onboarding = Traductions$onboarding$fr.internal(_root);
+	late final Traductions$whatsapp$fr whatsapp = Traductions$whatsapp$fr.internal(_root);
 }
 
 // Path: commun
@@ -4843,6 +4844,48 @@ class Traductions$onboarding$fr {
 	late final Traductions$onboarding$envoye$fr envoye = Traductions$onboarding$envoye$fr.internal(_root);
 	late final Traductions$onboarding$vous$fr vous = Traductions$onboarding$vous$fr.internal(_root);
 	late final Traductions$onboarding$fin$fr fin = Traductions$onboarding$fin$fr.internal(_root);
+}
+
+// Path: whatsapp
+class Traductions$whatsapp$fr {
+	Traductions$whatsapp$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre numéro WhatsApp'
+	String get etiquette => 'Votre numéro WhatsApp';
+
+	/// fr: 'Pour que la direction puisse vous joindre rapidement après votre inscription.'
+	String get pourquoi => 'Pour que la direction puisse vous joindre rapidement après votre inscription.';
+
+	/// fr: 'Ajoutez votre numéro WhatsApp'
+	String get accueilLigne => 'Ajoutez votre numéro WhatsApp';
+
+	/// fr: 'La direction pourra vous joindre rapidement.'
+	String get accueilPourquoi => 'La direction pourra vous joindre rapidement.';
+
+	/// fr: 'Votre numéro WhatsApp'
+	String get titreFeuille => 'Votre numéro WhatsApp';
+
+	/// fr: 'Enregistrer mon numéro'
+	String get enregistrer => 'Enregistrer mon numéro';
+
+	/// fr: 'Votre numéro n'a pas été enregistré. Réessayez dans un instant.'
+	String get echec => 'Votre numéro n\'a pas été enregistré. Réessayez dans un instant.';
+
+	/// fr: 'WhatsApp'
+	String get direction => 'WhatsApp';
+
+	/// fr: 'Ouvrir WhatsApp'
+	String get ouvrir => 'Ouvrir WhatsApp';
+
+	/// fr: 'Le numéro n'a pas pu être lu. Rechargez la page.'
+	String get illisible => 'Le numéro n\'a pas pu être lu. Rechargez la page.';
+
+	/// fr: 'Aucun numéro WhatsApp donné.'
+	String get absent => 'Aucun numéro WhatsApp donné.';
 }
 
 // Path: commun.langue
@@ -74958,6 +75001,19 @@ extension on Traductions {
 			'onboarding.fin.trois' => '3. Il ne reste que vos jours et vos horaires. Tout le reste est déjà noté.',
 			'onboarding.fin.fratrie' => 'Chaque enfant aura sa propre classe et son propre enseignant : si un enseignant est absent, les autres continuent, et une seule tablette suffit à tour de rôle.',
 			'onboarding.fin.suivre' => 'Suivre ma demande',
+			'whatsapp.etiquette' => 'Votre numéro WhatsApp',
+			'whatsapp.pourquoi' => 'Pour que la direction puisse vous joindre rapidement après votre inscription.',
+			'whatsapp.accueilLigne' => 'Ajoutez votre numéro WhatsApp',
+			'whatsapp.accueilPourquoi' => 'La direction pourra vous joindre rapidement.',
+			'whatsapp.titreFeuille' => 'Votre numéro WhatsApp',
+			'whatsapp.enregistrer' => 'Enregistrer mon numéro',
+			'whatsapp.echec' => 'Votre numéro n\'a pas été enregistré. Réessayez dans un instant.',
+			'whatsapp.direction' => 'WhatsApp',
+			'whatsapp.ouvrir' => 'Ouvrir WhatsApp',
+			'whatsapp.illisible' => 'Le numéro n\'a pas pu être lu. Rechargez la page.',
+			_ => null,
+		} ?? switch (path) {
+			'whatsapp.absent' => 'Aucun numéro WhatsApp donné.',
 			_ => null,
 		};
 	}

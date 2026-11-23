@@ -42,6 +42,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../admin_admissions/ligne_whatsapp_direction.dart';
 import '../admin_admissions/reponses_admission.dart';
 import '../foyer/fiche_eleve_page.dart' show ColonnesFiche, SurfaceFiche;
 import '../foyer/photo_eleve.dart';
@@ -504,6 +505,7 @@ class _SectionFamille extends StatelessWidget {
           tu.telephone == null ? null : isolerSens(tu.telephone!),
           chiffres: true,
         ),
+        LigneWhatsappDirection(cible: (candidatureId: null, profilId: tu.id)),
       ],
       pied: matricule == null
           ? null

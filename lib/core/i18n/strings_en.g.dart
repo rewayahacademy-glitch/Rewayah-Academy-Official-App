@@ -132,6 +132,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$calendrier$en calendrier = _Traductions$calendrier$en._(_root);
 	@override late final _Traductions$pause$en pause = _Traductions$pause$en._(_root);
 	@override late final _Traductions$onboarding$en onboarding = _Traductions$onboarding$en._(_root);
+	@override late final _Traductions$whatsapp$en whatsapp = _Traductions$whatsapp$en._(_root);
 }
 
 // Path: commun
@@ -2594,6 +2595,26 @@ class _Traductions$onboarding$en extends Traductions$onboarding$fr {
 	@override late final _Traductions$onboarding$envoye$en envoye = _Traductions$onboarding$envoye$en._(_root);
 	@override late final _Traductions$onboarding$vous$en vous = _Traductions$onboarding$vous$en._(_root);
 	@override late final _Traductions$onboarding$fin$en fin = _Traductions$onboarding$fin$en._(_root);
+}
+
+// Path: whatsapp
+class _Traductions$whatsapp$en extends Traductions$whatsapp$fr {
+	_Traductions$whatsapp$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get etiquette => 'Your WhatsApp number';
+	@override String get pourquoi => 'So the school can reach you quickly after you sign up.';
+	@override String get accueilLigne => 'Add your WhatsApp number';
+	@override String get accueilPourquoi => 'The school will be able to reach you quickly.';
+	@override String get titreFeuille => 'Your WhatsApp number';
+	@override String get enregistrer => 'Save my number';
+	@override String get echec => 'Your number was not saved. Please try again in a moment.';
+	@override String get direction => 'WhatsApp';
+	@override String get ouvrir => 'Open WhatsApp';
+	@override String get illisible => 'The number could not be read. Reload the page.';
+	@override String get absent => 'No WhatsApp number given.';
 }
 
 // Path: commun.langue
@@ -45240,6 +45261,19 @@ extension on TraductionsEn {
 			'onboarding.fin.trois' => '3. Only your days and times remain. Everything else is already noted.',
 			'onboarding.fin.fratrie' => 'Each child will have their own class and their own teacher: if a teacher is absent, the others continue, and one tablet is enough, taking turns.',
 			'onboarding.fin.suivre' => 'Follow my request',
+			'whatsapp.etiquette' => 'Your WhatsApp number',
+			'whatsapp.pourquoi' => 'So the school can reach you quickly after you sign up.',
+			'whatsapp.accueilLigne' => 'Add your WhatsApp number',
+			'whatsapp.accueilPourquoi' => 'The school will be able to reach you quickly.',
+			'whatsapp.titreFeuille' => 'Your WhatsApp number',
+			'whatsapp.enregistrer' => 'Save my number',
+			'whatsapp.echec' => 'Your number was not saved. Please try again in a moment.',
+			'whatsapp.direction' => 'WhatsApp',
+			'whatsapp.ouvrir' => 'Open WhatsApp',
+			'whatsapp.illisible' => 'The number could not be read. Reload the page.',
+			_ => null,
+		} ?? switch (path) {
+			'whatsapp.absent' => 'No WhatsApp number given.',
 			_ => null,
 		};
 	}

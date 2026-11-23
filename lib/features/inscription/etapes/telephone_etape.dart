@@ -183,7 +183,7 @@ class _TelephoneEtapeState extends ConsumerState<TelephoneEtape> {
           // arabe.
           Directionality(
             textDirection: TextDirection.ltr,
-            child: _ChampNumero(
+            child: ChampNumeroTelephone(
               controleur: _numero,
               focus: _focusNumero,
               pays: _pays,
@@ -314,9 +314,13 @@ class _ListePaysState extends State<_ListePays> {
 }
 
 /// Un seul champ : le drapeau du pays et sa fleche a gauche (toucher ouvre la
-/// liste des pays), puis le numero, l'indicatif en tete.
-class _ChampNumero extends StatelessWidget {
-  const _ChampNumero({
+/// liste des pays), puis le numero, l'indicatif en tete. Partage avec le
+/// numero WhatsApp de la famille (WHATSAPP-FAMILLE) : un seul composant.
+class ChampNumeroTelephone extends StatelessWidget {
+  /// Cree le champ ; [cle] remplace la cle des tests de l'etape du candidat.
+  const ChampNumeroTelephone({
+    this.cle,
+    super.key,
     required this.controleur,
     required this.focus,
     required this.pays,
@@ -327,6 +331,7 @@ class _ChampNumero extends StatelessWidget {
     required this.onChoisirPays,
   });
 
+  final Key? cle;
   final TextEditingController controleur;
   final FocusNode focus;
   final String? pays;
@@ -341,7 +346,7 @@ class _ChampNumero extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final String? code = pays;
     return TextField(
-      key: TelephoneEtape.numeroKey,
+      key: cle ?? TelephoneEtape.numeroKey,
       controller: controleur,
       focusNode: focus,
       onChanged: (String _) => onChanged(),

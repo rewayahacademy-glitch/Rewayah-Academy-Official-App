@@ -403,7 +403,10 @@ declare
     'inscrire_comptable_invite(text,text,text,gender)',
     -- ONBOARDING-PRAXIS (22/11) : p_source s'ajoute, l'ancienne forme part dans private.
     -- AUDIT-FAMILLE-2 (22/11) : p_langue s'ajoute, l'ancienne forme part dans private.
-    'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb,text,text)',
+    -- WHATSAPP-FAMILLE (23/11) : p_whatsapp s'ajoute, l'ancienne forme part dans private ; la famille corrige son numero, la direction le lit (journalise).
+    'inscrire_titulaire(text,text,text,gender,text,boolean,jsonb,text,text,text)',
+    'definir_mon_whatsapp(text)',
+    'whatsapp_famille_direction(uuid,uuid)',
     -- ADMISSION lot C (30/10) : gestes de la direction sur les familles et
     -- les eleves adultes (direction active seulement), et le lien d'un enfant
     -- de la demande a son profil (le titulaire, sur sa demande confirmee).

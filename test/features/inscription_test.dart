@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/inscription/code_comptable_retenu.dart';
+import 'package:rewayah_academy/features/inscription/etapes/champ_whatsapp.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/recapitulatif_etape.dart';
@@ -34,6 +35,7 @@ import 'package:rewayah_academy/features/inscription/questionnaire/onboarding_do
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
 
+import '../capture/outil_capture.dart';
 import '../fixtures/candidature/faux_inscription_candidat.dart';
 import '../support/demo/recrutement_demo.dart';
 import '../support/harnais.dart';
@@ -143,6 +145,7 @@ class _DossierLent extends FauxServiceDossier {
     List<Map<String, Object?>>? apprenants,
     String? source,
     String? fuseau,
+    String? whatsapp,
   }) async {
     await _porte.future;
     await super.creerProfil(
@@ -330,6 +333,13 @@ class _InscriptionComptable implements PortInscriptionComptable {
     });
     return resultat;
   }
+}
+
+/// WHATSAPP-FAMILLE : le titulaire donne son numero WhatsApp. Le pays est
+/// propose d'apres la langue de l'appareil (les Etats-Unis sous test).
+Future<void> _donnerWhatsapp(WidgetTester tester) async {
+  await tester.enterText(find.byKey(ChampWhatsapp.numeroKey), '2025550123');
+  await tester.pump();
 }
 
 /// Le parcours comptable jusqu'a la creation.
@@ -546,6 +556,26 @@ void main() {
       expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
     });
 
+    testWidgets('WHATSAPP-FAMILLE : sans numero lisible, rien ne part et la '
+        'phrase dit quoi faire', (WidgetTester tester) async {
+      final (FauxServiceDossier dossier, FausseSourceSession _) = await _monter(
+        tester,
+        questionnaire: _qMoi,
+      );
+      await tester.enterText(
+        find.byKey(const Key('inscription-nom')),
+        'Diallo',
+      );
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      expect(dossier.profilsCrees, isEmpty);
+      expect(find.text(t.inscription.telephone.numeroManquant), findsOneWidget);
+      expect(find.text(t.whatsapp.pourquoi), findsOneWidget);
+      await tester.enterText(find.byKey(ChampWhatsapp.numeroKey), 'abc');
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      expect(dossier.profilsCrees, isEmpty);
+      expect(find.text(t.inscription.telephone.numeroInvalide), findsOneWidget);
+    });
+
     testWidgets('ONBOARDING-PRAXIS : « Pour moi » : le nom de famille seul, '
         'puis la fin, puis /attente', (WidgetTester tester) async {
       final (FauxServiceDossier dossier, FausseSourceSession source) =
@@ -559,11 +589,14 @@ void main() {
         find.byKey(const Key('inscription-nom')),
         'Diallo',
       );
+      await _donnerWhatsapp(tester);
       await _taper(tester, find.byKey(const Key('inscription-envoyer')));
 
       expect(dossier.profilsCrees, hasLength(1));
       expect(dossier.profilsCrees.single.role, AppRole.guardian);
       expect(dossier.profilsCrees.single.genre, Genre.femme);
+      // Le numero part au format international, avec l'indicatif du pays.
+      expect(dossier.whatsappsEnvoyes.single, '+12025550123');
       expect(dossier.usages.single.usage, UsageTitulaire.moi);
       expect(dossier.usages.single.suitDesCours, isTrue);
       expect(dossier.apprenantsEnvoyes.single, <Map<String, Object?>>[
@@ -816,6 +849,7 @@ void main() {
           );
         }
         await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+        await _donnerWhatsapp(tester);
         await _taper(tester, find.byKey(const Key('inscription-envoyer')));
         expect(dossier.usages.single.usage, UsageTitulaire.famille);
         expect(dossier.usages.single.suitDesCours, suit);
@@ -868,6 +902,7 @@ void main() {
       );
       await _taper(tester, find.byKey(const Key('inscription-genre-homme')));
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _donnerWhatsapp(tester);
       await _taper(tester, find.byKey(const Key('inscription-envoyer')));
       expect(find.byKey(const Key('inscription-fin-fratrie')), findsOneWidget);
       expect(find.text(t.onboarding.fin.deuxPlusieurs), findsOneWidget);
@@ -878,6 +913,7 @@ void main() {
       final _SourceRetenue source = _SourceRetenue();
       await _monter(tester, source: source, questionnaire: _qMoi);
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _donnerWhatsapp(tester);
       await _taper(tester, find.byKey(const Key('inscription-envoyer')));
       expect(find.byKey(RecapitulatifEtape.cleFin), findsOneWidget);
       expect(source.rafraichissements, 0);
@@ -925,6 +961,7 @@ void main() {
         questionnaire: _qMoi,
       );
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah2');
+      await _donnerWhatsapp(tester);
       await _taper(tester, find.byKey(const Key('inscription-envoyer')));
       expect(find.text(t.inscription.nomEnLettresNom), findsOneWidget);
       expect(dossier.profilsCrees, isEmpty);
@@ -940,6 +977,7 @@ void main() {
         questionnaire: _qMoi,
       );
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _donnerWhatsapp(tester);
       await _taper(tester, find.byKey(const Key('inscription-envoyer')));
       await _taper(tester, find.byKey(const Key('inscription-suivre')));
 
@@ -962,6 +1000,7 @@ void main() {
       );
       dossier.erreurAJeter = StateError('reseau');
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _donnerWhatsapp(tester);
       await _taper(tester, find.byKey(const Key('inscription-envoyer')));
       expect(find.text(t.inscription.erreur), findsOneWidget);
       expect(find.byKey(RecapitulatifEtape.cleVous), findsOneWidget);
@@ -972,6 +1011,7 @@ void main() {
       final _DossierLent dossier = _DossierLent();
       await _monter(tester, dossierFourni: dossier, questionnaire: _qMoi);
       await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah');
+      await _donnerWhatsapp(tester);
 
       final Finder cta = find.byKey(const Key('inscription-envoyer'));
       await tester.ensureVisible(cta);
@@ -1004,6 +1044,52 @@ void main() {
       expect(find.byType(DisqueRetour), findsNothing);
       expect(find.text('1 sur 4'), findsOneWidget);
       expect(find.byKey(const Key('inscription-deconnexion')), findsOneWidget);
+    });
+  });
+
+  // WHATSAPP-FAMILLE (23/11/2026), captures R3 : l'ecran du titulaire avec
+  // « Votre numero WhatsApp ». Jamais sans `CAPTURE_DIR`.
+  group('Capture : WHATSAPP-FAMILLE', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+    for (final (String nom, AppLocale locale, double largeur, double hauteur)
+        in <(String, AppLocale, double, double)>[
+          ('onboarding_whatsapp_fr_390', AppLocale.fr, 390, 1100),
+          ('onboarding_whatsapp_fr_1440', AppLocale.fr, 1440, 900),
+          ('onboarding_whatsapp_ar_390', AppLocale.ar, 390, 1100),
+        ]) {
+      testWidgets(nom, (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(locale));
+        await _monter(tester, questionnaire: _qMoi);
+        tester.view.physicalSize = Size(largeur, hauteur);
+        await tester.pumpAndSettle();
+        debugPrint('PNG ${await capturerVue(tester, nom)}');
+        // Rempli : le pays propose d'apres l'appareil, le numero saisi.
+        await tester.enterText(
+          find.byKey(ChampWhatsapp.numeroKey),
+          '612345678',
+        );
+        await tester.pumpAndSettle();
+        debugPrint('PNG ${await capturerVue(tester, '${nom}_rempli')}');
+      });
+    }
+
+    testWidgets('onboarding_whatsapp_erreur_fr_390', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, questionnaire: _qMoi);
+      tester.view.physicalSize = const Size(390, 1100);
+      await tester.enterText(
+        find.byKey(const Key('inscription-nom')),
+        'Diallo',
+      );
+      await _taper(tester, find.byKey(const Key('inscription-envoyer')));
+      await tester.pumpAndSettle();
+      debugPrint(
+        'PNG ${await capturerVue(tester, 'onboarding_whatsapp_erreur_fr_390')}',
+      );
     });
   });
 }

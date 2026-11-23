@@ -18554,5 +18554,18 @@
       "fratrie": "Each child will have their own class and their own teacher: if a teacher is absent, the others continue, and one tablet is enough, taking turns.",
       "suivre": "Follow my request"
     }
+  },
+  "whatsapp": {
+    "etiquette": "Your WhatsApp number",
+    "pourquoi": "So the school can reach you quickly after you sign up.",
+    "accueilLigne": "Add your WhatsApp number",
+    "accueilPourquoi": "The school will be able to reach you quickly.",
+    "titreFeuille": "Your WhatsApp number",
+    "enregistrer": "Save my number",
+    "echec": "Your number was not saved. Please try again in a moment.",
+    "direction": "WhatsApp",
+    "ouvrir": "Open WhatsApp",
+    "illisible": "The number could not be read. Reload the page.",
+    "absent": "No WhatsApp number given."
   }
 }

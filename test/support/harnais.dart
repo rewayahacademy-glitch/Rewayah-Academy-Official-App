@@ -150,6 +150,9 @@ class FauxServiceDossier implements ServiceDossier {
   /// ONBOARDING-PRAXIS : le fuseau envoye a chaque creation (`p_timezone`).
   final List<String?> fuseauxEnvoyes = <String?>[];
 
+  /// WHATSAPP-FAMILLE : les numeros WhatsApp partis avec les demandes.
+  final List<String?> whatsappsEnvoyes = <String?>[];
+
   /// Vrai pour simuler le service de la demonstration.
   @override
   bool demonstration = false;
@@ -190,6 +193,7 @@ class FauxServiceDossier implements ServiceDossier {
     List<Map<String, Object?>>? apprenants,
     String? source,
     String? fuseau,
+    String? whatsapp,
   }) async {
     _peutEchouer();
     codesInvitation.add(codeInvitation);
@@ -197,6 +201,7 @@ class FauxServiceDossier implements ServiceDossier {
     apprenantsEnvoyes.add(apprenants);
     sourcesEnvoyees.add(source);
     fuseauxEnvoyes.add(fuseau);
+    whatsappsEnvoyes.add(whatsapp);
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));
   }
 

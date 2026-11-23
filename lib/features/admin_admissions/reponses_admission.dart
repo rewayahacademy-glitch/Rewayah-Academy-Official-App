@@ -24,6 +24,7 @@ import '../inscription/questionnaire/interludes_onboarding.dart'
 import '../inscription/questionnaire/onboarding_donnees.dart'
     show QuantiteMemorisee;
 import '../parcours_offres/libelles_parcours.dart';
+import 'ligne_whatsapp_direction.dart';
 
 /// Le mot d'un genre (`male` ou `female`) : « Garcon », « Fille » pour un
 /// enfant, « Homme », « Femme » pour le titulaire adulte. `null` si inconnu.
@@ -142,6 +143,9 @@ class ReponsesAdmission extends StatelessWidget {
             lignes: <Widget>[
               _ligne(r.nom, d.nom),
               _ligne(a.courriel, d.courriel),
+              LigneWhatsappDirection(
+                cible: (candidatureId: d.id, profilId: null),
+              ),
               if (ligneEtat case final Widget e)
                 Padding(
                   padding: const EdgeInsets.symmetric(

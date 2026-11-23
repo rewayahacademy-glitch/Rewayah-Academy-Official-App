@@ -37,6 +37,7 @@ import 'core/admin/port_remplacements_direction.dart';
 import 'core/admin/port_seances_reportees.dart';
 import 'core/admin/remplacements_direction_supabase.dart';
 import 'core/admin/seances_reportees_supabase.dart';
+import 'core/admin/whatsapp_direction.dart';
 import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/alertes/alertes_supabase.dart';
@@ -158,6 +159,7 @@ import 'core/controle/port_tirage_controle_supabase.dart';
 import 'core/dossier/port_acces_pieces_kyc.dart';
 import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
 import 'core/dossier/service_validation.dart';
+import 'core/dossier/whatsapp_famille.dart';
 import 'core/enseignant/absence_remplacement.dart';
 import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
@@ -398,6 +400,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction (RPC fiche_eleve_direction, migration 20261201010000).
   portFicheEleveDirectionProvider.overrideWithValue(
     FicheEleveDirectionSupabase(Supabase.instance.client),
+  ),
+  // WHATSAPP-FAMILLE (23/11/2026) : le numero WhatsApp d'une famille, lu par
+  // la direction (RPC whatsapp_famille_direction).
+  portWhatsappDirectionProvider.overrideWithValue(
+    WhatsappDirectionSupabase(Supabase.instance.client),
+  ),
+  portWhatsappFamilleProvider.overrideWithValue(
+    WhatsappFamilleSupabase(Supabase.instance.client),
   ),
   portSeancesReporteesProvider.overrideWithValue(
     SeancesReporteesSupabase(Supabase.instance.client),

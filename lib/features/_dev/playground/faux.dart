@@ -82,6 +82,7 @@ class FauxServiceDossier implements ServiceDossier {
     List<Map<String, Object?>>? apprenants,
     String? source,
     String? fuseau,
+    String? whatsapp,
   }) async {
     _peutEchouer();
     profilsCrees.add((role: role, prenom: prenom, nom: nom, genre: genre));

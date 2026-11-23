@@ -132,6 +132,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$presentationTuteur$ar presentationTuteur = _Traductions$presentationTuteur$ar._(_root);
 	@override late final _Traductions$reprisesAdmin$ar reprisesAdmin = _Traductions$reprisesAdmin$ar._(_root);
 	@override late final _Traductions$onboarding$ar onboarding = _Traductions$onboarding$ar._(_root);
+	@override late final _Traductions$whatsapp$ar whatsapp = _Traductions$whatsapp$ar._(_root);
 }
 
 // Path: notifications
@@ -2665,6 +2666,26 @@ class _Traductions$onboarding$ar extends Traductions$onboarding$fr {
 	@override late final _Traductions$onboarding$envoye$ar envoye = _Traductions$onboarding$envoye$ar._(_root);
 	@override late final _Traductions$onboarding$vous$ar vous = _Traductions$onboarding$vous$ar._(_root);
 	@override late final _Traductions$onboarding$fin$ar fin = _Traductions$onboarding$fin$ar._(_root);
+}
+
+// Path: whatsapp
+class _Traductions$whatsapp$ar extends Traductions$whatsapp$fr {
+	_Traductions$whatsapp$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get etiquette => 'رقم الواتساب الخاص بك';
+	@override String get pourquoi => 'حتى تتمكن الإدارة من التواصل معك بسرعة بعد تسجيلك.';
+	@override String get accueilLigne => 'أضف رقم الواتساب الخاص بك';
+	@override String get accueilPourquoi => 'ستتمكن الإدارة من التواصل معك بسرعة.';
+	@override String get titreFeuille => 'رقم الواتساب الخاص بك';
+	@override String get enregistrer => 'حفظ رقمي';
+	@override String get echec => 'لم يُحفظ رقمك. حاول مرة أخرى بعد قليل.';
+	@override String get direction => 'واتساب';
+	@override String get ouvrir => 'فتح واتساب';
+	@override String get illisible => 'تعذّرت قراءة الرقم. أعد تحميل الصفحة.';
+	@override String get absent => 'لم يُذكر رقم واتساب.';
 }
 
 // Path: notifications.cloche
@@ -46260,6 +46281,19 @@ extension on TraductionsAr {
 			'onboarding.fin.trois' => '3. لا يبقى إلا أيامك وأوقاتك. كل ما عدا ذلك مسجّل.',
 			'onboarding.fin.fratrie' => 'لكل طفل فصله الخاص ومعلّمه الخاص: إن غاب معلّم، يكمل الآخرون، ويكفي جهاز لوحي واحد بالتناوب.',
 			'onboarding.fin.suivre' => 'تابع طلبي',
+			'whatsapp.etiquette' => 'رقم الواتساب الخاص بك',
+			'whatsapp.pourquoi' => 'حتى تتمكن الإدارة من التواصل معك بسرعة بعد تسجيلك.',
+			'whatsapp.accueilLigne' => 'أضف رقم الواتساب الخاص بك',
+			'whatsapp.accueilPourquoi' => 'ستتمكن الإدارة من التواصل معك بسرعة.',
+			'whatsapp.titreFeuille' => 'رقم الواتساب الخاص بك',
+			'whatsapp.enregistrer' => 'حفظ رقمي',
+			'whatsapp.echec' => 'لم يُحفظ رقمك. حاول مرة أخرى بعد قليل.',
+			'whatsapp.direction' => 'واتساب',
+			'whatsapp.ouvrir' => 'فتح واتساب',
+			'whatsapp.illisible' => 'تعذّرت قراءة الرقم. أعد تحميل الصفحة.',
+			_ => null,
+		} ?? switch (path) {
+			'whatsapp.absent' => 'لم يُذكر رقم واتساب.',
 			_ => null,
 		};
 	}
