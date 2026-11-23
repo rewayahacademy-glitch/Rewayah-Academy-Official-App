@@ -60,6 +60,8 @@ declare
     -- service_role : hors de cette liste.
     -- PAIEMENT-UNIFIE P5 (23/11) : demander le paiement d'un eleve maintenant ; garde private.fac_direction().
     'demander_paiement_maintenant(uuid)',
+    -- PAIEMENT-FAMILLE-ACCES D7 (23/11) : la direction reconnait le reglement d'une dette de famille ; garde role admin et app_account_valid(), motif obligatoire, trace log_sensitive_access.
+    'regler_dette_famille(uuid,text)',
     'direction_praxis_emettre_cle(text,text,timestamp with time zone,uuid)',
     'direction_praxis_regler(boolean,boolean,integer)',
     -- PX-4 (17/11) : MODE ESSAI, la porte du directeur (administrateur valide, aal2) qui nomme les conversations d'essai

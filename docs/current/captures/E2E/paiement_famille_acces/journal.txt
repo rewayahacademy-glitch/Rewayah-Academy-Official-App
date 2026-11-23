@@ -1,0 +1,15 @@
+PAIEMENT-FAMILLE-ACCES (23/11/2026) - journal R3
+Lot SQL seul : aucun ecran. Rejeu sur Postgres 16 nu (stub_auth.sql, les 597 fichiers de supabase/migrations dont
+20261203100000_paiement_famille_acces.sql, puis les scenarios).
+
+- scenarios_paiement_famille_acces.sql : 48 controles verts (S6, S7, S8, S9, accompagner, enseignant, direction, droits).
+- Mutation : avec les anciens corps de acces_paye_seance_pour / acces_paye_groupe_pour / acces_paye_appelant
+  (20261104600000) remis avant le scenario, il echoue a « S6 : la porte juge G1 sur SA place ».
+- Migration rejouee deux fois de suite sur la meme base : sans erreur (idempotente).
+- Scenarios voisins rejoues et verts : lot_b_acces_paye, o1_observation, paiement_unifie, fn115b_remboursements (section 6
+  mise a jour pour D7), lot_a_tarifs_particuliers, salle_groupe, af_l2_01_jeton_remplacant_retrait,
+  com_lister_fils_econome, b13_admin_suspended, b18_security_definer, af_liste_blanche_volatiles (ligne ajoutee).
+- scenarios_cand_l2a2_gestes_direction.sql echoue sur l'empreinte de lister_candidatures : fonction non touchee ici
+  (redefinie par 20261130968000), a verifier sur main.
+- Non prouve : LiveKit reel (un second appareil du meme profil coupe le premier : comportement documente de LiveKit, pas rejoue) ;
+  production ; aucun ecran n'affiche la dette.
