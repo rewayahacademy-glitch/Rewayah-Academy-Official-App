@@ -128,20 +128,22 @@ export function nomLigne(l: LignePaiement, langue = 'fr'): string {
   }
 }
 
-/// Une couleur de fond acceptee pour le formulaire (« #RRGGBB »), sinon `null`.
-export function couleurFond(v: unknown): string | null {
-  return typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v) ? v.toLowerCase() : null
-}
-
 /// Les parametres de la session Checkout : une ligne par profil, la
 /// commande en metadonnees (relue par le webhook).
 ///
-/// [integre] (decision du directeur du 01/11/2026 : « le paiement doit se
-/// faire sur l'app, pas de sortir ailleurs ») : le formulaire de Stripe se
-/// monte dans la page de l'application (`ui_mode: embedded_page`). Une carte
-/// se paie sans quitter l'application (`redirect_on_completion:
-/// if_required`) ; seul un moyen qui exige une banque externe ramene ensuite
-/// a [retour]. Sans [integre], la page hebergee de Stripe (repli).
+/// PAIEMENT-UNIFIE P3 (directeur, 23/11/2026 : « une seule forme de formulaire
+/// Stripe ») : une seule forme, `ui_mode: elements`, celle que l'application
+/// monte depuis le 06/11 (LINK-CHOIX) : l'element de paiement de Stripe dans la
+/// page de l'application, la carte, Link et les portefeuilles en choix visibles,
+/// Link ne s'ouvrant que sur le bouton de la personne. Les deux autres formes
+/// (page hebergee, `embedded_page`) sont retirees. Ni `branding_settings` ni
+/// `redirect_on_completion` : Stripe les refuse en `elements` (la page confirme
+/// avec `redirect: 'if_required'`, l'apparence se regle dans la page).
+///
+/// P2 (preparation) : avec [taxe], Stripe Tax calcule la taxe du pays du payeur
+/// (`automatic_tax`), les prix restent hors taxes (`tax_behavior: exclusive`) et
+/// l'adresse est exigee. Le reglage `paiement.taxe_stripe_active` n'est allume
+/// qu'une fois les enregistrements fiscaux faits dans le tableau de bord.
 export function parametresSession(p: {
   commandeId: string
   reference: string
@@ -150,65 +152,27 @@ export function parametresSession(p: {
   retour: string
   libelle: (ligne: LignePaiement) => string
   expireA: number
-  integre?: boolean
-  /// LINK-CHOIX (directeur, 06/11/2026 : « donner le choix ») : `elements`
-  /// ouvre la session pour l'element de paiement de Stripe (Payment Element
-  /// et Express Checkout Element, `ui_mode: elements`), ou la carte, Link et
-  /// les portefeuilles restent des choix visibles et ou Link ne s'ouvre que
-  /// sur le bouton de la personne. La session integree (`embedded_page`)
-  /// n'a, cote serveur, que `wallet_options.link.display` (`auto` ou
-  /// `never`) : afficher Link, ou le cacher, jamais « le montrer sans qu'il
-  /// envoie de code ». Sans [forme], rien ne change : `embedded_page`.
-  /// Ne vaut qu'avec [integre].
-  forme?: FormeIntegree
-  /// PAY-UX : le fond de la page de l'application autour du formulaire ; le
-  /// formulaire integre prend le meme (`branding_settings.background_color`),
-  /// sans cadre d'une autre couleur. Le CSS de la page ne traverse pas
-  /// l'iframe de Stripe : seul ce reglage (ou celui du tableau de bord) agit.
-  fond?: string | null
+  taxe?: boolean
 }): Stripe.Checkout.SessionCreateParams {
-  const commun: Stripe.Checkout.SessionCreateParams = {
+  return {
     mode: 'payment',
     client_reference_id: p.commandeId,
     metadata: { commande: p.commandeId, reference: p.reference },
     payment_intent_data: { metadata: { commande: p.commandeId }, description: p.reference },
     expires_at: p.expireA,
+    ui_mode: 'elements',
+    return_url: p.retour,
     line_items: p.lignes.map((l) => ({
       quantity: 1,
       price_data: {
         currency: p.devise.toLowerCase(),
         unit_amount: l.mineur,
         product_data: { name: p.libelle(l) },
+        ...(p.taxe ? { tax_behavior: 'exclusive' as const } : {}),
       },
     })),
+    ...(p.taxe ? { automatic_tax: { enabled: true }, billing_address_collection: 'required' as const } : {}),
   }
-  if (p.integre && p.forme === 'elements') {
-    // Ni `branding_settings` (refuse par Stripe en `elements` : l'apparence
-    // se regle dans la page) ni `redirect_on_completion` (propre a
-    // `embedded_page` ; en `elements`, la page confirme avec
-    // `redirect: 'if_required'`).
-    return { ...commun, ui_mode: 'elements', return_url: p.retour }
-  }
-  if (p.integre) {
-    const fond = couleurFond(p.fond)
-    return {
-      ...commun,
-      ui_mode: 'embedded_page',
-      redirect_on_completion: 'if_required',
-      return_url: p.retour,
-      branding_settings: { display_name: 'Rewayah Academy', ...(fond ? { background_color: fond } : {}) },
-    }
-  }
-  return { ...commun, success_url: p.retour, cancel_url: p.retour }
-}
-
-/// LINK-CHOIX : les deux formes du formulaire monte dans l'application.
-export type FormeIntegree = 'embedded_page' | 'elements'
-
-/// La forme demandee par l'application, `embedded_page` par defaut : une
-/// application qui n'envoie rien garde le formulaire actuel.
-export function formeDemandee(v: unknown): FormeIntegree {
-  return v === 'elements' ? 'elements' : 'embedded_page'
 }
 
 /// Vrai pour une session dont l'application recoit un secret client.

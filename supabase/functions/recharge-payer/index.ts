@@ -4,8 +4,13 @@
 // Depuis le 01/11/2026 (directeur : « le paiement doit se faire sur l'app,
 // pas de sortir ailleurs »), le formulaire de Stripe se monte dans la page
 // de l'application : la reponse porte le secret client et la cle publiable.
-// Sans cle publiable du meme mode (`STRIPE_PUBLISHABLE_KEY`), repli sur la
-// page hebergee, comme avant.
+// PAIEMENT-UNIFIE P3 (23/11/2026) : une seule forme (`elements`) ; plus de page
+// hebergee ni d'`embedded_page`. Sans cle publiable du meme mode
+// (`STRIPE_PUBLISHABLE_KEY`), le paiement est indisponible (503), jamais
+// une autre forme. Seule une commande deja ouverte en page hebergee avant
+// ce lot rend encore son adresse (reprise, jamais deux paiements).
+// P2 : le reglage `paiement.taxe_stripe_active` (eteint par defaut) allume
+// Stripe Tax sur les sessions neuves.
 //
 // 1. Avec le jeton de l'appelant, `recharge_payer` cree (ou rend, pour la
 //    meme cle) la commande : seul le titulaire du foyer y arrive, et le
@@ -35,10 +40,8 @@
 import { clientAuthentifie, clientService, enTetesCors, json, refus } from '../_shared/clients.ts'
 import {
   clientStripe,
-  couleurFond,
   creerSession,
   fermerAncienneSession,
-  formeDemandee,
   formulaireIntegrePossible,
   type LignePaiement,
   MARQUE_INTEGRE,
@@ -74,6 +77,19 @@ export async function identiteVerifiee(
   return { id: sub, email: typeof email === 'string' && email.length > 0 ? email : null }
 }
 
+/// P2 : Stripe Tax est-il allume ? Reglage `paiement.taxe_stripe_active`
+/// (jsonb), faux par defaut ; une lecture impossible vaut faux (jamais une
+/// taxe calculee sans que la direction l'ait voulu).
+export async function taxeStripeActive(): Promise<boolean> {
+  try {
+    const { data } = await clientService().from('app_config').select('value')
+      .eq('key', 'paiement.taxe_stripe_active').maybeSingle()
+    return data?.value === true
+  } catch {
+    return false
+  }
+}
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /// La page de paiement expire au bout de 30 minutes (minimum de Stripe) : une
@@ -93,7 +109,6 @@ export async function gerer(requete: Request): Promise<Response> {
   if (!cleSecrete) return refus('paiement indisponible', 503)
   const clePublique = Deno.env.get('STRIPE_PUBLISHABLE_KEY')
   const integre = formulaireIntegrePossible(cleSecrete, clePublique)
-
   const utilisateur = clientAuthentifie(requete)
   if (!utilisateur) return refus('authentification requise', 401)
 
@@ -112,11 +127,10 @@ export async function gerer(requete: Request): Promise<Response> {
   const recapitulatif = typeof corps.recapitulatifId === 'string' ? corps.recapitulatifId : ''
   const cle = typeof corps.cle === 'string' ? corps.cle : ''
   const retourBase = typeof corps.retour === 'string' ? corps.retour : ''
-  // PAY-UX : le fond de la page autour du formulaire, et la langue des lignes.
-  const fond = couleurFond(corps.fond)
+  // PAY-UX : la langue des lignes de paiement.
   const langue = corps.langue === 'ar' ? 'ar' : 'fr'
-  // LINK-CHOIX : la forme du formulaire ; sans champ, l'actuelle.
-  const forme = formeDemandee(corps.forme)
+  // P3 : une seule forme de formulaire ; sans cle publiable du meme mode, aucune commande n'est ouverte.
+  if (!integre) return refus('paiement indisponible', 503)
   if (!UUID.test(recapitulatif) || !UUID.test(cle)) return refus('recapitulatif ou cle invalide')
   if (!retourBase.includes(MARQUE_COMMANDE) || !retourAutorise(retourBase, Deno.env.get('APP_ORIGINES'))) {
     return refus('adresse de retour refusee')
@@ -162,8 +176,14 @@ export async function gerer(requete: Request): Promise<Response> {
     return json({ commandeId, url: null })
   }
 
+  // P3 : une seule forme, qui exige la cle publiable du meme mode.
+  if (!integre || !clePublique) return refus('paiement indisponible', 503)
+
   const qui = await identiteVerifiee(utilisateur.auth, requete.headers.get('Authorization'))
   if (!qui) return refus('authentification requise', 401)
+
+  // P2 : Stripe Tax, seulement quand le reglage est allume (faux par defaut).
+  const taxe = await taxeStripeActive()
 
   const total = commande.total as { devise: string }
   const lignes = (commande.lignesPaiement as LignePaiement[] | null) ?? []
@@ -183,21 +203,15 @@ export async function gerer(requete: Request): Promise<Response> {
         retour,
         libelle: (ligne) => nomLigne(ligne, langue),
         expireA: Math.floor(Date.now() / 1000) + DUREE_PAGE_S,
-        integre,
-        forme,
-        fond,
+        taxe,
       }),
-      // Une cle par forme : une session hebergee deja ouverte avant ce lot
-      // ne se rejoue jamais en integree avec d'autres parametres. Une
-      // nouvelle session apres l'expiration de [ancienne] a sa propre cle,
-      // stable : une reprise apres coupure rend la meme nouvelle session.
+      // Une seule cle par commande (P3) ; une nouvelle session apres
+      // l'expiration de [ancienne] a sa propre cle, stable : une reprise
+      // apres coupure rend la meme nouvelle session. La taxe est dans la cle :
+      // allumer Stripe Tax ne rejoue jamais une session creee sans elle.
       ancienne !== null
-        ? `recharge-${commandeId}-${forme === 'elements' ? 'elements' : 'integre'}-apres-${ancienne}`
-        : !integre
-        ? `recharge-${commandeId}`
-        : forme === 'elements'
-        ? `recharge-${commandeId}-elements-v1`
-        : `recharge-${commandeId}-integre-v2`,
+        ? `recharge-${commandeId}-elements${taxe ? '-taxe' : ''}-apres-${ancienne}`
+        : `recharge-${commandeId}-elements${taxe ? '-taxe' : ''}-v1`,
     )
   } catch (e) {
     console.error('session stripe refusee', { commandeId, erreur: (e as Error).message })
@@ -225,17 +239,15 @@ export async function gerer(requete: Request): Promise<Response> {
     return refus('paiement indisponible', 502)
   }
   if (session.secretClient) {
-    // LINK-CHOIX : la forme rendue, pour que la page monte le bon formulaire.
-    // En `elements`, Stripe exige une adresse a la confirmation : celle du
-    // compte, que la page ne passe qu'au moment de payer (jamais a
-    // l'ouverture, pour que Link ne reconnaisse personne avant un choix).
+    // Stripe exige une adresse a la confirmation : celle du compte, que la
+    // page ne passe qu'au moment de payer (jamais a l'ouverture, pour que
+    // Link ne reconnaisse personne avant un choix).
     return json({
       commandeId,
       url: null,
       secretClient: session.secretClient,
       clePublique,
-      forme,
-      ...(forme === 'elements' && qui.email ? { email: qui.email } : {}),
+      ...(qui.email ? { email: qui.email } : {}),
     })
   }
   return json({ commandeId, url: session.url })

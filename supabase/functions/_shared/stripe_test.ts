@@ -13,9 +13,7 @@ import {
   Stripe,
   verifierEvenement,
   adresseBanc,
-  couleurFond,
   fermerAncienneSession,
-  formeDemandee,
   nomLigne,
   sessionIntegreeParams,
   type SessionsCheckout,
@@ -94,7 +92,7 @@ Deno.test('session : une ligne par profil, montants en unites mineures', () => {
   assertEquals(p.line_items?.[1].price_data?.currency, 'usd')
   assertEquals(p.line_items?.[1].price_data?.product_data?.name, 'Rewayah Academy · Yasmine')
   assertEquals(p.metadata?.commande, 'c1')
-  assertEquals(p.success_url, 'https://app.test/#/r?commande=c1')
+  assertEquals(p.return_url, 'https://app.test/#/r?commande=c1')
 })
 
 Deno.test('retour : seulement vers une origine autorisee', () => {
@@ -102,26 +100,6 @@ Deno.test('retour : seulement vers une origine autorisee', () => {
   assertEquals(retourAutorise('https://pirate.test/#/x', 'https://app.test'), false)
   assertEquals(retourAutorise('pas une adresse', 'https://app.test'), false)
   assertEquals(retourAutorise('https://app.test/', undefined), false)
-})
-
-Deno.test('formulaire integre : embedded_page, retour seulement si un moyen l exige, aucune page hebergee', () => {
-  const p = parametresSession({
-    commandeId: 'c1',
-    reference: 'RWY-ABCD1234',
-    devise: 'USD',
-    lignes: [{ prenom: 'Bilal', mineur: 5000 }],
-    retour: 'https://app.test/#/r?commande=c1',
-    libelle: (l) => `Rewayah Academy · ${l.prenom}`,
-    expireA: 1,
-    integre: true,
-  })
-  assertEquals(p.ui_mode, 'embedded_page')
-  assertEquals(p.redirect_on_completion, 'if_required')
-  assertEquals(p.return_url, 'https://app.test/#/r?commande=c1')
-  assertEquals(p.success_url, undefined)
-  assertEquals(p.cancel_url, undefined)
-  assertEquals(p.metadata?.commande, 'c1')
-  assertEquals(p.line_items?.[0].price_data?.unit_amount, 5000)
 })
 
 Deno.test('formulaire integre possible : cle publiable du meme mode que la cle secrete', () => {
@@ -220,26 +198,6 @@ Deno.test('PAY-UX : le nom d une ligne dit ce qu on paie, jamais un prenom', () 
   assertEquals(nomLigne({ prenom: 'H', mineur: 1, formule: 'mois', mois: 'n importe' }), 'Mensualité')
 })
 
-Deno.test('PAY-UX : le formulaire integre prend le fond de la page et le nom de l academie', () => {
-  const p = parametresSession({
-    commandeId: 'c1', reference: 'RWY-ABCD1234', devise: 'USD',
-    lignes: [{ prenom: 'H', mineur: 5500, formule: 'mois', mois: '2026-11-01' }],
-    retour: 'https://app.test/#/r?commande=c1',
-    libelle: (l) => nomLigne(l), expireA: 1, integre: true, fond: '#F7F4FB',
-  })
-  assertEquals(p.branding_settings?.background_color, '#f7f4fb')
-  assertEquals(p.branding_settings?.display_name, 'Rewayah Academy')
-  assertEquals(p.line_items?.[0].price_data?.product_data?.name, 'Mensualité de novembre 2026')
-  const sansFond = parametresSession({
-    commandeId: 'c1', reference: 'R', devise: 'USD', lignes: [{ prenom: 'H', mineur: 1 }],
-    retour: 'https://app.test/', libelle: (l) => nomLigne(l), expireA: 1, integre: true, fond: 'red;}',
-  })
-  assertEquals(sansFond.branding_settings?.background_color, undefined)
-  assertEquals(couleurFond('#123abc'), '#123abc')
-  assertEquals(couleurFond('url(x)'), null)
-  assertEquals(couleurFond(12), null)
-})
-
 function fauxSessions(statut: string, expireRefuse = false) {
   const appels: string[] = []
   return {
@@ -278,24 +236,23 @@ Deno.test('PAY-UX : expiration refusee par Stripe, l erreur remonte (rien n est 
   assertEquals(f.appels, ['retrieve:cs_a', 'expire:cs_a'])
 })
 
-Deno.test('LINK-CHOIX : forme elements, session pour l element de paiement, aucun reglage refuse par Stripe', () => {
+
+Deno.test('P3 : une seule forme, elements ; aucun reglage refuse par Stripe, aucune page hebergee', () => {
   const p = parametresSession({
     commandeId: 'c1',
     reference: 'RWY-ABCD1234',
     devise: 'USD',
-    lignes: [{ prenom: 'Bilal', mineur: 5000 }],
+    lignes: [{ prenom: 'Bilal', mineur: 5000, formule: 'mois', mois: '2026-11-01' }],
     retour: 'https://app.test/#/r?commande=c1',
-    libelle: (l) => `Rewayah Academy · ${l.prenom}`,
+    libelle: (l) => nomLigne(l),
     expireA: 1,
-    integre: true,
-    forme: 'elements',
-    fond: '#FAF7F2',
   })
   assertEquals(p.ui_mode, 'elements')
   assertEquals(p.return_url, 'https://app.test/#/r?commande=c1')
-  // Refuse par Stripe en `elements` ; propre a `embedded_page`.
+  // Refuse par Stripe en `elements`.
   assertEquals(p.branding_settings, undefined)
   assertEquals(p.redirect_on_completion, undefined)
+  // Plus de page hebergee.
   assertEquals(p.success_url, undefined)
   assertEquals(p.cancel_url, undefined)
   // Le choix reste entier : aucune liste fermee de moyens, Link non cache.
@@ -303,34 +260,23 @@ Deno.test('LINK-CHOIX : forme elements, session pour l element de paiement, aucu
   assertEquals(p.wallet_options, undefined)
   assertEquals(p.metadata?.commande, 'c1')
   assertEquals(p.line_items?.[0].price_data?.unit_amount, 5000)
+  assertEquals(p.line_items?.[0].price_data?.product_data?.name, 'Mensualité de novembre 2026')
   assertEquals(sessionIntegreeParams(p), true)
 })
 
-Deno.test('LINK-CHOIX : sans forme, le formulaire actuel ne change pas', () => {
+Deno.test('P2 : sans reglage, aucune taxe ; avec le reglage, Stripe Tax et des prix hors taxes', () => {
   const base = {
-    commandeId: 'c1',
-    reference: 'RWY-ABCD1234',
-    devise: 'USD',
-    lignes: [{ prenom: 'Bilal', mineur: 5000 }],
-    retour: 'https://app.test/#/r?commande=c1',
-    libelle: (l: { prenom: string }) => `Rewayah Academy · ${l.prenom}`,
-    expireA: 1,
+    commandeId: 'c1', reference: 'R', devise: 'USD', lignes: [{ prenom: 'H', mineur: 5500 }],
+    retour: 'https://app.test/', libelle: (l: { prenom: string }) => l.prenom, expireA: 1,
   }
-  const integre = parametresSession({ ...base, integre: true })
-  assertEquals(integre.ui_mode, 'embedded_page')
-  assertEquals(integre.redirect_on_completion, 'if_required')
-  assertEquals(sessionIntegreeParams(integre), true)
-  // `elements` sans formulaire integre possible : la page hebergee, comme avant.
-  const heberge = parametresSession({ ...base, forme: 'elements' })
-  assertEquals(heberge.ui_mode, undefined)
-  assertEquals(heberge.success_url, 'https://app.test/#/r?commande=c1')
-  assertEquals(sessionIntegreeParams(heberge), false)
-})
-
-Deno.test('LINK-CHOIX : la forme demandee, embedded_page par defaut', () => {
-  assertEquals(formeDemandee('elements'), 'elements')
-  assertEquals(formeDemandee('embedded_page'), 'embedded_page')
-  assertEquals(formeDemandee(undefined), 'embedded_page')
-  assertEquals(formeDemandee('hosted_page'), 'embedded_page')
-  assertEquals(formeDemandee(42), 'embedded_page')
+  const sans = parametresSession(base)
+  assertEquals(sans.automatic_tax, undefined)
+  assertEquals(sans.billing_address_collection, undefined)
+  assertEquals(sans.line_items?.[0].price_data?.tax_behavior, undefined)
+  const avec = parametresSession({ ...base, taxe: true })
+  assertEquals(avec.automatic_tax, { enabled: true })
+  assertEquals(avec.billing_address_collection, 'required')
+  assertEquals(avec.line_items?.[0].price_data?.tax_behavior, 'exclusive')
+  // Le prix reste celui du serveur : la taxe s'ajoute, elle ne le change pas.
+  assertEquals(avec.line_items?.[0].price_data?.unit_amount, 5500)
 })
