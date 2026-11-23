@@ -1458,6 +1458,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       ouvrirApercuCompte(
         context,
         nom: c.libelle,
+        profilId: c.profilId,
         informations: <InformationCompte>[
           for (final ColonneDonnees<CompteAdmin> colonne in colonnes)
             if (colonne.role != RoleColonne.identifiante)

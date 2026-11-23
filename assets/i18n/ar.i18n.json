@@ -8656,6 +8656,7 @@
       "erreur": "تعذّرت قراءة الحسابات. أعد المحاولة بعد لحظة.",
       "colonnePersonne": "الشخص",
       "colonneIdentifiant": "المعرّف",
+      "colonneCourriel": "البريد الإلكتروني",
       "colonneRole": "الدور",
       "colonneEtat": "الحالة",
       "colonnePiece": "وثيقة الهوية",

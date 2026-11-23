@@ -11107,5 +11107,6 @@
   "attente.demandeRefuseeDetail": "directeur, 22/11/2026 : « l'infrastructure complète pour accueillir 100 familles » ; correctifs de docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md (point 3 et 7)",
   "attente.precisionsReponse": "directeur, 22/11/2026 : « l'infrastructure complète pour accueillir 100 familles » ; correctifs de docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md (point 3)",
   "admin.groupes.c1.fratrieMemeClasse": "directeur, 22/11/2026 : « l'infrastructure complète pour accueillir 100 familles » ; correctifs de docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md (point 8)",
-  "admin.regroupements.fratrieMotif": "directeur, 22/11/2026 : « l'infrastructure complète pour accueillir 100 familles » ; correctifs de docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md (point 8)"
+  "admin.regroupements.fratrieMotif": "directeur, 22/11/2026 : « l'infrastructure complète pour accueillir 100 familles » ; correctifs de docs/current/PARCOURS-FAMILLE/AUDIT-ANGLES-MORTS-2026-11-22.md (point 8)",
+  "admin.comptes.colonneCourriel": "directeur, 22/11/2026 : « l'e-mail qui s'affichait ne s'affiche plus » (aperçu d'un compte, page Personnes) ; mot « Courriel » du lexique."
 }

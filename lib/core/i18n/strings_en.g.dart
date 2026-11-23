@@ -7024,6 +7024,7 @@ class _Traductions$admin$comptes$en extends Traductions$admin$comptes$fr {
 	@override String get erreur => 'The accounts could not be read. Try again in a moment.';
 	@override String get colonnePersonne => 'Person';
 	@override String get colonneIdentifiant => 'Identifier';
+	@override String get colonneCourriel => 'Email';
 	@override String get colonneRole => 'Role';
 	@override String get colonneEtat => 'Status';
 	@override String get colonnePiece => 'ID document';
@@ -35861,6 +35862,7 @@ extension on TraductionsEn {
 			'admin.comptes.erreur' => 'The accounts could not be read. Try again in a moment.',
 			'admin.comptes.colonnePersonne' => 'Person',
 			'admin.comptes.colonneIdentifiant' => 'Identifier',
+			'admin.comptes.colonneCourriel' => 'Email',
 			'admin.comptes.colonneRole' => 'Role',
 			'admin.comptes.colonneEtat' => 'Status',
 			'admin.comptes.colonnePiece' => 'ID document',
@@ -36360,9 +36362,9 @@ extension on TraductionsEn {
 			'admin.finance.vue.alerte.aRegulariserMontant' => ({required Object qui, required Object montant}) => '${qui}: ${montant} is missing to fund the current period.',
 			'admin.finance.vue.alerte.aRegulariserSansMontant' => ({required Object qui}) => '${qui}: the current period is not funded.',
 			'admin.finance.vue.alerte.confirmation' => 'Payment awaiting confirmation',
-			'admin.finance.vue.alerte.confirmationMontant' => ({required Object qui, required Object montant}) => '${qui}: a payment of ${montant} awaits confirmation.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.vue.alerte.confirmationMontant' => ({required Object qui, required Object montant}) => '${qui}: a payment of ${montant} awaits confirmation.',
 			'admin.finance.vue.alerte.confirmationSansMontant' => ({required Object qui}) => '${qui}: a payment awaits confirmation.',
 			'admin.finance.vue.alerte.sousMinimum' => 'Class below the opening minimum',
 			'admin.finance.vue.alerte.sousMinimumDetail' => ({required Object qui}) => '${qui}: fewer students registered than the opening minimum.',
@@ -36874,9 +36876,9 @@ extension on TraductionsEn {
 			'admin.incidents.sousTitre' => 'Sessions that went into technical incident, teacher absent or student absent in the last 24 hours: what the "Incidents (24 h)" tile counts.',
 			'admin.incidents.liste' => 'Sessions in incident',
 			'admin.incidents.natureTechnique' => 'Technical incident',
-			'admin.incidents.natureEnseignantAbsent' => 'Teacher absent',
 			_ => null,
 		} ?? switch (path) {
+			'admin.incidents.natureEnseignantAbsent' => 'Teacher absent',
 			'admin.incidents.natureEleveAbsent' => 'Student absent',
 			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'admin.incidents.vide' => 'No incident in 24 hours',
@@ -37388,9 +37390,9 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.simple.lienALaPlace' => 'Add a link instead',
 			'admin.bibliotheque.import.simple.fichierALaPlace' => 'Upload a file instead',
 			'admin.bibliotheque.import.simple.nom' => 'Name',
-			'admin.bibliotheque.import.simple.nomVide' => 'Give the document a name.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.bibliotheque.import.simple.nomVide' => 'Give the document a name.',
 			'admin.bibliotheque.import.simple.description' => 'Description (optional)',
 			'admin.bibliotheque.import.simple.descriptionLien' => 'An external link needs a description: say in one sentence where it leads.',
 			'admin.bibliotheque.import.simple.acces.titre' => 'File access',
@@ -37902,9 +37904,9 @@ extension on TraductionsEn {
 			'compte.donnees.suppression.horsLigne' => 'Your request was not sent. Make it again as soon as the network is back.',
 			'compte.donnees.suppression.refuse' => 'This account cannot request its deletion here.',
 			'compte.titre' => 'My account',
-			'compte.intro' => 'Your information, your preferences and your access, in one place.',
 			_ => null,
 		} ?? switch (path) {
+			'compte.intro' => 'Your information, your preferences and your access, in one place.',
 			'compte.informations' => 'Information',
 			'compte.profil' => 'Profile',
 			'compte.profilDetail' => 'See and manage your information',
@@ -38416,9 +38418,9 @@ extension on TraductionsEn {
 			'eleve.accueil.prochainAujourdhui' => 'Your next class is later today.',
 			'eleve.accueil.prochainDemain' => 'Your next class is tomorrow.',
 			'eleve.accueil.annulee' => 'This class will not take place',
-			'eleve.accueil.horsLigne' => 'Entry pending',
 			_ => null,
 		} ?? switch (path) {
+			'eleve.accueil.horsLigne' => 'Entry pending',
 			'eleve.accueil.horsLigneDetail' => 'You will be able to enter as soon as the network is back.',
 			'eleve.accueil.pausePriere' => 'Prayer break',
 			'eleve.accueil.pausePriereDetail' => ({required Object heure}) => 'At ${heure}',
@@ -38930,9 +38932,9 @@ extension on TraductionsEn {
 			'enseignant.journee.heure' => 'Time',
 			'enseignant.journee.eleves' => 'Students',
 			'enseignant.journee.classe' => 'Class',
-			'enseignant.journee.preparerSeance' => 'Prepare the session',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.preparerSeance' => 'Prepare the session',
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Prepare the session ${classe}',
 			'enseignant.journee.derniereSeance' => 'Last session',
 			'enseignant.journee.rejoindreSalle' => 'Join the room',
@@ -39444,9 +39446,9 @@ extension on TraductionsEn {
 			'controleur.historique.cleDuree' => 'Time observed',
 			'controleur.historique.cleElevesPresents' => 'Present',
 			'controleur.historique.cleReponse' => 'Reply',
-			'controleur.historique.sansComplement' => 'No addendum.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.sansComplement' => 'No addendum.',
 			'controleur.historique.faitsIndisponibles' => 'The automatic log of this visit (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. It will appear here as soon as it is received. The rest of the report remains reliable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Reason: ${motif}',
 			'controleur.historique.ajouterComplement' => 'Add an addendum',
@@ -39958,9 +39960,9 @@ extension on TraductionsEn {
 			'tc.observation.entree.retourClasse' => 'Back to the class',
 			'tc.observation.explication.titre' => 'A glimpse of their learning',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visit of ${duree}',
-			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
 			'tc.observation.explication.regleDetail' => 'Per session and per parent, even if several of your children are in the class.',
 			'tc.observation.explication.ecoute' => 'Listen to the teacher and the students',
 			'tc.observation.explication.ecouteDetail' => 'You hear the teacher and the students who speak, including your child.',
@@ -40472,9 +40474,9 @@ extension on TraductionsEn {
 			'adulte.reprise.deposerConsequence' => 'The household account holder will be informed and can refuse it. The administration will then review the request and decide.',
 			'adulte.reprise.horsLigne' => 'Nothing is sent. You can submit the request yourself when the connection is back.',
 			'adulte.reprise.depotEchecTitre' => 'The request was not confirmed.',
-			'adulte.reprise.echecPhrase' => 'Check before trying again.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.echecPhrase' => 'Check before trying again.',
 			'adulte.reprise.motif' => 'Reason',
 			'adulte.reprise.motifDeces' => 'Reported death of the account holder',
 			'adulte.reprise.deposeeLe' => 'Submitted on',
@@ -40986,9 +40988,9 @@ extension on TraductionsEn {
 			'com.socle.composants.composer.reessayer' => 'Try again',
 			'com.socle.composants.composer.auteurSoi' => 'You',
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'New message from ${auteur}: ${texte}',
-			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Draft restored',
 			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
 			'com.socle.composants.composer.aucunMessageTitre' => 'No message yet',
@@ -41500,9 +41502,9 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'No mention or reply pending.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'No decision pending.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'No upcoming deadline.',
-			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
 			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'In ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Due on ${date}',
@@ -42014,9 +42016,9 @@ extension on TraductionsEn {
 			'comptable.commun.activiteReference' => ({required Object reference}) => 'Ref. ${reference}',
 			'comptable.commun.relancePreparee' => 'Reminder prepared (demo)',
 			'comptable.commun.prestataireDemonstration' => ({required Object nom}) => '${nom} (demo)',
-			'comptable.commun.date' => ({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.date' => ({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}',
 			'comptable.commun.aucuneValeur' => 'Not provided',
 			'comptable.coffres.fondsClientsEngages' => 'Client funds committed',
 			'comptable.coffres.paieADecaisser' => 'Pay to disburse',
@@ -42528,9 +42530,9 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspend ${nom}\'s payments?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'No payment will go to this beneficiary until you resume them. Their details do not change. Choose the reason: it will be written in the profile log.',
 			'comptable.beneficiaires.profil.motifVerifier' => 'Details to verify',
-			'comptable.beneficiaires.profil.motifVerifierDetail' => 'The method seems incorrect or could not be confirmed.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.motifVerifierDetail' => 'The method seems incorrect or could not be confirmed.',
 			'comptable.beneficiaires.profil.motifAnomalie' => 'Anomaly reported',
 			'comptable.beneficiaires.profil.motifAnomalieDetail' => 'A recent payment failed or a discrepancy was reported.',
 			'comptable.beneficiaires.profil.motifDemande' => 'Beneficiary\'s request',
@@ -43042,9 +43044,9 @@ extension on TraductionsEn {
 			'recherche.domaines.classes' => 'Classes',
 			'recherche.domaines.supports' => 'Documents',
 			'recherche.domaines.personnes' => 'People',
-			'recherche.domaines.enseignants' => 'Teachers',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.domaines.enseignants' => 'Teachers',
 			'recherche.domaines.pedagogie' => 'Students',
 			'recherche.domaines.controle' => 'Review',
 			'recherche.domaines.finances' => 'Finances',
@@ -43556,9 +43558,9 @@ extension on TraductionsEn {
 			'admissions.reponses.nom' => 'Name',
 			'admissions.reponses.apprenantsTitre' => ({required Object n}) => 'Learners (${n})',
 			'admissions.reponses.aucunApprenant' => 'No learner is attached to this request.',
-			'admissions.reponses.titulaireRole' => 'Request holder',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.reponses.titulaireRole' => 'Request holder',
 			'admissions.reponses.enfantRole' => 'Child of the family',
 			'admissions.reponses.age' => 'Age',
 			'admissions.reponses.ageValeur' => ({required Object age}) => '${age}',
@@ -44070,9 +44072,9 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.confirmation.cleReutilisee' => 'This request cannot be replayed as it is. Run the analysis again to start cleanly.',
 			'candidatsFlux.importFormulaires.confirmation.refus' => 'The server refuses this import. Check that you are signed in with two-step verification, then try again.',
 			'candidatsFlux.importFormulaires.confirmation.titreNonConfirme' => 'Import not confirmed',
-			'candidatsFlux.importFormulaires.confirmation.titreARefaire' => 'The analysis must be redone',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.confirmation.titreARefaire' => 'The analysis must be redone',
 			'candidatsFlux.importFormulaires.confirmation.relancer' => 'Run the analysis again',
 			'candidatsFlux.importFormulaires.rapport.titre' => 'Import finished',
 			'candidatsFlux.importFormulaires.rapport.question' => 'Here is what the import did.',
@@ -44584,9 +44586,9 @@ extension on TraductionsEn {
 			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'The academy\'s closure is removed, but the session of ${quand} will not take place.',
 			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed, but some sessions will not take place: ${n}, including the one of ${quand}.',
 			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'The academy\'s closure is removed. Sessions restored: ${retablies}. Sessions that will not take place: ${abandonnees}. Open the class to see them.',
-			'calendrier.dates.concernees.titre' => 'Sessions concerned',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.dates.concernees.titre' => 'Sessions concerned',
 			'calendrier.dates.concernees.heureMecque' => 'Days and times are Makkah time.',
 			'calendrier.dates.concernees.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.concernees.deCote' => 'set aside',

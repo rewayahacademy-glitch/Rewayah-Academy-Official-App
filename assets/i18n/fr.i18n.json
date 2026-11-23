@@ -7171,6 +7171,7 @@
       "erreur": "Les comptes n'ont pas pu être lus. Réessayez dans un instant.",
       "colonnePersonne": "Personne",
       "colonneIdentifiant": "Identifiant",
+      "colonneCourriel": "Courriel",
       "colonneRole": "Rôle",
       "colonneEtat": "État",
       "colonnePiece": "Pièce d'identité",

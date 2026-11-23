@@ -7144,6 +7144,7 @@ class _Traductions$admin$comptes$ar extends Traductions$admin$comptes$fr {
 	@override String get erreur => 'تعذّرت قراءة الحسابات. أعد المحاولة بعد لحظة.';
 	@override String get colonnePersonne => 'الشخص';
 	@override String get colonneIdentifiant => 'المعرّف';
+	@override String get colonneCourriel => 'البريد الإلكتروني';
 	@override String get colonneRole => 'الدور';
 	@override String get colonneEtat => 'الحالة';
 	@override String get colonnePiece => 'وثيقة الهوية';
@@ -37980,6 +37981,7 @@ extension on TraductionsAr {
 			'admin.comptes.erreur' => 'تعذّرت قراءة الحسابات. أعد المحاولة بعد لحظة.',
 			'admin.comptes.colonnePersonne' => 'الشخص',
 			'admin.comptes.colonneIdentifiant' => 'المعرّف',
+			'admin.comptes.colonneCourriel' => 'البريد الإلكتروني',
 			'admin.comptes.colonneRole' => 'الدور',
 			'admin.comptes.colonneEtat' => 'الحالة',
 			'admin.comptes.colonnePiece' => 'وثيقة الهوية',
@@ -38408,9 +38410,9 @@ extension on TraductionsAr {
 			'admin.praxis.objectifs.clos' => 'أهداف أُغلقت مؤخرًا',
 			'admin.praxis.objectifs.cible' => ({required Object n}) => 'العدد المستهدف: ⁨${n}⁩',
 			'admin.praxis.objectifs.pourLe' => ({required Object date}) => 'ليوم ⁨${date}⁩',
-			'admin.praxis.objectifs.semaineDu' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'admin.praxis.objectifs.semaineDu' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			'admin.praxis.objectifs.echu' => 'انقضت المدة',
 			'admin.praxis.objectifs.ouvert' => 'مفتوح',
 			'admin.praxis.objectifs.atteint' => 'تحقّق',
@@ -38922,9 +38924,9 @@ extension on TraductionsAr {
 			'admin.tirage.colonneControleur' => 'المراقب',
 			'admin.tirage.colonneCritere' => 'القرعة',
 			'admin.tirage.colonneStatut' => 'المهمة',
-			'admin.tirage.statutAttribuee' => 'موزعة',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.statutAttribuee' => 'موزعة',
 			'admin.tirage.statutEnCours' => 'مراقبة جارية',
 			'admin.tirage.statutControlee' => 'روقبت',
 			'admin.tirage.statutNonControlee' => 'لم تُراقَب',
@@ -39436,9 +39438,9 @@ extension on TraductionsAr {
 			'comptable.statuts.paiement.calcule' => 'محسوب',
 			'comptable.statuts.paiement.aVerifier' => 'للتحقق',
 			'comptable.statuts.paiement.infosManquantes' => 'معلومات الدفع ناقصة',
-			'comptable.statuts.paiement.verificationRequise' => 'يلزم التحقق من الدفع',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.paiement.verificationRequise' => 'يلزم التحقق من الدفع',
 			'comptable.statuts.paiement.pretAPayer' => 'جاهز للدفع',
 			'comptable.statuts.paiement.validationRequise' => 'تلزم مصادقة إضافية',
 			'comptable.statuts.paiement.soumis' => 'مُرسَل',
@@ -39950,9 +39952,9 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.profilTitre' => 'ملف الدفع',
 			'comptable.beneficiaires.recevoir.rubrique' => 'المدفوعات',
 			'comptable.beneficiaires.recevoir.ligneDetail' => 'وسائل الدفع الخاصة بك، تديرها أنت وحدك.',
-			'comptable.beneficiaires.recevoir.noticeDetail' => 'أضف وسيلة دفع لتتمكن الأكاديمية من صرف دفعتك القادمة.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.noticeDetail' => 'أضف وسيلة دفع لتتمكن الأكاديمية من صرف دفعتك القادمة.',
 			'comptable.beneficiaires.recevoir.phraseAucunMoyen' => 'ليست لديك أي وسيلة دفع بعد. أضف واحدة لاستلام دفعاتك.',
 			'comptable.beneficiaires.recevoir.phraseIncomplet' => 'وسيلة الدفع الخاصة بك غير مكتملة. أكملها لاستلام دفعتك القادمة.',
 			'comptable.beneficiaires.recevoir.phraseEnVerification' => 'وسيلتك الجديدة قيد التحقق. تُحدَّث حالتها هنا.',
@@ -40464,9 +40466,9 @@ extension on TraductionsAr {
 			'ficheEleve.informations.photoPresente' => 'الصورة محفوظة',
 			'ficheEleve.informations.choisir' => 'اختيار صورة',
 			'ficheEleve.informations.changer' => 'تغيير الصورة',
-			'ficheEleve.informations.apercuTitre' => 'معاينة',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.informations.apercuTitre' => 'معاينة',
 			'ficheEleve.informations.apercuPhrase' => 'تحقّق من الصورة قبل إرسالها.',
 			'ficheEleve.informations.apercuIllisible' => 'لا تظهر المعاينة على هذا الجهاز. يمكن مع ذلك إرسال الصورة.',
 			'ficheEleve.informations.envoyer' => 'إرسال هذه الصورة',
@@ -40978,9 +40980,9 @@ extension on TraductionsAr {
 			'priere.regles.valeurs' => 'قيم رقمية',
 			'priere.regles.valeursDetail' => 'المدد والهوامش وإعادة الحساب الليلي: تطبق رواية هذه القيم، لا تغيروها إلا لاستثناء.',
 			'priere.regles.methodeSelonPays' => 'الطريقة بحسب البلد',
-			'priere.regles.methodeSelonPaysDetail' => 'عند التفعيل تُطبَّق الطريقة المعتادة في بلد المكان (السعودية، قطر، الكويت، الإمارات، مصر، باكستان، سنغافورة، تركيا، إيران)، وفي غيرها طريقة الأكاديمية. يؤكدها المدير.',
 			_ => null,
 		} ?? switch (path) {
+			'priere.regles.methodeSelonPaysDetail' => 'عند التفعيل تُطبَّق الطريقة المعتادة في بلد المكان (السعودية، قطر، الكويت، الإمارات، مصر، باكستان، سنغافورة، تركيا، إيران)، وفي غيرها طريقة الأكاديمية. يؤكدها المدير.',
 			'priere.regles.lieux' => 'أماكن صلاة المعلمين',
 			'priere.regles.lieuxDetail' => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.',
 			'priere.regles.unite' => ({required Object n}) => '⁨${n}⁩ د',
@@ -41492,9 +41494,9 @@ extension on TraductionsAr {
 			'foyer.monProfil.indisponibleTitre' => 'غير ممكن بعد',
 			'foyer.monProfil.indisponiblePhrase' => 'متابعة الدروس بنفسك بملفك الخاص كطالب ستُقترح قريبًا. يبقى حسابك كوليّ أمر كما هو.',
 			'foyer.monProfil.intro' => 'بملفك كطالب الخاص يمكنك أن تتابع الدروس بنفسك، في فصل للكبار.',
-			'foyer.monProfil.consequence' => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
 			_ => null,
 		} ?? switch (path) {
+			'foyer.monProfil.consequence' => 'لا يتغير حسابك كولي أمر: تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
 			'foyer.monProfil.creer' => 'إنشاء ملفي كطالب',
 			'foyer.monProfil.reessayer' => 'إعادة محاولة إنشاء ملفي كطالب',
 			'foyer.monProfil.nonConfirme' => 'لم يتأكد إنشاء ملفك كطالب: ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد قليل؛ وإن كان ملفك موجودًا فلن يُنشأ مرتين.',
@@ -42006,9 +42008,9 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.documentFictif' => 'وثيقة وهمية',
 			'dossiers.revue.identite' => 'الهوية والملف',
 			'dossiers.revue.pieceNonTransmise' => 'لم تُرسل الوثيقة المطلوبة.',
-			'dossiers.revue.piece' => 'وثيقة الهوية',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.revue.piece' => 'وثيقة الهوية',
 			'dossiers.revue.voirPiece' => 'عرض الوثيقة',
 			'dossiers.revue.accords' => 'الموافقات والعناصر المقدَّمة',
 			'dossiers.revue.nom' => 'اللقب',
@@ -42520,9 +42522,9 @@ extension on TraductionsAr {
 			'suiviFamille.sansDonnees' => 'طلباتكم',
 			'suiviFamille.introuvable' => 'هذا الطلب لم يعد موجودًا أو ليس من طلباتكم.',
 			'suiviFamille.retour' => 'العودة إلى الطلبات',
-			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.fuseau' => ({required Object deVille}) => 'الأوقات المعروضة بتوقيت ⁨${deVille}⁩.',
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'مقررة ⁨${date}⁩ في ⁨${heure}⁩',
 			'suiviFamille.prevueJour' => ({required Object date}) => 'مقررة ⁨${date}⁩',
 			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
@@ -43034,9 +43036,9 @@ extension on TraductionsAr {
 			'recrutement.cadre.erreurLecture' => 'تعذّر تحميل الإطار. أعد المحاولة.',
 			'recrutement.cadre.erreurAccord' => 'لم تُسجَّل موافقتك. أعد المحاولة.',
 			'recrutement.cadre.refuse' => 'لا يمكن قبول هذا الإطار الآن: لم يعد ترشّحك في هذه المرحلة.',
-			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
 			'recrutement.portail.aCompleter' => 'المطلوب استكماله',
 			'recrutement.portail.elementCadre' => 'الإطار الديني والتربوي',
 			'recrutement.portail.etatAEnvoyer' => 'للإرسال',
@@ -43548,9 +43550,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.libelle' => 'ليس عندي إجازة، لكن أستطيع اجتياز اختبار',
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.description' => 'ليس عندك إجازة تعرضها، لكنك توافق على اجتياز اختبار.',
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.explication' => 'ستتحدث الأكاديمية معك في الأمر أثناء المقابلة.',
-			'recrutement.parcours.q.ijazaPresentable.options.pret_test.exemple' => 'تعلّمت عند شيخ دون وثيقة مكتوبة، وتقبل أن تُختبر.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.ijazaPresentable.options.pret_test.exemple' => 'تعلّمت عند شيخ دون وثيقة مكتوبة، وتقبل أن تُختبر.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'لا، ليس عندي إجازة',
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، ولا تنوي اجتياز اختبار الآن.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
@@ -44062,9 +44064,9 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s5.blocs.0' => 'يمر الفيديو عبر خدمة متخصصة. ويمنح الخادم الدخول إلى الحصة لهذه الحصة فقط ولمدة قصيرة.',
 			'juridique.confidentialite.s5.blocs.1' => 'اليوم لا يسجّل التطبيق الدروس. وإذا عاد التسجيل فسنقول لكم قبل ذلك لماذا، وكم مدة الحفظ، ومن يمكنه الاطلاع عليه، وسنطلب موافقتكم.',
 			'juridique.confidentialite.s5.blocs.2' => 'تذكّر عبارة داخل القاعة بأن زيارة مراقبة ممكنة.',
-			'juridique.confidentialite.s6.titre' => '٦. أين توجد معلوماتكم',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.confidentialite.s6.titre' => '٦. أين توجد معلوماتكم',
 			'juridique.confidentialite.s6.blocs.0' => 'نستخدم مستضيفًا لصفحات الويب، وقاعدة بيانات مع تسجيل دخول الحسابات، وخدمة فيديو، وتخزينًا خاصًا للملفات، ومزوّدًا للدفع، وخدمة لتقارير الأخطاء. وهي تعالج معلوماتكم لحسابنا ولهذه الأسباب فقط.',
 			'juridique.confidentialite.s6.blocs.1' => 'لحماية تسجيل الدخول من البرامج الآلية، نستخدم خدمة Cloudflare Turnstile (شركة Cloudflare). عند التحقق، تعالج Cloudflare عنوان IP الخاص بكم ومعلومات تقنية عن متصفحكم، لهذا التحقق فقط ودون ملفات تعريف ارتباط إعلانية. الأساس القانوني: مصلحتنا المشروعة في تأمين الخدمة.',
 			'juridique.confidentialite.s6.blocs.2' => 'للقراءة والرد، يعتمد المساعد على مزوّد للذكاء الاصطناعي. وهو اليوم شركة Anthropic PBC (Claude)، ومقرها في الولايات المتحدة. ويمكن للأكاديمية أيضًا، بالشروط نفسها، أن تستعين بشركة Google LLC (Gemini) أو بشركة OpenAI (ChatGPT)، ومقرهما في الولايات المتحدة؛ ويُذكر هنا دائمًا المزوّد المستخدم. وتُرسل الرسائل التي يقرؤها المساعد إلى المزوّد لهذا السبب وحده. ولا تُستخدم لتدريب نماذجه، وتُحذف لديه بعد 30 يومًا على الأكثر. ويخضع هذا النقل إلى خارج الاتحاد الأوروبي للبنود التعاقدية النموذجية للمفوضية الأوروبية. ونحتفظ مدة 12 شهرًا بأثر لما أرسله المساعد، ولا نحتفظ أبدًا بنص الرسائل التي تكتبونها. والأساس القانوني هو مصلحتنا المشروعة في الرد عليكم بسرعة.',
@@ -44576,9 +44578,9 @@ extension on TraductionsAr {
 			'i1.invitations.dejaInvite' => 'توجد دعوة سارية لهذا العنوان، وهي في القائمة أدناه؛ ولا يُعاد إرسال بريدها مرة ثانية.',
 			'i1.familles.choixTitre' => 'أسرة مسجّلة من قبل',
 			'i1.familles.choixExplication' => 'اختر هذا للأسر المستوردة: تتلقى كل أسرة بريدًا لفتح مساحتها دون إعادة إدخال أي شيء.',
-			'i1.familles.titre' => 'أسر تنتظر الدعوة',
 			_ => null,
 		} ?? switch (path) {
+			'i1.familles.titre' => 'أسر تنتظر الدعوة',
 			'i1.familles.aide' => 'تتلقى كل أسرة مستوردة، عندما تطلب ذلك، بريدًا يدعوها إلى تسجيل الدخول بعنوانها. لا شيء يُرسَل من تلقاء نفسه.',
 			'i1.familles.personnes' => ({required Object n}) => 'عدد الأفراد: ⁨${n}⁩',
 			'i1.familles.etat.aEnvoyer' => 'للإرسال',
@@ -45090,9 +45092,9 @@ extension on TraductionsAr {
 			'push1.evenements.personneEnSalle' => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.',
 			'push1.evenements.paiementEchoue' => 'لم تكتمل دفعتكم. تُسوّى في صفحة المدفوعات.',
 			'push1.evenements.paiementEchoueDirection' => 'تعذّر إتمام دفعة.',
-			'push1.evenements.coordonneesAValider' => 'بيانات تحويل بانتظار المصادقة.',
 			_ => null,
 		} ?? switch (path) {
+			'push1.evenements.coordonneesAValider' => 'بيانات تحويل بانتظار المصادقة.',
 			'push1.evenements.coordonneesValidees' => 'صودق على بيانات التحويل الخاصة بكم.',
 			'push1.evenements.remboursementDemande' => 'طُلب استرداد مبلغ.',
 			'push1.evenements.remboursementEchec' => 'تعذّر إتمام استرداد.',
@@ -45604,9 +45606,9 @@ extension on TraductionsAr {
 			'motifs.retraitEleve.ecartNiveau' => 'فارق مستوى دائم',
 			'motifs.retraitEleve.finInscription' => 'انتهاء التسجيل',
 			'motifs.clotureClasse.finCycle' => 'نهاية مرحلة الفصل',
-			'motifs.clotureClasse.remplissage' => 'قلة الامتلاء',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.clotureClasse.remplissage' => 'قلة الامتلاء',
 			'motifs.clotureClasse.transfert' => 'نقل الطلاب إلى فصول أخرى',
 			'motifs.clotureClasse.remplacement' => 'غياب المعلّم دون استبدال',
 			'motifs.clotureClasse.parErreur' => 'فصل أُنشئ بالخطأ',
