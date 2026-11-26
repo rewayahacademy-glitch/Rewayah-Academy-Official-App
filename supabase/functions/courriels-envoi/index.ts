@@ -68,6 +68,12 @@ Deno.serve(async (req) => {
       let ok = false
       let id: string | undefined
       let erreur: string | undefined
+      // PE-A7 : un avis d'ouverture de creneau devenu inutile (plus aucun creneau choisissable, entretien deja
+      // fixe) est ecarte par le serveur (statut annule) et ne part pas. Une erreur de cette lecture laisse partir l'avis.
+      if (l.modele === 'entretien_creneau_ouvert') {
+        const { data: ecarte, error: e0 } = await db.rpc('courriel_avis_creneau_ecarter', { p_id: l.id })
+        if (!e0 && ecarte === true) continue
+      }
       try {
         // ADRESSE-LIBEREE (14/11/2026) : pour toute invitation d'equipe ou de candidat
         // valide, l'ancienne adresse d'un compte supprime est liberee et le compte
