@@ -124,6 +124,21 @@ SELECT pg_temp.vrai((SELECT cohorte FROM public.v_parcours_onboarding
                       WHERE eleve_id = '7f100000-0000-4000-8000-0000000000a1') = 'adulte_18_plus',
   'titulaire : le parcours lit sa tranche adulte_18_plus (pas de question d''age)');
 -- La recharge : tarif adulte du mois pour lui, tarif enfant pour son enfant.
+-- PAIEMENT-FAMILLE-PRIX (23/11/2026) : sans classe ni creneau choisi, aucune offre. Les deux profils entrent
+-- dans une classe encore sans enseignant (avant leur premier mois reel : un mois seulement, formule « mois »).
+RESET ROLE;
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, etat) VALUES
+ ('7f100000-0000-4000-8000-000000000c01', NULL, 'adulte', 6, 'Al-Huda PT', 3, 20, 'Europe/Paris', 'en_attente_enseignant'),
+ ('7f100000-0000-4000-8000-000000000c02', NULL, 'enfant', 5, 'An-Nour PT', 1, 9, 'Europe/Paris', 'en_attente_enseignant');
+SELECT pg_temp.vrai(jsonb_array_length((SELECT x -> 'options' FROM pg_catalog.jsonb_array_elements(public.recharge_beneficiaires()) x
+                                         WHERE x ->> 'id' = '7f100000-0000-4000-8000-0000000000a1')) = 0,
+  'recharge : sans classe ni creneau choisi, aucune offre (le titulaire)');
+RESET ROLE;
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
+ ('7f100000-0000-4000-8000-000000000c01', '7f100000-0000-4000-8000-0000000000a1', now()),
+ ('7f100000-0000-4000-8000-000000000c02', '7f100000-0000-4000-8000-0000000000e1', now());
+SELECT pg_temp.qui_foyer('7f100000-0000-4000-8000-0000000000a1','guardian','7f100000-0000-4000-8000-0000000000f1');
+SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(EXISTS (
          SELECT 1 FROM pg_catalog.jsonb_array_elements(public.recharge_beneficiaires()) b,
                        pg_catalog.jsonb_array_elements(b -> 'formules') f
@@ -209,8 +224,8 @@ RESET ROLE;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.r_n')::int <> 17 THEN
-    RAISE EXCEPTION 'ROUGE : % controles executes, 17 attendus', current_setting('test.r_n');
+  IF current_setting('test.r_n')::int <> 18 THEN
+    RAISE EXCEPTION 'ROUGE : % controles executes, 18 attendus', current_setting('test.r_n');
   END IF;
   RAISE NOTICE 'PROFIL-TITULAIRE : % controles verts', current_setting('test.r_n');
 END $fin$;

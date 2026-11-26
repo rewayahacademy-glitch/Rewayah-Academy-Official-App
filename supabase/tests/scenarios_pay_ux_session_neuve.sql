@@ -21,8 +21,8 @@ DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.0.0';
 DELETE FROM public.politiques_commerciales WHERE version = 'v2.0.0';
 -- REMB-14 (migration 20261106100000) : la v2.1.0, copie de la v2 avec le
 -- delai de 14 jours, s'en va aussi (sans effet tant qu'elle n'existe pas).
-DELETE FROM public.repartitions_paiement WHERE politique_version = 'v2.1.0';
-DELETE FROM public.politiques_commerciales WHERE version = 'v2.1.0';
+DELETE FROM public.repartitions_paiement WHERE politique_version IN ('v2.1.0', 'v2.2.0');
+DELETE FROM public.politiques_commerciales WHERE version IN ('v2.1.0', 'v2.2.0');
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL)

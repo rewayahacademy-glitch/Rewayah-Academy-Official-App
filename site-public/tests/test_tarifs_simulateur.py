@@ -120,7 +120,7 @@ class ValidationStricte(unittest.TestCase):
 
     def test_remises_foyer_mal_rangees_refusees(self) -> None:
         p = politique_valide()
-        p["remisesFoyer"] = [{"aPartirDuRang": 3, "pourMille": 170}, {"aPartirDuRang": 2, "pourMille": 80}]
+        p["remisesFoyer"] = [{"aPartirDuRang": 3, "pourMille": 150}, {"aPartirDuRang": 2, "pourMille": 80}]
         with self.assertRaises(TARIFS.TarifsInvalides):
             TARIFS.valider_tarifs({"courante": p, "suivante": None})
 
@@ -212,7 +212,7 @@ class LectureDeLaBase(unittest.TestCase):
                          (5500, 6500, 18, True))
         self.assertFalse(p["essaiActif"])
         self.assertEqual(p["remisesFoyer"], [{"aPartirDuRang": 2, "pourMille": 80},
-                                             {"aPartirDuRang": 3, "pourMille": 170}])
+                                             {"aPartirDuRang": 3, "pourMille": 150}])
         self.assertEqual(p["cumulMaxPourMille"], 250)
 
     def test_la_copie_du_repli_est_la_decision(self) -> None:
@@ -238,8 +238,8 @@ class PageGeneree(unittest.TestCase):
         texte = re.sub(r"<[^>]+>", "|", self.tarifs_html)
         # Le texte courant lie ses petits mots par des espaces insecables : les phrases se comparent sans elles.
         plat = texte.replace(NBSP, " ")
-        for attendu in (f"55{NBSP}$", f"65{NBSP}$", f"105,60{NBSP}$", f"151,25{NBSP}$", f"196,90{NBSP}$",
-                        f"8{NBSP}%", f"17{NBSP}%", f"5{NBSP}%", f"10{NBSP}%", f"30{NBSP}%", f"25{NBSP}%",
+        for attendu in (f"55{NBSP}$", f"65{NBSP}$", f"105,60{NBSP}$", f"152,35{NBSP}$", f"199,10{NBSP}$",
+                        f"8{NBSP}%", f"15{NBSP}%", f"5{NBSP}%", f"10{NBSP}%", f"30{NBSP}%", f"25{NBSP}%",
                         f"20{NBSP}$", "6 à 17 ans", "18 ans et plus", "hors taxes",
                         "dans les 14 jours qui suivent le paiement", "moins les séances déjà suivies"):
             self.assertIn(attendu, texte if NBSP in attendu else plat)
@@ -327,7 +327,7 @@ class PageGeneree(unittest.TestCase):
         source = (SITE / "styles" / "site.js").read_text(encoding="utf-8")
         source = re.sub(r"/\*.*?\*/", "", source, flags=re.S)
         source = re.sub(r"//.*", "", source)
-        for nombre in ("5500", "6500", "2000", "250", "170", "80", "55", "65", "18", "20", "30", "12", "1000", "100"):
+        for nombre in ("5500", "6500", "2000", "250", "150", "80", "55", "65", "18", "20", "30", "12", "1000", "100"):
             self.assertIsNone(re.search(rf"(?<![\w.]){nombre}(?![\w.])", source), nombre)
 
     def test_apercu_jamais_indexe(self) -> None:
@@ -373,8 +373,8 @@ class CalculReference(unittest.TestCase):
 
     def test_foyer(self) -> None:
         self.assertEqual(self.calcul([eleve(8)] * 2)["totalPeriode"], 10560)
-        self.assertEqual(self.calcul([eleve(8)] * 3)["totalPeriode"], 15125)
-        self.assertEqual(self.calcul([eleve(8)] * 4)["totalPeriode"], 19690)
+        self.assertEqual(self.calcul([eleve(8)] * 3)["totalPeriode"], 15235)
+        self.assertEqual(self.calcul([eleve(8)] * 4)["totalPeriode"], 19910)
         self.assertEqual(self.calcul([eleve(30)] * 2)["totalPeriode"], 12480)
 
     def test_prepaiement_seul_un_enfant(self) -> None:
@@ -386,8 +386,9 @@ class CalculReference(unittest.TestCase):
     def test_foyer_et_annee_plafond_atteint(self) -> None:
         r = self.calcul([eleve(8)] * 3, "annee")
         self.assertEqual([l["total"] for l in r["lignes"]], [59400, 54100, 49500])
-        # 3e : 17 % + 10 % = 27 % du prix, ramene a 25 % (1 320 centimes de moins).
-        self.assertEqual(r["lignes"][2]["plafond"], 1320)
+        # 3e : 15 % + 10 % = 25 % du prix : le plafond est atteint sans etre depasse (depuis le 23/11/2026 ; avec
+        # 17 % il valait 1 320 centimes de moins). Le plafond qui joue se prouve en base (scenarios_paiement_famille).
+        self.assertEqual(r["lignes"][2]["plafond"], 0)
         self.assertEqual(r["lignes"][1]["plafond"], 0)
         self.assertEqual(r["totalPeriode"], 163000)
 
@@ -410,9 +411,9 @@ class CalculReference(unittest.TestCase):
         # Un enfant : le credit de 20 $ est borne par la marge de 25 % (13,75 $).
         r = self.calcul([eleve(8)], "mensuel", True)
         self.assertEqual((r["credit"], r["totalPeriode"], r["totalSansCredit"]), (1375, 4125, 5500))
-        # Trois enfants : la marge restante (27,50 $) laisse passer les 20 $.
+        # Trois enfants : la marge restante (28,60 $) laisse passer les 20 $.
         r = self.calcul([eleve(8)] * 3, "mensuel", True)
-        self.assertEqual((r["credit"], r["totalPeriode"]), (2000, 13125))
+        self.assertEqual((r["credit"], r["totalPeriode"]), (2000, 13235))  # 152,35 $ - 20 $ (23/11/2026, 15 % au 3e)
         # Annee : 10 % utilises sur 25 %, le credit passe entier.
         r = self.calcul([eleve(8)], "annee", True)
         self.assertEqual((r["credit"], r["totalPeriode"]), (2000, 57400))
@@ -463,7 +464,7 @@ class CalculJavaScript(unittest.TestCase):
 
     def test_les_montants_sont_formates_comme_le_serveur_les_ecrit(self) -> None:
         d = donnees()
-        valeurs = [0, 5, 100, 5500, 10560, 15125, 1234567, 59400, -1375]
+        valeurs = [0, 5, 100, 5500, 10560, 15235, 1234567, 59400, -1375]
         sortie = lancer_node(d, [{"montant": v} for v in valeurs])
         for v, texte in zip(valeurs, sortie):
             self.assertEqual(texte["texte"], TARIFS.fmt_montant(v, d["devise"]).replace(" ", " "))

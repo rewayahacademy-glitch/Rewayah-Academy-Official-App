@@ -204,13 +204,22 @@ RESET ROLE;
 -- ------------------------------------------------------------------
 -- 5. P2 : la taxe s'ajoute au prix, jamais au credit
 -- ------------------------------------------------------------------
+-- PAIEMENT-FAMILLE-PRIX (23/11/2026) : aucune offre sans classe ; e3 entre en classe, et son paiement est
+-- une offre du serveur (un mois d'avance), jamais un montant suppose.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+VALUES ('9c000000-0000-4000-8000-000000000c02', pg_temp.id('b1'), 'enfant', 5, 'Al-Fajr PU', 3, 15, 'Europe/Paris');
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at)
+VALUES ('9c000000-0000-4000-8000-000000000c02', pg_temp.id('e3'), now() - interval '20 days');
 CREATE FUNCTION pg_temp.commande(p_cle text, p_pi text) RETURNS uuid LANGUAGE plpgsql AS $$
 DECLARE v_r jsonb; v_c uuid;
 BEGIN
   PERFORM pg_temp.qui(pg_temp.id('d1'), 'guardian', pg_temp.id('f1'));
   EXECUTE 'SET LOCAL ROLE authenticated';
   v_r := public.recharge_verifier_montants(jsonb_build_array(
-    jsonb_build_object('profilId', pg_temp.id('e3'), 'mineur', 5500, 'devise', 'USD')));
+    jsonb_build_object('profilId', pg_temp.id('e3'), 'devise', 'USD', 'mineur',
+      (SELECT (o -> 'montant' ->> 'mineur')::bigint
+         FROM jsonb_array_elements(public.recharge_beneficiaires()) x, jsonb_array_elements(x -> 'options') o
+        WHERE x ->> 'id' = pg_temp.id('e3')::text AND (o ->> 'nbMois')::int = 1))));
   v_c := (public.recharge_payer((v_r ->> 'id')::uuid, ('9c000000-0000-4000-8000-000000' || p_cle)::uuid)
           ->> 'commandeId')::uuid;
   EXECUTE 'RESET ROLE';

@@ -143,11 +143,6 @@ INSERT INTO public.factures_mensuelles(profile_id, household_id, mois, politique
 SELECT pg_temp.id(x.e), pg_temp.id(x.f), (pg_temp.mois() - interval '1 month')::date,
        (private.fac_politique_au(pg_temp.mois())).version, 'USD', 1, '[]'::jsonb, 0, 'financee', now()
   FROM (VALUES ('e1','f1'), ('e2','f1'), ('e4','f2'), ('e5','f3')) AS x(e, f);
--- e1 a 50 USD d'avance : les remboursements partiels le laissent positif.
-INSERT INTO public.wallets(id, household_id, currency) VALUES
- ('fb000000-0000-4000-8000-000000000901', pg_temp.id('f1'), 'USD');
-INSERT INTO public.wallet_entries(wallet_id, amount_minor, currency, reference_type, beneficiaire_id, confirme_par_prestataire_le)
-VALUES ('fb000000-0000-4000-8000-000000000901', 5000, 'USD', 'credit', pg_temp.id('e1'), now());
 
 -- Une commande payee : recapitulatif, commande, session, evenement Stripe.
 CREATE FUNCTION pg_temp.payer(p_titulaire text, p_foyer text, p_lignes jsonb, p_cle text, p_pi text)
@@ -193,8 +188,13 @@ SELECT set_config('test.c1', pg_temp.payer('d1', 'f1', jsonb_build_array(
   jsonb_build_object('profilId', pg_temp.id('e1'), 'mineur', current_setting('test.m1')::bigint, 'devise', 'USD'),
   jsonb_build_object('profilId', pg_temp.id('e2'), 'mineur', current_setting('test.m2')::bigint, 'devise', 'USD')),
   '00a001', 'pi_fb_1')::text, true);
--- e2 a la remise de fratrie : sa facture est sous le prix paye, le reste
--- demeure a son solde.
+-- PAIEMENT-FAMILLE-PRIX (23/11/2026) : le serveur propose d'abord la DETTE du mois, au prix exact de chaque
+-- profil (e2 : 50,60 USD, sa remise de fratrie incluse). Les 50 USD d'avance de e1 (les remboursements
+-- partiels le laissent positif) sont donc poses APRES ce premier paiement : avant, ils auraient reduit sa dette.
+INSERT INTO public.wallet_entries(wallet_id, amount_minor, currency, reference_type, beneficiaire_id, confirme_par_prestataire_le)
+SELECT w.id, 5000, 'USD', 'credit', pg_temp.id('e1'), now()
+  FROM public.wallets w WHERE w.household_id = pg_temp.id('f1');
+-- e2 a la remise de fratrie : sa facture est au prix paye.
 SELECT set_config('test.s2', pg_temp.solde('e2')::text, true);
 SELECT pg_temp.vrai((pg_temp.fac('e1')).statut = 'financee' AND (pg_temp.fac('e2')).statut = 'financee'
   AND pg_temp.solde('e1') = 5000 AND pg_temp.solde('e2') >= 0 AND pg_temp.solde('e2') < 1650,

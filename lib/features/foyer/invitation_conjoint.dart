@@ -35,6 +35,7 @@ import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/finance/delai_retractation.dart';
+import '../../core/finance/explication_recharge.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/formulaire_paiement.dart';

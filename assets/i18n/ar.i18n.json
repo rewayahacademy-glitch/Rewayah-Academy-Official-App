@@ -13273,6 +13273,103 @@
         "trimestriel": "⁨{montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا",
         "annuel": "⁨{montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا"
       },
+      "montantChangeTitre": "تغيّر المبلغ",
+      "montantChangePhrase": "تغيّرت فاتورة أو شهر منذ تحقّقكم. لم يُدفع أي مبلغ. تحقّقوا من جديد قبل الدفع.",
+      "montantChangeAction": "تحقّق من جديد",
+      "explication": {
+        "libelleDette": "⁨{montant}⁩: الشهر المستحق",
+        "libelleMois(plural, param=n)": {
+          "zero": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهر مدفوع مقدّمًا",
+          "one": "⁨{montant}⁩ مقابل شهر واحد مدفوع مقدّمًا",
+          "other": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهر مدفوع مقدّمًا",
+          "two": "⁨{montant}⁩ مقابل شهرين مدفوعين مقدّمًا",
+          "few": "⁨{montant}⁩ مقابل ⁨{n}⁩ أشهر مدفوعة مقدّمًا",
+          "many": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهرًا مدفوعًا مقدّمًا"
+        },
+        "libelleDetteEtMois(plural, param=n)": {
+          "zero": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهر مقدّمًا",
+          "one": "⁨{montant}⁩: الشهر المستحق وشهر واحد مقدّمًا",
+          "other": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهر مقدّمًا",
+          "two": "⁨{montant}⁩: الشهر المستحق وشهرين مقدّمًا",
+          "few": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ أشهر مقدّمًا",
+          "many": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهرًا مقدّمًا"
+        },
+        "libelleUnMois": "⁨{montant}⁩ مقابل شهر واحد",
+        "synthese": {
+          "detteSeule": "تدفعون ⁨{montant}⁩ عن الشهر المستحق (⁨{mois}⁩).",
+          "detteEtAvance(plural, param=n)": {
+            "zero": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
+            "one": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم شهرًا واحدًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
+            "other": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
+            "two": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم شهرين مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
+            "few": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ أشهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
+            "many": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ شهرًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع."
+          },
+          "avanceSeule(plural, param=n)": {
+            "zero": "تدفعون ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
+            "one": "تدفعون شهرًا واحدًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
+            "other": "تدفعون ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
+            "two": "تدفعون شهرين مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
+            "few": "تدفعون ⁨{n}⁩ أشهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
+            "many": "تدفعون ⁨{n}⁩ شهرًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩."
+          },
+          "moisSansDate": "تدفعون شهرًا واحدًا، ⁨{montant}⁩. ويُحتسب منذ بداية حصصكم.",
+          "aucunCreneau": "لا يمكن الدفع حاليًا. اختاروا موعدًا أولًا، ثم يمكنكم الدفع.",
+          "avantPremierMois": "قبل بدء الحصص، يمكن دفع شهر واحد فقط."
+        },
+        "mois": {
+          "separateur": "، ",
+          "et": "⁨{liste}⁩ و⁨{dernier}⁩",
+          "plage": "من ⁨{debut}⁩ إلى ⁨{fin}⁩"
+        },
+        "ligne": {
+          "prix(plural, param=n)": {
+            "zero": "سعر ⁨{n}⁩ شهر",
+            "one": "سعر الشهر",
+            "other": "سعر ⁨{n}⁩ شهر",
+            "two": "سعر شهرين",
+            "few": "سعر ⁨{n}⁩ أشهر",
+            "many": "سعر ⁨{n}⁩ شهرًا"
+          },
+          "remiseFamille": "خصم العائلة، المسجَّل رقم ⁨{rang}⁩ (⁨{taux}⁩)",
+          "remisePrepaiement": "خصم الدفع المقدّم (⁨{taux}⁩)",
+          "plafond": "الخصومات محدّدة بـ⁨{taux}⁩ من السعر",
+          "arrondi": "تقريب إلى أقرب دولار",
+          "bourse": "منحة",
+          "prixSpecial": "سعر خاص",
+          "accesOffert": "وصول مجاني",
+          "total": "المبلغ الإجمالي المستحق"
+        },
+        "nonAppliquee": {
+          "premierInscrit": "لا خصم عائلي: أول مسجَّل.",
+          "familleSpecial": "لا خصم عائلي: السعر الخاص لا يُجمع مع خصم.",
+          "familleOffert": "لا خصم عائلي: الوصول المجاني لا يُجمع مع خصم.",
+          "familleBourse": "لا خصم عائلي: المنحة لا تُجمع مع خصم.",
+          "prepaiementMoinsDeTrois": "لا خصم على الدفع المقدّم لأقل من 3 أشهر.",
+          "prepaiementSpecial": "لا خصم على الدفع المقدّم: السعر الخاص لا يُجمع مع خصم.",
+          "prepaiementOffert": "لا خصم على الدفع المقدّم: الوصول المجاني لا يُجمع مع خصم.",
+          "prepaiementBourse": "لا خصم على الدفع المقدّم: المنحة لا تُجمع مع خصم.",
+          "plafondAtteint": "بلغ السقف: الخصومات محدّدة بـ⁨{taux}⁩ من السعر (خصم أقل بمقدار ⁨{montant}⁩)."
+        },
+        "dette": {
+          "titre": "يُسدَّد أولًا",
+          "moisApercu": "⁨{mois}⁩، لم تصدر فاتورته بعد",
+          "prorata(plural, param=restantes)": {
+            "zero": "بدأتم في ⁨{date}⁩: ⁨{restantes}⁩ حصة من أصل ⁨{total}⁩ هذا الشهر",
+            "one": "بدأتم في ⁨{date}⁩: حصة واحدة من أصل ⁨{total}⁩ هذا الشهر",
+            "other": "بدأتم في ⁨{date}⁩: ⁨{restantes}⁩ حصة من أصل ⁨{total}⁩ هذا الشهر",
+            "two": "بدأتم في ⁨{date}⁩: حصتان من أصل ⁨{total}⁩ هذا الشهر",
+            "few": "بدأتم في ⁨{date}⁩: ⁨{restantes}⁩ حصص من أصل ⁨{total}⁩ هذا الشهر",
+            "many": "بدأتم في ⁨{date}⁩: ⁨{restantes}⁩ حصة من أصل ⁨{total}⁩ هذا الشهر"
+          },
+          "solde": "رصيد الملف",
+          "factureTarif": "سعر الشهر",
+          "factureRemiseRang": "خصم العائلة، المسجَّل رقم ⁨{rang}⁩",
+          "factureProrata": "بحسب حصص الشهر",
+          "facturePrepaiement": "حصة من الدفع المقدّم"
+        },
+        "moisCouverts": "الأشهر المغطّاة"
+      },
       "revenirPaiements": "العودة إلى مدفوعات الأسرة",
       "resultat": {
         "formulaireTitre": "ادفع هنا دون مغادرة التطبيق",
