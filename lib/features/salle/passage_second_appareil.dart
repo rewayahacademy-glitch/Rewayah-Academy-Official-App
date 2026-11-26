@@ -308,6 +308,7 @@ class CarteCessionAppareil extends StatelessWidget {
               ActionPrincipale(
                 key: comprisKey,
                 libelle: t.salle.passage.compris,
+                niveau: NiveauAction.secondaire,
                 onPress: onCompris,
               ),
             ],
