@@ -300,6 +300,7 @@
   },
   "salle": {
     "passage": {
+      "compris": "Understood",
       "titre": "Another device wants to join",
       "demande": "Someone is trying to join the class with your account on another device ({appareil}). Let them in?",
       "demandeSansNom": "Someone is trying to join the class with your account on another device. Let them in?",
@@ -10530,7 +10531,7 @@
       "secondes": "{secondes} s",
       "motif": {
         "placeEleve": "You have your own place in this session: join it with your student profile, not as an observer.",
-        "accesSuspendu": "Observation is closed: none of the students you accompany has paid access to this session. Settle the payment from the Household, or contact the management.",
+        "accesSuspendu": "Observation is closed: none of the students you accompany has paid access to this session. Top up from the Household, or contact the management.",
         "visitesEpuisees": "You have used your visits for this session.",
         "tempsEpuise": "Your observation time is used up for this session.",
         "seanceNonCommencee": "Observation opens when the session starts.",
@@ -12130,7 +12131,7 @@
         "placeEleveTitre": "Your student place",
         "placeEleve": "You have your own place in this session: join it with your student profile, not as an observer.",
         "accesSuspenduTitre": "Access suspended for payment",
-        "accesSuspendu": "Observation is closed: none of the students you accompany has paid access to this session. Settle the payment from the Household, or contact the management.",
+        "accesSuspendu": "Observation is closed: none of the students you accompany has paid access to this session. Top up from the Household, or contact the management.",
         "visitesEpuiseesTitre": "No visit left for this session",
         "visitesEpuisees": "You have used your visits. You can observe the next session.",
         "tempsEpuiseTitre": "Observation time used up",
@@ -12181,7 +12182,7 @@
       },
       "refus": {
         "placeEleve": "You have your own place in this session: join it with your student profile, not as an observer.",
-        "accesSuspendu": "Access to this session is suspended for payment: none of the students you accompany has paid access. Settle the payment from the Household, or contact the management.",
+        "accesSuspendu": "Access to this session is suspended for payment: none of the students you accompany has paid access. Top up from the Household, or contact the management.",
         "politiqueDesactivee": "Observation is turned off for this class.",
         "quotaVisites": "You have already used your visits for this session.",
         "tempsEpuise": "Your observation time is used up for this session.",

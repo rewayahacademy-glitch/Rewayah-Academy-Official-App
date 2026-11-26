@@ -13,14 +13,20 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/garde_passage.dart';
 import 'package:rewayah_academy/core/video/libelle_appareil.dart';
+import 'package:rewayah_academy/core/video/livekit_session_provider.dart'
+    show moteurSalleProvider;
 import 'package:rewayah_academy/core/video/second_appareil.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
-import 'package:rewayah_academy/core/video/video_session_provider.dart'
-    show AccesSalle;
+import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/passage_second_appareil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../teaching_core/f/faux/faux_moteur_salle.dart';
 
 class _Port implements PortSecondAppareil {
   BattementSalle prochain = const BattementSalle();
@@ -58,19 +64,76 @@ class _Port implements PortSecondAppareil {
   Future<void> annuler(String demandeId) async => appels.add('annuler');
 }
 
-Widget _app(Widget enfant, {List<Override> overrides = const <Override>[]}) =>
-    ProviderScope(
-      overrides: overrides,
-      child: TranslationProvider(
-        child: MaterialApp(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          locale: AppLocale.fr.flutterLocale,
-          supportedLocales: AppLocaleUtils.supportedLocales,
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          home: Scaffold(body: enfant),
-        ),
-      ),
-    );
+Widget _app(
+  Widget enfant, {
+  List<Override> overrides = const <Override>[],
+  bool racine = false,
+}) => ProviderScope(
+  overrides: overrides,
+  child: TranslationProvider(
+    child: MaterialApp(
+      theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      locale: AppLocale.fr.flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      // La racine de l'application : la couche pose la question par-dessus
+      // l'ecran ouvert, quel qu'il soit.
+      builder: racine
+          ? (BuildContext context, Widget? page) =>
+                CoucheAutreAppareil(child: page ?? const SizedBox.shrink())
+          : null,
+      home: Scaffold(body: enfant),
+    ),
+  ),
+);
+
+/// Un ecran quelconque : la salle est reduite, aucune page de salle n'est la.
+class _AutreEcran extends StatelessWidget {
+  const _AutreEcran();
+
+  @override
+  Widget build(BuildContext context) =>
+      const Center(child: Text('un autre ecran'));
+}
+
+/// Le moteur de la salle : une connexion vivante dont l'acces nomme la seance.
+class _MoteurVivant extends FauxMoteurSalle {
+  @override
+  AccesSalle? get accesCourant => AccesSalle.depuisJson(const <String, dynamic>{
+    'ws_url': 'wss://x',
+    'token': 'jwt',
+    'room_name': 'salle',
+    'provider': 'livekit_cloud',
+    'role': 'student',
+    'expire_le': '2030-01-01T00:00:00Z',
+    'capabilities': <String, dynamic>{},
+  }).pourLaDemande(seanceId: 's1');
+}
+
+/// La personne connectee.
+class _Connecte extends SessionControleur {
+  @override
+  SessionState build() => const SessionState(
+    resolue: true,
+    role: AppRole.student,
+    profileId: 'p1',
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
+  );
+}
+
+/// Un service video sans reseau : la sortie propre s'annonce, rien d'autre.
+class _ServiceSansReseau implements ServiceVideo {
+  @override
+  Future<AccesSalle> acces(String seanceId, {String? eleveId}) =>
+      throw UnimplementedError();
+
+  @override
+  Future<void> annoncerSortie(String seanceId) async {}
+
+  @override
+  Future<void> observerEnControle(String seanceId) async {}
+}
 
 FunctionException _conflit(Map<String, Object?> details) =>
     FunctionException(status: 409, details: details);
@@ -158,134 +221,159 @@ void main() {
     expect(find.text(t.salle.passage.horsLigne), findsOneWidget);
   });
 
-  group('premier appareil, dans la salle : le battement et le dialogue', () {
-    Future<_Port> monter(
-      WidgetTester tester,
-      _Port port,
-      List<String> cedes,
-    ) async {
+  group('premier appareil : le battement suit la CONNEXION, pas la page', () {
+    // Le moteur de salle est vivant ; AUCUNE page de salle n'est montee : la
+    // salle est reduite dans l'ile, l'ecran ouvert est un autre ecran.
+    late _MoteurVivant moteur;
+    late _Port port;
+
+    setUp(() {
+      moteur = _MoteurVivant();
+      port = _Port();
+    });
+    tearDown(() => moteur.fermer());
+
+    Future<void> monter(WidgetTester tester) async {
       await tester.pumpWidget(
         _app(
-          SurveillanceSecondAppareil(
-            seanceId: 's1',
-            profilId: 'p1',
-            actif: true,
-            rythme: const Duration(seconds: 5),
-            appareil: () => 'a1',
-            libelle: () => 'Firefox · Windows',
-            onCeder: () async => cedes.add('cede'),
-            child: const Text('salle'),
-          ),
+          const _AutreEcran(),
           overrides: <Override>[
+            moteurSalleProvider.overrideWithValue(moteur),
             portSecondAppareilProvider.overrideWithValue(port),
+            rythmeBattementProvider.overrideWithValue(
+              const Duration(seconds: 5),
+            ),
+            sessionProvider.overrideWith(_Connecte.new),
+            serviceVideoProvider.overrideWithValue(_ServiceSansReseau()),
           ],
+          racine: true,
         ),
       );
       await tester.pump();
-      return port;
     }
 
-    testWidgets('Accepter : reponse envoyee, puis sortie propre', (
+    testWidgets('salle reduite : la connexion vit, le battement part, et la '
+        'question arrive par-dessus l\'autre ecran', (
       WidgetTester tester,
     ) async {
-      final _Port port = _Port()
-        ..prochain = const BattementSalle(
-          demande: DemandePassage(id: 'd1', libelle: 'Chrome · Android'),
-        );
-      final List<String> cedes = <String>[];
-      await monter(tester, port, cedes);
+      await monter(tester);
+      moteur.poser(EtatSalle.connecte);
+      await tester.pump();
+      await tester.pump();
+      expect(port.battements, greaterThanOrEqualTo(1));
+      // Aucune page de salle : seul « un autre ecran » est la.
+      expect(find.text('un autre ecran'), findsOneWidget);
+      expect(find.byKey(DialogueAutreAppareil.cle), findsNothing);
+      port.prochain = const BattementSalle(
+        demande: DemandePassage(id: 'd1', libelle: 'Chrome · Android'),
+      );
+      await tester.pump(const Duration(seconds: 5));
       await tester.pump();
       expect(find.byKey(DialogueAutreAppareil.cle), findsOneWidget);
       expect(find.textContaining('Chrome · Android'), findsOneWidget);
+    });
+
+    testWidgets('Accepter : reponse envoyee, sortie propre, puis « Vous '
+        'continuez sur l\'autre appareil » par-dessus l\'ecran', (
+      WidgetTester tester,
+    ) async {
+      port.prochain = const BattementSalle(
+        demande: DemandePassage(id: 'd2', libelle: 'Safari · iOS'),
+      );
+      await monter(tester);
+      moteur.poser(EtatSalle.connecte);
+      await tester.pump();
+      await tester.pump();
       await tester.tap(find.byKey(DialogueAutreAppareil.accepterKey));
       await tester.pump();
       await tester.pump();
-      expect(port.appels, <String>['repondre:d1:true']);
-      expect(cedes, <String>['cede']);
+      await tester.pump();
+      expect(port.appels, <String>['repondre:d2:true']);
+      expect(moteur.etatCourant, EtatSalle.absent, reason: 'sortie propre');
       expect(find.byKey(DialogueAutreAppareil.cle), findsNothing);
+      expect(find.byKey(CarteCessionAppareil.cle), findsOneWidget);
+      expect(find.text(t.salle.passage.cede), findsOneWidget);
+      await tester.tap(find.byKey(CarteCessionAppareil.comprisKey));
+      await tester.pump();
+      expect(find.byKey(CarteCessionAppareil.cle), findsNothing);
     });
 
-    testWidgets('Refuser : l\'appareil reste, rien ne le coupe', (
+    testWidgets('Refuser : l\'appareil reste dans la classe', (
       WidgetTester tester,
     ) async {
-      final _Port port = _Port()
-        ..prochain = const BattementSalle(
-          demande: DemandePassage(id: 'd2', libelle: 'Safari · iOS'),
-        );
-      final List<String> cedes = <String>[];
-      await monter(tester, port, cedes);
+      port.prochain = const BattementSalle(
+        demande: DemandePassage(id: 'd3', libelle: 'Safari · iOS'),
+      );
+      await monter(tester);
+      moteur.poser(EtatSalle.connecte);
+      await tester.pump();
       await tester.pump();
       await tester.tap(find.byKey(DialogueAutreAppareil.refuserKey));
       await tester.pump();
       await tester.pump();
-      expect(port.appels, <String>['repondre:d2:false']);
-      expect(cedes, isEmpty);
+      expect(port.appels, <String>['repondre:d3:false']);
+      expect(moteur.etatCourant, EtatSalle.connecte);
       expect(find.byKey(DialogueAutreAppareil.cle), findsNothing);
-      expect(find.text('salle'), findsOneWidget);
     });
 
     testWidgets('reponse impossible (hors ligne) : le dialogue reste et le '
         'dit', (WidgetTester tester) async {
-      final _Port port = _Port()
+      port
         ..echecReponse = true
         ..prochain = const BattementSalle(
-          demande: DemandePassage(id: 'd3', libelle: 'Chrome · Android'),
+          demande: DemandePassage(id: 'd4', libelle: 'Chrome · Android'),
         );
-      final List<String> cedes = <String>[];
-      await monter(tester, port, cedes);
+      await monter(tester);
+      moteur.poser(EtatSalle.connecte);
+      await tester.pump();
       await tester.pump();
       await tester.tap(find.byKey(DialogueAutreAppareil.accepterKey));
       await tester.pump();
       await tester.pump();
       expect(find.text(t.salle.passage.echecReponse), findsOneWidget);
       expect(find.byKey(DialogueAutreAppareil.cle), findsOneWidget);
-      expect(cedes, isEmpty);
+      expect(moteur.etatCourant, EtatSalle.connecte);
     });
 
-    testWidgets('le serveur dit de ceder (l\'autre appareil a ete accepte) : '
-        'sortie propre sans dialogue', (WidgetTester tester) async {
-      final _Port port = _Port()..prochain = const BattementSalle(cede: true);
-      final List<String> cedes = <String>[];
-      await monter(tester, port, cedes);
-      await tester.pump();
-      expect(cedes, <String>['cede']);
-      expect(find.byKey(DialogueAutreAppareil.cle), findsNothing);
-    });
-
-    testWidgets('le battement revient toutes les 5 secondes, et la demande '
-        'qui expire disparait', (WidgetTester tester) async {
-      final _Port port = _Port()
-        ..prochain = const BattementSalle(
-          demande: DemandePassage(id: 'd4', libelle: 'Chrome · Android'),
-        );
-      await monter(tester, port, <String>[]);
-      await tester.pump();
-      expect(find.byKey(DialogueAutreAppareil.cle), findsOneWidget);
-      port.prochain = const BattementSalle();
-      await tester.pump(const Duration(seconds: 5));
-      await tester.pump();
-      expect(port.battements, greaterThanOrEqualTo(2));
-      expect(find.byKey(DialogueAutreAppareil.cle), findsNothing);
-    });
-
-    testWidgets('hors de la salle, aucun battement n\'est envoye', (
+    testWidgets('le serveur dit de ceder : sortie propre sans dialogue', (
       WidgetTester tester,
     ) async {
-      final _Port port = _Port();
-      await tester.pumpWidget(
-        _app(
-          SurveillanceSecondAppareil(
-            seanceId: 's1',
-            profilId: 'p1',
-            actif: false,
-            onCeder: () async {},
-            child: const Text('salle'),
-          ),
-          overrides: <Override>[
-            portSecondAppareilProvider.overrideWithValue(port),
-          ],
-        ),
-      );
+      port.prochain = const BattementSalle(cede: true);
+      await monter(tester);
+      moteur.poser(EtatSalle.connecte);
+      await tester.pump();
+      await tester.pump();
+      await tester.pump();
+      expect(moteur.etatCourant, EtatSalle.absent);
+      expect(find.byKey(CarteCessionAppareil.cle), findsOneWidget);
+    });
+
+    testWidgets('reconnexion, lien instable : le battement continue ; il '
+        's\'arrete seulement quand la connexion se termine', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
+      moteur.poser(EtatSalle.connecte);
+      await tester.pump();
+      await tester.pump();
+      moteur.poser(EtatSalle.reconnexion);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pump();
+      moteur.poser(EtatSalle.retabli);
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pump();
+      final int vivant = port.battements;
+      expect(vivant, greaterThanOrEqualTo(3));
+      moteur.poser(EtatSalle.echec);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 12));
+      expect(port.battements, vivant, reason: 'connexion terminee : plus rien');
+    });
+
+    testWidgets('hors de la salle (jamais connecte) : aucun battement', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
       await tester.pump(const Duration(seconds: 12));
       expect(port.battements, 0);
     });

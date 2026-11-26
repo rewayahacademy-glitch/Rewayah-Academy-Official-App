@@ -63,6 +63,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/fermeture_salle.dart';
 import '../../core/video/garde_fermeture.dart';
+import '../../core/video/garde_passage.dart';
 import '../../core/video/gestes_salle.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/politique_camera.dart';
@@ -821,16 +822,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // SYNCHRO-SESSION : la seance de l'appel vient de naitre (ou reste la
     // meme) ; la page s'y abonne tout de suite.
     _raccorderSeance(redessiner: true);
-  }
-
-  /// SALLE-SECOND-APPAREIL : cet appareil accepte de ceder la place a un autre
-  /// appareil du meme compte. Il sort proprement (annonce de sortie, puis
-  /// deconnexion) et le dit : « Vous continuez sur l'autre appareil ».
-  Future<void> _cederLaPlace() async {
-    await _quitterAppel();
-    if (mounted) {
-      setState(() => _impasse = CauseImpasse.cedeAutreAppareil);
-    }
   }
 
   /// La sortie de l'appel : par le controleur quand il le tient (annonce,
@@ -2757,6 +2748,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // profil arrive ; chaque heure (fin de seance, refus) est formee au
     // dessin par `DepuisSalle.heure`, a partir d'un instant garde.
     ref.watch(monHorlogeProvider);
+    // SALLE-SECOND-APPAREIL : le garde (connexion video) a fait sortir cet
+    // appareil proprement ; la page le dit : « Vous continuez sur l'autre
+    // appareil ».
+    ref.listen<String?>(gardePassageProvider.select((e) => e.cedeSeance), (
+      String? _,
+      String? seance,
+    ) {
+      if (seance == widget.seanceId && mounted) {
+        setState(() => _impasse = CauseImpasse.cedeAutreAppareil);
+        ref.read(gardePassageProvider.notifier).acquitterCession();
+      }
+    });
     return _dessiner(context);
   }
 
@@ -2778,11 +2781,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           // passe la main, la sortie), sans jamais retarder l'ecran.
           // SALLE-SECOND-APPAREIL : le battement qui garde la place, le
           // dialogue du premier appareil et l'attente du second.
-          child: SurveillanceSecondAppareil(
-            seanceId: widget.seanceId,
-            profilId: widget.eleveId ?? ref.read(sessionProvider).profileId,
-            actif: _acces != null && _aEteConnecte && _impasse == null,
-            onCeder: _cederLaPlace,
+          child: PasserelleSecondAppareil(
             child: PassageSalle(
               etape: _etape(),
               arrivee: _depuisIle

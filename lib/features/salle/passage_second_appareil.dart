@@ -10,10 +10,11 @@
 //     confirmer », avec « Annuler » ; hors ligne, il le dit ;
 //   * [NoteAncienAppareil] : « L'autre appareil ne repondait plus ».
 //
-// [SurveillanceSecondAppareil] les pose autour de la salle : le battement qui
-// garde la place et lit les demandes (toutes les 5 secondes, tant que la
-// personne est dans la salle), et l'attente du second appareil. Tout se decide
-// en base ; l'ecran ne fait que dire.
+// [CoucheAutreAppareil] pose la question du premier appareil a la racine de
+// l'application (par-dessus la salle reduite aussi) ; le battement qui la
+// nourrit vit dans `GardePassage`, avec la connexion video.
+// [PasserelleSecondAppareil] pose l'attente du second appareil autour de la
+// salle. Tout se decide en base ; l'ecran ne fait que dire.
 
 import 'dart:async';
 
@@ -23,19 +24,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/video/appareil_salle.dart';
-import '../../core/video/libelle_appareil.dart';
+import '../../core/video/garde_passage.dart';
 import '../../core/video/second_appareil.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
-
-/// Le rythme du battement du premier appareil : assez court pour qu'une
-/// demande apparaisse « presque tout de suite », assez long pour ne rien
-/// charger. Le serveur tient un appareil pour silencieux apres 30 secondes.
-const Duration rythmeBattementSalle = Duration(seconds: 5);
 
 /// Ce que dit la carte : qui demande (l'etiquette de l'appareil).
 String phraseDemandeAutreAppareil(String libelle) => libelle.isEmpty
@@ -263,155 +258,172 @@ class NoteAncienAppareil extends StatelessWidget {
   );
 }
 
-/// Pose autour de la salle : le battement (premier appareil), le dialogue, et
-/// l'attente (second appareil).
-class SurveillanceSecondAppareil extends ConsumerStatefulWidget {
-  /// Cree la surveillance.
-  const SurveillanceSecondAppareil({
-    required this.seanceId,
-    required this.profilId,
-    required this.actif,
-    required this.onCeder,
+/// « Vous continuez sur l'autre appareil », dit apres une sortie propre quand
+/// la page de la salle n'est pas a l'ecran (salle reduite, autre ecran).
+class CarteCessionAppareil extends StatelessWidget {
+  /// Cree la carte.
+  const CarteCessionAppareil({required this.onCompris, super.key});
+
+  /// Fermer le message.
+  final VoidCallback onCompris;
+
+  /// La carte.
+  static const Key cle = Key('salle.passage.cession');
+
+  /// « Compris ».
+  static const Key comprisKey = Key('salle.passage.compris');
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    return Semantics(
+      container: true,
+      liveRegion: true,
+      child: AppCard(
+        key: cle,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Semantics(
+                header: true,
+                child: Text(
+                  t.salle.passage.cede,
+                  style: palette.inkStrong.applyTo(
+                    textes.titleMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              Ecart.vSm,
+              Text(
+                t.salle.passage.cedeDetail,
+                style: palette.inkStrong.applyTo(
+                  textes.bodyLarge ?? const TextStyle(),
+                ),
+              ),
+              Ecart.vLg,
+              ActionPrincipale(
+                key: comprisKey,
+                libelle: t.salle.passage.compris,
+                onPress: onCompris,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Pose a la RACINE de l'application : la question « Laisser passer ? » arrive
+/// par-dessus l'ecran ouvert (la salle, ou toute autre page quand la salle est
+/// reduite dans l'ile). Le battement qui la nourrit ne vit pas ici : il suit la
+/// connexion video ([GardePassage]).
+class CoucheAutreAppareil extends ConsumerWidget {
+  /// Cree la couche.
+  const CoucheAutreAppareil({
     required this.child,
     super.key,
-    this.rythme = rythmeBattementSalle,
-    this.appareil,
-    this.libelle,
+    this.enSalle = _jamais,
   });
 
-  /// La seance de la salle.
-  final String seanceId;
+  /// L'application.
+  final Widget child;
 
-  /// Le profil dont la place se garde : l'eleve de la salle (D6), sinon la
-  /// personne connectee. `null` : rien a garder.
-  final String? profilId;
+  /// Vrai quand la page de la salle est a l'ecran (elle dit elle-meme la
+  /// sortie ; la couche n'ajoute pas de message).
+  final bool Function() enSalle;
 
-  /// Vrai quand cet appareil est dans la salle (il bat, il peut etre invite a
-  /// ceder). Faux avant l'entree et apres la sortie.
-  final bool actif;
+  static bool _jamais() => false;
 
-  /// Cet appareil cede la place : quitter la salle proprement, puis le dire.
-  final Future<void> Function() onCeder;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final EtatGardePassage etat = ref.watch(gardePassageProvider);
+    final GardePassage garde = ref.read(gardePassageProvider.notifier);
+    final bool cession = etat.cedeSeance != null && !enSalle();
+    return Stack(
+      fit: StackFit.passthrough,
+      children: <Widget>[
+        child,
+        if (etat.demande != null)
+          Positioned.fill(
+            child: Stack(
+              children: <Widget>[
+                ModalBarrier(
+                  dismissible: false,
+                  color: AppPalette.of(context).surfaceInverse.background
+                      .withValues(alpha: 0.6),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 520),
+                      child: DialogueAutreAppareil(
+                        libelle: etat.demande!.libelle,
+                        enCours: etat.enCours,
+                        echec: etat.echec,
+                        onAccepter: () =>
+                            unawaited(garde.repondre(accepter: true)),
+                        onRefuser: () =>
+                            unawaited(garde.repondre(accepter: false)),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (cession)
+          Positioned.fill(
+            child: Stack(
+              children: <Widget>[
+                ModalBarrier(
+                  dismissible: false,
+                  color: AppPalette.of(context).surfaceInverse.background
+                      .withValues(alpha: 0.6),
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 520),
+                      child: CarteCessionAppareil(
+                        onCompris: garde.acquitterCession,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
 
-  /// Le rythme du battement (reglable pour les tests).
-  final Duration rythme;
-
-  /// L'identifiant de cet appareil (reglable pour les tests).
-  final String Function()? appareil;
-
-  /// L'etiquette de cet appareil (reglable pour les tests).
-  final String Function()? libelle;
+/// Pose autour de la page de la salle : l'attente du SECOND appareil (« Nous lui
+/// demandons de confirmer… », avec Annuler) et la note « L'autre appareil ne
+/// repondait plus ». L'attente vit ici parce qu'elle accompagne l'entree.
+class PasserelleSecondAppareil extends ConsumerStatefulWidget {
+  /// Cree la passerelle.
+  const PasserelleSecondAppareil({required this.child, super.key});
 
   /// La salle.
   final Widget child;
 
   @override
-  ConsumerState<SurveillanceSecondAppareil> createState() => _Etat();
+  ConsumerState<PasserelleSecondAppareil> createState() => _EtatPasserelle();
 }
 
-class _Etat extends ConsumerState<SurveillanceSecondAppareil> {
-  Timer? _minuteur;
-  DemandePassage? _demande;
-  bool _enCours = false;
-  bool _echec = false;
-  bool _cede = false;
+class _EtatPasserelle extends ConsumerState<PasserelleSecondAppareil> {
   Timer? _effaceNote;
-
-  String get _appareil => (widget.appareil ?? identifiantAppareilSalle)();
-  String get _libelle => (widget.libelle ?? libelleAppareilCourant)();
-
-  @override
-  void initState() {
-    super.initState();
-    _armer();
-  }
-
-  @override
-  void didUpdateWidget(SurveillanceSecondAppareil ancien) {
-    super.didUpdateWidget(ancien);
-    if (ancien.actif != widget.actif || ancien.profilId != widget.profilId) {
-      _armer();
-    }
-  }
-
-  void _armer() {
-    _minuteur?.cancel();
-    _minuteur = null;
-    if (!widget.actif || widget.profilId == null) {
-      if (_demande != null) setState(() => _demande = null);
-      return;
-    }
-    unawaited(_battre());
-    _minuteur = Timer.periodic(widget.rythme, (_) => unawaited(_battre()));
-  }
-
-  Future<void> _battre() async {
-    final String? profil = widget.profilId;
-    if (!mounted || !widget.actif || profil == null || _cede) return;
-    try {
-      final BattementSalle b = await ref
-          .read(portSecondAppareilProvider)
-          .battement(
-            seanceId: widget.seanceId,
-            profilId: profil,
-            appareilId: _appareil,
-            libelle: _libelle,
-          );
-      if (!mounted) return;
-      if (b.cede) {
-        await _ceder();
-        return;
-      }
-      if (b.demande != _demande) {
-        setState(() {
-          _demande = b.demande;
-          if (b.demande == null) _echec = false;
-        });
-      }
-    } on Object {
-      // Un battement perdu n'est pas une coupure : le serveur ne tient un
-      // appareil pour silencieux qu'apres 30 secondes, le suivant rattrape.
-    }
-  }
-
-  Future<void> _ceder() async {
-    if (_cede) return;
-    _cede = true;
-    _minuteur?.cancel();
-    setState(() => _demande = null);
-    await widget.onCeder();
-  }
-
-  Future<void> _repondre(bool accepter) async {
-    final DemandePassage? d = _demande;
-    if (d == null || _enCours) return;
-    setState(() {
-      _enCours = true;
-      _echec = false;
-    });
-    try {
-      await ref
-          .read(portSecondAppareilProvider)
-          .repondre(d.id, accepter: accepter);
-      if (!mounted) return;
-      setState(() {
-        _enCours = false;
-        _demande = null;
-      });
-      if (accepter) await _ceder();
-    } on Object {
-      if (mounted) {
-        setState(() {
-          _enCours = false;
-          _echec = true;
-        });
-      }
-    }
-  }
 
   @override
   void dispose() {
-    _minuteur?.cancel();
     _effaceNote?.cancel();
     super.dispose();
   }
@@ -455,33 +467,6 @@ class _Etat extends ConsumerState<SurveillanceSecondAppareil> {
             start: AppSpacing.lg,
             end: AppSpacing.lg,
             child: NoteAncienAppareil(),
-          ),
-        if (_demande != null && widget.actif)
-          Positioned.fill(
-            child: Stack(
-              children: <Widget>[
-                ModalBarrier(
-                  dismissible: false,
-                  color: AppPalette.of(context).surfaceInverse.background
-                      .withValues(alpha: 0.6),
-                ),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSpacing.xl),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 520),
-                      child: DialogueAutreAppareil(
-                        libelle: _demande!.libelle,
-                        enCours: _enCours,
-                        echec: _echec,
-                        onAccepter: () => unawaited(_repondre(true)),
-                        onRefuser: () => unawaited(_repondre(false)),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ),
       ],
     );
