@@ -21,7 +21,13 @@
 --    encore emise, au prorata) est TOUJOURS payee d'abord et montree a part : une offre = dette + N mois.
 --    Aucune offre pour un profil sans classe ni creneau choisi ; avant son premier mois reel (creneau choisi,
 --    classe sans enseignant) : un mois seulement. L'engagement de prepaiement accepte 1 a 12 mois et ne porte
---    que la part « avance » (jamais la dette), ce qui garde le remboursement juste.
+--    que la part « avance » (jamais la dette), ce qui garde le remboursement juste. Les mois couverts sont FIGES au
+--    recapitulatif : l'engagement prend exactement ces mois, et `recharge_payer` refuse avant le prestataire
+--    (« le montant a changé, vérifiez à nouveau ») si la dette ou les mois ont change depuis la verification.
+--    Le remboursement compte les mois commences au prix mensuel normal de la famille (remise de rang comprise ;
+--    seule la remise de prepaiement est retiree), garde dans l'engagement (`prix_mensuel_mineur`).
+-- 4 bis. Rang : une seule regle partout (apercu, offre, facture) : l'ordre d'inscription (`profiles.created_at`, puis
+--    l'identifiant), sans les profils a bourse, acces offert ou prix special (`fac_rang_inscription`).
 -- 5. Contrat d'explication : `recharge_beneficiaires` rend, par profil et par offre, le prix, chaque remise
 --    appliquee, chaque remise non appliquee avec son code, le prorata, les mois de dette et les mois couverts.
 --    `recharge_verifier_montants` n'accepte que ces offres (un profil une seule fois par recapitulatif) et
@@ -108,13 +114,19 @@ ALTER TABLE public.engagements_prepaiement
   ADD CONSTRAINT engagements_prepaiement_check CHECK (
     formule = CASE WHEN nb_mois >= 12 THEN 'annuel' WHEN nb_mois >= 3 THEN 'trimestriel' ELSE 'avance' END);
 
+-- Le prix mensuel NORMAL (tarif moins la remise de rang, sans la remise de prepaiement) que la famille avait au
+-- moment de payer : le remboursement des mois commences le relit (decision DECISION-TARIFS point 3).
+ALTER TABLE public.engagements_prepaiement
+  ADD COLUMN IF NOT EXISTS prix_mensuel_mineur bigint CHECK (prix_mensuel_mineur > 0);
+
 ALTER TABLE public.recharges_recap_lignes DROP CONSTRAINT IF EXISTS recharges_recap_lignes_formule_check;
 ALTER TABLE public.recharges_recap_lignes
   ADD CONSTRAINT recharges_recap_lignes_formule_check
     CHECK (formule IN ('libre', 'mois', 'avance', 'trimestriel', 'annuel')),
   ADD COLUMN IF NOT EXISTS nb_mois smallint CHECK (nb_mois BETWEEN 1 AND 12),
   ADD COLUMN IF NOT EXISTS dette_mineur bigint NOT NULL DEFAULT 0 CHECK (dette_mineur >= 0),
-  ADD COLUMN IF NOT EXISTS mois_debut date;
+  ADD COLUMN IF NOT EXISTS mois_debut date,
+  ADD COLUMN IF NOT EXISTS prix_mensuel_mineur bigint;
 
 ALTER TABLE public.commandes_recharge_allocations DROP CONSTRAINT IF EXISTS commandes_recharge_allocations_formule_check;
 ALTER TABLE public.commandes_recharge_allocations
@@ -122,7 +134,8 @@ ALTER TABLE public.commandes_recharge_allocations
     CHECK (formule IN ('libre', 'mois', 'avance', 'trimestriel', 'annuel')),
   ADD COLUMN IF NOT EXISTS nb_mois smallint CHECK (nb_mois BETWEEN 1 AND 12),
   ADD COLUMN IF NOT EXISTS dette_mineur bigint NOT NULL DEFAULT 0 CHECK (dette_mineur >= 0),
-  ADD COLUMN IF NOT EXISTS mois_debut date;
+  ADD COLUMN IF NOT EXISTS mois_debut date,
+  ADD COLUMN IF NOT EXISTS prix_mensuel_mineur bigint;
 
 COMMENT ON COLUMN public.recharges_recap_lignes.dette_mineur IS
   'PAIEMENT-FAMILLE-PRIX : la part du montant qui paie la dette (factures a financer, premiere facture au prorata) ; le reste est l''avance de nb_mois mois.';
@@ -328,10 +341,38 @@ BEGIN
 END;
 $function$;
 
--- Le rang du profil dans son foyer pour p_mois : nul pour un profil a bourse, acces offert ou prix special ;
--- celui de sa facture si elle existe ; sinon celui qu'il prendrait : 1 + les AUTRES profils qui paient et ont
--- deja une facture ce mois-la, ou sont inscrits en classe et plus anciens que lui (ordre d'inscription, comme
--- l'emission de la nuit). Un profil sans rang ne fait jamais descendre les autres.
+-- LE rang d'un profil (une seule regle, partout : apercu, offre, facture) : l'ordre d'inscription
+-- (profiles.created_at, a egalite l'identifiant), sans les profils a bourse, acces offert ou prix special. Nul pour
+-- un profil a bourse. Sont comptes les AUTRES profils du foyer, eux-memes sans bourse ce mois-la, plus anciens que lui
+-- et qui paient : inscrits dans une classe (hors essai gratuit), ou deja factures ce mois-la avec un rang.
+CREATE OR REPLACE FUNCTION private.fac_rang_inscription(p_profil uuid, p_mois date)
+RETURNS integer
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT CASE
+    WHEN (private.fac_bourse(p_profil, p_mois)).id IS NOT NULL THEN NULL
+    ELSE 1 + (SELECT count(*)::integer
+                FROM public.profiles pr
+                JOIN public.profiles q ON q.household_id = pr.household_id AND q.id <> pr.id
+                JOIN public.student_profiles sq ON sq.profile_id = q.id AND sq.deleted_at IS NULL
+               WHERE pr.id = p_profil AND q.deleted_at IS NULL
+                 AND (private.fac_bourse(q.id, p_mois)).id IS NULL
+                 AND NOT private.fac_en_essai(q.id, private.fac_politique_au(p_mois))
+                 AND (q.created_at, q.id) < (pr.created_at, pr.id)
+                 AND (EXISTS (SELECT 1 FROM public.factures_mensuelles f
+                               WHERE f.profile_id = q.id AND f.mois = p_mois AND f.statut <> 'annulee'
+                                 AND f.rang_familial IS NOT NULL)
+                      OR EXISTS (SELECT 1 FROM public.groupe_membres m
+                                  JOIN public.groupes g ON g.id = m.groupe_id
+                                 WHERE m.student_id = q.id AND m.left_at IS NULL
+                                   AND g.ended_at IS NULL AND g.etat = 'active')))
+  END;
+$function$;
+
+-- Le rang attendu : celui de la facture deja emise, sinon celui que la regle donne.
 CREATE OR REPLACE FUNCTION private.fac_rang_attendu(p_profil uuid, p_mois date)
 RETURNS integer
 LANGUAGE sql
@@ -344,33 +385,17 @@ AS $function$
     ELSE coalesce(
       (SELECT f.rang_familial FROM public.factures_mensuelles f
         WHERE f.profile_id = p_profil AND f.mois = p_mois AND f.statut <> 'annulee'),
-      1 + (SELECT count(*)::integer
-             FROM public.profiles pr
-             JOIN public.profiles q ON q.household_id = pr.household_id AND q.id <> pr.id
-             JOIN public.student_profiles sq ON sq.profile_id = q.id AND sq.deleted_at IS NULL
-            WHERE pr.id = p_profil AND q.deleted_at IS NULL
-              AND (private.fac_bourse(q.id, p_mois)).id IS NULL
-              AND (EXISTS (SELECT 1 FROM public.factures_mensuelles f
-                            WHERE f.profile_id = q.id AND f.mois = p_mois AND f.statut <> 'annulee'
-                              AND f.rang_familial IS NOT NULL)
-                   OR (EXISTS (SELECT 1 FROM public.groupe_membres m
-                                 JOIN public.groupes g ON g.id = m.groupe_id
-                                WHERE m.student_id = q.id AND m.left_at IS NULL
-                                  AND g.ended_at IS NULL AND g.etat = 'active')
-                       AND (q.created_at, q.id) < (pr.created_at, pr.id)))))
+      private.fac_rang_inscription(p_profil, p_mois))
   END;
 $function$;
 
--- L'emission d'une facture : un profil a bourse n'a pas de rang et n'en fait pas prendre aux autres.
+-- L'emission d'une facture prend le MEME rang que l'apercu : l'ordre d'inscription, jamais l'ordre de paiement.
 SELECT pg_temp.remplacer('private.fac_emettre_facture(uuid,date,uuid)'::regprocedure,
 $a$  v_rang := 1 + (SELECT count(*) FROM public.factures_mensuelles f
                   WHERE f.household_id = v_foyer AND f.mois = p_mois AND f.statut <> 'annulee');$a$,
-$b$  -- PAIEMENT-FAMILLE-PRIX : bourse, acces offert et prix special ne prennent aucun rang ; les profils qui
-  -- paient gardent leur rang entre eux.
-  v_rang := CASE WHEN (private.fac_bourse(p_profil, p_mois)).id IS NOT NULL THEN NULL
-                 ELSE 1 + (SELECT count(*) FROM public.factures_mensuelles f
-                            WHERE f.household_id = v_foyer AND f.mois = p_mois AND f.statut <> 'annulee'
-                              AND NOT (f.lignes @> '[{"nature":"bourse"}]'::pg_catalog.jsonb)) END;$b$);
+$b$  -- PAIEMENT-FAMILLE-PRIX : une seule regle de rang (l'ordre d'inscription, sans les profils a bourse, acces offert
+  -- ou prix special), la meme que l'apercu et que les offres.
+  v_rang := private.fac_rang_inscription(p_profil, p_mois);$b$);
 
 -- ---------------------------------------------------------------------------
 -- 5. Le prix de N mois payes d'avance, avec son explication.
@@ -402,6 +427,7 @@ DECLARE
   v_non jsonb := '[]'::jsonb;
   v_formule text;
   v_code text;
+  v_prix_unite bigint;
 BEGIN
   IF p_nb IS NULL OR p_nb NOT BETWEEN 1 AND 12 OR p.version IS NULL THEN
     RETURN NULL;
@@ -444,6 +470,7 @@ BEGIN
     END IF;
     v_formule := 'libre';
     v_rang := NULL;
+    v_prix_unite := v_unite;
   ELSE
     v_rang := private.fac_rang_attendu(p_profil, p_debut);
     v_unite := -coalesce(private.fac_remise_montant(p, v_rang, v_tarif), 0);
@@ -488,9 +515,10 @@ BEGIN
         'code', 'arrondi', 'montant', private.bf1_montant(v_total - v_brut, p.devise)));
     END IF;
     v_formule := CASE WHEN p_nb >= 12 THEN 'annuel' WHEN p_nb >= 3 THEN 'trimestriel' ELSE 'avance' END;
+    v_prix_unite := v_tarif - v_unite;
   END IF;
   RETURN pg_catalog.jsonb_build_object(
-    'totalMineur', v_total, 'devise', p.devise, 'nbMois', p_nb, 'formule', v_formule,
+    'totalMineur', v_total, 'unitaireMineur', v_prix_unite, 'devise', p.devise, 'nbMois', p_nb, 'formule', v_formule,
     'debut', pg_catalog.to_char(p_debut, 'YYYY-MM-DD'),
     'fin', pg_catalog.to_char((p_debut + pg_catalog.make_interval(months => p_nb - 1))::date, 'YYYY-MM-DD'),
     'rang', v_rang, 'tarif', private.bf1_montant(v_tarif, p.devise), 'politique', p.version,
@@ -604,6 +632,23 @@ BEGIN
   RETURN pg_catalog.jsonb_build_object(
     'totalMineur', v_total, 'total', private.bf1_montant(v_total, v_devise),
     'solde', private.bf1_montant(v_solde, v_devise), 'mois', v_mois);
+END;
+$function$;
+
+-- Vrai quand une ligne de recapitulatif est encore une offre du serveur : meme montant, memes mois d'avance, meme
+-- dette, memes mois couverts (la dette ou le mois ont pu changer entre la verification et le paiement).
+CREATE OR REPLACE FUNCTION private.rch_ligne_valide(
+  p_profil uuid, p_montant bigint, p_nb integer, p_dette bigint, p_debut date)
+RETURNS boolean
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  RETURN EXISTS (SELECT 1 FROM private.rch_options(p_profil) o
+                  WHERE o.montant = p_montant AND o.nb_mois = coalesce(p_nb, 0)
+                    AND o.dette = p_dette AND o.mois_debut IS NOT DISTINCT FROM p_debut);
 END;
 $function$;
 
@@ -807,9 +852,11 @@ BEGIN
     END IF;
     v_rang := v_rang + 1;
     INSERT INTO public.recharges_recap_lignes
-      (recapitulatif_id, rang, profile_id, montant_mineur, formule, nb_mois, dette_mineur, mois_debut)
+      (recapitulatif_id, rang, profile_id, montant_mineur, formule, nb_mois, dette_mineur, mois_debut,
+       prix_mensuel_mineur)
     VALUES (v_id, v_rang, v_profil, v_montant, v_o.formule,
-            CASE WHEN v_o.nb_mois > 0 THEN v_o.nb_mois END, v_o.dette, v_o.mois_debut);
+            CASE WHEN v_o.nb_mois > 0 THEN v_o.nb_mois END, v_o.dette, v_o.mois_debut,
+            (v_o.avance_detail ->> 'unitaireMineur')::bigint);
     v_total := v_total + v_montant;
   END LOOP;
   UPDATE public.recharges_recapitulatifs SET total_mineur = v_total WHERE id = v_id;
@@ -841,8 +888,22 @@ SELECT pg_temp.remplacer('public.recharge_payer(uuid,uuid)'::regprocedure,
 $a$    INSERT INTO public.commandes_recharge_allocations (commande_id, rang, profile_id, montant_mineur, formule)
     SELECT v_c.id, l.rang, l.profile_id, l.montant_mineur, l.formule$a$,
 $b$    INSERT INTO public.commandes_recharge_allocations
-      (commande_id, rang, profile_id, montant_mineur, formule, nb_mois, dette_mineur, mois_debut)
-    SELECT v_c.id, l.rang, l.profile_id, l.montant_mineur, l.formule, l.nb_mois, l.dette_mineur, l.mois_debut$b$);
+      (commande_id, rang, profile_id, montant_mineur, formule, nb_mois, dette_mineur, mois_debut,
+       prix_mensuel_mineur)
+    SELECT v_c.id, l.rang, l.profile_id, l.montant_mineur, l.formule, l.nb_mois, l.dette_mineur, l.mois_debut,
+           l.prix_mensuel_mineur$b$);
+-- Avant la commande (donc avant Stripe) : chaque ligne doit encore etre une offre du serveur, avec les memes
+-- mois et la meme dette. Sinon rien ne part : la famille verifie de nouveau.
+SELECT pg_temp.remplacer('public.recharge_payer(uuid,uuid)'::regprocedure,
+$a$    INSERT INTO public.commandes_recharge
+      (id, reference, recapitulatif_id$a$,
+$b$    IF EXISTS (SELECT 1 FROM public.recharges_recap_lignes l
+                WHERE l.recapitulatif_id = v_r.id
+                  AND NOT private.rch_ligne_valide(l.profile_id, l.montant_mineur, l.nb_mois, l.dette_mineur, l.mois_debut)) THEN
+      RAISE EXCEPTION 'le montant a changé, vérifiez à nouveau' USING ERRCODE = '22023';
+    END IF;
+    INSERT INTO public.commandes_recharge
+      (id, reference, recapitulatif_id$b$);
 SELECT pg_temp.remplacer('public.recharge_payer(uuid,uuid)'::regprocedure,
 $a$'formule', a.formule, 'mois', private.fac_mois_courant()) ORDER BY a.rang)$a$,
 $b$'formule', a.formule, 'nbMois', a.nb_mois, 'mois', private.fac_mois_courant()) ORDER BY a.rang)$b$);
@@ -854,26 +915,26 @@ $a$        IF a.formule IN ('trimestriel', 'annuel') THEN
           VALUES (a.profile_id, a.formule, v_suivant, CASE a.formule WHEN 'trimestriel' THEN 3 ELSE 12 END,
                   a.montant_mineur, v_c.devise, v_c.id);
         END IF;$a$,
-$b$        -- PAIEMENT-FAMILLE-PRIX : N mois (1 a 12) payes d'avance ouvrent un engagement qui ne porte que la
-        -- part « avance » (jamais la dette), au plus tot le mois suivant et apres tout engagement ouvert.
+$b$        -- PAIEMENT-FAMILLE-PRIX : N mois (1 a 12) payes d'avance ouvrent un engagement sur EXACTEMENT les mois
+        -- figes au recapitulatif (jamais « le mois suivant maintenant ») ; il ne porte que la part « avance »
+        -- (jamais la dette). Un surplus eventuel reste au solde du profil, visible.
         IF a.formule IN ('avance', 'trimestriel', 'annuel') AND a.nb_mois IS NOT NULL
-           AND a.montant_mineur > a.dette_mineur THEN
+           AND a.mois_debut IS NOT NULL AND a.montant_mineur > a.dette_mineur THEN
           INSERT INTO public.engagements_prepaiement
-            (profile_id, formule, mois_debut, nb_mois, total_mineur, devise, commande_id)
+            (profile_id, formule, mois_debut, nb_mois, total_mineur, devise, commande_id, prix_mensuel_mineur)
           VALUES (a.profile_id,
                   CASE WHEN a.nb_mois >= 12 THEN 'annuel' WHEN a.nb_mois >= 3 THEN 'trimestriel' ELSE 'avance' END,
-                  greatest(coalesce(a.mois_debut, v_suivant), v_suivant,
-                           coalesce((SELECT max((e.mois_debut + pg_catalog.make_interval(months => e.nb_mois))::date)
-                                       FROM public.engagements_prepaiement e
-                                      WHERE e.profile_id = a.profile_id), v_suivant)),
-                  a.nb_mois, a.montant_mineur - a.dette_mineur, v_c.devise, v_c.id);
+                  a.mois_debut, a.nb_mois, a.montant_mineur - a.dette_mineur, v_c.devise, v_c.id,
+                  a.prix_mensuel_mineur);
         END IF;$b$);
 
--- Remboursement d'un engagement apres le delai : les mois commences au prix mensuel normal, le reste rendu,
--- sur la part « avance » seulement (la dette paie un mois deja consomme, elle n'est pas rendue).
+-- Remboursement d'un engagement apres le delai : les mois commences au prix mensuel NORMAL (le prix que la famille
+-- avait, remise de rang comprise ; seule la remise de la formule de prepaiement est retiree : DECISION-TARIFS
+-- point 3), le reste rendu, sur la part « avance » seulement (la dette paie un mois deja consomme).
 SELECT pg_temp.remplacer('private.fn115c_montant_propose(uuid,uuid)'::regprocedure,
 $a$      v_montant := GREATEST(v_paye - v_mois * v_mensuel - v_rendu - v_en_cours, 0);$a$,
-$b$      v_montant := GREATEST(v_e.total_mineur - v_mois * v_mensuel - v_rendu - v_en_cours, 0);$b$);
+$b$      v_montant := GREATEST(v_e.total_mineur - v_mois * coalesce(v_e.prix_mensuel_mineur, v_mensuel)
+                            - v_rendu - v_en_cours, 0);$b$);
 
 -- ---------------------------------------------------------------------------
 -- 9. Droits et empreintes.
@@ -890,6 +951,8 @@ BEGIN
     'private.rch_etat(uuid)'::regprocedure,
     'private.rch_dette(uuid)'::regprocedure,
     'private.rch_options(uuid)'::regprocedure,
+    'private.rch_ligne_valide(uuid,bigint,integer,bigint,date)'::regprocedure,
+    'private.fac_rang_inscription(uuid,date)'::regprocedure,
     'private.rch_explication(uuid,text)'::regprocedure,
     'private.rch_offres(uuid)'::regprocedure,
     'private.fac_mensualite(uuid,date,public.politiques_commerciales,integer,boolean)'::regprocedure,

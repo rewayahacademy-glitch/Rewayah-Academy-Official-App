@@ -12424,6 +12424,9 @@
         "trimestriel": "{montant} for 3 months, paid in advance",
         "annuel": "{montant} for 12 months, paid in advance"
       },
+      "montantChangeTitre": "The amount has changed",
+      "montantChangePhrase": "An invoice or a month changed since you checked. Nothing was paid. Check again before paying.",
+      "montantChangeAction": "Check again",
       "explication": {
         "libelleDette": "{montant}: the month due",
         "libelleMois(plural, param=n)": {

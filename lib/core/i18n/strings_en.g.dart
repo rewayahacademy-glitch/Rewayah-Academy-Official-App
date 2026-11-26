@@ -10226,6 +10226,9 @@ class _Traductions$adulte$recharge$en extends Traductions$adulte$recharge$fr {
 	@override String get paiementIndisponibleTitre => 'Payment not available yet';
 	@override String get paiementIndisponiblePhrase => 'No payment was made. Online payment is not yet open in the app.';
 	@override late final _Traductions$adulte$recharge$formules$en formules = _Traductions$adulte$recharge$formules$en._(_root);
+	@override String get montantChangeTitre => 'The amount has changed';
+	@override String get montantChangePhrase => 'An invoice or a month changed since you checked. Nothing was paid. Check again before paying.';
+	@override String get montantChangeAction => 'Check again';
 	@override late final _Traductions$adulte$recharge$explication$en explication = _Traductions$adulte$recharge$explication$en._(_root);
 	@override String get revenirPaiements => 'Back to the household payments';
 	@override String get phraseUnique => 'Tick the profile, then choose the amount.';
@@ -40641,6 +40644,9 @@ extension on TraductionsEn {
 			'adulte.recharge.paiementIndisponiblePhrase' => 'No payment was made. Online payment is not yet open in the app.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} for 3 months, paid in advance',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} for 12 months, paid in advance',
+			'adulte.recharge.montantChangeTitre' => 'The amount has changed',
+			'adulte.recharge.montantChangePhrase' => 'An invoice or a month changed since you checked. Nothing was paid. Check again before paying.',
+			'adulte.recharge.montantChangeAction' => 'Check again',
 			'adulte.recharge.explication.libelleDette' => ({required Object montant}) => '${montant}: the month due',
 			'adulte.recharge.explication.libelleMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${montant} for ${n} month paid ahead', other: '${montant} for ${n} months paid ahead', ), 
 			'adulte.recharge.explication.libelleDetteEtMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${montant}: the month due and ${n} month ahead', other: '${montant}: the month due and ${n} months ahead', ), 
@@ -40792,11 +40798,11 @@ extension on TraductionsEn {
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'A new invitation is possible from ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Sent to ${courriel}',
 			'adulte.famille.place.expiree' => 'The previous invitation has expired. You can send a new one.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.annulee' => 'The invitation was cancelled and can no longer be accepted. You can send a new one.',
 			'adulte.invitation.titreElle' => 'Invite my spouse',
 			'adulte.invitation.titreLui' => 'Invite my spouse',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.enteteElle' => 'A personal account for her',
 			'adulte.invitation.enteteLui' => 'A personal account for him',
 			'adulte.invitation.phraseElle' => 'Your spouse will use her own account. She will not be able to manage your household or the student profiles you created.',
@@ -41306,11 +41312,11 @@ extension on TraductionsEn {
 			'alertes.traitement.faitExamenPhrase' => 'It stays in the alerts until it is closed.',
 			'alertes.traitement.faitTransmisTitre' => 'Message saved',
 			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'Saved for ${cible}. No family screen shows it yet.',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.faitClosTitre' => 'Report closed',
 			'alertes.traitement.faitClosPhrase' => 'It has left the alerts.',
 			'alertes.traitement.refuseTitre' => 'This report has changed',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.refusePhrase' => 'The alerts have been reloaded.',
 			'alertes.traitement.erreurTitre' => 'The action did not go through',
 			'alertes.traitement.erreurPhrase' => 'Try again in a moment.',
@@ -41820,11 +41826,11 @@ extension on TraductionsEn {
 			'com.communaute.publication.enregistrer' => 'Save the post',
 			'com.communaute.publication.enregistree' => 'Post saved',
 			'com.communaute.publication.retirer' => 'Remove from saved items',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.publication.menu' => ({required Object titre}) => 'Actions on the post ${titre}',
 			'com.communaute.publication.signaler' => 'Report the post',
 			'com.communaute.publication.signalee' => 'The content has been reported to the moderation team.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.publication.choisirTitre' => 'No post open',
 			'com.communaute.publication.choisir' => 'Choose a post from the list to read it and reply.',
 			'com.communaute.publication.introuvableTitre' => 'Post unavailable',
@@ -42334,11 +42340,11 @@ extension on TraductionsEn {
 			'com.annonces.demoPublication.rentreeTitre' => 'Classes resume after the holidays',
 			'com.annonces.demoPublication.rentreeTexte' => 'Sessions resume on Monday 6 January at the usual times.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Post "Printable tajwid sheets"',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.extraitAffilie' => 'Find my sheets with this partner link, 20% off with my code.',
 			'com.annonces.demoPublication.signalementVente' => 'Post "Private lessons available"',
 			'com.annonces.demoPublication.extraitVente' => 'I offer paid private lessons at the weekend, write to me.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Reply under "Organizing a group revision"',
 			'com.annonces.section' => 'Class announcements',
 			'com.annonces.annonce' => 'Announcement',
@@ -42848,11 +42854,11 @@ extension on TraductionsEn {
 			'comptable.encaissements.filtreRembourses' => 'Refunded',
 			'comptable.encaissements.filtreContestes' => 'Disputed',
 			'comptable.encaissements.filtreARapprocher' => 'To reconcile',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.recherche' => 'Search for a family or a reference',
 			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Family',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.colReference' => 'Reference',
 			'comptable.encaissements.colBrut' => 'Gross',
 			'comptable.encaissements.colFrais' => 'Fees',
@@ -43362,11 +43368,11 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.reactiveeActive' => 'Delegations reactivated.',
 			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Delegations reactivated, but the delegation has expired: renew it so that it restarts for its duration.',
 			'comptable.direction.delegationPanneau.reactiverEchec' => 'The reactivation is not confirmed: the request may not have reached Rewayah, or your two-step verification needs redoing. Check the delegation\'s state before trying again.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'Delegations suspended',
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspended since ${date}. The Accountant can carry out nothing without your validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'The Accountant can carry out nothing without your validation.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension in progress',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'The suspension is not confirmed: the request may not have reached Rewayah. Check the delegation\'s state before trying again.',
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiry',
@@ -43876,11 +43882,11 @@ extension on TraductionsEn {
 			'avis.admin.retour.motifManque' => 'The reason is missing. Choose one.',
 			'avis.admin.retour.refus' => 'Only the signed-in management can decide on a review.',
 			'avis.admin.retour.echec' => 'The decision could not be confirmed. The list is reloaded: check the state of the review before trying again.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retour.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
 			'avis.admin.liens.creerTitre' => 'Create a link',
 			'avis.admin.liens.creerIntro' => 'A link opens the feedback form, without an account or sign-in. Give it a name so you can recognise it.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.libelle' => 'Link name',
 			'avis.admin.liens.libelleAide' => 'For example: Families October 2026.',
 			'avis.admin.liens.libelleErreur' => 'Give the link a name.',
@@ -44390,11 +44396,11 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'Keep row ${ligne} instead',
 			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'This row becomes the person\'s answer. The others go into the history.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'Different people',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'Choose this if these rows come from different people who share a contact. Each keeps their answer.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'two people from the same family who answered with the same number',
 			'candidatsFlux.importFormulaires.analyse.echec' => 'The analysis did not go through.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'Nothing was saved. Try again in a moment.',
 			'candidatsFlux.importFormulaires.analyse.refus' => 'The server cannot read this file with these names. Check the workbook, the tab and the file, then try again.',
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'Try the analysis again',
@@ -44904,11 +44910,11 @@ extension on TraductionsEn {
 			'suiviAttente.presentation.titre' => 'What families see of you',
 			'suiviAttente.presentation.phrase' => 'The families of your classes already see, as everywhere in the app, your title, first name, class language, photo and country if it is filled in. This setting only concerns the card tracking their request: you choose to also show your two countries and an introduction there, when you have entered them.',
 			'suiviAttente.presentation.montrer' => 'Show my countries and my introduction on the tracking card',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.presentation.paysOrigine' => 'Country of origin',
 			'suiviAttente.presentation.paysResidence' => 'Country of residence',
 			'suiviAttente.presentation.choisirPays' => 'Choose a country',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.presentation.nonRenseigne' => 'Not provided',
 			'suiviAttente.presentation.mot' => 'My introduction',
 			'suiviAttente.presentation.motAide' => '500 characters at most. Families read it exactly as you write it.',
@@ -45418,11 +45424,11 @@ extension on TraductionsEn {
 			'onboarding.chemin.rigueur' => 'Three sessions a week, always with the same teacher. An absence is caught up alone, before the next session, with the tools the academy provides: the recorded reading of the programme and the documents in the Library.',
 			'onboarding.chemin.horaires' => 'Your days and times will be chosen together after acceptance.',
 			'onboarding.recap.dit' => 'Here is what I understood. Nothing is committed: the administration reads every request.',
+			_ => null,
+		} ?? switch (path) {
 			'onboarding.recap.titre' => 'Here is what we understood',
 			'onboarding.recap.langue' => ({required Object langue}) => 'Language: ${langue}',
 			'onboarding.recap.sinon' => ({required Object langue, required Object secours}) => '${langue}, otherwise ${secours}',
-			_ => null,
-		} ?? switch (path) {
 			'onboarding.recap.heure' => ({required Object ville}) => 'Time zone: ${ville} (detected)',
 			'onboarding.recap.heureChoisie' => ({required Object ville}) => 'Time zone: ${ville}',
 			'onboarding.recap.heures' => ({required Object ici, required Object mecque}) => 'It is ${ici} where you are, ${mecque} in Makkah.',

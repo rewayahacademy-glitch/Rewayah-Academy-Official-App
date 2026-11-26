@@ -55,7 +55,7 @@
 part of 'invitation_conjoint.dart';
 
 /// Ce que l'ecran dit apres une verification ou un paiement manques.
-enum _EchecRecharge { reseau, indisponible, precedentOuvert }
+enum _EchecRecharge { reseau, indisponible, precedentOuvert, montantChange }
 
 /// La recharge du foyer, pour le titulaire seulement.
 class RechargeFoyerPage extends ConsumerStatefulWidget {
@@ -375,6 +375,18 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     });
   }
 
+  /// Le montant a change : l'echec s'efface, les offres se relisent, le
+  /// recapitulatif se refait avec les montants que le serveur propose
+  /// maintenant (un montant qui n'existe plus n'est pas retenu).
+  void _relireApresChangement() {
+    setState(() {
+      _echecPaiement = null;
+      _montants.clear();
+    });
+    ref.invalidate(beneficiairesRechargeProvider);
+    _actualiser();
+  }
+
   void _retour() {
     if (_paiementEnCours) return;
     if (_paiementIncertain || _commande != null) {
@@ -404,6 +416,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       echec = _EchecRecharge.indisponible;
     } on PaiementPrecedentOuvert {
       echec = _EchecRecharge.precedentOuvert;
+    } on MontantChange {
+      echec = _EchecRecharge.montantChange;
     } on Object {
       echec = _EchecRecharge.reseau;
     }
@@ -1059,7 +1073,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         : t.adulte.recharge.raisonMontant;
     final Widget? echecVerif = switch (_echecVerif) {
       // Une lecture manquee : rien n'a ete paye, les choix restent.
-      _EchecRecharge.reseau || _EchecRecharge.precedentOuvert => EtatSysteme(
+      _EchecRecharge.reseau ||
+      _EchecRecharge.precedentOuvert ||
+      _EchecRecharge.montantChange => EtatSysteme(
         nature: NatureEtat.echecServeur,
         titre: t.adulte.recharge.verificationEchecTitre,
         phrase: t.adulte.recharge.verificationEchecPhrase,
@@ -1080,6 +1096,17 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         nature: NatureEtat.echecServeur,
         titre: t.adulte.recharge.paiementEchecTitre,
         phrase: t.adulte.recharge.paiementEchecPhrase,
+      ),
+      // PAIEMENT-FAMILLE-PRIX : la dette ou les mois ont change depuis la
+      // verification ; rien n'est parti chez le prestataire, on relit les
+      // offres et on verifie de nouveau.
+      (_EchecRecharge.montantChange, _) => EtatSysteme(
+        key: const ValueKey<String>('recharge-montant-change'),
+        nature: NatureEtat.echecServeur,
+        titre: t.adulte.recharge.montantChangeTitre,
+        phrase: t.adulte.recharge.montantChangePhrase,
+        libelleAction: t.adulte.recharge.montantChangeAction,
+        onAction: _relireApresChangement,
       ),
       // PAY-UX : le formulaire ouvert avant n'a pas pu etre ferme ; rien
       // n'est paye deux fois, aucun nouveau formulaire ne s'ouvre.

@@ -3,8 +3,8 @@ PAIEMENT-FAMILLE-PRIX, journal de verification (23/11/2026, R3). Rien ici n'est 
 CE QUI A ETE EXECUTE (poste de l'agent, Postgres 16.15 local ; la CI utilise Postgres 17) :
 - stub_auth.sql, puis les migrations du depot (dont 20261203000000_paiement_famille_prix.sql) sans erreur ; la migration
   rejouee une seconde fois sur la meme base sans erreur (remplacements de texte idempotents).
-- supabase/tests/scenarios_paiement_famille.sql : 50 controles verts (liste ci-dessous).
-- Les 202 scenarios que la CI rejoue (liste lue dans le workflow, non modifie) : voir la ligne « CI » en fin de fichier.
+- supabase/tests/scenarios_paiement_famille.sql : 58 controles verts (liste ci-dessous).
+- Les 202 scenarios que la CI rejoue (liste lue dans le workflow, non modifie) : 202 verts apres la revue du pilote (fac_b et fac_c adaptes a l ordre d inscription).
 - Scenarios adaptes parce que le serveur propose maintenant la DETTE d'abord, au prix exact (et aucune offre sans classe) :
   fi_br06_recharge_stripe, fn115b_remboursements, fn115c_rembourser, remb14_delai, pay_ux_session_neuve,
   pub_tarifs_publics, fac_e_tarifs_v2, paiement_unifie, profil_titulaire_foyer ; les versions v2.1.0 et v2.2.0 sont
@@ -12,17 +12,21 @@ CE QUI A ETE EXECUTE (poste de l'agent, Postgres 16.15 local ; la CI utilise Pos
 - Flutter : dart analyze --fatal-infos propre ; tests cibles recharge, capacites, finance, foyer (voir « Flutter » en fin
   de fichier) ; verifier_jetons, verifier_branchement, verifier_conversations verts.
 - site-public : 174 tests unittest verts (152,35 USD pour trois enfants).
+- REVUE DU PILOTE (23/11) : prix mensuel normal avec remise de rang au remboursement ; mois figes au recapitulatif, refus avant Stripe ; un seul rang (inscription) ; test arabe 1280, 1440, 320 (la panne venait de setLocale dans le faux temps de testWidgets, pas de la mise en page) ; ar_domaines_test : zero ajoute aux pluriels arabes (cause de l echec du lot 0 en CI).
 - Production, LECTURE SEULE (execute_sql, SELECT sur pg_proc) : les empreintes des fonctions remplacees
   (fac_mensualite, fac_rang_attendu, fac_prix_prepaiement, fac_emettre_facture, rch_offres, recharge_beneficiaires,
   recharge_verifier_montants, recharge_payer, recharge_evenement_stripe) sont IDENTIQUES a celles d'un rejeu local
-  sans la migration. EXCEPTION : fn115c_montant_propose differe (production 3 493 caracteres, rejeu 3 930) : une
-  migration du depot qui la retouche n'est pas encore installee. L'ancre que la migration remplace y est presente.
+  sans la migration. EXCEPTION : fn115c_montant_propose differe en longueur (production 3 493 caracteres, rejeu 3 930)
+  MAIS seulement par les commentaires SQL : sans les lignes de commentaire, le rejeu fait 3 489 caracteres (ecart de 4 =
+  lignes vides / fin de ligne). Aucune migration du depot ne la retouche en attente : 20261102161229 (fn115c_rembourser)
+  et 20261103034610 (remb14_delai_public) sont installees en production ; la version du depot est 20261105100000 (meme
+  corps). Mon affirmation precedente d'une migration en attente etait fausse.
 
 NON FAIT / NON PROUVE : aucun vrai paiement Stripe ; Deno absent du poste (stripe.ts et stripe_test.ts modifies, non
 executes) ; aucune capture d'ecran produite (les tests mesurent la largeur de l'explication a 1280 et 1440, pas un rendu
 regarde par un humain) ; l'arabe est verifie par test de phrases, pas par un arabophone.
 
-LES 50 CONTROLES DE scenarios_paiement_famille.sql :
+LES 58 CONTROLES DE scenarios_paiement_famille.sql :
 OK 1 : le mois compte plus de seances que les trois seances existantes apres l'entree
 OK 1 : l'horaire de la classe donne ses seances sur le mois entier, creees ou non
 OK 1 : la premiere facture de k31 est emise
@@ -30,7 +34,8 @@ OK 1 : D1, entre en cours de mois, k31 ne paie pas le mois plein : 55 x seances 
 OK 1 : la ligne de prorata garde la date d'entree et « x seances sur y »
 OK 2 : acces offert : k22 sans rang, k23 2e inscrit payant (et non 3e)
 OK 2 : les trois factures du mois sont emises, le profil offert au milieu
-OK 2 : la facture du profil offert n'a pas de rang ; les deux payants ont les rangs 1 et 2, jamais 3
+OK 2 : la facture du profil offert n'a pas de rang ; les deux payants ont les rangs 1 et 2 dans l'ordre d'inscription, quel que soit l'ordre d'emission
+OK 2 : l'apercu et la facture donnent le meme rang et le meme prix (21 : 55 USD, 23 : 50,60 USD)
 OK 2 : l'offre d'un mois suit ce rang : 55 USD pour le 1er, 50,60 USD (8 %) pour le 2e payant
 OK 3 : la politique du mois suivant : 8 % au 2e, 15 % au 3e et suivants, cumul 25 %
 OK 3 : trois enfants : rangs 1, 2, 3 dans l'ordre d'inscription
@@ -69,7 +74,14 @@ OK 8 : remboursement apres le delai : le trimestre moins les mois commences au p
 OK 8 : une dette de 55 USD : l'offre 3 mois = 55 (dette) + 157 USD, la dette est le montant suggere
 OK 8 : la dette finance la facture du mois ; l'engagement porte 157 USD (3 mois), sans la dette ; 157 USD restent en solde
 OK 8 : dette + 3 mois, rembourse apres le delai : calcule sur les 157 USD d'avance seulement, jamais sur la dette de 55 USD
-OK 8 bis : acces offert : aucune offre pour k22 ; k23 garde un rang de payant (1 ou 2), jamais 3
+OK 8 ter : l'engagement garde le prix mensuel normal du 2e inscrit : 50,60 USD (8 % de rang, sans la remise du trimestre)
+OK 8 ter : rembourse apres le delai : les mois commences comptes a 50,60 USD (pas 55), jamais moins que la regle
+OK 8 quater : une nouvelle facture entre la verification et le paiement : refuse avant Stripe, « le montant a changé, vérifiez à nouveau »
+OK 8 quater : aucune commande creee, donc rien envoye a Stripe
+OK 8 quater : le prestataire a debite : credite
+OK 8 quater : l'engagement couvre exactement les mois figes au recapitulatif, jamais « le mois suivant maintenant »
+OK 8 quater : tout ce que le prestataire a debite est credite, au profil, exactement
+OK 8 bis : acces offert : aucune offre pour k22 ; k23 est le 2e payant
 OK 9 : les aides de prix restent privees ; la recharge reste au titulaire connecte
 OK 9 : un enfant ne lit pas les offres
-OK au moins 49 controles ont passe (50 avec celui-ci)
+OK au moins 59 controles ont passe (60 avec celui-ci)

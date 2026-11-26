@@ -13273,9 +13273,13 @@
         "trimestriel": "⁨{montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا",
         "annuel": "⁨{montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا"
       },
+      "montantChangeTitre": "تغيّر المبلغ",
+      "montantChangePhrase": "تغيّرت فاتورة أو شهر منذ تحقّقكم. لم يُدفع أي مبلغ. تحقّقوا من جديد قبل الدفع.",
+      "montantChangeAction": "تحقّق من جديد",
       "explication": {
         "libelleDette": "⁨{montant}⁩: الشهر المستحق",
         "libelleMois(plural, param=n)": {
+          "zero": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهر مدفوع مقدّمًا",
           "one": "⁨{montant}⁩ مقابل شهر واحد مدفوع مقدّمًا",
           "other": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهر مدفوع مقدّمًا",
           "two": "⁨{montant}⁩ مقابل شهرين مدفوعين مقدّمًا",
@@ -13283,6 +13287,7 @@
           "many": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهرًا مدفوعًا مقدّمًا"
         },
         "libelleDetteEtMois(plural, param=n)": {
+          "zero": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهر مقدّمًا",
           "one": "⁨{montant}⁩: الشهر المستحق وشهر واحد مقدّمًا",
           "other": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهر مقدّمًا",
           "two": "⁨{montant}⁩: الشهر المستحق وشهرين مقدّمًا",
@@ -13293,6 +13298,7 @@
         "synthese": {
           "detteSeule": "تدفعون ⁨{montant}⁩ عن الشهر المستحق (⁨{mois}⁩).",
           "detteEtAvance(plural, param=n)": {
+            "zero": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
             "one": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم شهرًا واحدًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
             "other": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
             "two": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم شهرين مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
@@ -13300,6 +13306,7 @@
             "many": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ شهرًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع."
           },
           "avanceSeule(plural, param=n)": {
+            "zero": "تدفعون ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
             "one": "تدفعون شهرًا واحدًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
             "other": "تدفعون ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
             "two": "تدفعون شهرين مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩.",
@@ -13317,6 +13324,7 @@
         },
         "ligne": {
           "prix(plural, param=n)": {
+            "zero": "سعر ⁨{n}⁩ شهر",
             "one": "سعر الشهر",
             "other": "سعر ⁨{n}⁩ شهر",
             "two": "سعر شهرين",
@@ -13347,6 +13355,7 @@
           "titre": "يُسدَّد أولًا",
           "moisApercu": "⁨{mois}⁩، لم تصدر فاتورته بعد",
           "prorata(plural, param=restantes)": {
+            "zero": "بدأتم في ⁨{date}⁩: ⁨{restantes}⁩ حصة من أصل ⁨{total}⁩ هذا الشهر",
             "one": "بدأتم في ⁨{date}⁩: حصة واحدة من أصل ⁨{total}⁩ هذا الشهر",
             "other": "بدأتم في ⁨{date}⁩: ⁨{restantes}⁩ حصة من أصل ⁨{total}⁩ هذا الشهر",
             "two": "بدأتم في ⁨{date}⁩: حصتان من أصل ⁨{total}⁩ هذا الشهر",

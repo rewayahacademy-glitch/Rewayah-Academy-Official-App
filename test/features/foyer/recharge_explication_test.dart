@@ -21,6 +21,8 @@ import 'package:rewayah_academy/core/capacites/recharge_foyer_supabase.dart'
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/formulaire_paiement.dart'
+    show MontantChange;
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
@@ -314,6 +316,11 @@ List<BeneficiaireRecharge> _profils() => <BeneficiaireRecharge>[
 
 /// Un port qui rend ces profils et garde les choix envoyes.
 class _PortExplique implements PortRechargeFoyer {
+  _PortExplique({this.payerEchec});
+
+  /// L'erreur que rend le paiement, ou `null`.
+  final Object? payerEchec;
+
   final List<List<MontantRecharge>> envois = <List<MontantRecharge>>[];
 
   @override
@@ -335,7 +342,7 @@ class _PortExplique implements PortRechargeFoyer {
   Future<String> payer({
     required String recapitulatifId,
     required String cle,
-  }) => Future<String>.error(UnimplementedError());
+  }) => Future<String>.error(payerEchec ?? UnimplementedError());
 
   @override
   Future<SuiviPaiement> suivre(String commandeId) =>
@@ -496,5 +503,66 @@ void main() {
     );
     expect(_texte('Vous payez d\'abord'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'le montant a change : refuse avant le prestataire, dit et a reverifier',
+    (WidgetTester tester) async {
+      final _PortExplique port = _PortExplique(
+        payerEchec: const MontantChange(),
+      );
+      await _monter(tester, port: port);
+      await _taper(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
+      await _taper(tester, find.byKey(RechargeFoyerPage.payerKey));
+      expect(_texte('Le montant a changé'), findsOneWidget);
+      expect(_texte('Rien n\'a été payé'), findsOneWidget);
+      final int avant = port.envois.length;
+      await _taper(tester, find.text('Vérifier à nouveau'));
+      expect(port.envois.length, greaterThan(avant));
+      expect(_texte('Le montant a changé'), findsNothing);
+    },
+  );
+
+  // L'arabe : la langue se charge HORS du faux temps du test (setUp), sinon
+  // le chargement differe ne se termine jamais dans `testWidgets` (cause du
+  // « blocage » vu le 23/11 : un harnais, pas une boucle de mise en page).
+  group('arabe', () {
+    setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+    for (final Size taille in <Size>[
+      const Size(1280, 1800),
+      const Size(1440, 1800),
+      const Size(320, 3600),
+    ]) {
+      testWidgets(
+        'ar ${taille.width.toInt()} : l\'explication se lit, de droite a gauche, sans deborder',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            port: _PortExplique(),
+            taille: taille,
+            echelle: taille.width < 400 ? 2 : 1,
+            direction: TextDirection.rtl,
+          );
+          await _taper(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
+          await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
+          await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
+          expect(
+            find.byKey(RechargeFoyerPage.explicationDe(_mariam)),
+            findsOneWidget,
+          );
+          expect(_texte('تدفعون أولًا'), findsOneWidget);
+          expect(_texte('ديسمبر'), findsWidgets);
+          if (taille.width >= 1280) {
+            final Size explication = tester.getSize(
+              find.byKey(RechargeFoyerPage.explicationDe(_mariam)),
+            );
+            expect(explication.width, lessThan(taille.width / 2));
+          }
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
   });
 }

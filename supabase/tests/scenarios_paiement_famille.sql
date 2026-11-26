@@ -231,9 +231,13 @@ SELECT pg_temp.vrai(private.fac_emettre_facture(pg_temp.id('22'), pg_temp.mois()
   AND private.fac_emettre_facture(pg_temp.id('21'), pg_temp.mois(), NULL),
   '2 : les trois factures du mois sont emises, le profil offert au milieu');
 SELECT pg_temp.vrai((pg_temp.fac('22')).rang_familial IS NULL
-  AND (pg_temp.fac('23')).rang_familial = 1 AND (pg_temp.fac('21')).rang_familial = 2
+  AND (pg_temp.fac('21')).rang_familial = 1 AND (pg_temp.fac('23')).rang_familial = 2
   AND (pg_temp.fac('22')).total_mineur = 0,
-  '2 : la facture du profil offert n''a pas de rang ; les deux payants ont les rangs 1 et 2, jamais 3');
+  '2 : la facture du profil offert n''a pas de rang ; les deux payants ont les rangs 1 et 2 dans l''ordre d''inscription, quel que soit l''ordre d''emission');
+SELECT pg_temp.vrai((pg_temp.fac('23')).total_mineur = 5060 AND (pg_temp.fac('21')).total_mineur = 5500
+  AND private.fac_rang_attendu(pg_temp.id('21'), pg_temp.mois()) = 1
+  AND private.fac_rang_attendu(pg_temp.id('23'), pg_temp.mois()) = 2,
+  '2 : l''apercu et la facture donnent le meme rang et le meme prix (21 : 55 USD, 23 : 50,60 USD)');
 SELECT pg_temp.vrai(pg_temp.prix('23', 1) = 5060 AND pg_temp.prix('21', 1) = 5500,
   '2 : l''offre d''un mois suit ce rang : 55 USD pour le 1er, 50,60 USD (8 %) pour le 2e payant');
 
@@ -494,13 +498,109 @@ SELECT pg_temp.vrai((pg_temp.propose(current_setting('test.c71')::uuid, '71') ->
   AND (pg_temp.propose(current_setting('test.c71')::uuid, '71') ->> 'montant_mineur')::bigint <= 15700 - 5500,
   '8 : dette + 3 mois, rembourse apres le delai : calcule sur les 157 USD d''avance seulement, jamais sur la dette de 55 USD');
 
+
+-- ------------------------------------------------------------------
+-- 8 ter. Le prix mensuel normal garde la remise de rang (DECISION-TARIFS point 3)
+-- ------------------------------------------------------------------
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui(pg_temp.id('d2'), 'guardian', pg_temp.id('f2'));
+SELECT set_config('test.m23', pg_temp.montant('23', 3)::text, true);
+RESET ROLE;
+SELECT set_config('test.c23', pg_temp.payer('d2', 'f2', jsonb_build_array(
+  jsonb_build_object('profilId', pg_temp.id('23'), 'mineur', current_setting('test.m23')::bigint, 'devise', 'USD', 'nbMois', 3)),
+  '00a023', 'pi_fa_23')::text, true);
+SELECT pg_temp.vrai((SELECT e.prix_mensuel_mineur = 5060 AND e.nb_mois = 3
+                       FROM public.engagements_prepaiement e WHERE e.profile_id = pg_temp.id('23')),
+  '8 ter : l''engagement garde le prix mensuel normal du 2e inscrit : 50,60 USD (8 % de rang, sans la remise du trimestre)');
+UPDATE public.commandes_recharge SET confirme_le = now() - interval '40 days'
+ WHERE id = current_setting('test.c23')::uuid;
+UPDATE public.engagements_prepaiement
+   SET mois_debut = (date_trunc('month', now() - interval '40 days') + interval '1 month')::date
+ WHERE commande_id = current_setting('test.c23')::uuid;
+SELECT pg_temp.vrai((pg_temp.propose(current_setting('test.c23')::uuid, '23') ->> 'montant_mineur')::bigint
+      = (SELECT e.total_mineur FROM public.engagements_prepaiement e WHERE e.commande_id = current_setting('test.c23')::uuid)
+        - (pg_temp.propose(current_setting('test.c23')::uuid, '23') ->> 'mois_commences')::int * 5060
+  AND (pg_temp.propose(current_setting('test.c23')::uuid, '23') ->> 'mois_commences')::int BETWEEN 1 AND 2,
+  '8 ter : rembourse apres le delai : les mois commences comptes a 50,60 USD (pas 55), jamais moins que la regle');
+
+-- ------------------------------------------------------------------
+-- 8 quater. Les mois couverts sont figes au recapitulatif
+-- ------------------------------------------------------------------
+CREATE FUNCTION pg_temp.refus_message(p_sql text, p_fragment text, p_label text) RETURNS void
+LANGUAGE plpgsql AS $$
+BEGIN
+  BEGIN
+    EXECUTE p_sql;
+    RAISE EXCEPTION 'PAIEMENT-FAMILLE ROUGE : % (aucun refus)', p_label USING ERRCODE = 'XX999';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLSTATE = 'XX999' THEN RAISE; END IF;
+    IF SQLSTATE <> '22023' OR position(p_fragment in SQLERRM) = 0 THEN
+      RAISE EXCEPTION 'PAIEMENT-FAMILLE ROUGE : % (%, %)', p_label, SQLSTATE, SQLERRM;
+    END IF;
+  END;
+  PERFORM pg_catalog.set_config('test.n',
+    (coalesce(nullif(pg_catalog.current_setting('test.n', true), ''), '0')::int + 1)::text, true);
+  RAISE NOTICE 'OK %', p_label;
+END $$;
+GRANT EXECUTE ON FUNCTION pg_temp.refus_message(text, text, text) TO authenticated;
+
+-- (a) La dette change entre la verification et le paiement : refuse AVANT Stripe, message clair.
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui(pg_temp.id('d1'), 'guardian', pg_temp.id('f1'));
+SELECT set_config('test.r13', public.recharge_verifier_montants(jsonb_build_array(
+  jsonb_build_object('profilId', pg_temp.id('13'), 'mineur', pg_temp.montant('13', 1), 'devise', 'USD', 'nbMois', 1)))::text, true);
+RESET ROLE;
+INSERT INTO public.factures_mensuelles(profile_id, household_id, mois, politique_version, devise, rang_familial, lignes, total_mineur)
+VALUES (pg_temp.id('13'), pg_temp.id('f1'), (pg_temp.mois() - interval '1 month')::date,
+        (private.fac_politique_au(pg_temp.mois())).version, 'USD', 3, '[]'::jsonb, 1234);
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui(pg_temp.id('d1'), 'guardian', pg_temp.id('f1'));
+SELECT pg_temp.refus_message(format($q$SELECT public.recharge_payer(%L, gen_random_uuid())$q$,
+  current_setting('test.r13')::jsonb ->> 'id'), 'le montant a changé, vérifiez à nouveau',
+  '8 quater : une nouvelle facture entre la verification et le paiement : refuse avant Stripe, « le montant a changé, vérifiez à nouveau »');
+RESET ROLE;
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.commandes_recharge
+                                 WHERE recapitulatif_id = (current_setting('test.r13')::jsonb ->> 'id')::uuid),
+  '8 quater : aucune commande creee, donc rien envoye a Stripe');
+
+-- (b) Le mois change avant que le prestataire confirme : l'engagement prend EXACTEMENT les mois figes.
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui(pg_temp.id('d1'), 'guardian', pg_temp.id('f1'));
+SELECT set_config('test.r11', public.recharge_verifier_montants(jsonb_build_array(
+  jsonb_build_object('profilId', pg_temp.id('11'), 'mineur', pg_temp.montant('11', 2), 'devise', 'USD', 'nbMois', 2)))::text, true);
+SELECT set_config('test.m11', pg_temp.montant('11', 2)::text, true);
+SELECT set_config('test.cm11', public.recharge_payer((current_setting('test.r11')::jsonb ->> 'id')::uuid,
+  'fa000000-0000-4000-8000-00000000a111') ->> 'commandeId', true);
+RESET ROLE;
+-- La verification date du mois d'avant : ses mois figes commencent ce mois-ci, et le mois a change depuis.
+UPDATE public.commandes_recharge_allocations SET mois_debut = pg_temp.mois()
+ WHERE commande_id = current_setting('test.cm11')::uuid;
+-- Une nouvelle facture est tombee entre-temps (le prestataire a deja debite la carte).
+INSERT INTO public.factures_mensuelles(profile_id, household_id, mois, politique_version, devise, rang_familial, lignes, total_mineur)
+VALUES (pg_temp.id('11'), pg_temp.id('f1'), (pg_temp.mois() - interval '1 month')::date,
+        (private.fac_politique_au(pg_temp.mois())).version, 'USD', 1, '[]'::jsonb, 700);
+SET LOCAL ROLE service_role;
+SELECT public.recharge_attacher_session(current_setting('test.cm11')::uuid, pg_temp.id('d1'), 'cs_fa_m11', 'https://x/cs_fa_m11', 'test');
+SELECT pg_temp.vrai(public.recharge_evenement_stripe('evt_fa_m11', 'checkout.session.completed', 'test',
+  current_setting('test.cm11')::uuid, 'cs_fa_m11', 'pi_fa_m11', 'paid', current_setting('test.m11')::bigint, 'usd') = 'credite',
+  '8 quater : le prestataire a debite : credite');
+RESET ROLE;
+SELECT pg_temp.vrai((SELECT e.mois_debut = pg_temp.mois() AND e.nb_mois = 2
+                            AND e.total_mineur = (SELECT a.montant_mineur - a.dette_mineur FROM public.commandes_recharge_allocations a
+                                                   WHERE a.commande_id = current_setting('test.cm11')::uuid)
+                       FROM public.engagements_prepaiement e WHERE e.profile_id = pg_temp.id('11')),
+  '8 quater : l''engagement couvre exactement les mois figes au recapitulatif, jamais « le mois suivant maintenant »');
+SELECT pg_temp.vrai((SELECT amount_minor FROM public.wallet_entries WHERE reference_id = current_setting('test.cm11')::uuid
+                        AND reference_type = 'credit' AND beneficiaire_id = pg_temp.id('11')) = current_setting('test.m11')::bigint,
+  '8 quater : tout ce que le prestataire a debite est credite, au profil, exactement');
+
 -- Un profil a acces offert : rien a payer, aucune offre ; son frere paye au rang 2.
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui(pg_temp.id('d2'), 'guardian', pg_temp.id('f2'));
 SELECT pg_temp.vrai(jsonb_array_length(pg_temp.profil('22') -> 'options') = 0
   AND jsonb_array_length(pg_temp.profil('23') -> 'options') >= 12
-  AND (pg_temp.profil('23') ->> 'rang')::int IN (1, 2),
-  '8 bis : acces offert : aucune offre pour k22 ; k23 garde un rang de payant (1 ou 2), jamais 3');
+  AND (pg_temp.profil('23') ->> 'rang')::int = 2,
+  '8 bis : acces offert : aucune offre pour k22 ; k23 est le 2e payant');
 RESET ROLE;
 
 -- ------------------------------------------------------------------
@@ -518,8 +618,8 @@ SELECT pg_temp.qui(pg_temp.id('11'), 'student', pg_temp.id('f1'));
 SELECT pg_temp.refus($q$SELECT public.recharge_beneficiaires()$q$, '42501', '9 : un enfant ne lit pas les offres');
 RESET ROLE;
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 49,
-  'au moins 49 controles ont passe (50 avec celui-ci)');
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 57,
+  'au moins 57 controles ont passe (58 avec celui-ci)');
 \o
 SELECT 'PAIEMENT-FAMILLE-PRIX : scenarios verts' AS resultat;
 ROLLBACK;

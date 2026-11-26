@@ -12412,6 +12412,9 @@
         "trimestriel": "{montant} pour 3 mois, payés d'avance",
         "annuel": "{montant} pour 12 mois, payés d'avance"
       },
+      "montantChangeTitre": "Le montant a changé",
+      "montantChangePhrase": "Une facture ou un mois a changé depuis votre vérification. Rien n'a été payé. Vérifiez à nouveau avant de payer.",
+      "montantChangeAction": "Vérifier à nouveau",
       "explication": {
         "libelleDette": "{montant}\u00a0: le mois dû",
         "libelleMois(plural, param=n)": {

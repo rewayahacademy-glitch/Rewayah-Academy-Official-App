@@ -28,7 +28,7 @@ Source : `docs/current/PAIEMENT/FAMILLE-SCENARIOS-2026-11-23.md` §6. **Prévaut
 - **La dette d'abord et à part** : une offre = la dette (factures à financer, ou première facture du mois en cours, au prorata) **plus** N mois d'avance. Les mois d'avance commencent le mois suivant.
 - **Aucune offre sans classe ni créneau choisi** ; créneau choisi sans classe, ou classe sans enseignant : **un mois seulement**.
 - **Prorata du premier mois** : le dénominateur est le nombre de séances que l'horaire de la classe donne sur **tout le mois**, qu'elles existent ou non ; le numérateur, celles à partir de l'entrée du profil.
-- **Remboursement d'un paiement de N mois** : règle inchangée (mois commencés au prix mensuel normal, le reste rendu), calculée sur la seule part « avance » ; la dette n'est jamais rendue. Constat laissé au directeur : le « prix mensuel normal » est le tarif plein, sans la remise de famille déjà accordée.
+- **Remboursement d'un paiement de N mois** : règle inchangée (mois commencés au prix mensuel normal, le reste rendu), calculée sur la seule part « avance » ; la dette n'est jamais rendue. Le « prix mensuel normal » d'un mois commencé est le prix que la famille avait (tarif moins la remise de rang, 8 % ou 15 %) ; seule la remise de la formule de prépaiement est retirée (revue du pilote, 23/11/2026). Les mois couverts sont figés au récapitulatif : si la dette ou les mois changent avant le paiement, la famille voit « le montant a changé, vérifiez à nouveau » avant tout envoi au prestataire. Le rang suit une seule règle : l'ordre d'inscription, sans les profils à bourse, accès offert ou prix spécial.
 
 ## Décision du directeur du 01/11/2026 : remboursements, contestations, accès sans paiement (FN-115)
 

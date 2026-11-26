@@ -130,6 +130,8 @@ class RechargeFoyerSupabase
           // PAY-UX : l'ancien formulaire n'a pas pu etre ferme ; aucune
           // nouvelle session n'est ouverte.
           if (e.status == 409) throw const PaiementPrecedentOuvert();
+          // PAIEMENT-FAMILLE-PRIX : la dette ou les mois ont change.
+          if (e.status == 422) throw const MontantChange();
           rethrow;
         }
       };
