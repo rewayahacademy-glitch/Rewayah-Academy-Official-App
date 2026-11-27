@@ -147,21 +147,23 @@ INSERT INTO public.session_participants(session_id, profile_id, role) VALUES
  ('b4000000-0000-4000-8000-000000000502','b4000000-0000-4000-8000-0000000000e1','student');
 
 -- ------------------------------------------------------------------
--- 3. Milieu de mois : rien
+-- 3. Milieu de mois : la facture du mois courant d'un eleve en classe qui ne l'a pas encore
+--    (RIEN-DE-GRATUIT, 27/11/2026 : avant, le mois d'entree n'etait jamais facture), pas celle du suivant
 -- ------------------------------------------------------------------
 SELECT set_config('test.r', private.fac_emission_planifiee(pg_temp.mois() + 10)::text, true);
-SELECT pg_temp.vrai(jsonb_array_length(current_setting('test.r')::jsonb -> 'emissions') = 0
-  AND pg_temp.nb(pg_temp.mois()) = 0 AND pg_temp.nb(pg_temp.suivant()) = 0,
-  'milieu de mois : le job n''emet rien');
+SELECT pg_temp.vrai(jsonb_array_length(current_setting('test.r')::jsonb -> 'emissions') = 1
+  AND (current_setting('test.r')::jsonb #>> '{emissions,0,mois}') = to_char(pg_temp.mois(), 'YYYY-MM-DD')
+  AND pg_temp.nb(pg_temp.mois()) = 1 AND pg_temp.nb(pg_temp.suivant()) = 0,
+  'milieu de mois : la facture du mois courant est emise, pas celle du suivant');
 
 -- ------------------------------------------------------------------
 -- 4. Le 1er : le mois courant, une seule fois
 -- ------------------------------------------------------------------
 SELECT set_config('test.r', private.fac_emission_planifiee(pg_temp.mois())::text, true);
 SELECT pg_temp.vrai((current_setting('test.r')::jsonb #>> '{emissions,0,mois}') = to_char(pg_temp.mois(), 'YYYY-MM-DD')
-  AND (current_setting('test.r')::jsonb #>> '{emissions,0,emises}')::int >= 1
+  AND (current_setting('test.r')::jsonb #>> '{emissions,0,emises}')::int = 0
   AND pg_temp.nb(pg_temp.mois()) = 1,
-  'le 1er : la facture du mois courant est emise');
+  'le 1er : la facture du mois courant existe une seule fois');
 SELECT pg_temp.vrai((SELECT emise_par IS NULL AND total_mineur > 0
                        AND politique_version = (private.fac_politique_au(pg_temp.mois())).version
                        FROM public.factures_mensuelles
