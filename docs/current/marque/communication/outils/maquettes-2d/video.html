@@ -1,0 +1,58 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face { font-family: DM; src: url(file:///home/user/Rewayah-Academy-Official-App/assets/fonts/DMSans-Variable.ttf); font-weight: 100 1000; }
+@font-face { font-family: Jak; src: url(file:///home/user/Rewayah-Academy-Official-App/assets/fonts/PlusJakartaSans-Variable.ttf); font-weight: 200 800; }
+@font-face { font-family: Ar; src: url(file:///home/user/Rewayah-Academy-Official-App/assets/fonts/NotoSansArabic-Variable.ttf); font-weight: 100 900; }
+@font-face { font-family: Naskh; src: url(file:///home/user/Rewayah-Academy-Official-App/assets/fonts/UthmanTahaNaskh-Regular.otf); }
+@font-face { font-family: Kufi; src: url(file:///home/user/Rewayah-Academy-Official-App/assets/fonts/ReemKufi-Variable.ttf); font-weight: 400 700; }
+:root {
+  --nuit:#110E20; --ardoise:#16161E; --violet:#8652E6; --profond:#4E2983; --accent:#6538E4;
+  --lavande:#BA98FB; --lilas:#DCCAFD; --pale:#EEE6FA; --papier:#F7F5FE; --filet:#E3DEE9; --doux:#655E70;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:#444; padding:40px; display:flex; flex-wrap:wrap; gap:40px; align-items:flex-start; }
+.frame { position:relative; overflow:hidden; flex:none; font-family:Jak; }
+.post { width:1080px; height:1350px; }
+.story { width:1080px; height:1920px; }
+.abs { position:absolute; }
+.over { font-family:Jak; font-weight:600; font-size:21px; letter-spacing:.22em; text-transform:uppercase; }
+.h { font-family:DM; font-weight:600; letter-spacing:-.025em; line-height:1.02; }
+.p { font-family:Jak; font-weight:500; line-height:1.45; }
+.naskh { font-family:Naskh; direction:rtl; line-height:1.5; }
+.ar { font-family:Ar; direction:rtl; }
+.num { font-family:Jak; font-weight:700; font-variant-numeric:tabular-nums; }
+.logo { display:block; }
+
+body{padding:0;background:#110E20} .w{opacity:0;transform:translateY(24px);display:block}</style></head><body>
+<div class="frame story" style="background:var(--nuit)">
+ <svg class="abs" style="left:0;top:0" width="1080" height="1920">
+  <defs>
+   <radialGradient id="halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#DCCAFD" stop-opacity=".55"/><stop offset="1" stop-color="#8652E6" stop-opacity="0"/></radialGradient>
+   <linearGradient id="lum" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".6" stop-color="#EEE6FA"/><stop offset="1" stop-color="#BA98FB"/></linearGradient>
+   <clipPath id="cl"><path d="M0 980 L0 235.0 A235.0 235.0 0 0 1 470 235.0 L470 980 Z"/></clipPath>
+  </defs>
+  <ellipse id="halo" cx="540" cy="760" rx="620" ry="760" fill="url(#halo)" opacity="0"/>
+  <g transform="translate(305,280)">
+   <path id="trait" d="M-22 980 L-22 235.0 A257.0 257.0 0 0 1 492 235.0 L492 980" fill="none" stroke="#BA98FB" stroke-width="2.5"/>
+   <g clip-path="url(#cl)"><rect id="remplir" x="0" y="0" width="470" height="980" fill="url(#lum)" transform="translate(0 980)"/></g>
+   <g id="porte" opacity="0"><path d="M228.502 0C354.698 0.000693714 457 102.213 457 228.299V698.096C408.62 720.609 356.414 736.289 301.62 743.89V237.916L38.3203 192.029L220.509 296.623V642.457L0 704.176V228.299C-1.40788e-06 212.619 -0.114343 187.909 5.70508 173.305L5.70703 173.306C32.0729 75.7387 122.912 8.41403e-05 228.502 0Z" transform="translate(98,300) scale(.6)" fill="#110E20" opacity=".9"/></g>
+  </g>
+ </svg>
+ <div id="sig" class="abs naskh w" style="left:0;right:0;top:1280px;text-align:center;font-size:72px;color:var(--lilas)">بوّابتك نحو القرآن</div>
+ <div class="abs h" style="left:110px;right:110px;top:1410px;text-align:center;font-size:56px;color:#fff">
+  <span class="w l">Une classe stable.</span><span class="w l">Un enseignant attitré.</span><span class="w l">Une heure qui ne bouge pas.</span></div>
+ <div id="logo" class="abs" style="left:0;right:0;bottom:200px;display:flex;justify-content:center;opacity:0"><img class="logo" src="file:///home/user/Rewayah-Academy-Official-App/assets/brand/logo/blanc/logo-horizontal.svg" style="height:46px;"></div>
+</div>
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+const L=document.getElementById('trait').getTotalLength();
+gsap.set('#trait',{strokeDasharray:L,strokeDashoffset:L});
+const tl=gsap.timeline({paused:true});
+tl.to('#trait',{strokeDashoffset:0,duration:1.4,ease:'power2.inOut'},0.2)
+  .to('#remplir',{attr:{transform:'translate(0 0)'},duration:1.6,ease:'power3.out'},1.2)
+  .to('#halo',{opacity:1,duration:1.8,ease:'sine.out'},1.4)
+  .to('#porte',{opacity:1,duration:.8,ease:'power1.out'},2.4)
+  .to('#sig',{opacity:1,y:0,duration:.9,ease:'power3.out'},3.1)
+  .to('.l',{opacity:1,y:0,duration:.7,ease:'power3.out',stagger:.55},4.0)
+  .to('#logo',{opacity:1,duration:.8,ease:'power1.out'},6.3);
+window.tl=tl;
+</script></body></html>

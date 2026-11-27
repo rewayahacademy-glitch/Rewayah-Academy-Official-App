@@ -1,0 +1,74 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: Naskh; src: url(file:///home/user/Rewayah-Academy-Official-App/assets/fonts/UthmanTahaNaskh-Regular.otf); }
+@font-face { font-family: DM; src: url(file:///home/user/Rewayah-Academy-Official-App/assets/fonts/DMSans-Variable.ttf); font-weight: 100 1000; }
+html,body{margin:0;background:#110E20}
+#f{position:relative;width:1080px;height:1920px;overflow:hidden;background:#110E20}
+.abs{position:absolute}
+</style></head><body>
+<div id="f">
+<svg id="sc" class="abs" style="left:0;top:0" width="1080" height="1920" viewBox="0 0 1080 1920">
+  <defs>
+    <radialGradient id="halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#DCCAFD" stop-opacity=".6"/><stop offset=".5" stop-color="#8652E6" stop-opacity=".18"/><stop offset="1" stop-color="#8652E6" stop-opacity="0"/></radialGradient>
+    <linearGradient id="lum" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BA98FB"/><stop offset=".45" stop-color="#EEE6FA"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+    <linearGradient id="mat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211A3D"/><stop offset="1" stop-color="#17122B"/></linearGradient>
+    <linearGradient id="sol" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".85"/><stop offset=".35" stop-color="#DCCAFD" stop-opacity=".35"/><stop offset="1" stop-color="#BA98FB" stop-opacity="0"/></linearGradient>
+    <filter id="flou" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+  </defs>
+  <g id="cam">
+    <ellipse id="halo1" cx="540" cy="760" rx="700" ry="800" fill="url(#halo)" opacity="0"/>
+    <!-- repère de l'ornement officiel : 457 x 744, posé à l'échelle 1,2 -->
+    <g id="porte" transform="translate(265.8,300) scale(1.2)">
+      <path id="sol1" fill="url(#sol)" opacity="0" filter="url(#flou)"/>
+      <path id="sol2" fill="url(#sol)" opacity="0"/>
+      <path id="cadre" fill="url(#mat)" d="M228.502 0C354.698 0.000693714 457 102.213 457 228.299V698.096C408.62 720.609 356.414 736.289 301.62 743.89L0 704.176V228.299C-1.40788e-06 212.619 -0.114343 187.909 5.70508 173.305L5.70703 173.306C32.0729 75.7387 122.912 8.41403e-05 228.502 0Z"/>
+      <path id="baie" fill="url(#lum)" d="M38.3203 192.029L301.62 237.916V743.89L0 704.176Z" opacity="0"/>
+      <path id="battant" fill="url(#mat)"/>
+      <path id="rive" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0"/>
+      <path id="contour" fill="none" stroke="#BA98FB" stroke-width="2.5" stroke-linejoin="round" d="M0 704.176V228.299C-1.40788e-06 212.619 -0.114343 187.909 5.70508 173.305L5.70703 173.306C32.0729 75.7387 122.912 8.41403e-05 228.502 0C354.698 0.000693714 457 102.213 457 228.299V698.096"/>
+    </g>
+  </g>
+</svg>
+<div id="sig" class="abs" style="left:0;right:0;top:1470px;text-align:center;font-family:Naskh;font-size:76px;color:#DCCAFD;direction:rtl;opacity:0">بوّابتك نحو القرآن</div>
+<div id="logo" class="abs" style="left:0;right:0;bottom:220px;display:flex;justify-content:center;opacity:0"><img src="file:///home/user/Rewayah-Academy-Official-App/assets/brand/logo/blanc/logo-horizontal.svg" style="height:52px"></div>
+</div>
+<script src="node_modules/gsap/dist/gsap.min.js"></script>
+<script>
+// La baie (l'ouverture de la porte) et le battant, dans le repère de l'ornement officiel.
+// Gonds : H1 (38.3,192.0) en haut, H2 (0,704.2) en bas. Rive libre : fermée sur le jambage droit,
+// ouverte exactement à la position du logo (220.5 ; 296.6 → 642.5). À s = 1, le dessin EST l'ornement.
+const H1=[38.3203,192.029], H2=[0,704.176];
+const F0=[[301.62,237.916],[301.62,743.89]], F1=[[220.509,296.623],[220.509,642.457]];
+const st={s:0, lum:0};
+const L=(a,b,t)=>a+(b-a)*t;
+function rend(){
+  const s=st.s;
+  // la rive s'éloigne en perspective : la hauteur se resserre plus vite au début (cosinus de l'angle)
+  const k=1-Math.cos(s*Math.PI/2)*0+0; const u=Math.sin(s*Math.PI/2);
+  const t1=[L(F0[0][0],F1[0][0],u), L(F0[0][1],F1[0][1],u)];
+  const t2=[L(F0[1][0],F1[1][0],u), L(F0[1][1],F1[1][1],u)];
+  document.getElementById('battant').setAttribute('d',`M${H1}L${t1}L${t2}L${H2}Z`);
+  document.getElementById('rive').setAttribute('d',`M${t1}L${t2}`);
+  const ouvert=Math.min(1,s*6);
+  document.getElementById('baie').setAttribute('opacity',ouvert);
+  document.getElementById('rive').setAttribute('opacity',Math.min(1,s*10)*(1-0.6*s));
+  // la lumière au sol : elle sort par l'entrebâillement (entre la rive et le jambage) et vient vers nous
+  const g=[t2[0],t2[1]], d=[301.62,743.89], long=150*u+30;
+  const p=`M${g}L${d}L${d[0]+40+70*u},${d[1]+long}L${g[0]-80*u-20},${g[1]+long+20}Z`;
+  document.getElementById('sol1').setAttribute('d',p); document.getElementById('sol2').setAttribute('d',p);
+  document.getElementById('sol1').setAttribute('opacity',0.9*Math.min(1,s*3));
+  document.getElementById('sol2').setAttribute('opacity',0.55*Math.min(1,s*3));
+  document.getElementById('halo1').setAttribute('opacity',0.15+0.85*u);
+}
+const C=document.getElementById('contour'); const LC=C.getTotalLength();
+gsap.set(C,{strokeDasharray:LC,strokeDashoffset:LC}); gsap.set('#cam',{transformOrigin:'540px 760px'});
+const tl=gsap.timeline({paused:true,onUpdate:rend});
+tl.to(C,{strokeDashoffset:0,duration:1.2,ease:'power2.inOut'},0.1)
+  .to(st,{s:0.035,duration:0.7,ease:'power1.out'},1.2)          // la porte se décolle : un fil de lumière
+  .to(st,{s:1,duration:2.4,ease:'power2.inOut'},2.1)            // elle s'ouvre jusqu'au dessin du logo
+  .fromTo('#cam',{scale:1},{scale:1.05,duration:4.2,ease:'sine.inOut'},1.0)
+  .to('#sig',{opacity:1,y:-10,duration:.9,ease:'power3.out'},4.6)
+  .to('#logo',{opacity:1,duration:.8,ease:'power1.out'},5.4)
+  .to({}, {duration:1.4});
+rend(); window.tl=tl;
+</script></body></html>
