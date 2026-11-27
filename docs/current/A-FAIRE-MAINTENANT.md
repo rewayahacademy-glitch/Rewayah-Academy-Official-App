@@ -25,7 +25,7 @@ qui précède le 17/11 est dans `INVENTAIRE-NON-PRODUCTION-2026-11-27.md`.
 | M4 | Liste des élèves et des familles | Le 27/11 : « tellement la pagaille… on le laisse d'abord de côté » | Mise de côté par le directeur : ne pas lancer sans ordre |
 | M5 | Guide de l'enseignant, en ligne depuis le 21/11 | Il promet ce que l'application ne fait pas (voir N1) | Décisions du directeur, voir N1 |
 | M6 | « Enregistrer l'image » dans la messagerie | La règle CORS du seau R2_MESSAGING couvre l'envoi, pas la lecture (`GET`) | Le directeur dans Cloudflare |
-| M7 | CI des PR (27/11, 14 h 57 UTC) | Tous les jobs échouent en une seconde sans obtenir de machine. Cause probable : quota de minutes ou plafond de dépense de GitHub Actions. Si c'est le quota, une fusion dans `main` ne se déploierait plus | Le directeur dans les paramètres GitHub, rubrique Billing (facturation) |
+| M7 | CI des PR (27/11, 14 h 57 UTC) | Tous les jobs échouaient en une seconde sans obtenir de machine : le dépôt était passé en privé le 27/11, et le quota de minutes Actions d'un compte privé s'épuise en quelques passages de cette CI. Le directeur l'a remis en public le 27/11. À vérifier : la CI suivante tourne de nouveau | Un agent regarde la CI suivante ; si le dépôt repasse en privé, prévoir un budget Actions avant |
 
 ## 2. Demandé, pas fait
 
