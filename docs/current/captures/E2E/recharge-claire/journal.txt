@@ -1,0 +1,24 @@
+RECHARGE-CLAIRE + RIEN-DE-GRATUIT, journal de verification (27/11/2026, R3). Rien ici n'est une preuve en production.
+
+ORIGINE : captures du directeur (ecran Recharger, Dyna et Hallowx, telephone, 27/11/2026 04:52) :
+- « 616,90 $ : the month due and 12 months ahead » en anglais sur un ecran en francais ;
+- decembre (50,60 $) dans « A regler d'abord » ET dans « 12 mois d'avance (de decembre 2026 a novembre 2027) » ;
+- « je ne comprends pas comment les remises sont calculees » ;
+- « la logique elle-meme doit etre revue pour etre sur que tu ne distribues rien gratuitement ».
+
+CE QUI A ETE EXECUTE (poste de l'agent, Postgres 16 local ; la CI utilise Postgres 17) :
+- stub_auth.sql puis toutes les migrations du depot, sans erreur (dont 20261204000000 et 20261204100000).
+- Scenarios verts : b4_factures_cron (adapte : en milieu de mois, la facture du mois courant d'un eleve en classe
+  est emise), fn115c_rembourser, fn115b_remboursements, remb14_delai, paiement_famille, fac_b_factures,
+  fac_c_paiements, fac_f_relances_suspension.
+- Flutter : dart analyze --fatal-infos propre (lib, test/features/foyer, test/core/finance) ; verifier_jetons vert ;
+  tests verts : test/core/finance, test/features/foyer/recharge_explication_test.dart (titre « Puis 2 mois
+  d'avance », « du prix plein de » sous chaque remise, phrase de l'arrondi), test/i18n.
+- Production, LECTURE SEULE : Dyna a un acces offert (100 %) de novembre 2026 a janvier 2027 accorde le 15/11 a 22:29,
+  sa facture de novembre (65 $) emise le 15/11 a 04:04 ; Hallowx a ses factures de novembre (25,30 $) et decembre
+  (50,60 $) a financer ; 0 commande de paiement completee, 0 remboursement ; tous les eleves en classe en novembre ont
+  leur facture (les deux eleves sans facture d'octobre sont avant la premiere politique, 01/11).
+
+NON FAIT / NON PROUVE : aucune capture d'ecran produite (les tests lisent les phrases rendues, pas un rendu regarde
+par un humain) ; aucun scenario nouveau pour la regle de remboursement corrigee (fn115c) ; l'arabe est verifie par
+les tests de pluriels, pas par un arabophone ; le directeur verifie lui-meme l'ecran Recharger apres fusion.
