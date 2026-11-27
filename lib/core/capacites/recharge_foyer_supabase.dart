@@ -21,6 +21,7 @@ import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../finance/explication_recharge.dart';
 import '../finance/format_montant.dart';
 import '../finance/formulaire_paiement.dart';
 import '../finance/montant.dart';
@@ -366,6 +367,7 @@ LigneDue _ligneDue(Map<String, dynamic> l) => LigneDue(
   nature: texteJson(l, 'nature'),
   montant: montantJson(l['montant'], 'montant'),
   rang: _entierNullable(l, 'rang'),
+  remise: l['remise'] is String ? l['remise'] as String : null,
 );
 
 ProrataExplique _prorata(Map<String, dynamic> p) => ProrataExplique(
@@ -373,29 +375,6 @@ ProrataExplique _prorata(Map<String, dynamic> p) => ProrataExplique(
   seancesRestantes: entierJson(p, 'seancesRestantes'),
   seancesDuMois: entierJson(p, 'seancesDuMois'),
 );
-
-/// Le libelle d'une offre au pas du « moins / plus » : le montant que le
-/// serveur rend, dit en mots (la dette seule, la dette et N mois d'avance, N
-/// mois d'avance). Aucun chiffre n'est calcule ici.
-String libelleOption(OptionPaiement o) {
-  final String montant = sansAncre(formaterMontant(o.montant));
-  if (o.formule == 'mois' && o.moisCouverts == null) {
-    return t.adulte.recharge.explication.libelleUnMois(montant: montant);
-  }
-  if (o.nbMois == 0) {
-    return t.adulte.recharge.explication.libelleDette(montant: montant);
-  }
-  if (!o.dette.estNul) {
-    return t.adulte.recharge.explication.libelleDetteEtMois(
-      n: o.nbMois,
-      montant: montant,
-    );
-  }
-  return t.adulte.recharge.explication.libelleMois(
-    n: o.nbMois,
-    montant: montant,
-  );
-}
 
 /// Le libelle d'un trimestre ou d'une annee payes d'avance (tarifs du
 /// 18/10/2026), ou `null` : un mois ou un reste a payer se lisent en montant.

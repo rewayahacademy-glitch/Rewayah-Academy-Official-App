@@ -12477,18 +12477,18 @@
       "montantChangePhrase": "Une facture ou un mois a changé depuis votre vérification. Rien n'a été payé. Vérifiez à nouveau avant de payer.",
       "montantChangeAction": "Vérifier à nouveau",
       "explication": {
-        "libelleDette": "{montant}\u00a0: le mois dû",
+        "libelleDette": "{montant}\u00a0: ce qui est dû",
         "libelleMois(plural, param=n)": {
           "one": "{montant} pour {n}\u00a0mois d'avance",
           "other": "{montant} pour {n}\u00a0mois d'avance"
         },
         "libelleDetteEtMois(plural, param=n)": {
-          "one": "{montant}\u00a0: le mois dû et {n}\u00a0mois d'avance",
-          "other": "{montant}\u00a0: le mois dû et {n}\u00a0mois d'avance"
+          "one": "{montant}\u00a0: ce qui est dû et {n}\u00a0mois d'avance",
+          "other": "{montant}\u00a0: ce qui est dû et {n}\u00a0mois d'avance"
         },
         "libelleUnMois": "{montant} pour un mois",
         "synthese": {
-          "detteSeule": "Vous payez {montant} pour le mois dû ({mois}).",
+          "detteSeule": "Vous payez {montant}, ce qui est dû ({mois}).",
           "detteEtAvance(plural, param=n)": {
             "one": "Vous payez d'abord {dette} ({moisDus}), puis {n}\u00a0mois d'avance ({moisCouverts})\u00a0: {montant} en tout.",
             "other": "Vous payez d'abord {dette} ({moisDus}), puis {n}\u00a0mois d'avance ({moisCouverts})\u00a0: {montant} en tout."
@@ -12543,6 +12543,14 @@
           "factureRemiseRang": "Remise de famille, {rang}ᵉ inscrit",
           "factureProrata": "Au prorata des séances du mois",
           "facturePrepaiement": "Part du paiement d'avance"
+        },
+        "avance": {
+          "titre(plural, param=n)": {
+            "one": "Puis {n}\u00a0mois d'avance ({moisCouverts})",
+            "other": "Puis {n}\u00a0mois d'avance ({moisCouverts})"
+          },
+          "tauxDuPrix": "{taux} du prix plein de {prix}",
+          "arrondi": "À partir de 3\u00a0mois, le total s'arrondit au dollar le plus proche."
         },
         "moisCouverts": "Mois couverts"
       },

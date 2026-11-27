@@ -189,6 +189,24 @@ List<LigneExplication> detailOption(BeneficiaireRecharge b, OptionPaiement o) {
   }
 
   if (o.nbMois > 0) {
+    // Un titre pour les mois d'avance, apres ce qui est du (directeur,
+    // 27/11/2026 : « je ne comprends pas comment les remises sont calculees »).
+    final MoisCouverts? couverts = o.moisCouverts;
+    if (couverts != null && dette != null && dette.mois.isNotEmpty) {
+      lignes.add(
+        LigneExplication(
+          cle: e.avance.titre(
+            n: o.nbMois,
+            moisCouverts: moisCouvertsEnLettres(couverts),
+          ),
+        ),
+      );
+    }
+    // Le prix plein des mois d'avance : chaque remise se dit « 8 % de 660 $ ».
+    final Montant? prixPlein = <Montant?>[
+      for (final LigneOption l in o.lignes)
+        if (l.code == 'prix') l.montant,
+    ].firstOrNull;
     for (final LigneOption l in o.lignes) {
       final String? cle = _cleLigne(l, o);
       if (cle == null) continue;
@@ -196,6 +214,7 @@ List<LigneExplication> detailOption(BeneficiaireRecharge b, OptionPaiement o) {
         LigneExplication(
           cle: cle,
           valeur: l.montant == null ? null : _m(l.montant!),
+          detail: _detailLigne(l, prixPlein),
         ),
       );
     }
@@ -221,6 +240,18 @@ String? _detailFacture(MoisDu m) {
     total: p.seancesDuMois,
     date: '${p.entreeLe.day} ${nomDuMois(p.entreeLe)}',
   );
+}
+
+/// La precision sous une ligne d'avance : sur quoi la remise se calcule.
+String? _detailLigne(LigneOption l, Montant? prixPlein) {
+  final e = t.adulte.recharge.explication.avance;
+  final String? prix = prixPlein == null ? null : _m(prixPlein);
+  return switch (l.code) {
+    'remise_famille' || 'remise_prepaiement' when prix != null =>
+      e.tauxDuPrix(taux: pourcentage(l.pourMille ?? 0), prix: prix),
+    'arrondi' => e.arrondi,
+    _ => null,
+  };
 }
 
 String? _cleLigne(LigneOption l, OptionPaiement o) {
@@ -273,7 +304,45 @@ String? cleLigneDue(LigneDue l) {
     'remise_rang' => d.factureRemiseRang(rang: l.rang ?? 0),
     'prorata' => d.factureProrata,
     'remise_prepaiement' => d.facturePrepaiement,
-    'bourse' => t.adulte.recharge.explication.ligne.bourse,
+    'bourse' => switch (l.remise) {
+      'acces_offert' => t.adulte.recharge.explication.ligne.accesOffert,
+      'prix_special' => t.adulte.recharge.explication.ligne.prixSpecial,
+      _ => t.adulte.recharge.explication.ligne.bourse,
+    },
     _ => null,
   };
+}
+
+/// Le libelle d'une offre au pas du « moins / plus » : le montant que le
+/// serveur rend, dit en mots (la dette seule, la dette et N mois d'avance, N
+/// mois d'avance). Aucun chiffre n'est calcule ici.
+String libelleOption(OptionPaiement o) {
+  final String montant = sansAncre(formaterMontant(o.montant));
+  if (o.formule == 'mois' && o.moisCouverts == null) {
+    return t.adulte.recharge.explication.libelleUnMois(montant: montant);
+  }
+  if (o.nbMois == 0) {
+    return t.adulte.recharge.explication.libelleDette(montant: montant);
+  }
+  if (!o.dette.estNul) {
+    return t.adulte.recharge.explication.libelleDetteEtMois(
+      n: o.nbMois,
+      montant: montant,
+    );
+  }
+  return t.adulte.recharge.explication.libelleMois(
+    n: o.nbMois,
+    montant: montant,
+  );
+}
+
+/// Le libelle du montant [m] de [b], redige **au moment de l'affichage**,
+/// dans la langue de l'ecran (le libelle calcule a la lecture des donnees
+/// pouvait rester dans la langue de l'appareil, retour du directeur du
+/// 27/11/2026 : « the month due » sur un ecran en francais).
+String? libelleMontant(BeneficiaireRecharge b, Montant m) {
+  for (final OptionPaiement o in b.options) {
+    if (o.montant == m) return libelleOption(o);
+  }
+  return b.montantsRediges[m];
 }
