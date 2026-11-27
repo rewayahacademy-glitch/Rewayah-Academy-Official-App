@@ -1,10 +1,21 @@
 # Rewayah Academy — App (Flutter · Supabase · LiveKit · R2 · Vercel)
 
+> **AVANT TOUTE CHOSE, AVANT LA BOUCLE 1 ET AVANT LA TABLE (directeur, 27/11/2026) : lire
+> `docs/current/A-FAIRE-MAINTENANT.md`.** C'est la seule liste de ce que le directeur a demandé et qui n'est pas fait ou
+> ne marche pas. Une ligne n'en sort qu'avec la PR fusionnée et la preuve du directeur ; toute nouvelle demande y entre
+> le jour même. Les autres listes de suivi (registre, SUIVI, checklists, alertes de la table) sont du détail : en cas
+> d'écart, cette liste prévaut.
+
 Application de cours de Coran en visio par **classes stables** (groupe, horaire récurrent,
 enseignant attitré). Remise à plat documentaire du 23 septembre 2026 : les seules
 spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 
 ## Mission en cours, décision du directeur du 24/10/2026 : Boucle 1 avant tout
+
+> **Amendé le 27/11/2026 (directeur : « il faut ranger ce que l'on doit faire pour ne pas que ça se perde encore »)** :
+> `docs/current/A-FAIRE-MAINTENANT.md` prévaut sur la règle ci-dessous. Les lignes de cette liste ne sont pas « hors
+> boucle » ; un agent chargé de l'une d'elles lit aussi les fichiers qu'elle cite. Le reste de la règle (une étape, une
+> PR ; quatre agents au plus ; le pilote fusionne et installe ; preuve par le directeur en production) reste en vigueur.
 
 Tant que `docs/current/BOUCLE-1_PLAN_2026-10-24.md` n'a pas ses quatre phrases vraies, ce plan
 prévaut sur tout le reste de ce fichier et de `docs/current/`. Un agent lit le plan, puis
