@@ -14,6 +14,7 @@ import '../../../core/domain/enums.dart';
 import '../../../core/dossier/etat_dossier.dart';
 import '../../../core/dossier/service_dossier.dart';
 import '../../../core/i18n/isolat_bidi.dart';
+import '../../../core/i18n/pays_du_fuseau.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/identite/nom_propre.dart';
@@ -43,6 +44,7 @@ import '../inscription_page.dart';
 import '../invitation_en_cours.dart';
 import '../questionnaire/coquille_onboarding.dart';
 import '../questionnaire/questionnaire_inscription.dart';
+import 'champ_whatsapp.dart';
 
 /// `/inscription/recapitulatif` : les reponses, un « Modifier » par ligne, et
 /// la creation du compte.
@@ -172,6 +174,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                   ? questionnaire.sourcePourServeur
                   : null,
               fuseau: brouillon.titulaire ? questionnaire.fuseau : null,
+              whatsapp: brouillon.titulaire ? _whatsapp : null,
             );
         ref.read(brouillonInscriptionProvider.notifier).noterProfilCree();
         // La demande est partie : les reponses quitteront l'appareil a
@@ -538,6 +541,10 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
   Genre? _genreTitulaire;
   bool _tenteTitulaire = false;
 
+  /// WHATSAPP-FAMILLE (23/11/2026) : le numero WhatsApp du titulaire, au format
+  /// international, ou `null` tant qu'il ne se lit pas. Obligatoire.
+  String? _whatsapp;
+
   String? _erreurNom(String saisie, String enLettres) {
     if (!_tenteTitulaire) return null;
     if (saisie.trim().isEmpty) return t.inscription.champRequis;
@@ -549,6 +556,7 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     final Genre? genre = apprenant?.genre ?? _genreTitulaire;
     if (!nomPropreValide(prenom) ||
         !nomPropreValide(_nomTitulaire.text) ||
+        _whatsapp == null ||
         genre == null) {
       setState(() => _tenteTitulaire = true);
       return;
@@ -721,6 +729,16 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
                   ),
                   onChanged: (String _) => setState(() {}),
                   onSubmitted: (String _) => _envoyerTitulaire(l0),
+                ),
+                // WHATSAPP-FAMILLE (directeur, 23/11/2026) : la direction doit
+                // pouvoir joindre la famille juste apres l'inscription.
+                Ecart.vLg,
+                ChampWhatsapp(
+                  paysInitial: paysPourIndicatif(fuseau: questionnaire.fuseau),
+                  tente: _tenteTitulaire,
+                  onChanged: (String? numero) =>
+                      setState(() => _whatsapp = numero),
+                  onValider: () => _envoyerTitulaire(l0),
                 ),
                 if (l0 == null) ...<Widget>[
                   Ecart.vLg,

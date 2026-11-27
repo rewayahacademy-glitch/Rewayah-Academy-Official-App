@@ -1,0 +1,32 @@
+WHATSAPP-FAMILLE, captures R3 (23/11/2026)
+
+Ordre du directeur (23/11/2026) : « ajouter une demande de numéro WhatsApp, car c'est difficile d'être en contact
+avec les familles juste après leur inscription par e-mail ».
+
+Rendu : tests de widgets, polices du dépôt, densité 1. Données de test seulement (« Amina », numéro +33612345678).
+Commandes :
+  CAPTURE_DIR=docs/current/captures/E2E/whatsapp-famille \
+    flutter test test/features/inscription_test.dart --plain-name "WHATSAPP-FAMILLE"
+  CAPTURE_DIR=docs/current/captures/E2E/whatsapp-famille \
+    flutter test test/features/whatsapp_famille_test.dart
+
+Ce que chaque image montre, et ce qu'elle ne prouve pas :
+
+  onboarding_whatsapp_fr_390.png, onboarding_whatsapp_fr_1440.png, onboarding_whatsapp_ar_390.png
+      L'écran du titulaire après la connexion (« Votre nom de famille ») avec le champ « Votre numéro WhatsApp » :
+      la phrase qui dit pourquoi, le drapeau et l'indicatif à gauche (liste des pays avec recherche, la même que celle
+      du candidat enseignant), le numéro à droite. Le pays est proposé d'après la langue de l'appareil, sinon le
+      fuseau (ici les États-Unis : l'appareil de test est en en-US). Sur 1440, la colonne reste bornée.
+  *_rempli.png : le même écran, numéro saisi.
+  onboarding_whatsapp_erreur_fr_390.png : « Envoyer ma demande » sans numéro : rien ne part, la phrase dit quoi faire.
+  direction_whatsapp_fr_1440.png : la ligne WhatsApp d'une demande ou de la fiche d'un élève (direction seulement),
+      avec « Ouvrir WhatsApp » (https://wa.me/<numéro sans +>). La ligne est rendue seule, hors de la feuille d'une demande.
+  accueil_whatsapp_fr_390.png : la ligne discrète de l'accueil famille pour un compte sans numéro (« Ajoutez votre
+      numéro WhatsApp »), rendue seule, hors de l'accueil complet.
+
+NE MONTRE PAS : la feuille de saisie de l'accueil ouverte ; l'ouverture réelle de WhatsApp (sur le web, un nouvel
+onglet ; hors web, le lien est copié : `url_launcher` n'est pas une dépendance) ; la page de la fiche élève entière.
+Le directeur doit le voir en production après installation de la migration 20261201018500 et fusion.
+
+À comparer : aucune maquette n'existe pour ces lignes ; le critère est l'ordre du directeur (le numéro demandé à
+l'inscription, lu par la direction avec un lien WhatsApp) et le champ téléphone existant (même composant).

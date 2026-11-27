@@ -169,6 +169,25 @@
     },
     "fuseaux": {
       "europeParis": "Paris",
+      "europeZurich": "Zurich",
+      "europeLuxembourg": "Luxembourg",
+      "europeBerlin": "Berlin",
+      "europeMadrid": "Madrid",
+      "europeRome": "Rome",
+      "europeAmsterdam": "Amsterdam",
+      "europeLisbon": "Lisbon",
+      "europeIstanbul": "Istanbul",
+      "americaMontreal": "Montreal",
+      "americaVancouver": "Vancouver",
+      "americaChicago": "Chicago",
+      "africaAlgiers": "Algiers",
+      "africaTunis": "Tunis",
+      "africaCairo": "Cairo",
+      "asiaDubai": "Dubai",
+      "asiaQatar": "Qatar",
+      "asiaKuwait": "Kuwait",
+      "asiaAmman": "Amman",
+      "asiaBeirut": "Beirut",
       "africaConakry": "Conakry",
       "americaToronto": "Toronto",
       "europeLondon": "London",
@@ -18702,5 +18721,18 @@
       "fratrie": "Chaque enfant aura sa propre classe et son propre enseignant\u00a0: si un enseignant est absent, les autres continuent, et une seule tablette suffit à tour de rôle.",
       "suivre": "Suivre ma demande"
     }
+  },
+  "whatsapp": {
+    "etiquette": "Votre numéro WhatsApp",
+    "pourquoi": "Pour que la direction puisse vous joindre rapidement après votre inscription.",
+    "accueilLigne": "Ajoutez votre numéro WhatsApp",
+    "accueilPourquoi": "La direction pourra vous joindre rapidement.",
+    "titreFeuille": "Votre numéro WhatsApp",
+    "enregistrer": "Enregistrer mon numéro",
+    "echec": "Votre numéro n'a pas été enregistré. Réessayez dans un instant.",
+    "direction": "WhatsApp",
+    "ouvrir": "Ouvrir WhatsApp",
+    "illisible": "Le numéro n'a pas pu être lu. Rechargez la page.",
+    "absent": "Aucun numéro WhatsApp donné."
   }
 }

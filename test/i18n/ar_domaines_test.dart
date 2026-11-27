@@ -166,6 +166,8 @@ const Map<String, int> _domaines = <String, int>{
   'identiteProfil': 5,
   // ONBOARDING-PRAXIS (directeur, 22/11/2026) : le questionnaire avec Praxis.
   'onboarding': 300,
+  // WHATSAPP-FAMILLE (directeur, 23/11/2026) : le numero WhatsApp de la famille.
+  'whatsapp': 10,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) ;

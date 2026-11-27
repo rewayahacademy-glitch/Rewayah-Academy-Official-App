@@ -80,6 +80,7 @@ import 'carte_horaire.dart';
 import 'feuille_autre_appareil.dart';
 import 'ligne_bibliotheque_classe.dart';
 import 'ligne_derniere_seance.dart';
+import 'ligne_whatsapp_famille.dart';
 import 'liste_preparation.dart';
 import 'parcours_du_profil_choisi.dart';
 import 'salle_rejoignable.dart';
@@ -564,6 +565,8 @@ class _CorpsAccueil extends ConsumerWidget {
         const CarteDemandePresentation(),
         // L9 : les comptes d'avant l'accord des visites y sont conduits.
         const InviteConsentementObservation(),
+        // WHATSAPP-FAMILLE (23/11/2026) : les comptes sans numero le donnent ici.
+        const LigneWhatsappFamille(),
         // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
         // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
         // Silencieuse quand aucun apprenant n'a de parcours a suivre.
@@ -797,6 +800,8 @@ class _CorpsAccueil extends ConsumerWidget {
       const CarteDemandePresentation(),
       // L9 : les comptes d'avant l'accord des visites y sont conduits.
       const InviteConsentementObservation(),
+      // WHATSAPP-FAMILLE (23/11/2026) : les comptes sans numero le donnent ici.
+      const LigneWhatsappFamille(),
       LayoutBuilder(
         builder: (BuildContext _, BoxConstraints contraintes) {
           final bool coteACote =

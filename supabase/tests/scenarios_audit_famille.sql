@@ -122,8 +122,8 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.vrai(
   (SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
     WHERE n.nspname = 'public' AND p.proname = 'inscrire_titulaire') = 1
-  AND NOT has_function_privilege('anon', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text,text)', 'execute')
-  AND has_function_privilege('authenticated', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text,text)', 'execute'),
+  AND NOT has_function_privilege('anon', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text,text,text)', 'execute')
+  AND has_function_privilege('authenticated', 'public.inscrire_titulaire(text,text,text,public.gender,text,boolean,jsonb,text,text,text)', 'execute'),
   '2. une seule forme publique, fermee a anon, ouverte aux comptes connectes');
 
 -- 3. Ecrire a la direction (famille en attente).
