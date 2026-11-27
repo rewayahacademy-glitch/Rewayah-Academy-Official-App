@@ -39,9 +39,9 @@ def scene(tx, ty, k, s_ouvert, pal, faisceau_div=(110, 150), bas=1920):
     t1, t2 = lerp(J1, F1, s_ouvert), lerp(J2, F2, s_ouvert)
     battant = [H1, t1, t2, H2]
     baie = [J1, H1, t1, t2, H2, J2]            # la baie moins le battant : ce qui laisse passer la lumière
-    # Au seuil, la lumière sort à droite de la rive libre du battant (le battant, ouvert vers l'intérieur,
-    # cache la partie gauche) : le faisceau part du seuil entre la rive et le montant, et vient vers nous.
-    gx = t2[0] - 40*s_ouvert
+    # Au seuil, la lumière sort sur toute la largeur éclairée de la baie : du gond au montant quand la porte
+    # est grande ouverte, entre la rive et le montant quand elle est à peine décollée. Le faisceau vient vers nous.
+    gx = t2[0] * (1 - s_ouvert)   # porte grande ouverte : la lumière touche tout le seuil, du gond au montant
     a = P((gx, H2[1] + (J2[1]-H2[1]) * gx / J2[0]))
     b = P(J2)
     dl, dr = faisceau_div
