@@ -57,6 +57,10 @@ enum MotifRefusCreation {
   /// Le genre manque ou n'est pas connu (MINEUR-FANTOME B, 07/11/2026).
   genreRequis,
 
+  /// PAIEMENT-FAMILLE-ACCES (D7, 23/11/2026) : une dette de la famille
+  /// (frais d'une contestation bancaire perdue) bloque tout nouvel achat.
+  detteFamille,
+
   /// Tout autre refus. L'ecran ne l'explique pas davantage.
   refuse,
 }
@@ -88,6 +92,9 @@ ResultatCreationProfil resultatDepuisRefus(FunctionException erreur) {
   final String message = details is Map
       ? '${details['error'] ?? ''}'
       : '${details ?? ''}';
+  if (message.contains('DETTE_FAMILLE')) {
+    return const CreationRefusee(MotifRefusCreation.detteFamille);
+  }
   if (message.contains('compte tuteur non valide')) {
     return const CreationRefusee(MotifRefusCreation.compteNonValide);
   }

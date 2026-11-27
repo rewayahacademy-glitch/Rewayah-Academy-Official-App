@@ -736,6 +736,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     MotifIndisponibilite.visiteDejaOuverte => AppIcons.observationEnCours,
     MotifIndisponibilite.visitesEpuisees ||
     MotifIndisponibilite.tempsEpuise ||
+    MotifIndisponibilite.placeEleve ||
+    MotifIndisponibilite.accesSuspendu ||
     MotifIndisponibilite.observationDesactivee ||
     MotifIndisponibilite.garantieServeurAbsente ||
     MotifIndisponibilite.capaciteAbsente ||

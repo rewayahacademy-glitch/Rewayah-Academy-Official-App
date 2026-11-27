@@ -36,6 +36,7 @@ import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart'
     show identiteTitulaireProvider, profilEleveTitulaireExisteProvider;
+import 'carte_dette_famille.dart';
 import 'finances_foyer.dart';
 import 'foyer_second_adulte.dart';
 import 'ligne_membre.dart';
@@ -754,6 +755,9 @@ class _ListeMembres extends ConsumerWidget {
         SyntheseSoldesFoyer(
           onRechargerPlusieurs: () => aller(Routes.tuteurFoyerRecharge),
         ),
+        // PAIEMENT-FAMILLE-ACCES (D7) : la dette de la famille, quand elle
+        // existe ; rien sinon.
+        const CarteDetteFamille(),
         // Une carte par enfant (maquette 11, K-62), separees par l'ecart des
         // jetons (K-55).
         Semantics(

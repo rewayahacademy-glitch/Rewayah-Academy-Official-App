@@ -24,6 +24,7 @@ import 'core/theme/app_theme.dart';
 import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
 import 'features/compte/correction_nom.dart';
+import 'features/salle/passage_second_appareil.dart' show CoucheAutreAppareil;
 import 'features/salle_seance/barre_seance_en_direct.dart';
 import 'features/salle_seance/hors_salle.dart';
 
@@ -121,62 +122,69 @@ class RewayahApp extends ConsumerWidget {
         // `Overlay.wrap` : les infobulles et menus poses ici, hors du
         // `Navigator`, gardent une couche ou s'afficher.
         return Overlay.wrap(
-          child: ReglageMouvement(
-            child: ColoredBox(
-              color: fond,
-              // PE-D8 (directeur, 19/11/2026 : « rien ne pousse la page ») :
-              // la nouvelle version et les avis courts (« Vous avez recu un
-              // nouveau message. », « Cette classe n'existe plus. ») flottent
-              // en haut, par-dessus l'ecran, au lieu de le decaler.
-              child: CoucheAvis(
-                avis: <Widget>[
-                  BandeauNouvelleVersion(
-                    enSeance: () => routeur
-                        .routerDelegate
-                        .currentConfiguration
-                        .uri
-                        .path
-                        .startsWith('/salle'),
-                  ),
-                  const BandeauAvisEphemere(),
-                  // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le son
-                  // bloque, salle reduite.
-                  BandeauSonBloqueHorsSalle(routeur: routeur),
-                  // NOTIF-DEFAUT : la demande des notifications, une fois par
-                  // appareil.
-                  const BandeauInvitationPush(),
-                  // L'observation reste visible tant qu'elle dure, posee
-                  // par-dessus, sans croix.
-                  if (observation != null)
-                    BandeauObservation(observation: observation),
-                ],
-                child: Column(
-                  children: <Widget>[
-                    // L'eleve sorti pendant son absence hors de l'application
-                    // retrouve l'ecran du retour (ne rend rien).
-                    RetourHorsApplication(routeur: routeur),
-                    // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
-                    // relire au retour sur un onglet ou dans l'application.
-                    // Directeur, 31/10/2026 : « Seance toujours en direct » sur
-                    // tous les ecrans hors de la salle, tant que l'appel continue.
-                    Expanded(
-                      child: BarreSeanceEnDirect(
-                        routeur: routeur,
-                        child: RelectureGenerale(
-                          // FIL-ARIANE (06/11/2026) : l'arbre des routes du role,
-                          // lu une fois ici, pour le fil de chaque `PageShell`.
-                          child: ContexteFilAriane(
-                            plan: planFilPour(session),
-                            // NOM-PROPRE (14/11/2026) : un nom a corriger
-                            // passe avant tout le reste.
-                            child: GardeNomPropre(
-                              child: rendu ?? const SizedBox.shrink(),
+          // SALLE-SECOND-APPAREIL (directeur, 23/11/2026) : la question « Laisser
+          // passer ? » arrive par-dessus l'ecran ouvert, salle reduite
+          // comprise : le battement suit la connexion video, pas la page.
+          child: CoucheAutreAppareil(
+            enSalle: () => routeur.routerDelegate.currentConfiguration.uri.path
+                .startsWith('/salle'),
+            child: ReglageMouvement(
+              child: ColoredBox(
+                color: fond,
+                // PE-D8 (directeur, 19/11/2026 : « rien ne pousse la page ») :
+                // la nouvelle version et les avis courts (« Vous avez recu un
+                // nouveau message. », « Cette classe n'existe plus. ») flottent
+                // en haut, par-dessus l'ecran, au lieu de le decaler.
+                child: CoucheAvis(
+                  avis: <Widget>[
+                    BandeauNouvelleVersion(
+                      enSeance: () => routeur
+                          .routerDelegate
+                          .currentConfiguration
+                          .uri
+                          .path
+                          .startsWith('/salle'),
+                    ),
+                    const BandeauAvisEphemere(),
+                    // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le son
+                    // bloque, salle reduite.
+                    BandeauSonBloqueHorsSalle(routeur: routeur),
+                    // NOTIF-DEFAUT : la demande des notifications, une fois par
+                    // appareil.
+                    const BandeauInvitationPush(),
+                    // L'observation reste visible tant qu'elle dure, posee
+                    // par-dessus, sans croix.
+                    if (observation != null)
+                      BandeauObservation(observation: observation),
+                  ],
+                  child: Column(
+                    children: <Widget>[
+                      // L'eleve sorti pendant son absence hors de l'application
+                      // retrouve l'ecran du retour (ne rend rien).
+                      RetourHorsApplication(routeur: routeur),
+                      // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
+                      // relire au retour sur un onglet ou dans l'application.
+                      // Directeur, 31/10/2026 : « Seance toujours en direct » sur
+                      // tous les ecrans hors de la salle, tant que l'appel continue.
+                      Expanded(
+                        child: BarreSeanceEnDirect(
+                          routeur: routeur,
+                          child: RelectureGenerale(
+                            // FIL-ARIANE (06/11/2026) : l'arbre des routes du role,
+                            // lu une fois ici, pour le fil de chaque `PageShell`.
+                            child: ContexteFilAriane(
+                              plan: planFilPour(session),
+                              // NOM-PROPRE (14/11/2026) : un nom a corriger
+                              // passe avant tout le reste.
+                              child: GardeNomPropre(
+                                child: rendu ?? const SizedBox.shrink(),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -67,6 +67,8 @@ String texteMotif(MotifIndisponibilite motif, {required String prenom}) {
     MotifIndisponibilite.horsFenetre => m.horsFenetre,
     MotifIndisponibilite.observationDesactivee => m.observationDesactivee,
     MotifIndisponibilite.lienAbsent => m.lienAbsent,
+    MotifIndisponibilite.placeEleve => m.placeEleve,
+    MotifIndisponibilite.accesSuspendu => m.accesSuspendu,
     MotifIndisponibilite.enfantAbsent => m.enfantAbsent(
       dePrenom: deDevant(prenom, cle: 'classe.observation.motif.enfantAbsent'),
     ),

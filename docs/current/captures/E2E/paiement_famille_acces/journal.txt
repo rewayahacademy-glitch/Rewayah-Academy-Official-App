@@ -1,0 +1,37 @@
+PAIEMENT-FAMILLE-ACCES (23/11/2026) - journal R3
+Lot SQL seul : aucun ecran. Rejeu sur Postgres 16 nu (stub_auth.sql, les 597 fichiers de supabase/migrations dont
+20261203100000_paiement_famille_acces.sql, puis les scenarios).
+
+- scenarios_paiement_famille_acces.sql : 48 controles verts (S6, S7, S8, S9, accompagner, enseignant, direction, droits).
+- Mutation : avec les anciens corps de acces_paye_seance_pour / acces_paye_groupe_pour / acces_paye_appelant
+  (20261104600000) remis avant le scenario, il echoue a « S6 : la porte juge G1 sur SA place ».
+- Migration rejouee deux fois de suite sur la meme base : sans erreur (idempotente).
+- Scenarios voisins rejoues et verts : lot_b_acces_paye, o1_observation, paiement_unifie, fn115b_remboursements (section 6
+  mise a jour pour D7), lot_a_tarifs_particuliers, salle_groupe, af_l2_01_jeton_remplacant_retrait,
+  com_lister_fils_econome, b13_admin_suspended, b18_security_definer, af_liste_blanche_volatiles (ligne ajoutee).
+- scenarios_cand_l2a2_gestes_direction.sql echoue sur l'empreinte de lister_candidatures : fonction non touchee ici
+  (redefinie par 20261130968000), a verifier sur main.
+- Non prouve : LiveKit reel (un second appareil du meme profil coupe le premier : comportement documente de LiveKit, pas rejoue) ;
+  production ; aucun ecran n'affiche la dette.
+
+SUITE 23/11 (Dart et i18n, meme PR)
+- Refus serveur dits en fr/en/ar : `place_eleve` et `acces_suspendu` (observation : MotifRefusObservation, MotifIndisponibilite, libelles et bloc de la Classe du tuteur),
+  `DETTE_FAMILLE` a la creation d'un profil eleve (MotifRefusCreation.detteFamille). NON FAIT : le meme refus a la demande d'une classe
+  (parcours_offres_page.dart, zone interdite par le garde-fou : il tombe sur le message d'erreur generique) et a la recharge
+  (recharge_foyer*.dart, autre agent).
+- Dette de la famille : `CarteDetteFamille` en tete du Foyer (lib/features/foyer/carte_dette_famille.dart), port `PortDetteFamille` + adaptateur
+  `DetteFamilleSupabase` (ma_dette_famille), branche dans main.dart. Etats : chargement, vide (rien), erreur, hors ligne, source absente (rien).
+- test/features/foyer/carte_dette_famille_test.dart : 9 verts. dart analyze --fatal-infos : propre. verifier_jetons : 0 violation.
+  verifier_branchement : aucun nouveau fichier non atteint. Tests teaching_core, tc_observation, classe_tuteur, foyer : tous verts (2142).
+- scenarios_cand_l2a2_gestes_direction.sql rejoue sur origin/main propre (597 migrations, sans la migration de ce lot) : MEME ECHEC
+  (empreinte de lister_candidatures). Il est donc anterieur a ce lot.
+- Capture a 1280/1440 non faite (aucun navigateur ici) : la largeur est bornee a 840 par le test, pas vue a l'ecran.
+
+SUITE 23/11, SALLE-SECOND-APPAREIL (meme PR)
+- supabase/tests/scenarios_salle_second_appareil.sql : verts (demande, acceptation, refus, premier appareil silencieux 30 s, sans reponse 45 s,
+  annulation, demande d'un autre profil refusee x6, tuteur pour son enfant, enseignant, administration hors perimetre, droits, empreintes F86).
+- scenarios_af_liste_blanche_volatiles.sql : 4 lignes ajoutees (salle_*).
+- test/features/salle/passage_second_appareil_test.dart : 19 verts (deux dialogues, battement, service de jeton : accepte, refuse, sans reponse,
+  silencieux, annule, hors ligne ; etiquette sans adresse ; fr/en/ar).
+- NON PROUVE : la fonction Edge create-room-token modifiee n'a pas ete executee (pas de Deno/Supabase ici) ; aucune capture a l'ecran ;
+  aucun essai avec deux vrais appareils ; LiveKit non rejoue.

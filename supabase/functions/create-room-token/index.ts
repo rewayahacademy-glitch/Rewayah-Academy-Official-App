@@ -110,6 +110,43 @@ Deno.serve(async (requete: Request) => {
 
   const service = clientService()
 
+  // SALLE-SECOND-APPAREIL (directeur, 23/11/2026 : jamais de coupure brusque) :
+  // un profil deja dans la salle depuis un AUTRE appareil ne recoit pas de
+  // jeton tout de suite. La base cree une demande que le premier appareil
+  // accepte ou refuse ; le second attend (409 + `passage`). Un client qui ne
+  // donne pas d'identifiant d'appareil garde l'ancien comportement (LiveKit
+  // remplace la premiere connexion de la meme identite). Un jeton n'est
+  // jamais rendu sans cette decision : l'identifiant de demande est verifie
+  // par la base (demandeur, appareil, profil, seance).
+  let notePassage: string | null = null
+  const appareil = String(corps.appareil_id ?? '').trim()
+  if (!action && appareil) {
+    const passage = await service.rpc('salle_passage', {
+      p_session: seance,
+      p_profil: eleve || compte.id,
+      p_demandeur: compte.id,
+      p_appareil: appareil,
+      p_libelle: String(corps.appareil_libelle ?? '').slice(0, 60),
+      p_demande: String(corps.demande_id ?? '').trim() || null,
+    })
+    if (passage.error) {
+      console.error('salle_passage refuse', { seance, erreur: passage.error.message })
+      return passage.error.code === '42501' || passage.error.code === '22P02'
+        ? refus('acces a la salle refuse', 403)
+        : refus('salle momentanement indisponible', 500)
+    }
+    const decision = (passage.data as Record<string, unknown> | null) ?? {}
+    if (decision.decision !== 'entrer') {
+      return json({
+        error: 'second appareil',
+        passage: decision.decision ?? 'attendre',
+        demande_id: decision.demande ?? null,
+        appareil_libelle: decision.libelle ?? null,
+      }, 409)
+    }
+    notePassage = typeof decision.note === 'string' ? decision.note : null
+  }
+
   // La cle de service contourne la RLS, elle ne remplace pas le controle :
   // c'est la fonction appelee qui reverifie l'appartenance, la fenetre horaire
   // et le statut de la seance, et qui refuse par exception.
@@ -315,5 +352,8 @@ Deno.serve(async (requete: Request) => {
     // l'enseignant. L'application ne rend alors pas le bouton du micro et
     // dit pourquoi.
     publication_differee: differe,
+    // SALLE-SECOND-APPAREIL : « l'autre appareil ne repondait plus » quand le
+    // premier etait silencieux ; sinon absent.
+    note_passage: notePassage,
   })
 })
