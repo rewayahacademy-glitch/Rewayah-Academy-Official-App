@@ -1,5 +1,11 @@
 # Rewayah Academy — App (Flutter · Supabase · LiveKit · R2 · Vercel)
 
+> **AVANT TOUTE CHOSE, AVANT LA BOUCLE 1 ET AVANT LA TABLE (directeur, 27/11/2026) : lire
+> `docs/current/A-FAIRE-MAINTENANT.md`.** C'est la seule liste de ce que le directeur a demandé et qui n'est pas fait ou
+> ne marche pas. Une ligne n'en sort qu'avec la PR fusionnée et la preuve du directeur ; toute nouvelle demande y entre
+> le jour même. Les autres listes de suivi (registre, SUIVI, checklists, alertes de la table) sont du détail : en cas
+> d'écart, cette liste prévaut.
+
 Application de cours de Coran en visio par **classes stables** (groupe, horaire récurrent,
 enseignant attitré). Remise à plat documentaire du 23 septembre 2026 : les seules
 spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
