@@ -154,7 +154,12 @@ class ProrataExplique {
 @immutable
 class LigneDue {
   /// Cree la ligne.
-  const LigneDue({required this.nature, required this.montant, this.rang});
+  const LigneDue({
+    required this.nature,
+    required this.montant,
+    this.rang,
+    this.remise,
+  });
 
   /// La nature : `tarif`, `remise_rang`, `bourse`, `prorata`,
   /// `remise_prepaiement`.
@@ -165,6 +170,10 @@ class LigneDue {
 
   /// Le rang de famille, ou `null`.
   final int? rang;
+
+  /// Pour une ligne `bourse` : `prix_special` ou `acces_offert` quand ce
+  /// n'est pas une bourse, sinon `null`.
+  final String? remise;
 }
 
 /// Un mois que le profil doit encore : une facture a financer, ou la

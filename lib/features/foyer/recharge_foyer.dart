@@ -805,7 +805,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     };
     final String? suggere = switch (b.montantSuggere) {
       final Montant m => t.adulte.recharge.montantSuggere(
-        montant: b.montantsRediges[m] ?? formaterMontant(m),
+        montant: libelleMontant(b, m) ?? formaterMontant(m),
       ),
       null => null,
     };
@@ -1021,7 +1021,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     BeneficiaireRecharge b,
     Montant m, {
     required bool attenue,
-  }) => switch (b.montantsRediges[m]) {
+  }) => switch (libelleMontant(b, m)) {
     final String redige => Text(
       redige,
       textAlign: TextAlign.center,

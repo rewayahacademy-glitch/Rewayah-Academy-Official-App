@@ -13338,7 +13338,7 @@
       "montantChangePhrase": "تغيّرت فاتورة أو شهر منذ تحقّقكم. لم يُدفع أي مبلغ. تحقّقوا من جديد قبل الدفع.",
       "montantChangeAction": "تحقّق من جديد",
       "explication": {
-        "libelleDette": "⁨{montant}⁩: الشهر المستحق",
+        "libelleDette": "⁨{montant}⁩: المبلغ المستحق",
         "libelleMois(plural, param=n)": {
           "zero": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهر مدفوع مقدّمًا",
           "one": "⁨{montant}⁩ مقابل شهر واحد مدفوع مقدّمًا",
@@ -13348,16 +13348,16 @@
           "many": "⁨{montant}⁩ مقابل ⁨{n}⁩ شهرًا مدفوعًا مقدّمًا"
         },
         "libelleDetteEtMois(plural, param=n)": {
-          "zero": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهر مقدّمًا",
-          "one": "⁨{montant}⁩: الشهر المستحق وشهر واحد مقدّمًا",
-          "other": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهر مقدّمًا",
-          "two": "⁨{montant}⁩: الشهر المستحق وشهرين مقدّمًا",
-          "few": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ أشهر مقدّمًا",
-          "many": "⁨{montant}⁩: الشهر المستحق و⁨{n}⁩ شهرًا مقدّمًا"
+          "zero": "⁨{montant}⁩: المبلغ المستحق و⁨{n}⁩ شهر مقدّمًا",
+          "one": "⁨{montant}⁩: المبلغ المستحق وشهر واحد مقدّمًا",
+          "other": "⁨{montant}⁩: المبلغ المستحق و⁨{n}⁩ شهر مقدّمًا",
+          "two": "⁨{montant}⁩: المبلغ المستحق وشهرين مقدّمًا",
+          "few": "⁨{montant}⁩: المبلغ المستحق و⁨{n}⁩ أشهر مقدّمًا",
+          "many": "⁨{montant}⁩: المبلغ المستحق و⁨{n}⁩ شهرًا مقدّمًا"
         },
         "libelleUnMois": "⁨{montant}⁩ مقابل شهر واحد",
         "synthese": {
-          "detteSeule": "تدفعون ⁨{montant}⁩ عن الشهر المستحق (⁨{mois}⁩).",
+          "detteSeule": "تدفعون ⁨{montant}⁩، وهو المبلغ المستحق (⁨{mois}⁩).",
           "detteEtAvance(plural, param=n)": {
             "zero": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم ⁨{n}⁩ شهر مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
             "one": "تدفعون أولًا ⁨{dette}⁩ (⁨{moisDus}⁩)، ثم شهرًا واحدًا مقدّمًا (⁨{moisCouverts}⁩): ⁨{montant}⁩ في المجموع.",
@@ -13428,6 +13428,18 @@
           "factureRemiseRang": "خصم العائلة، المسجَّل رقم ⁨{rang}⁩",
           "factureProrata": "بحسب حصص الشهر",
           "facturePrepaiement": "حصة من الدفع المقدّم"
+        },
+        "avance": {
+          "titre(plural, param=n)": {
+            "zero": "ثم ⁨{n}⁩ شهر مقدمًا (⁨{moisCouverts}⁩)",
+            "one": "ثم شهر واحد مقدمًا (⁨{moisCouverts}⁩)",
+            "two": "ثم شهران مقدمًا (⁨{moisCouverts}⁩)",
+            "few": "ثم ⁨{n}⁩ أشهر مقدمًا (⁨{moisCouverts}⁩)",
+            "many": "ثم ⁨{n}⁩ شهرًا مقدمًا (⁨{moisCouverts}⁩)",
+            "other": "ثم ⁨{n}⁩ شهر مقدمًا (⁨{moisCouverts}⁩)"
+          },
+          "tauxDuPrix": "⁨{taux}⁩ من السعر الكامل ⁨{prix}⁩",
+          "arrondi": "ابتداءً من 3 أشهر، يُقرَّب المجموع إلى أقرب دولار."
         },
         "moisCouverts": "الأشهر المغطّاة"
       },

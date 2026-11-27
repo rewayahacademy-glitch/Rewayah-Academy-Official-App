@@ -227,7 +227,7 @@ void main() {
       );
       expect(
         phraseSynthese(b, b.options[0]),
-        'Vous payez ${_m(2530)} pour le mois dû (novembre).',
+        'Vous payez ${_m(2530)}, ce qui est dû (novembre).',
       );
       // Douze mois : « de decembre 2026 a novembre 2027 » (la periode change d'annee).
       expect(
@@ -360,10 +360,10 @@ void main() {
     'le libelle du moins / plus dit l offre, jamais seulement un montant',
     () {
       final BeneficiaireRecharge b = _lu();
-      expect(libelleOption(b.options[0]), '${_m(2530)} : le mois dû');
+      expect(libelleOption(b.options[0]), '${_m(2530)} : ce qui est dû');
       expect(
         libelleOption(b.options[1]),
-        '${_m(12650)} : le mois dû et 2 mois d\'avance',
+        '${_m(12650)} : ce qui est dû et 2 mois d\'avance',
       );
       expect(
         b.montantsRediges[b.options[1].montant],

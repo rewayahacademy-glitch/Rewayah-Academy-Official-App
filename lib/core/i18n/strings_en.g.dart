@@ -21162,14 +21162,14 @@ class _Traductions$adulte$recharge$explication$en extends Traductions$adulte$rec
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
-	@override String libelleDette({required Object montant}) => '${montant}: the month due';
+	@override String libelleDette({required Object montant}) => '${montant}: what is due';
 	@override String libelleMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
 		one: '${montant} for ${n} month paid ahead',
 		other: '${montant} for ${n} months paid ahead',
 	);
 	@override String libelleDetteEtMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
-		one: '${montant}: the month due and ${n} month ahead',
-		other: '${montant}: the month due and ${n} months ahead',
+		one: '${montant}: what is due and ${n} month ahead',
+		other: '${montant}: what is due and ${n} months ahead',
 	);
 	@override String libelleUnMois({required Object montant}) => '${montant} for one month';
 	@override late final _Traductions$adulte$recharge$explication$synthese$en synthese = _Traductions$adulte$recharge$explication$synthese$en._(_root);
@@ -21177,6 +21177,7 @@ class _Traductions$adulte$recharge$explication$en extends Traductions$adulte$rec
 	@override late final _Traductions$adulte$recharge$explication$ligne$en ligne = _Traductions$adulte$recharge$explication$ligne$en._(_root);
 	@override late final _Traductions$adulte$recharge$explication$nonAppliquee$en nonAppliquee = _Traductions$adulte$recharge$explication$nonAppliquee$en._(_root);
 	@override late final _Traductions$adulte$recharge$explication$dette$en dette = _Traductions$adulte$recharge$explication$dette$en._(_root);
+	@override late final _Traductions$adulte$recharge$explication$avance$en avance = _Traductions$adulte$recharge$explication$avance$en._(_root);
 	@override String get moisCouverts => 'Months covered';
 }
 
@@ -28168,7 +28169,7 @@ class _Traductions$adulte$recharge$explication$synthese$en extends Traductions$a
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
-	@override String detteSeule({required Object montant, required Object mois}) => 'You pay ${montant} for the month due (${mois}).';
+	@override String detteSeule({required Object montant, required Object mois}) => 'You pay ${montant}, what is due (${mois}).';
 	@override String detteEtAvance({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
 		one: 'You first pay ${dette} (${moisDus}), then ${n} month ahead (${moisCouverts}): ${montant} in total.',
 		other: 'You first pay ${dette} (${moisDus}), then ${n} months ahead (${moisCouverts}): ${montant} in total.',
@@ -28251,6 +28252,21 @@ class _Traductions$adulte$recharge$explication$dette$en extends Traductions$adul
 	@override String factureRemiseRang({required Object rang}) => 'Family discount, member no. ${rang}';
 	@override String get factureProrata => 'In proportion to the month\'s sessions';
 	@override String get facturePrepaiement => 'Share of the payment made ahead';
+}
+
+// Path: adulte.recharge.explication.avance
+class _Traductions$adulte$recharge$explication$avance$en extends Traductions$adulte$recharge$explication$avance$fr {
+	_Traductions$adulte$recharge$explication$avance$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required num n, required Object moisCouverts}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Then ${n} month ahead (${moisCouverts})',
+		other: 'Then ${n} months ahead (${moisCouverts})',
+	);
+	@override String tauxDuPrix({required Object taux, required Object prix}) => '${taux} of the full price of ${prix}';
+	@override String get arrondi => 'From 3 months, the total is rounded to the nearest dollar.';
 }
 
 // Path: adulte.recharge.source.motifs
@@ -40808,11 +40824,11 @@ extension on TraductionsEn {
 			'adulte.recharge.montantChangeTitre' => 'The amount has changed',
 			'adulte.recharge.montantChangePhrase' => 'An invoice or a month changed since you checked. Nothing was paid. Check again before paying.',
 			'adulte.recharge.montantChangeAction' => 'Check again',
-			'adulte.recharge.explication.libelleDette' => ({required Object montant}) => '${montant}: the month due',
+			'adulte.recharge.explication.libelleDette' => ({required Object montant}) => '${montant}: what is due',
 			'adulte.recharge.explication.libelleMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${montant} for ${n} month paid ahead', other: '${montant} for ${n} months paid ahead', ), 
-			'adulte.recharge.explication.libelleDetteEtMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${montant}: the month due and ${n} month ahead', other: '${montant}: the month due and ${n} months ahead', ), 
+			'adulte.recharge.explication.libelleDetteEtMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${montant}: what is due and ${n} month ahead', other: '${montant}: what is due and ${n} months ahead', ), 
 			'adulte.recharge.explication.libelleUnMois' => ({required Object montant}) => '${montant} for one month',
-			'adulte.recharge.explication.synthese.detteSeule' => ({required Object montant, required Object mois}) => 'You pay ${montant} for the month due (${mois}).',
+			'adulte.recharge.explication.synthese.detteSeule' => ({required Object montant, required Object mois}) => 'You pay ${montant}, what is due (${mois}).',
 			'adulte.recharge.explication.synthese.detteEtAvance' => ({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You first pay ${dette} (${moisDus}), then ${n} month ahead (${moisCouverts}): ${montant} in total.', other: 'You first pay ${dette} (${moisDus}), then ${n} months ahead (${moisCouverts}): ${montant} in total.', ), 
 			'adulte.recharge.explication.synthese.avanceSeule' => ({required num n, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You pay ${n} month ahead (${moisCouverts}): ${montant}.', other: 'You pay ${n} months ahead (${moisCouverts}): ${montant}.', ), 
 			'adulte.recharge.explication.synthese.moisSansDate' => ({required Object montant}) => 'You pay one month, ${montant}. It counts from the start of your classes.',
@@ -40847,6 +40863,9 @@ extension on TraductionsEn {
 			'adulte.recharge.explication.dette.factureRemiseRang' => ({required Object rang}) => 'Family discount, member no. ${rang}',
 			'adulte.recharge.explication.dette.factureProrata' => 'In proportion to the month\'s sessions',
 			'adulte.recharge.explication.dette.facturePrepaiement' => 'Share of the payment made ahead',
+			'adulte.recharge.explication.avance.titre' => ({required num n, required Object moisCouverts}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Then ${n} month ahead (${moisCouverts})', other: 'Then ${n} months ahead (${moisCouverts})', ), 
+			'adulte.recharge.explication.avance.tauxDuPrix' => ({required Object taux, required Object prix}) => '${taux} of the full price of ${prix}',
+			'adulte.recharge.explication.avance.arrondi' => 'From 3 months, the total is rounded to the nearest dollar.',
 			'adulte.recharge.explication.moisCouverts' => 'Months covered',
 			'adulte.recharge.revenirPaiements' => 'Back to the household payments',
 			'adulte.recharge.phraseUnique' => 'Tick the profile, then choose the amount.',
@@ -40901,11 +40920,11 @@ extension on TraductionsEn {
 			'adulte.recharge.resultat.echecMotif' => 'Reason',
 			'adulte.recharge.resultat.reessayer' => 'Try again',
 			'adulte.recharge.resultat.changerMoyen' => 'Change payment method',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.annuleTitre' => 'Payment cancelled',
 			'adulte.recharge.resultat.annulePhrase' => 'The payment was cancelled before its confirmation. No balance was credited. You can start again with the same selection.',
 			'adulte.recharge.resultat.perimeTitre' => 'Order expired',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.perimePhrase' => 'The payment deadline for this order has passed. No balance was credited. Start the top-up again to get a new order.',
 			'adulte.recharge.resultat.recommencer' => 'Start the top-up again',
 			'adulte.recharge.resultat.actualiser' => 'Reload',
@@ -41415,11 +41434,11 @@ extension on TraductionsEn {
 			'suiviDemandes.changement.lien' => 'See the new class',
 			'suiviDemandes.changement.lienPour' => ({required Object dePrenom}) => 'See ${dePrenom}\'s new class',
 			'suiviDemandes.changement.retour' => 'Back to the tracking of requests',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.changement.introuvable' => 'This class change no longer needs to be shown',
 			'suiviDemandes.changement.introuvableDetail' => 'Go back to the tracking to see where your requests stand.',
 			'alertes.titre' => 'Alerts',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.gravite.urgent' => 'Urgent',
 			'alertes.gravite.important' => 'Important',
 			'alertes.gravite.info' => 'For information',
@@ -41929,11 +41948,11 @@ extension on TraductionsEn {
 			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} of ${duree}',
 			'com.vocal.lecteur.indisponible' => 'Playback is not available here yet. The message stays in the conversation: come back later to listen to it.',
 			'com.vocal.lecteur.erreurLectureTitre' => 'This voice message could not be played.',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.lecteur.erreurLectureAction' => 'Try again',
 			'com.vocal.demo.contexte' => 'Voice message demo: no real microphone is used, the recording is simulated.',
 			'com.vocal.demo.situations' => 'Demo situations',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.demo.autorise' => 'Microphone allowed',
 			'com.vocal.demo.aDemander' => 'To ask',
 			'com.vocal.demo.refuse' => 'Microphone refused',
@@ -42443,11 +42462,11 @@ extension on TraductionsEn {
 			'com.annonces.administration.matrice.vide' => 'No publishing right is configured.',
 			'com.annonces.administration.moderation.titre' => 'Moderation queue',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Reported on ${date} at ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Reason: ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Reported content',
 			'com.annonces.administration.moderation.extraitAbsent' => 'This content\'s excerpt is not provided.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.regle' => 'Rule concerned',
 			'com.annonces.administration.moderation.approuver' => 'Approve after review',
 			'com.annonces.administration.moderation.masquer' => 'Hide the content',
@@ -42957,11 +42976,11 @@ extension on TraductionsEn {
 			'comptable.tresorerie.retraitSansValidation' => 'The policy requires no validation for a withdrawal; it is still handled as a sensitive movement.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, in force since ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.mouvementsTitre' => 'Movements between vaults',
 			'comptable.tresorerie.mouvementsPhrase' => 'Towards a protection: according to your delegation. Outflow from a protected vault: additional validation required.',
 			'comptable.tresorerie.preparerMouvement' => 'Prepare a movement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.retirer' => 'Withdraw from the Strategic reserve',
 			'comptable.tresorerie.retraitBloque' => ({required Object raison}) => 'Withdrawal from the Strategic reserve: ${raison}.',
 			'comptable.tresorerie.alimenterBloque' => ({required Object raison}) => 'Funding of the Strategic reserve: ${raison}.',
@@ -43471,11 +43490,11 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.cadence.manuelle' => 'Manual',
 			'comptable.direction.reservePanneau.seuilTitre' => 'Alert',
 			'comptable.direction.reservePanneau.seuil' => 'Alert threshold',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.seuilDetail' => 'Below this share of the target, the Reserve is flagged "below target". Leave empty to set no threshold.',
 			'comptable.direction.reservePanneau.seuilIndice' => 'No threshold',
 			'comptable.direction.reservePanneau.retraitTitre' => 'Withdrawal',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.retraitSwitch' => 'A withdrawal requires additional validation',
 			'comptable.direction.reservePanneau.retraitSwitchDetail' => 'Taking money out of the Reserve is a sensitive operation: someone other than the requester validates it.',
 			'comptable.direction.delegationPanneau.intro' => 'You set once what the Accountant can carry out alone. Everything else is yours.',
@@ -43985,11 +44004,11 @@ extension on TraductionsEn {
 			'avis.admin.outilDetail' => 'Create a collection link, read the reviews, publish or refuse them',
 			'avis.admin.sections.libelle' => 'Review sections',
 			'avis.admin.sections.avis' => 'Reviews',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.sections.liens' => 'Links',
 			'avis.admin.statut.tous' => 'All',
 			'avis.admin.statut.enAttente' => 'Pending',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.statut.publie' => 'Published',
 			'avis.admin.statut.refuse' => 'Refused',
 			'avis.admin.statut.retire' => 'Removed',
@@ -44499,11 +44518,11 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'Rewayah is reading your file. Nothing is saved yet.',
 			'candidatsFlux.importFormulaires.depot.horsLigne' => 'The analysis can be done when the connection returns.',
 			'candidatsFlux.importFormulaires.depot.vide' => 'This file contains no row to import.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.videAide' => 'Check that you exported the right sheet.',
 			'candidatsFlux.importFormulaires.fichier.titre' => 'Unreadable file',
 			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'This file could not be read, row ${ligne}: ${cause}.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.fichier.illisible' => ({required Object cause}) => 'This file could not be read: ${cause}.',
 			'candidatsFlux.importFormulaires.fichier.cause.guillemetNonFerme' => 'an opening quotation mark is never closed',
 			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'the file exceeds 5 MB',
@@ -45013,11 +45032,11 @@ extension on TraductionsEn {
 			'suiviAttente.dit.confirmeeFait' => 'Your class is confirmed.',
 			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'Your class "${classe}" is confirmed.',
 			'suiviAttente.dit.confirmeeAVenir' => 'The academy confirms the class when its students are brought together.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.dit.enseignantEnCours' => 'The academy is appointing the class teacher.',
 			'suiviAttente.dit.enseignantEnAttente' => 'Your class is waiting for its teacher. The academy appoints one and lets you know.',
 			'suiviAttente.dit.enseignantFait' => 'Your teacher is known.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.dit.enseignantFaitSimple' => 'Your teacher is known.',
 			'suiviAttente.dit.enseignantAVenir' => 'The academy appoints the teacher once the class is confirmed.',
 			'suiviAttente.dit.pretFait' => 'The class, the teacher and the first class are known.',
@@ -45527,11 +45546,11 @@ extension on TraductionsEn {
 			'onboarding.depart.reco.lenteSuite' => 'Depending on the first session.',
 			'onboarding.depart.reco.courante' => 'Stage 3 or 4 · Reading in the Quran',
 			'onboarding.depart.reco.couranteSuite' => 'Then the end of basics exam.',
+			_ => null,
+		} ?? switch (path) {
 			'onboarding.depart.reco.memo' => 'Stage 4 · The short surahs',
 			'onboarding.depart.reco.memoSuite' => 'Then the end of basics exam: memorisation starts afterwards.',
 			'onboarding.depart.indice' => 'A likely starting point, never a promise: the first session checks it.',
-			_ => null,
-		} ?? switch (path) {
 			'onboarding.langue.dit' => 'Our teachers speak more than twenty languages. In which one do you want the explanations?',
 			'onboarding.langue.titre' => 'The language of explanations',
 			'onboarding.langue.sous' => 'Your first choice. We direct you to a class in this language as soon as a teacher is available.',

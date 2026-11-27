@@ -377,7 +377,7 @@ void main() {
       await _taper(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
       // La dette est retenue a la coche, et dite.
       expect(
-        _texte('Vous payez ${_m(2530)} pour le mois dû (novembre).'),
+        _texte('Vous payez ${_m(2530)}, ce qui est dû (novembre).'),
         findsOneWidget,
       );
       expect(
@@ -406,24 +406,27 @@ void main() {
       expect(port.envois.last.single.nbMois, 1);
 
       await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
-      expect(_texte('2 mois d\'avance (décembre et janvier)'), findsOneWidget);
+      expect(_texte('Puis 2 mois d\'avance (décembre et janvier)'), findsOneWidget);
       expect(port.envois.last.single.nbMois, 2);
       expect(port.envois.last.single.montant, const Montant(12650, 'USD'));
 
       await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
       expect(
-        _texte('3 mois d\'avance (de décembre 2026 à février 2027)'),
+        _texte('Puis 3 mois d\'avance (de décembre 2026 à février 2027)'),
         findsOneWidget,
       );
       expect(_texte('Remise de paiement d\'avance (5 %)'), findsOneWidget);
       expect(_texte('Arrondi au dollar'), findsOneWidget);
+      // Chaque remise dit sur quoi elle se calcule (directeur, 27/11/2026).
+      expect(_texte('du prix plein de'), findsNWidgets(2));
+      expect(_texte('arrondit au dollar le plus proche'), findsOneWidget);
       // Plus d'offre au-dela de la derniere : « plus » disparait (jamais grise).
       expect(find.byKey(RechargeFoyerPage.plusDe(_mariam)), findsNothing);
       expect(find.text(_m(16930)), findsWidgets);
 
       // Et on revient : « moins » ramene a l'offre d'avant.
       await _taper(tester, find.byKey(RechargeFoyerPage.moinsDe(_mariam)));
-      expect(_texte('2 mois d\'avance (décembre et janvier)'), findsOneWidget);
+      expect(_texte('Puis 2 mois d\'avance (décembre et janvier)'), findsOneWidget);
     },
   );
 

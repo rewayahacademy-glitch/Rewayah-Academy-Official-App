@@ -12489,18 +12489,18 @@
       "montantChangePhrase": "An invoice or a month changed since you checked. Nothing was paid. Check again before paying.",
       "montantChangeAction": "Check again",
       "explication": {
-        "libelleDette": "{montant}: the month due",
+        "libelleDette": "{montant}: what is due",
         "libelleMois(plural, param=n)": {
           "one": "{montant} for {n} month paid ahead",
           "other": "{montant} for {n} months paid ahead"
         },
         "libelleDetteEtMois(plural, param=n)": {
-          "one": "{montant}: the month due and {n} month ahead",
-          "other": "{montant}: the month due and {n} months ahead"
+          "one": "{montant}: what is due and {n} month ahead",
+          "other": "{montant}: what is due and {n} months ahead"
         },
         "libelleUnMois": "{montant} for one month",
         "synthese": {
-          "detteSeule": "You pay {montant} for the month due ({mois}).",
+          "detteSeule": "You pay {montant}, what is due ({mois}).",
           "detteEtAvance(plural, param=n)": {
             "one": "You first pay {dette} ({moisDus}), then {n} month ahead ({moisCouverts}): {montant} in total.",
             "other": "You first pay {dette} ({moisDus}), then {n} months ahead ({moisCouverts}): {montant} in total."
@@ -12555,6 +12555,14 @@
           "factureRemiseRang": "Family discount, member no. {rang}",
           "factureProrata": "In proportion to the month's sessions",
           "facturePrepaiement": "Share of the payment made ahead"
+        },
+        "avance": {
+          "titre(plural, param=n)": {
+            "one": "Then {n} month ahead ({moisCouverts})",
+            "other": "Then {n} months ahead ({moisCouverts})"
+          },
+          "tauxDuPrix": "{taux} of the full price of {prix}",
+          "arrondi": "From 3 months, the total is rounded to the nearest dollar."
         },
         "moisCouverts": "Months covered"
       },
