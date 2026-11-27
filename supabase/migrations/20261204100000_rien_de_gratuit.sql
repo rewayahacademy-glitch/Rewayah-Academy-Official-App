@@ -17,8 +17,9 @@
 --      environ 8 seances par mois : chaque seance suivie etait sous-comptee d'un tiers ;
 --    - il s'appliquait a chaque paiement, alors que le delai de 14 jours vaut pour un nouvel inscrit
 --      (A-HARMONISER-REGLES-ARGENT-ET-ARRET : « 14 jours legaux pour les nouveaux inscrits »).
---    Desormais : le delai ne vaut que pour le PREMIER paiement du profil ; toutes les seances suivies par le
---    profil sont retirees (le premier paiement couvre aussi celles d'avant) ; chaque seance vaut le prix
+--    Desormais : le delai court a partir du PREMIER paiement du profil (tout paiement fait pendant ce delai en
+--    profite) ; toutes les seances suivies par le profil sont retirees, une seule fois, d'abord sur le paiement
+--    le plus ancien (le premier paiement couvre aussi celles d'avant lui) ; chaque seance vaut le prix
 --    mensuel du profil (remise de famille comprise, la meme que sa facture) divise par le nombre reel de
 --    seances de sa classe ce mois-la (`rch_seances_mois`, repli sur la politique). Les paiements suivants
 --    suivent la regle du paiement d'avance (mois commences retires) ou ne sont pas remboursables.
@@ -93,7 +94,8 @@ DECLARE
   v_jours integer;
   v_regle text;
   v_montant bigint := 0;
-  v_premier boolean;
+  v_premier_le date;
+  v_anterieur bigint;
 BEGIN
   SELECT * INTO v_c FROM public.commandes_recharge WHERE id = p_commande;
   SELECT * INTO v_a FROM public.commandes_recharge_allocations
@@ -114,14 +116,22 @@ BEGIN
   v_p := private.fac_politique_au((coalesce(v_c.confirme_le, v_c.cree_le))::date);
   v_mensuel := coalesce(private.fac_tarif_profil(p_profil, v_p), 0);
   v_jours := (pg_catalog.now()::date - (coalesce(v_c.confirme_le, v_c.cree_le))::date);
-  -- Le delai legal vaut pour un nouvel inscrit : le premier paiement complete du profil.
-  v_premier := NOT EXISTS (
-    SELECT 1 FROM public.commandes_recharge_allocations a2
-      JOIN public.commandes_recharge c2 ON c2.id = a2.commande_id
-     WHERE a2.profile_id = p_profil AND c2.etat = 'completed' AND c2.id <> v_c.id
-       AND (coalesce(c2.confirme_le, c2.cree_le), c2.id) < (coalesce(v_c.confirme_le, v_c.cree_le), v_c.id));
+  -- Le delai legal vaut pour un nouvel inscrit : il court a partir du PREMIER paiement complete du profil, et
+  -- couvre tout paiement fait pendant ce delai. Les paiements anterieurs a celui-ci absorbent d'abord les seances
+  -- suivies (chaque seance n'est retiree qu'une fois, sur le paiement le plus ancien).
+  SELECT min(coalesce(c2.confirme_le, c2.cree_le))::date,
+         -- net de ce qui en a deja ete rendu : un paiement rembourse ne couvre plus rien.
+         coalesce(sum(a2.montant_mineur - coalesce((SELECT sum(w.amount_minor) FROM public.wallet_entries w
+                                                     WHERE w.refund_of_entry_id = a2.entry_id
+                                                       AND w.reference_type = 'refund'), 0)) FILTER (
+           WHERE (coalesce(c2.confirme_le, c2.cree_le), c2.id) < (coalesce(v_c.confirme_le, v_c.cree_le), v_c.id)), 0)
+    INTO v_premier_le, v_anterieur
+    FROM public.commandes_recharge_allocations a2
+    JOIN public.commandes_recharge c2 ON c2.id = a2.commande_id
+   WHERE a2.profile_id = p_profil AND c2.etat = 'completed';
 
-  IF v_premier AND v_jours <= v_p.remboursement_delai_jours THEN
+  IF pg_catalog.now()::date - coalesce(v_premier_le, (coalesce(v_c.confirme_le, v_c.cree_le))::date)
+       <= v_p.remboursement_delai_jours THEN
     -- Toutes les seances suivies par le profil (le premier paiement couvre aussi celles d'avant lui), chacune
     -- au prix mensuel du profil (remise de famille comprise) divise par le nombre reel de seances de sa classe
     -- ce mois-la.
@@ -140,6 +150,8 @@ BEGIN
                AND sp.deleted_at IS NULL AND sp.entered_at IS NOT NULL
                AND x.deleted_at IS NULL) s;
     v_prix_seance := CASE WHEN v_suivies > 0 THEN v_deduit / v_suivies ELSE 0 END;
+    -- Ce que les paiements plus anciens ont deja couvert ne se retire pas une seconde fois.
+    v_deduit := GREATEST(v_deduit - v_anterieur, 0);
     v_regle := 'delai';
     v_montant := GREATEST(v_paye - v_deduit - v_rendu - v_en_cours, 0);
   ELSE
