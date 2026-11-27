@@ -890,3 +890,38 @@ Deno.test('audit famille : acceptation avec la suite, reprise, horaire ouvert (f
     for (const m of ['admission_reprise', 'horaire_ouvert']) assertEquals(rendu(m, l).traduireDepuis, 'fr', `${l} ${m}`)
   }
 })
+
+// PROSPECTION-IMAGE (27/11/2026) : l'image optionnelle d'un message de la direction.
+Deno.test('message libre : image du site public en tete, avec son texte de remplacement', () => {
+  const src = 'https://rewayahacademy.com/fr/assets/prospection-fr.png'
+  const c = contenuPour({ modele: 'message_libre', categorie: 'nouvelles', essentielle: false,
+    donnees: { sujet: 'S', corps: 'Un.\n\nDeux.', langue_source: 'fr', jeton_desinscription: 'j'.repeat(32),
+      image: { src, alt: 'Apprendre en attendant', largeur: 600, hauteur: 315 },
+      raison: 'Vous recevez cet e-mail parce que votre liste d’attente est publique.' } }, 'fr')
+  assertEquals(c.blocs[0], { type: 'image', src, alt: 'Apprendre en attendant', largeur: 600, hauteur: 315 })
+  assertEquals(c.apercu, 'Un.')
+  assertEquals(c.raison, 'Vous recevez cet e-mail parce que votre liste d’attente est publique.')
+  assert(c.desinscription?.includes('/fr/courriels/desinscription?jeton='), 'le lien de desinscription reste')
+  const { html, texte } = composer(c)
+  assert(html.includes(`<img src="${src}" width="600" height="315" alt="Apprendre en attendant"`))
+  assert(texte.includes('[Apprendre en attendant]'))
+  assert(html.length < 30_000, 'le message reste leger')
+})
+
+Deno.test('message libre : une image hors du site, sans texte de remplacement ou mal formee est ignoree', () => {
+  for (const image of [
+    { src: 'https://exemple.com/fr/assets/a.png', alt: 'x' },
+    { src: 'http://rewayahacademy.com/fr/assets/a.png', alt: 'x' },
+    { src: 'https://rewayahacademy.com/fr/assets/a.png', alt: '  ' },
+    { src: 'https://rewayahacademy.com/fr/assets/a.svg', alt: 'x' },
+    { src: 'https://rewayahacademy.com/fr/assets/a.png"onerror="x', alt: 'x' },
+    'https://rewayahacademy.com/fr/assets/a.png',
+  ]) {
+    const c = contenuPour({ modele: 'message_libre', categorie: 'direction', essentielle: true,
+      donnees: { sujet: 'S', corps: 'C', image } }, 'fr')
+    assertEquals(c.blocs.map((b) => b.type), ['texte'], JSON.stringify(image))
+  }
+  const sans = contenuPour({ modele: 'message_libre', categorie: 'direction', essentielle: true,
+    donnees: { sujet: 'S', corps: 'C', raison: '' } }, 'fr')
+  assertEquals(sans.raison, FRANCAIS.raisons.direction)
+})

@@ -5,7 +5,7 @@
 // message court « avis » et message libre de la direction. Le francais est la
 // reference : ses parametres par defaut redonnent exactement ses textes.
 
-import { APP, type Bloc, type Contenu, paragraphes } from './gabarit.ts'
+import { APP, type Bloc, type Contenu, paragraphes, SITE } from './gabarit.ts'
 import { villeDuFuseau } from './villes_fuseau.ts'
 
 export type Donnees = Record<string, unknown>
@@ -285,6 +285,22 @@ export function avisDans(p: Parole) {
 export function libre(d: Donnees, sujetParDefaut = PAROLE_FR.sujetLibre): Omit<Contenu, 'raison'> {
   const sujet = typeof d.sujet === 'string' ? d.sujet : sujetParDefaut
   const corps = typeof d.corps === 'string' ? d.corps : ''
-  const blocs: Bloc[] = paragraphes(corps).map((texte) => ({ type: 'texte', texte }))
-  return { sujet, apercu: blocs[0]?.type === 'texte' ? blocs[0].texte.slice(0, 120) : sujet, titre: sujet, blocs }
+  const textes: Bloc[] = paragraphes(corps).map((texte) => ({ type: 'texte', texte }))
+  const image = imageLibre(d.image)
+  const blocs: Bloc[] = image ? [image, ...textes] : textes
+  return { sujet, apercu: textes[0]?.type === 'texte' ? textes[0].texte.slice(0, 120) : sujet, titre: sujet, blocs }
+}
+
+/// PROSPECTION-IMAGE (27/11/2026) : l'image optionnelle d'un message de la direction,
+/// `donnees.image = { src, alt, largeur?, hauteur? }`. Seulement une image PNG ou JPEG
+/// des ressources du site public, avec un texte de remplacement ; sinon aucune image.
+export function imageLibre(v: unknown): Bloc | undefined {
+  if (v === null || typeof v !== 'object') return undefined
+  const o = v as Record<string, unknown>
+  const src = typeof o.src === 'string' ? o.src : ''
+  const alt = typeof o.alt === 'string' ? o.alt.trim() : ''
+  if (!src.startsWith(`${SITE}/fr/assets/`) || !/^[\w\/:.-]+\.(png|jpe?g)$/i.test(src) || alt === '') return undefined
+  const entier = (x: unknown, defaut: number) =>
+    typeof x === 'number' && Number.isInteger(x) && x > 0 && x <= 1200 ? x : defaut
+  return { type: 'image', src, alt: alt.slice(0, 200), largeur: entier(o.largeur, 600), hauteur: entier(o.hauteur, 315) }
 }

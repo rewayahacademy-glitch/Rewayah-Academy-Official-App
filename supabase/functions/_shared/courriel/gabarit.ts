@@ -34,6 +34,9 @@ export type Bloc =
   /// Une phrase discrete suivie d'un lien court : le lien de secours d'un
   /// bouton, sans afficher l'adresse technique en clair.
   | { type: 'lien'; texte: string; libelle: string; href: string }
+  /// PROSPECTION-IMAGE (27/11/2026) : une image hebergee sur le site public
+  /// (`${SITE}/fr/assets/...`), toujours avec son texte de remplacement.
+  | { type: 'image'; src: string; alt: string; largeur: number; hauteur: number }
 
 export interface Contenu {
   sujet: string
@@ -100,6 +103,10 @@ function blocHtml(b: Bloc, typo: (h: string) => string, cote: string): string {
     case 'lien':
       return `<p style="margin:0 0 16px;font:400 13px/1.5 ${POLICE};color:${C.attenue}">${typo(echapper(b.texte))} ` +
         `<a href="${echapper(b.href)}" style="color:${C.lien}">${typo(echapper(b.libelle))}</a></p>`
+    case 'image':
+      return `<p style="margin:0 0 20px"><img src="${echapper(b.src)}" width="${b.largeur}" height="${b.hauteur}" ` +
+        `alt="${echapper(b.alt)}" style="display:block;border:0;width:100%;max-width:${b.largeur}px;height:auto;` +
+        `border-radius:12px"></p>`
   }
 }
 
@@ -114,6 +121,8 @@ function blocTexte(b: Bloc): string {
       return `${b.libelle} : ${b.href}`
     case 'lien':
       return `${b.texte} ${b.libelle} : ${b.href}`
+    case 'image':
+      return `[${b.alt}]`
   }
 }
 
@@ -143,6 +152,9 @@ function composerLettre(c: Contenu): { html: string; texte: string } {
         return `<p style="margin:0 0 14px"><a href="${echapper(b.href)}">${echapper(b.libelle)}</a></p>`
       case 'lien':
         return `<p style="margin:0 0 14px">${typo(echapper(b.texte))} <a href="${echapper(b.href)}">${typo(echapper(b.libelle))}</a></p>`
+      case 'image':
+        // La lettre reste sans image (rendu d'un courriel ecrit a la main) : le texte de remplacement seul.
+        return ''
     }
   }).join('')
   const pied = [
