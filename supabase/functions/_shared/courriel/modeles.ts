@@ -52,7 +52,11 @@ export function rendre(l: Ligne, langue = 'fr'): Rendu {
   const chrome = libre ? (LANGUES[source] ?? FRANCAIS) : base
   const contenu: Contenu = {
     ...c,
-    raison: chrome.raisons[l.categorie] ?? chrome.raisons.direction ?? RAISON.direction,
+    // PROSPECTION-IMAGE (27/11/2026) : un message de la direction peut dire lui-meme pourquoi
+    // la personne le recoit (une organisation qui n'a jamais suivi « les nouvelles »).
+    raison: libre && typeof d.raison === 'string' && d.raison.trim() !== ''
+      ? d.raison.trim().slice(0, 300)
+      : chrome.raisons[l.categorie] ?? chrome.raisons.direction ?? RAISON.direction,
     libelleDesinscription: chrome.desinscription,
     langue: langueDuTexte,
     droiteAGauche: (LANGUES[langueDuTexte]?.droiteAGauche) ?? false,

@@ -164,6 +164,10 @@ class GeneratedSiteQA(unittest.TestCase):
                 # COURRIELS-1 : logo et ornement des e-mails (PNG, les messageries ne rendent pas le SVG).
                 "courriel-logo-violet.png",
                 "courriel-ornement-violet.png",
+                # PROSPECTION-IMAGE (27/11/2026) : l'image des lettres aux organisations, une par langue.
+                "courriel-prospection-fr.png",
+                "courriel-prospection-en.png",
+                "courriel-prospection-ar.png",
                 # Apercu de partage et icone d'ecran d'accueil (directeur, 06/11) : carte de marque 1200 x 630 en JPEG, copie
                 # de web/icons/Icon-192.png (fichier deja produit, jamais rasterise par un agent).
                 "partage.jpg",
