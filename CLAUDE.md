@@ -12,6 +12,11 @@ spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 
 ## Mission en cours, décision du directeur du 24/10/2026 : Boucle 1 avant tout
 
+> **Amendé le 27/11/2026 (directeur : « il faut ranger ce que l'on doit faire pour ne pas que ça se perde encore »)** :
+> `docs/current/A-FAIRE-MAINTENANT.md` prévaut sur la règle ci-dessous. Les lignes de cette liste ne sont pas « hors
+> boucle » ; un agent chargé de l'une d'elles lit aussi les fichiers qu'elle cite. Le reste de la règle (une étape, une
+> PR ; quatre agents au plus ; le pilote fusionne et installe ; preuve par le directeur en production) reste en vigueur.
+
 Tant que `docs/current/BOUCLE-1_PLAN_2026-10-24.md` n'a pas ses quatre phrases vraies, ce plan
 prévaut sur tout le reste de ce fichier et de `docs/current/`. Un agent lit le plan, puis
 seulement les fichiers nommés dans l'étape en cours ; il ne relit ni la table ci-dessous, ni les
