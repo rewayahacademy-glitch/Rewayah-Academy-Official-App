@@ -21812,6 +21812,17 @@ class Traductions$adulte$recharge$fr {
 
 	late final Traductions$adulte$recharge$formules$fr formules = Traductions$adulte$recharge$formules$fr.internal(_root);
 
+	/// fr: 'Le montant a changé'
+	String get montantChangeTitre => 'Le montant a changé';
+
+	/// fr: 'Une facture ou un mois a changé depuis votre vérification. Rien n'a été payé. Vérifiez à nouveau avant de payer.'
+	String get montantChangePhrase => 'Une facture ou un mois a changé depuis votre vérification. Rien n\'a été payé. Vérifiez à nouveau avant de payer.';
+
+	/// fr: 'Vérifier à nouveau'
+	String get montantChangeAction => 'Vérifier à nouveau';
+
+	late final Traductions$adulte$recharge$explication$fr explication = Traductions$adulte$recharge$explication$fr.internal(_root);
+
 	/// fr: 'Revenir aux paiements du foyer'
 	String get revenirPaiements => 'Revenir aux paiements du foyer';
 
@@ -43338,6 +43349,42 @@ class Traductions$adulte$recharge$formules$fr {
 	String annuel({required Object montant}) => '${montant} pour 12 mois, payés d\'avance';
 }
 
+// Path: adulte.recharge.explication
+class Traductions$adulte$recharge$explication$fr {
+	Traductions$adulte$recharge$explication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{montant} : le mois dû'
+	String libelleDette({required Object montant}) => '${montant} : le mois dû';
+
+	/// fr: '(one) {{montant} pour {n} mois d'avance} (other) {{montant} pour {n} mois d'avance}'
+	String libelleMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${montant} pour ${n} mois d\'avance',
+		other: '${montant} pour ${n} mois d\'avance',
+	);
+
+	/// fr: '(one) {{montant} : le mois dû et {n} mois d'avance} (other) {{montant} : le mois dû et {n} mois d'avance}'
+	String libelleDetteEtMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${montant} : le mois dû et ${n} mois d\'avance',
+		other: '${montant} : le mois dû et ${n} mois d\'avance',
+	);
+
+	/// fr: '{montant} pour un mois'
+	String libelleUnMois({required Object montant}) => '${montant} pour un mois';
+
+	late final Traductions$adulte$recharge$explication$synthese$fr synthese = Traductions$adulte$recharge$explication$synthese$fr.internal(_root);
+	late final Traductions$adulte$recharge$explication$mois$fr mois = Traductions$adulte$recharge$explication$mois$fr.internal(_root);
+	late final Traductions$adulte$recharge$explication$ligne$fr ligne = Traductions$adulte$recharge$explication$ligne$fr.internal(_root);
+	late final Traductions$adulte$recharge$explication$nonAppliquee$fr nonAppliquee = Traductions$adulte$recharge$explication$nonAppliquee$fr.internal(_root);
+	late final Traductions$adulte$recharge$explication$dette$fr dette = Traductions$adulte$recharge$explication$dette$fr.internal(_root);
+
+	/// fr: 'Mois couverts'
+	String get moisCouverts => 'Mois couverts';
+}
+
 // Path: adulte.recharge.resultat
 class Traductions$adulte$recharge$resultat$fr {
 	Traductions$adulte$recharge$resultat$fr.internal(this._root);
@@ -56203,6 +56250,168 @@ class Traductions$tc$parcours$signalement$categorieValeur$fr {
 
 	/// fr: 'Autre'
 	String get autre => 'Autre';
+}
+
+// Path: adulte.recharge.explication.synthese
+class Traductions$adulte$recharge$explication$synthese$fr {
+	Traductions$adulte$recharge$explication$synthese$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous payez {montant} pour le mois dû ({mois}).'
+	String detteSeule({required Object montant, required Object mois}) => 'Vous payez ${montant} pour le mois dû (${mois}).';
+
+	/// fr: '(one) {Vous payez d'abord {dette} ({moisDus}), puis {n} mois d'avance ({moisCouverts}) : {montant} en tout.} (other) {Vous payez d'abord {dette} ({moisDus}), puis {n} mois d'avance ({moisCouverts}) : {montant} en tout.}'
+	String detteEtAvance({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Vous payez d\'abord ${dette} (${moisDus}), puis ${n} mois d\'avance (${moisCouverts}) : ${montant} en tout.',
+		other: 'Vous payez d\'abord ${dette} (${moisDus}), puis ${n} mois d\'avance (${moisCouverts}) : ${montant} en tout.',
+	);
+
+	/// fr: '(one) {Vous payez {n} mois d'avance ({moisCouverts}) : {montant}.} (other) {Vous payez {n} mois d'avance ({moisCouverts}) : {montant}.}'
+	String avanceSeule({required num n, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Vous payez ${n} mois d\'avance (${moisCouverts}) : ${montant}.',
+		other: 'Vous payez ${n} mois d\'avance (${moisCouverts}) : ${montant}.',
+	);
+
+	/// fr: 'Vous payez un mois, {montant}. Il sera compté dès le début de vos cours.'
+	String moisSansDate({required Object montant}) => 'Vous payez un mois, ${montant}. Il sera compté dès le début de vos cours.';
+
+	/// fr: 'Aucun paiement n'est possible pour le moment. Choisissez d'abord un créneau : vous pourrez payer ensuite.'
+	String get aucunCreneau => 'Aucun paiement n\'est possible pour le moment. Choisissez d\'abord un créneau : vous pourrez payer ensuite.';
+
+	/// fr: 'Avant le début des cours, un seul mois peut être payé.'
+	String get avantPremierMois => 'Avant le début des cours, un seul mois peut être payé.';
+}
+
+// Path: adulte.recharge.explication.mois
+class Traductions$adulte$recharge$explication$mois$fr {
+	Traductions$adulte$recharge$explication$mois$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: ', '
+	String get separateur => ', ';
+
+	/// fr: '{liste} et {dernier}'
+	String et({required Object liste, required Object dernier}) => '${liste} et ${dernier}';
+
+	/// fr: 'de {debut} à {fin}'
+	String plage({required Object debut, required Object fin}) => 'de ${debut} à ${fin}';
+}
+
+// Path: adulte.recharge.explication.ligne
+class Traductions$adulte$recharge$explication$ligne$fr {
+	Traductions$adulte$recharge$explication$ligne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {Prix du mois} (other) {Prix de {n} mois}'
+	String prix({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Prix du mois',
+		other: 'Prix de ${n} mois',
+	);
+
+	/// fr: 'Remise de famille, {rang}ᵉ inscrit ({taux})'
+	String remiseFamille({required Object rang, required Object taux}) => 'Remise de famille, ${rang}ᵉ inscrit (${taux})';
+
+	/// fr: 'Remise de paiement d'avance ({taux})'
+	String remisePrepaiement({required Object taux}) => 'Remise de paiement d\'avance (${taux})';
+
+	/// fr: 'Remises limitées à {taux} du prix'
+	String plafond({required Object taux}) => 'Remises limitées à ${taux} du prix';
+
+	/// fr: 'Arrondi au dollar'
+	String get arrondi => 'Arrondi au dollar';
+
+	/// fr: 'Bourse'
+	String get bourse => 'Bourse';
+
+	/// fr: 'Prix spécial'
+	String get prixSpecial => 'Prix spécial';
+
+	/// fr: 'Accès offert'
+	String get accesOffert => 'Accès offert';
+
+	/// fr: 'Total à payer'
+	String get total => 'Total à payer';
+}
+
+// Path: adulte.recharge.explication.nonAppliquee
+class Traductions$adulte$recharge$explication$nonAppliquee$fr {
+	Traductions$adulte$recharge$explication$nonAppliquee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pas de remise de famille : premier inscrit.'
+	String get premierInscrit => 'Pas de remise de famille : premier inscrit.';
+
+	/// fr: 'Pas de remise de famille : un prix spécial ne se cumule pas avec une remise.'
+	String get familleSpecial => 'Pas de remise de famille : un prix spécial ne se cumule pas avec une remise.';
+
+	/// fr: 'Pas de remise de famille : un accès offert ne se cumule pas avec une remise.'
+	String get familleOffert => 'Pas de remise de famille : un accès offert ne se cumule pas avec une remise.';
+
+	/// fr: 'Pas de remise de famille : une bourse ne se cumule pas avec une remise.'
+	String get familleBourse => 'Pas de remise de famille : une bourse ne se cumule pas avec une remise.';
+
+	/// fr: 'Pas de remise de paiement d'avance en dessous de 3 mois.'
+	String get prepaiementMoinsDeTrois => 'Pas de remise de paiement d\'avance en dessous de 3 mois.';
+
+	/// fr: 'Pas de remise de paiement d'avance : un prix spécial ne se cumule pas avec une remise.'
+	String get prepaiementSpecial => 'Pas de remise de paiement d\'avance : un prix spécial ne se cumule pas avec une remise.';
+
+	/// fr: 'Pas de remise de paiement d'avance : un accès offert ne se cumule pas avec une remise.'
+	String get prepaiementOffert => 'Pas de remise de paiement d\'avance : un accès offert ne se cumule pas avec une remise.';
+
+	/// fr: 'Pas de remise de paiement d'avance : une bourse ne se cumule pas avec une remise.'
+	String get prepaiementBourse => 'Pas de remise de paiement d\'avance : une bourse ne se cumule pas avec une remise.';
+
+	/// fr: 'Plafond atteint : les remises sont limitées à {taux} du prix ({montant} de remise en moins).'
+	String plafondAtteint({required Object taux, required Object montant}) => 'Plafond atteint : les remises sont limitées à ${taux} du prix (${montant} de remise en moins).';
+}
+
+// Path: adulte.recharge.explication.dette
+class Traductions$adulte$recharge$explication$dette$fr {
+	Traductions$adulte$recharge$explication$dette$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À régler d'abord'
+	String get titre => 'À régler d\'abord';
+
+	/// fr: '{mois}, pas encore facturé'
+	String moisApercu({required Object mois}) => '${mois}, pas encore facturé';
+
+	/// fr: '(one) {Début le {date} : {restantes} séance sur {total} ce mois-ci} (other) {Début le {date} : {restantes} séances sur {total} ce mois-ci}'
+	String prorata({required num restantes, required Object date, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(restantes,
+		one: 'Début le ${date} : ${restantes} séance sur ${total} ce mois-ci',
+		other: 'Début le ${date} : ${restantes} séances sur ${total} ce mois-ci',
+	);
+
+	/// fr: 'Solde du profil'
+	String get solde => 'Solde du profil';
+
+	/// fr: 'Prix du mois'
+	String get factureTarif => 'Prix du mois';
+
+	/// fr: 'Remise de famille, {rang}ᵉ inscrit'
+	String factureRemiseRang({required Object rang}) => 'Remise de famille, ${rang}ᵉ inscrit';
+
+	/// fr: 'Au prorata des séances du mois'
+	String get factureProrata => 'Au prorata des séances du mois';
+
+	/// fr: 'Part du paiement d'avance'
+	String get facturePrepaiement => 'Part du paiement d\'avance';
 }
 
 // Path: adulte.recharge.source.motifs
@@ -70496,6 +70705,49 @@ extension on Traductions {
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} pour 3 mois, payés d\'avance',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} pour 12 mois, payés d\'avance',
+			'adulte.recharge.montantChangeTitre' => 'Le montant a changé',
+			'adulte.recharge.montantChangePhrase' => 'Une facture ou un mois a changé depuis votre vérification. Rien n\'a été payé. Vérifiez à nouveau avant de payer.',
+			'adulte.recharge.montantChangeAction' => 'Vérifier à nouveau',
+			'adulte.recharge.explication.libelleDette' => ({required Object montant}) => '${montant} : le mois dû',
+			'adulte.recharge.explication.libelleMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${montant} pour ${n} mois d\'avance', other: '${montant} pour ${n} mois d\'avance', ), 
+			'adulte.recharge.explication.libelleDetteEtMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${montant} : le mois dû et ${n} mois d\'avance', other: '${montant} : le mois dû et ${n} mois d\'avance', ), 
+			'adulte.recharge.explication.libelleUnMois' => ({required Object montant}) => '${montant} pour un mois',
+			'adulte.recharge.explication.synthese.detteSeule' => ({required Object montant, required Object mois}) => 'Vous payez ${montant} pour le mois dû (${mois}).',
+			'adulte.recharge.explication.synthese.detteEtAvance' => ({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Vous payez d\'abord ${dette} (${moisDus}), puis ${n} mois d\'avance (${moisCouverts}) : ${montant} en tout.', other: 'Vous payez d\'abord ${dette} (${moisDus}), puis ${n} mois d\'avance (${moisCouverts}) : ${montant} en tout.', ), 
+			'adulte.recharge.explication.synthese.avanceSeule' => ({required num n, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Vous payez ${n} mois d\'avance (${moisCouverts}) : ${montant}.', other: 'Vous payez ${n} mois d\'avance (${moisCouverts}) : ${montant}.', ), 
+			'adulte.recharge.explication.synthese.moisSansDate' => ({required Object montant}) => 'Vous payez un mois, ${montant}. Il sera compté dès le début de vos cours.',
+			'adulte.recharge.explication.synthese.aucunCreneau' => 'Aucun paiement n\'est possible pour le moment. Choisissez d\'abord un créneau : vous pourrez payer ensuite.',
+			'adulte.recharge.explication.synthese.avantPremierMois' => 'Avant le début des cours, un seul mois peut être payé.',
+			'adulte.recharge.explication.mois.separateur' => ', ',
+			'adulte.recharge.explication.mois.et' => ({required Object liste, required Object dernier}) => '${liste} et ${dernier}',
+			'adulte.recharge.explication.mois.plage' => ({required Object debut, required Object fin}) => 'de ${debut} à ${fin}',
+			'adulte.recharge.explication.ligne.prix' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Prix du mois', other: 'Prix de ${n} mois', ), 
+			'adulte.recharge.explication.ligne.remiseFamille' => ({required Object rang, required Object taux}) => 'Remise de famille, ${rang}ᵉ inscrit (${taux})',
+			'adulte.recharge.explication.ligne.remisePrepaiement' => ({required Object taux}) => 'Remise de paiement d\'avance (${taux})',
+			'adulte.recharge.explication.ligne.plafond' => ({required Object taux}) => 'Remises limitées à ${taux} du prix',
+			'adulte.recharge.explication.ligne.arrondi' => 'Arrondi au dollar',
+			'adulte.recharge.explication.ligne.bourse' => 'Bourse',
+			'adulte.recharge.explication.ligne.prixSpecial' => 'Prix spécial',
+			'adulte.recharge.explication.ligne.accesOffert' => 'Accès offert',
+			'adulte.recharge.explication.ligne.total' => 'Total à payer',
+			'adulte.recharge.explication.nonAppliquee.premierInscrit' => 'Pas de remise de famille : premier inscrit.',
+			'adulte.recharge.explication.nonAppliquee.familleSpecial' => 'Pas de remise de famille : un prix spécial ne se cumule pas avec une remise.',
+			'adulte.recharge.explication.nonAppliquee.familleOffert' => 'Pas de remise de famille : un accès offert ne se cumule pas avec une remise.',
+			'adulte.recharge.explication.nonAppliquee.familleBourse' => 'Pas de remise de famille : une bourse ne se cumule pas avec une remise.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementMoinsDeTrois' => 'Pas de remise de paiement d\'avance en dessous de 3 mois.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementSpecial' => 'Pas de remise de paiement d\'avance : un prix spécial ne se cumule pas avec une remise.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementOffert' => 'Pas de remise de paiement d\'avance : un accès offert ne se cumule pas avec une remise.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementBourse' => 'Pas de remise de paiement d\'avance : une bourse ne se cumule pas avec une remise.',
+			'adulte.recharge.explication.nonAppliquee.plafondAtteint' => ({required Object taux, required Object montant}) => 'Plafond atteint : les remises sont limitées à ${taux} du prix (${montant} de remise en moins).',
+			'adulte.recharge.explication.dette.titre' => 'À régler d\'abord',
+			'adulte.recharge.explication.dette.moisApercu' => ({required Object mois}) => '${mois}, pas encore facturé',
+			'adulte.recharge.explication.dette.prorata' => ({required num restantes, required Object date, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(restantes, one: 'Début le ${date} : ${restantes} séance sur ${total} ce mois-ci', other: 'Début le ${date} : ${restantes} séances sur ${total} ce mois-ci', ), 
+			'adulte.recharge.explication.dette.solde' => 'Solde du profil',
+			'adulte.recharge.explication.dette.factureTarif' => 'Prix du mois',
+			'adulte.recharge.explication.dette.factureRemiseRang' => ({required Object rang}) => 'Remise de famille, ${rang}ᵉ inscrit',
+			'adulte.recharge.explication.dette.factureProrata' => 'Au prorata des séances du mois',
+			'adulte.recharge.explication.dette.facturePrepaiement' => 'Part du paiement d\'avance',
+			'adulte.recharge.explication.moisCouverts' => 'Mois couverts',
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.phraseUnique' => 'Cochez le profil, puis choisissez le montant.',
 			'adulte.recharge.profils' => 'Profils à recharger',
@@ -70571,6 +70823,8 @@ extension on Traductions {
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
 			'adulte.paiements.bientotEpuise' => 'Bientôt épuisé',
 			'adulte.paiements.inactif' => 'Inactif',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.paiements.historique' => 'Historique des paiements',
 			'adulte.paiements.soldesSansDonnees' => 'Les soldes de votre foyer n\'ont pas pu être chargés',
 			'adulte.paiements.soldesIndisponiblesTitre' => 'Soldes pas encore consultables',
@@ -70614,8 +70868,6 @@ extension on Traductions {
 			'adulte.invitation.enteteLui' => 'Un compte personnel pour lui',
 			'adulte.invitation.phraseElle' => 'Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
 			'adulte.invitation.phraseLui' => 'Votre conjoint utilisera son propre compte. Il ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.prenom' => 'Prénom',
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',
@@ -71085,6 +71337,8 @@ extension on Traductions {
 			'alertes.sansDonnees' => 'Les alertes n\'ont pas pu être lues',
 			'alertes.cloche' => 'Alertes',
 			'alertes.clocheUneUrgente' => 'Alertes, une urgente',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
 			'alertes.traitement.titre' => 'Traiter le signalement',
 			'alertes.traitement.categorie' => 'Catégorie',
@@ -71128,8 +71382,6 @@ extension on Traductions {
 			'alertes.traitement.erreurTitre' => 'L\'action n\'a pas abouti',
 			'alertes.traitement.erreurPhrase' => 'Réessayez dans un instant.',
 			'alertes.traitement.indisponibleTitre' => 'Traitement indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.indisponiblePhrase' => 'Le traitement des signalements n\'est pas encore ouvert.',
 			'alertes.traitement.horsLigne' => 'Les actions reviennent avec la connexion.',
 			'argent.transparence.titre' => 'Nos prix, en toute transparence',
@@ -71599,6 +71851,8 @@ extension on Traductions {
 			'com.communaute.garde.bloqueVente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
 			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
 			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
@@ -71642,8 +71896,6 @@ extension on Traductions {
 			'com.communaute.publication.choisir' => 'Choisissez une publication dans la liste pour la lire et y répondre.',
 			'com.communaute.publication.introuvableTitre' => 'Publication indisponible',
 			'com.communaute.publication.introuvable' => 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.publication.revenir' => 'Revenir aux publications',
 			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Réponses (${nombre})',
 			'com.communaute.reponses.vide' => 'Aucune réponse pour le moment.',
@@ -72113,6 +72365,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.refuseTitre' => 'File réservée à la modération',
 			'com.annonces.administration.moderation.refuse' => 'Seules les personnes chargées de la modération voient cette file.',
 			'com.annonces.administration.moderation.choisirTitre' => 'Aucun signalement ouvert',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.choisir' => 'Choisissez un signalement dans la file pour l\'examiner.',
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
@@ -72156,8 +72410,6 @@ extension on Traductions {
 			'com.annonces.section' => 'Annonces de la classe',
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.videPublier' => 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.',
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
@@ -72627,6 +72879,8 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
 			'comptable.tresorerie.transfert.delegable' => 'Vers une protection : exécuté selon votre délégation.',
 			'comptable.tresorerie.transfert.sensible' => 'Validation supplémentaire requise : une autre personne décide, rien ne sort du coffre avant.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.montant' => 'Montant',
 			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'En unités entières, ${devise}.',
 			'comptable.tresorerie.transfert.montantPropose' => 'Montant proposé par la politique',
@@ -72670,8 +72924,6 @@ extension on Traductions {
 			'comptable.encaissements.colBrut' => 'Brut',
 			'comptable.encaissements.colFrais' => 'Frais',
 			'comptable.encaissements.colNet' => 'Net',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.colMoyen' => 'Moyen',
 			'comptable.encaissements.colEtat' => 'État',
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
@@ -73141,6 +73393,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
 			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.validationsTitre' => 'Quand une seconde validation est exigée',
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Interdit au Comptable sans validation.',
@@ -73184,8 +73438,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
@@ -73655,6 +73907,8 @@ extension on Traductions {
 			'avis.admin.champs.pays' => 'Pays',
 			'avis.admin.champs.depuis' => 'Avec nous depuis',
 			'avis.admin.champs.qualite' => 'Vous êtes',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.champs.depose' => 'Déposé le',
 			'avis.admin.champs.accord' => 'Accord de publication',
 			'avis.admin.champs.motif' => 'Motif',
@@ -73698,8 +73952,6 @@ extension on Traductions {
 			'avis.admin.liens.libelleAide' => 'Par exemple : Familles octobre 2026.',
 			'avis.admin.liens.libelleErreur' => 'Donnez un nom au lien.',
 			'avis.admin.liens.jours' => 'Durée en jours',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.joursAide' => '90 par défaut, 365 au plus.',
 			'avis.admin.liens.joursErreur' => 'Entrez un nombre de jours de 1 à 365.',
 			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
@@ -74169,6 +74421,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.colonnes.nePasLire' => 'Ne pas lire cette colonne',
 			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'Son contenu est ignoré par l\'import.',
 			'candidatsFlux.importFormulaires.colonnes.fermer' => 'Fermer ce choix',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'Associez d\'abord ces colonnes : ${champs}.',
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Plusieurs colonnes portent le titre de : ${champs}. Touchez celle qu\'il faut lire, puis choisissez ce qu\'elle contient.',
 			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'Comment les réponses sont lues',
@@ -74212,8 +74466,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.analyse.refus' => 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l\'onglet et le fichier, puis réessayez.',
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'Réessayer l\'analyse',
 			'candidatsFlux.importFormulaires.apercu.question' => 'Est-ce bien le bon fichier ?',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.explication' => 'Voici ce que Rewayah a lu. Rien n\'est encore enregistré.',
 			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'Les contacts sont masqués dans l\'aperçu.',
 			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne lue', other: '${n} lignes lues', ), 
@@ -74683,6 +74935,8 @@ extension on Traductions {
 			'suiviAttente.cloture.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviAttente.cloture.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviAttente.cloture.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.motif.dejaEnClasse' => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.',
 			'suiviAttente.cloture.motif.inconnu' => 'Cette demande est close.',
 			'suiviAttente.cloture.suite' => 'Vous pouvez choisir un autre créneau.',
@@ -74726,8 +74980,6 @@ extension on Traductions {
 			'suiviAttente.presentation.mot' => 'Mon mot de présentation',
 			'suiviAttente.presentation.motAide' => '500 caractères au plus. Les familles le lisent tel que vous l\'écrivez.',
 			'suiviAttente.presentation.nonConfirme' => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, vos pays et votre mot, s\'ils sont saisis, sont montrés sur la carte du suivi.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.presentation.enregistrer' => 'Enregistrer',
 			'suiviAttente.presentation.enregistre' => 'Enregistré.',
 			'suiviAttente.presentation.erreur' => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -75197,6 +75449,8 @@ extension on Traductions {
 			'onboarding.langues.francais' => 'Français',
 			'onboarding.langues.english' => 'English',
 			'onboarding.langues.ar' => 'العربية (arabe)',
+			_ => null,
+		} ?? switch (path) {
 			'onboarding.langues.ha' => 'Hausa',
 			'onboarding.langues.poular' => 'Poular (peul)',
 			'onboarding.langues.yo' => 'Yoruba',
@@ -75240,8 +75494,6 @@ extension on Traductions {
 			'onboarding.recap.heureChoisie' => ({required Object ville}) => 'Fuseau horaire : ${ville}',
 			'onboarding.recap.heures' => ({required Object ici, required Object mecque}) => 'Il est ${ici} chez vous, ${mecque} à La Mecque.',
 			'onboarding.recap.pasMonFuseau' => 'Ce n\'est pas mon fuseau',
-			_ => null,
-		} ?? switch (path) {
 			'onboarding.recap.fuseauInconnu' => 'Votre fuseau horaire n\'a pas pu être lu sur cet appareil. Choisissez-le : les horaires des cours vous seront montrés à votre heure.',
 			'onboarding.recap.fuseauChoix' => 'Où vivez-vous ?',
 			'onboarding.recap.vous' => ({required Object prenom}) => '${prenom} (vous)',

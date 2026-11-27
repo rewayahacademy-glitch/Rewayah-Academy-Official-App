@@ -95,6 +95,9 @@ export interface LignePaiement {
   /// (AAAA-MM-01). Absents d'une base d'avant ce lot.
   formule?: string
   mois?: string
+  /// PAIEMENT-FAMILLE-PRIX (migration 20261203000000) : les mois d'avance de
+  /// la part (1 a 12), absents d'une base d'avant ce lot.
+  nbMois?: number
 }
 
 const MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre',
@@ -119,10 +122,19 @@ export function nomLigne(l: LignePaiement, langue = 'fr'): string {
         return `Mensualité ${/^[aeiouyâàéèêëîïôûù]/i.test(mois) ? 'd’' : 'de '}${mois} ${m.an}`
       }
       return ar ? 'رسوم الشهر' : 'Mensualité'
+    case 'avance':
     case 'trimestriel':
-      return ar ? 'ثلاثة أشهر مدفوعة مسبقًا' : 'Trois mois payés d’avance'
-    case 'annuel':
-      return ar ? 'سنة مدفوعة مسبقًا' : 'Une année payée d’avance'
+    case 'annuel': {
+      const n = l.nbMois
+      if (typeof n === 'number' && Number.isInteger(n) && n >= 1 && n <= 12) {
+        if (n === 12) return ar ? 'سنة مدفوعة مسبقًا' : 'Une année payée d’avance'
+        if (n === 1) return ar ? 'شهر مدفوع مسبقًا' : 'Un mois payé d’avance'
+        return ar ? `${n} أشهر مدفوعة مسبقًا` : `${n} mois payés d’avance`
+      }
+      if (l.formule === 'annuel') return ar ? 'سنة مدفوعة مسبقًا' : 'Une année payée d’avance'
+      if (l.formule === 'trimestriel') return ar ? 'ثلاثة أشهر مدفوعة مسبقًا' : 'Trois mois payés d’avance'
+      return ar ? 'رسوم الدروس' : 'Paiement des cours'
+    }
     default:
       return ar ? 'رسوم الدروس' : 'Paiement des cours'
   }

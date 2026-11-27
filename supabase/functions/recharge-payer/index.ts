@@ -140,6 +140,11 @@ export async function gerer(requete: Request): Promise<Response> {
     p_recapitulatif: recapitulatif,
     p_cle: cle,
   })
+  if (error && error.code === '22023' && /le montant a chang/.test(error.message ?? '')) {
+    // PAIEMENT-FAMILLE-PRIX : la dette ou les mois ont change depuis la verification ; rien n'est envoye a
+    // Stripe. 422 : l'application dit « le montant a change, verifiez a nouveau ».
+    return refus('le montant a changé, vérifiez à nouveau', 422)
+  }
   if (error || !data || typeof data !== 'object') {
     const statut = error?.code === '42501' ? 403 : error?.code === 'P0002' ? 404 : 400
     return refus('recharge refusee', statut)

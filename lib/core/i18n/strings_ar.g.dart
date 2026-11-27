@@ -10270,6 +10270,10 @@ class _Traductions$adulte$recharge$ar extends Traductions$adulte$recharge$fr {
 	@override String get paiementIndisponibleTitre => 'الدفع غير متاح بعد';
 	@override String get paiementIndisponiblePhrase => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.';
 	@override late final _Traductions$adulte$recharge$formules$ar formules = _Traductions$adulte$recharge$formules$ar._(_root);
+	@override String get montantChangeTitre => 'تغيّر المبلغ';
+	@override String get montantChangePhrase => 'تغيّرت فاتورة أو شهر منذ تحقّقكم. لم يُدفع أي مبلغ. تحقّقوا من جديد قبل الدفع.';
+	@override String get montantChangeAction => 'تحقّق من جديد';
+	@override late final _Traductions$adulte$recharge$explication$ar explication = _Traductions$adulte$recharge$explication$ar._(_root);
 	@override String get revenirPaiements => 'العودة إلى مدفوعات الأسرة';
 	@override late final _Traductions$adulte$recharge$resultat$ar resultat = _Traductions$adulte$recharge$resultat$ar._(_root);
 	@override late final _Traductions$adulte$recharge$source$ar source = _Traductions$adulte$recharge$source$ar._(_root);
@@ -22763,6 +22767,39 @@ class _Traductions$adulte$recharge$formules$ar extends Traductions$adulte$rechar
 	@override String annuel({required Object montant}) => '⁨${montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا';
 }
 
+// Path: adulte.recharge.explication
+class _Traductions$adulte$recharge$explication$ar extends Traductions$adulte$recharge$explication$fr {
+	_Traductions$adulte$recharge$explication$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String libelleDette({required Object montant}) => '⁨${montant}⁩: الشهر المستحق';
+	@override String libelleMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${montant}⁩ مقابل ⁨${n}⁩ شهر مدفوع مقدّمًا',
+		one: '⁨${montant}⁩ مقابل شهر واحد مدفوع مقدّمًا',
+		other: '⁨${montant}⁩ مقابل ⁨${n}⁩ شهر مدفوع مقدّمًا',
+		two: '⁨${montant}⁩ مقابل شهرين مدفوعين مقدّمًا',
+		few: '⁨${montant}⁩ مقابل ⁨${n}⁩ أشهر مدفوعة مقدّمًا',
+		many: '⁨${montant}⁩ مقابل ⁨${n}⁩ شهرًا مدفوعًا مقدّمًا',
+	);
+	@override String libelleDetteEtMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ شهر مقدّمًا',
+		one: '⁨${montant}⁩: الشهر المستحق وشهر واحد مقدّمًا',
+		other: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ شهر مقدّمًا',
+		two: '⁨${montant}⁩: الشهر المستحق وشهرين مقدّمًا',
+		few: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ أشهر مقدّمًا',
+		many: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ شهرًا مقدّمًا',
+	);
+	@override String libelleUnMois({required Object montant}) => '⁨${montant}⁩ مقابل شهر واحد';
+	@override late final _Traductions$adulte$recharge$explication$synthese$ar synthese = _Traductions$adulte$recharge$explication$synthese$ar._(_root);
+	@override late final _Traductions$adulte$recharge$explication$mois$ar mois = _Traductions$adulte$recharge$explication$mois$ar._(_root);
+	@override late final _Traductions$adulte$recharge$explication$ligne$ar ligne = _Traductions$adulte$recharge$explication$ligne$ar._(_root);
+	@override late final _Traductions$adulte$recharge$explication$nonAppliquee$ar nonAppliquee = _Traductions$adulte$recharge$explication$nonAppliquee$ar._(_root);
+	@override late final _Traductions$adulte$recharge$explication$dette$ar dette = _Traductions$adulte$recharge$explication$dette$ar._(_root);
+	@override String get moisCouverts => 'الأشهر المغطّاة';
+}
+
 // Path: adulte.recharge.resultat
 class _Traductions$adulte$recharge$resultat$ar extends Traductions$adulte$recharge$resultat$fr {
 	_Traductions$adulte$recharge$resultat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -29016,6 +29053,114 @@ class _Traductions$comptable$direction$reservePanneau$cadence$ar extends Traduct
 	@override String get mensuelle => 'كل شهر';
 	@override String get apresEncaissementConsolide => 'بعد كل مقبوض مُثبَّت';
 	@override String get manuelle => 'يدوية';
+}
+
+// Path: adulte.recharge.explication.synthese
+class _Traductions$adulte$recharge$explication$synthese$ar extends Traductions$adulte$recharge$explication$synthese$fr {
+	_Traductions$adulte$recharge$explication$synthese$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String detteSeule({required Object montant, required Object mois}) => 'تدفعون ⁨${montant}⁩ عن الشهر المستحق (⁨${mois}⁩).';
+	@override String detteEtAvance({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.',
+		one: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم شهرًا واحدًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.',
+		other: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.',
+		two: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم شهرين مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.',
+		few: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ أشهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.',
+		many: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ شهرًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.',
+	);
+	@override String avanceSeule({required num n, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'تدفعون ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.',
+		one: 'تدفعون شهرًا واحدًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.',
+		other: 'تدفعون ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.',
+		two: 'تدفعون شهرين مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.',
+		few: 'تدفعون ⁨${n}⁩ أشهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.',
+		many: 'تدفعون ⁨${n}⁩ شهرًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.',
+	);
+	@override String moisSansDate({required Object montant}) => 'تدفعون شهرًا واحدًا، ⁨${montant}⁩. ويُحتسب منذ بداية حصصكم.';
+	@override String get aucunCreneau => 'لا يمكن الدفع حاليًا. اختاروا موعدًا أولًا، ثم يمكنكم الدفع.';
+	@override String get avantPremierMois => 'قبل بدء الحصص، يمكن دفع شهر واحد فقط.';
+}
+
+// Path: adulte.recharge.explication.mois
+class _Traductions$adulte$recharge$explication$mois$ar extends Traductions$adulte$recharge$explication$mois$fr {
+	_Traductions$adulte$recharge$explication$mois$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get separateur => '، ';
+	@override String et({required Object liste, required Object dernier}) => '⁨${liste}⁩ و⁨${dernier}⁩';
+	@override String plage({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩';
+}
+
+// Path: adulte.recharge.explication.ligne
+class _Traductions$adulte$recharge$explication$ligne$ar extends Traductions$adulte$recharge$explication$ligne$fr {
+	_Traductions$adulte$recharge$explication$ligne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String prix({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'سعر ⁨${n}⁩ شهر',
+		one: 'سعر الشهر',
+		other: 'سعر ⁨${n}⁩ شهر',
+		two: 'سعر شهرين',
+		few: 'سعر ⁨${n}⁩ أشهر',
+		many: 'سعر ⁨${n}⁩ شهرًا',
+	);
+	@override String remiseFamille({required Object rang, required Object taux}) => 'خصم العائلة، المسجَّل رقم ⁨${rang}⁩ (⁨${taux}⁩)';
+	@override String remisePrepaiement({required Object taux}) => 'خصم الدفع المقدّم (⁨${taux}⁩)';
+	@override String plafond({required Object taux}) => 'الخصومات محدّدة بـ⁨${taux}⁩ من السعر';
+	@override String get arrondi => 'تقريب إلى أقرب دولار';
+	@override String get bourse => 'منحة';
+	@override String get prixSpecial => 'سعر خاص';
+	@override String get accesOffert => 'وصول مجاني';
+	@override String get total => 'المبلغ الإجمالي المستحق';
+}
+
+// Path: adulte.recharge.explication.nonAppliquee
+class _Traductions$adulte$recharge$explication$nonAppliquee$ar extends Traductions$adulte$recharge$explication$nonAppliquee$fr {
+	_Traductions$adulte$recharge$explication$nonAppliquee$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get premierInscrit => 'لا خصم عائلي: أول مسجَّل.';
+	@override String get familleSpecial => 'لا خصم عائلي: السعر الخاص لا يُجمع مع خصم.';
+	@override String get familleOffert => 'لا خصم عائلي: الوصول المجاني لا يُجمع مع خصم.';
+	@override String get familleBourse => 'لا خصم عائلي: المنحة لا تُجمع مع خصم.';
+	@override String get prepaiementMoinsDeTrois => 'لا خصم على الدفع المقدّم لأقل من 3 أشهر.';
+	@override String get prepaiementSpecial => 'لا خصم على الدفع المقدّم: السعر الخاص لا يُجمع مع خصم.';
+	@override String get prepaiementOffert => 'لا خصم على الدفع المقدّم: الوصول المجاني لا يُجمع مع خصم.';
+	@override String get prepaiementBourse => 'لا خصم على الدفع المقدّم: المنحة لا تُجمع مع خصم.';
+	@override String plafondAtteint({required Object taux, required Object montant}) => 'بلغ السقف: الخصومات محدّدة بـ⁨${taux}⁩ من السعر (خصم أقل بمقدار ⁨${montant}⁩).';
+}
+
+// Path: adulte.recharge.explication.dette
+class _Traductions$adulte$recharge$explication$dette$ar extends Traductions$adulte$recharge$explication$dette$fr {
+	_Traductions$adulte$recharge$explication$dette$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'يُسدَّد أولًا';
+	@override String moisApercu({required Object mois}) => '⁨${mois}⁩، لم تصدر فاتورته بعد';
+	@override String prorata({required num restantes, required Object date, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(restantes,
+		zero: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصة من أصل ⁨${total}⁩ هذا الشهر',
+		one: 'بدأتم في ⁨${date}⁩: حصة واحدة من أصل ⁨${total}⁩ هذا الشهر',
+		other: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصة من أصل ⁨${total}⁩ هذا الشهر',
+		two: 'بدأتم في ⁨${date}⁩: حصتان من أصل ⁨${total}⁩ هذا الشهر',
+		few: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصص من أصل ⁨${total}⁩ هذا الشهر',
+		many: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصة من أصل ⁨${total}⁩ هذا الشهر',
+	);
+	@override String get solde => 'رصيد الملف';
+	@override String get factureTarif => 'سعر الشهر';
+	@override String factureRemiseRang({required Object rang}) => 'خصم العائلة، المسجَّل رقم ⁨${rang}⁩';
+	@override String get factureProrata => 'بحسب حصص الشهر';
+	@override String get facturePrepaiement => 'حصة من الدفع المقدّم';
 }
 
 // Path: adulte.recharge.source.motifs
@@ -42035,6 +42180,49 @@ extension on TraductionsAr {
 			'adulte.recharge.paiementIndisponiblePhrase' => 'لم يُجرَ أي دفع. الدفع عبر الإنترنت غير مفتوح في التطبيق بعد.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '⁨${montant}⁩ مقابل 3 أشهر، تُدفع مقدّمًا',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '⁨${montant}⁩ مقابل 12 شهرًا، تُدفع مقدّمًا',
+			'adulte.recharge.montantChangeTitre' => 'تغيّر المبلغ',
+			'adulte.recharge.montantChangePhrase' => 'تغيّرت فاتورة أو شهر منذ تحقّقكم. لم يُدفع أي مبلغ. تحقّقوا من جديد قبل الدفع.',
+			'adulte.recharge.montantChangeAction' => 'تحقّق من جديد',
+			'adulte.recharge.explication.libelleDette' => ({required Object montant}) => '⁨${montant}⁩: الشهر المستحق',
+			'adulte.recharge.explication.libelleMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${montant}⁩ مقابل ⁨${n}⁩ شهر مدفوع مقدّمًا', one: '⁨${montant}⁩ مقابل شهر واحد مدفوع مقدّمًا', other: '⁨${montant}⁩ مقابل ⁨${n}⁩ شهر مدفوع مقدّمًا', two: '⁨${montant}⁩ مقابل شهرين مدفوعين مقدّمًا', few: '⁨${montant}⁩ مقابل ⁨${n}⁩ أشهر مدفوعة مقدّمًا', many: '⁨${montant}⁩ مقابل ⁨${n}⁩ شهرًا مدفوعًا مقدّمًا', ), 
+			'adulte.recharge.explication.libelleDetteEtMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ شهر مقدّمًا', one: '⁨${montant}⁩: الشهر المستحق وشهر واحد مقدّمًا', other: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ شهر مقدّمًا', two: '⁨${montant}⁩: الشهر المستحق وشهرين مقدّمًا', few: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ أشهر مقدّمًا', many: '⁨${montant}⁩: الشهر المستحق و⁨${n}⁩ شهرًا مقدّمًا', ), 
+			'adulte.recharge.explication.libelleUnMois' => ({required Object montant}) => '⁨${montant}⁩ مقابل شهر واحد',
+			'adulte.recharge.explication.synthese.detteSeule' => ({required Object montant, required Object mois}) => 'تدفعون ⁨${montant}⁩ عن الشهر المستحق (⁨${mois}⁩).',
+			'adulte.recharge.explication.synthese.detteEtAvance' => ({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.', one: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم شهرًا واحدًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.', other: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.', two: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم شهرين مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.', few: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ أشهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.', many: 'تدفعون أولًا ⁨${dette}⁩ (⁨${moisDus}⁩)، ثم ⁨${n}⁩ شهرًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩ في المجموع.', ), 
+			'adulte.recharge.explication.synthese.avanceSeule' => ({required num n, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تدفعون ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.', one: 'تدفعون شهرًا واحدًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.', other: 'تدفعون ⁨${n}⁩ شهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.', two: 'تدفعون شهرين مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.', few: 'تدفعون ⁨${n}⁩ أشهر مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.', many: 'تدفعون ⁨${n}⁩ شهرًا مقدّمًا (⁨${moisCouverts}⁩): ⁨${montant}⁩.', ), 
+			'adulte.recharge.explication.synthese.moisSansDate' => ({required Object montant}) => 'تدفعون شهرًا واحدًا، ⁨${montant}⁩. ويُحتسب منذ بداية حصصكم.',
+			'adulte.recharge.explication.synthese.aucunCreneau' => 'لا يمكن الدفع حاليًا. اختاروا موعدًا أولًا، ثم يمكنكم الدفع.',
+			'adulte.recharge.explication.synthese.avantPremierMois' => 'قبل بدء الحصص، يمكن دفع شهر واحد فقط.',
+			'adulte.recharge.explication.mois.separateur' => '، ',
+			'adulte.recharge.explication.mois.et' => ({required Object liste, required Object dernier}) => '⁨${liste}⁩ و⁨${dernier}⁩',
+			'adulte.recharge.explication.mois.plage' => ({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'adulte.recharge.explication.ligne.prix' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سعر ⁨${n}⁩ شهر', one: 'سعر الشهر', other: 'سعر ⁨${n}⁩ شهر', two: 'سعر شهرين', few: 'سعر ⁨${n}⁩ أشهر', many: 'سعر ⁨${n}⁩ شهرًا', ), 
+			'adulte.recharge.explication.ligne.remiseFamille' => ({required Object rang, required Object taux}) => 'خصم العائلة، المسجَّل رقم ⁨${rang}⁩ (⁨${taux}⁩)',
+			'adulte.recharge.explication.ligne.remisePrepaiement' => ({required Object taux}) => 'خصم الدفع المقدّم (⁨${taux}⁩)',
+			'adulte.recharge.explication.ligne.plafond' => ({required Object taux}) => 'الخصومات محدّدة بـ⁨${taux}⁩ من السعر',
+			'adulte.recharge.explication.ligne.arrondi' => 'تقريب إلى أقرب دولار',
+			'adulte.recharge.explication.ligne.bourse' => 'منحة',
+			'adulte.recharge.explication.ligne.prixSpecial' => 'سعر خاص',
+			'adulte.recharge.explication.ligne.accesOffert' => 'وصول مجاني',
+			'adulte.recharge.explication.ligne.total' => 'المبلغ الإجمالي المستحق',
+			'adulte.recharge.explication.nonAppliquee.premierInscrit' => 'لا خصم عائلي: أول مسجَّل.',
+			'adulte.recharge.explication.nonAppliquee.familleSpecial' => 'لا خصم عائلي: السعر الخاص لا يُجمع مع خصم.',
+			'adulte.recharge.explication.nonAppliquee.familleOffert' => 'لا خصم عائلي: الوصول المجاني لا يُجمع مع خصم.',
+			'adulte.recharge.explication.nonAppliquee.familleBourse' => 'لا خصم عائلي: المنحة لا تُجمع مع خصم.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementMoinsDeTrois' => 'لا خصم على الدفع المقدّم لأقل من 3 أشهر.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementSpecial' => 'لا خصم على الدفع المقدّم: السعر الخاص لا يُجمع مع خصم.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementOffert' => 'لا خصم على الدفع المقدّم: الوصول المجاني لا يُجمع مع خصم.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementBourse' => 'لا خصم على الدفع المقدّم: المنحة لا تُجمع مع خصم.',
+			'adulte.recharge.explication.nonAppliquee.plafondAtteint' => ({required Object taux, required Object montant}) => 'بلغ السقف: الخصومات محدّدة بـ⁨${taux}⁩ من السعر (خصم أقل بمقدار ⁨${montant}⁩).',
+			'adulte.recharge.explication.dette.titre' => 'يُسدَّد أولًا',
+			'adulte.recharge.explication.dette.moisApercu' => ({required Object mois}) => '⁨${mois}⁩، لم تصدر فاتورته بعد',
+			'adulte.recharge.explication.dette.prorata' => ({required num restantes, required Object date, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(restantes, zero: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصة من أصل ⁨${total}⁩ هذا الشهر', one: 'بدأتم في ⁨${date}⁩: حصة واحدة من أصل ⁨${total}⁩ هذا الشهر', other: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصة من أصل ⁨${total}⁩ هذا الشهر', two: 'بدأتم في ⁨${date}⁩: حصتان من أصل ⁨${total}⁩ هذا الشهر', few: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصص من أصل ⁨${total}⁩ هذا الشهر', many: 'بدأتم في ⁨${date}⁩: ⁨${restantes}⁩ حصة من أصل ⁨${total}⁩ هذا الشهر', ), 
+			'adulte.recharge.explication.dette.solde' => 'رصيد الملف',
+			'adulte.recharge.explication.dette.factureTarif' => 'سعر الشهر',
+			'adulte.recharge.explication.dette.factureRemiseRang' => ({required Object rang}) => 'خصم العائلة، المسجَّل رقم ⁨${rang}⁩',
+			'adulte.recharge.explication.dette.factureProrata' => 'بحسب حصص الشهر',
+			'adulte.recharge.explication.dette.facturePrepaiement' => 'حصة من الدفع المقدّم',
+			'adulte.recharge.explication.moisCouverts' => 'الأشهر المغطّاة',
 			'adulte.recharge.revenirPaiements' => 'العودة إلى مدفوعات الأسرة',
 			'adulte.recharge.resultat.formulaireTitre' => 'ادفع هنا دون مغادرة التطبيق',
 			'adulte.recharge.resultat.formulairePhrase' => 'أدخل بيانات الدفع أدناه. لا تتغيّر الأرصدة إلا بعد تأكيد الدفع.',
@@ -42238,6 +42426,8 @@ extension on TraductionsAr {
 			'adulte.sortie.retirerLui' => 'إزالة زوجي',
 			'adulte.sortie.retirerQuestionElle' => 'إزالة زوجتي؟',
 			'adulte.sortie.retirerQuestionLui' => 'إزالة زوجي؟',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.retirerConsequence' => 'لن يُحذف حسابه ولا دروسه ولا سجله ولا رصيده.',
 			'adulte.sortie.placePhrase' => ({required Object prenom}) => '⁨${prenom}⁩ جزء من باقة أسرتك، بحسابه الخاص.',
 			'adulte.sortie.quitter' => 'مغادرة باقة الأسرة',
@@ -42281,8 +42471,6 @@ extension on TraductionsAr {
 			'adulte.reprise.deposerQuestion' => 'تقديم هذا الطلب؟',
 			'adulte.reprise.deposerConsequence' => 'سيُبلَّغ صاحب حساب الأسرة ويمكنه رفضه. ثم تدرس الإدارة الطلب وتقرر.',
 			'adulte.reprise.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك تقديم الطلب بنفسك عند عودة الاتصال.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.depotEchecTitre' => 'لم يُؤكَّد الطلب.',
 			'adulte.reprise.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
 			'adulte.reprise.motif' => 'السبب',
@@ -42752,6 +42940,8 @@ extension on TraductionsAr {
 			'controleur.complement.envoyePhrase' => 'تظهر تحت التقرير الأصلي، الذي يبقى دون تغيير.',
 			'controleur.complement.revenir' => 'العودة إلى التقرير',
 			'controleur.compteRendu.titre' => 'التقرير',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.provisoire' => 'هذه الشاشة قيد التحضير.',
 			'controleur.compteRendu.revenir' => 'العودة إلى المراقبة',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '⁨${classe}⁩ · ⁨${heure}⁩',
@@ -42795,8 +42985,6 @@ extension on TraductionsAr {
 			'controleur.compteRendu.visiteInconnueAide' => 'لم يعد هذا الجهاز يحتفظ بالزيارة في الذاكرة، غالبًا بعد إعادة تحميل الصفحة. يرسل الخادم الزيارة وكشفها التلقائي فور الخروج من القاعة؛ ولا تستطيع هذه الشاشة تأكيد ذلك. لإضافة ملاحظة، اكتب إلى الإدارة.',
 			'controleur.observation.important' => 'أنت تبلغ عن نقطة مهمة: سيُطلب نصك.',
 			'controleur.observation.questionNature' => 'ما طبيعة ملاحظتك؟',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.contexteNature' => 'تنضم ملاحظتك إلى تقرير هذه الزيارة، المرسل إلى الإدارة.',
 			'controleur.observation.pointPositif' => 'نقطة إيجابية',
 			'controleur.observation.pointPositifAide' => 'حين تستحق ممارسة أن تُذكر · تظهر في التقرير كنقطة إيجابية',
@@ -43266,6 +43454,8 @@ extension on TraductionsAr {
 			'recrutement.dossier3.raison.entretienPlanifie' => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.',
 			'recrutement.dossier3.raison.decisionAttendue' => 'تمت المقابلة: القرار في انتظاركم.',
 			'recrutement.dossier3.photoAgrandir' => ({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.dossier3.tete.manque' => 'ما ينقص',
 			'recrutement.dossier3.tete.manqueRien' => 'لا شيء من جهته',
 			'recrutement.dossier3.tete.elements.compte' => 'حسابه',
@@ -43309,8 +43499,6 @@ extension on TraductionsAr {
 			'recrutement.file.responsableAucun' => 'لا أحد',
 			'recrutement.file.ijaza' => 'الإجازة',
 			'recrutement.file.langue' => 'لغة الشرح',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.file.riwaya' => 'الرواية',
 			'recrutement.file.public' => 'الفئة المستهدفة',
 			'recrutement.file.jours' => 'الأيام المتاحة',
@@ -43780,6 +43968,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.riwayat.titreUne' => 'بأي رواية تقرأ؟',
 			'recrutement.parcours.riwayat.titreQuelques' => 'المس كل رواية تقرأ بها.',
 			'recrutement.parcours.riwayat.rechercheLecteur' => 'ابحث عن قارئ أو رواية',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.riwayat.rechercheLecteurAide' => 'اسم القارئ أو الرواية',
 			'recrutement.parcours.riwayat.lecteurs.nafi' => 'نافع',
 			'recrutement.parcours.riwayat.lecteurs.ibnKathir' => 'ابن كثير',
@@ -43823,8 +44013,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.fuseau.regions.America' => 'الأمريكتان',
 			'recrutement.parcours.fuseau.regions.Antarctica' => 'القارة القطبية الجنوبية',
 			'recrutement.parcours.fuseau.regions.Arctic' => 'المنطقة القطبية الشمالية',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.fuseau.regions.Asia' => 'آسيا',
 			'recrutement.parcours.fuseau.regions.Atlantic' => 'المحيط الأطلسي',
 			'recrutement.parcours.fuseau.regions.Australia' => 'أستراليا',
@@ -44294,6 +44482,8 @@ extension on TraductionsAr {
 			'argent.transparence.montantsTitre' => 'المبالغ الدقيقة',
 			'argent.transparence.montantsPhrase' => 'لا تعرض هذه الصفحة إلا النسب المئوية: فالمبالغ تتغير كل شهر بحسب عدد الطلاب. ومن أراد المبالغ الدقيقة فليطلبها من الإدارة.',
 			'argent.transparence.indisponibleTitre' => 'تعذّرت قراءة توزيع الأسعار',
+			_ => null,
+		} ?? switch (path) {
 			'argent.transparence.indisponiblePhrase' => 'سيُعرض هنا حين يصبح متاحًا.',
 			'argent.transparence.erreurTitre' => 'لم نتمكن من قراءة توزيع الأسعار',
 			'argent.transparence.sansDonnees' => 'لم نتمكن من تحميل توزيع الأسعار',
@@ -44337,8 +44527,6 @@ extension on TraductionsAr {
 			'argent.moyen.webStripe' => 'بطاقة مصرفية',
 			'argent.moyen.webStripeDetail' => 'الدفع عبر الويب. لا خصم قبل تأكيدك.',
 			'argent.soldes.total' => 'مجموع الأرصدة (قراءة)',
-			_ => null,
-		} ?? switch (path) {
 			'argent.soldes.totalDetail' => 'قراءة فقط: يبقى كل رصيد رصيد ملفه.',
 			'argent.soldes.aPayer' => 'المطلوب دفعه هذا الشهر',
 			'argent.soldes.profilsFinances' => 'الملفات الممولة',
@@ -44808,6 +44996,8 @@ extension on TraductionsAr {
 			'admissions.reponses.moments' => 'أوقات اليوم',
 			'admissions.reponses.langue' => 'لغة الدرس',
 			'admissions.reponses.titulaireLigne' => 'صاحب الطلب',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.reponses.oui' => 'نعم',
 			'admissions.reponses.non' => 'لا',
 			'admissions.reponses.nonRenseigne' => 'غير مذكور',
@@ -44851,8 +45041,6 @@ extension on TraductionsAr {
 			'admissions.contactEnvoyer' => 'إرسال الرسالة',
 			'admissions.annulerRefus' => 'إلغاء الرفض',
 			'admissions.annulerRefusDetail' => 'يمكن إلغاء الرفض خلال سبعة أيام: يعود الطلب «للمعالجة». لا يتلقى الشخص أي رسالة.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'أُلغي قبول طلب ⁨${deNom}⁩.',
 			'admissions.annulerAcceptationConsequence' => 'يعود حسابه إلى الانتظار فورًا.',
 			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'إلغاء قبول ⁨${deNom}⁩؟',
@@ -45322,6 +45510,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'حُذفت العربية من لغات الشرح (ليست لغة دراسة)',
 			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'إجابة من الخيارات غير معروفة',
 			'candidatsFlux.importFormulaires.avertissement.ijazaDeclareeEnG' => 'أُعلنت إجازة بدل الحفظ: على الشخص أن يذكر حفظه',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.experiencePretTest' => '«مستعد لاختبار» لا يقابله خيار في الخبرة: على الشخص أن يجيب',
 			'candidatsFlux.importFormulaires.avertissement.moinsDe3Heures' => 'أقل من 3 ساعات في الأسبوع: لا يكفي لفصل، على الشخص أن يجيب',
 			'candidatsFlux.importFormulaires.avertissement.creneauxContradictoires' => 'فترات متناقضة تُحفظ كما هي',
@@ -45365,8 +45555,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.confirmation.garanties.texte' => 'لا يُنشئ حسابًا ولا دعوة ولا طلب ترشح، ولا يرسل أي رسالة. يسجّل ردودًا تُستعمل للتعرّف على الأشخاص حين يسجّلون. وإعادة استيراد الملف نفسه لا تضيف شيئًا.',
 			'candidatsFlux.importFormulaires.confirmation.importer' => 'استيراد الردود',
 			'candidatsFlux.importFormulaires.confirmation.envoi' => 'جارٍ الإرسال. لا يُعتبر الاستيراد مؤكَّدًا إلا بعد رد رواية.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.horsLigne' => 'سيمكن تأكيد الاستيراد عند عودة الاتصال.',
 			'candidatsFlux.importFormulaires.confirmation.nonConfirme' => 'الاستيراد غير مؤكَّد: ربما لم يصل إلى رواية. المسوا «استيراد الردود» مرة أخرى: لا يُسجَّل الطلب نفسه إلا مرة واحدة.',
 			'candidatsFlux.importFormulaires.confirmation.jetonPerime' => 'تغيّر الملف أو إعداداته منذ المعاينة. أعيدوا التحليل للمتابعة.',
@@ -45836,6 +46024,8 @@ extension on TraductionsAr {
 			'calendrier.dates.type.fermeture' => 'إغلاق',
 			'calendrier.dates.type.rencontre' => 'لقاء تلاوة',
 			'calendrier.dates.type.evaluation' => 'تقييم',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.type.autre' => 'تاريخ آخر',
 			'calendrier.dates.categorie.ramadan' => 'رمضان، عشرون يومًا على الأكثر',
 			'calendrier.dates.categorie.aidAlAdha' => 'عيد الأضحى، عشرة أيام على الأكثر',
@@ -45879,8 +46069,6 @@ extension on TraductionsAr {
 			'calendrier.dates.notification.conflit.rappelGenerale' => 'تذكير: ما زال تعذّر استرجاع حصة لم تعد تحت الإغلاق: لدى المعلّم درس آخر في الوقت نفسه. حرّره لاسترجاعها.',
 			'calendrier.dates.notification.conflit.rappelAvecNom' => ({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'تذكير: ما زال تعذّر استرجاع حصة الفصل ⁨${classe}⁩ بتاريخ ⁨${jour}⁩ الساعة ⁨${heure}⁩ (بتوقيت مكة المكرمة): لدى ⁨${enseignant}⁩ درس آخر في الوقت نفسه. حرّر المعلّم لاسترجاعها.',
 			'calendrier.dates.notification.conflit.rappelSansNom' => ({required Object classe, required Object jour, required Object heure}) => 'تذكير: ما زال تعذّر استرجاع حصة الفصل ⁨${classe}⁩ بتاريخ ⁨${jour}⁩ الساعة ⁨${heure}⁩ (بتوقيت مكة المكرمة): لدى المعلّم درس آخر في الوقت نفسه. حرّره لاسترجاعها.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.notification.quandLocal' => ({required Object local, required Object mecque}) => '⁨${local}⁩ (⁨${mecque}⁩، بتوقيت مكة المكرمة)',
 			'calendrier.dates.notification.quandMecque' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت مكة المكرمة',
 			'calendrier.dates.notification.annoncee.une' => ({required Object du, required Object au, required Object quand}) => 'الأكاديمية مغلقة من ⁨${du}⁩ إلى ⁨${au}⁩. لن تُعقد الحصة المقررة في ⁨${quand}⁩.',
@@ -46350,6 +46538,8 @@ extension on TraductionsAr {
 			'onboarding.langues.francais' => 'Français (الفرنسية)',
 			'onboarding.langues.english' => 'English (الإنجليزية)',
 			'onboarding.langues.ar' => 'العربية',
+			_ => null,
+		} ?? switch (path) {
 			'onboarding.langues.ha' => 'الهوسا',
 			'onboarding.langues.poular' => 'البولار (الفولانية)',
 			'onboarding.langues.yo' => 'اليوروبا',
@@ -46393,8 +46583,6 @@ extension on TraductionsAr {
 			'onboarding.recap.heureChoisie' => ({required Object ville}) => 'المنطقة الزمنية: ⁨${ville}⁩',
 			'onboarding.recap.heures' => ({required Object ici, required Object mecque}) => 'الساعة عندك ⁨${ici}⁩، و⁨${mecque}⁩ في مكة المكرمة.',
 			'onboarding.recap.pasMonFuseau' => 'ليست منطقتي الزمنية',
-			_ => null,
-		} ?? switch (path) {
 			'onboarding.recap.fuseauInconnu' => 'تعذّرت قراءة منطقتك الزمنية على هذا الجهاز. اخترها: ستظهر لك مواعيد الدروس بتوقيتك.',
 			'onboarding.recap.fuseauChoix' => 'أين تعيش؟',
 			'onboarding.recap.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
