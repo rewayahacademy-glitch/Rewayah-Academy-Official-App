@@ -39,11 +39,48 @@ qui précède le 17/11 est dans `INVENTAIRE-NON-PRODUCTION-2026-11-27.md`.
 | N6 | Paie des enseignants sans que l'académie voie leurs coordonnées bancaires (20/11) | Verto « pas très réactif » (27/11), alternative à chercher. **Aujourd'hui les coordonnées sont stockées en clair** | Le directeur : prestataire ; un agent : la sécurité des coordonnées |
 | N7 | Prospection : relance du jour 2 aux ~130 organisations écrites du 23 au 26/11 qui n'ont pas répondu | Annoncée, pas faite. Les 100 lettres courtes partent du 29/11 21 h 24 au 30/11 19 h 25 UTC ; contrôles prévus le 29/11 21 h 45 et le 30/11 21 h 30 | Un agent, après le premier contrôle |
 | N8 | Bras droit de Praxis : « qu'il m'aide surtout à 100 % » (17/11) ; courriels (« il ne faut pas lui amputer les bras ») ; réveil sur événement ; mention IA discrète aux familles ; le chat du directeur relié à Praxis (#627, #632 à #638) | Rien en production. #625 à #630 gelées et en conflit, #632 en conflit. **Praxis est arrêté depuis le 21/11 (M1) : on ne relance rien sans ordre** | Le directeur : relancer Praxis ou non |
-| N9 | Restes des maquettes validées (19-20/11) : écran de chargement et de mise à jour avec Praxis, tableau de bord, icônes, mouvement, en-tête, « Plus », interface de l'enseignant | Pas faits. Le plan du parcours de l'enseignant (19/11) n'est pas validé. Détail : `PARCOURS-ENSEIGNANT/RESTE-A-FAIRE.md` §1-2 | Le directeur valide le plan |
+| N9 | Chantiers des maquettes validées : voir le §2 bis, ligne par ligne | Correction du 27/11 : la première version de cette liste les avait résumés en une ligne et classés « sur ordre seulement ». C'était faux : le directeur a validé les maquettes et ordonné le 20/11 de lancer les chantiers | — |
 | N10 | Guide : Praxis qui répond aux commentaires depuis le texte validé, badge des fils en attente (20/11) | Pas faits ; dépend de Praxis (M1) | Après M1 |
 | N11 | Relecture du guide en arabe et en anglais par une personne de la langue ; relecture du hadith des lettres de prospection par un enseignant | Pas faites | Le directeur désigne qui relit |
 | N12 | Politique de confidentialité : relire l'anglais et l'arabe, aligner la copie du site public ; vérifier qu'elle nomme Gemini et OpenAI (17/11) | Pas fait, ou non vérifié | Un agent |
 | N13 | Purge des pièces d'identité | Jamais exécutée | Un agent, avec le pilote |
+
+## 2 bis. Chantiers programmés, pas encore faits (maquettes validées les 19-20/11 ; ordre de lancer du 20/11)
+
+Directeur, 27/11 : « je suis triste que tu n'aies pas vu tous les chantiers programmés mais pas encore faits, comme celui des
+icônes animées, les pages de chargement, etc. » Chaque ligne est un chantier à part entière. Détail, références et maquettes :
+`PARCOURS-ENSEIGNANT/RESTE-A-FAIRE.md` §1-2, `PLAN.md`, `SUIVI.md`, `maquettes/`.
+
+| # | Chantier | Ce qui manque (au 27/11) | Lot |
+|---|---|---|---|
+| C1 | **Écran de chargement avec Praxis** (maquette « Praxis vous accueille » v3, confirmée le 20/11) : il sort de la porte du logo, suit la route, parle, repart dans la lumière | Rien dans l'application | PE-F8 |
+| C2 | **Écran de mise à jour avec Praxis** (même maquette) | Rien dans l'application | PE-F8 |
+| C3 | Page de connexion avec Praxis | Faite (#664, #671), mais un mot passe sur la toque de Praxis pendant qu'il écrit sa phrase (vu en production le 21/11) | PE-F8 |
+| C4 | **Icônes animées** : une quinzaine (barre du bas, cloche, envoyer, succès, épingler) | Pas commencé ; paquet Lottie à ajouter (`pubspec.yaml`, zone protégée) et licence à vérifier | PE-F2 |
+| C5 | **Nouvelle famille d'icônes fixes**, dans le seul fichier `app_icons.dart` | Pas commencé | PE-F1 |
+| C6 | **Langage de mouvement** : ressort, rebond, élastique, liquide, reflet | En partie (ressorts dans `AppMouvement`, #642, #648) ; la décision datée qui amende `DECISION-MOUVEMENT` n'est pas écrite | PE-F3 |
+| C7 | **Compétence du mouvement** (skill, pour toute l'application et hors d'elle) | Pas commencé (celle de Praxis existe, #649) | PE-F6 |
+| C8 | **Composants vivants** : file d'avatars, bulle, capsule liquide | Pas faits (ressort, eau, pile, nombres qui roulent, avis flottant sont dans `main`) | PE-F7 |
+| C9 | **Praxis mascotte animée**, un seul Praxis partout | Le Praxis du tableau de bord n'est pas celui de la maquette « Praxis vous accueille » : à unifier sur `lib/core/vivant/praxis_vivant.dart` ; avatar animé arrêté le 20/11 | PE-F5 |
+| C10 | **Tableau de bord** conforme à la maquette validée (« on valide cette maquette pour aller vite », 20/11) | Pas de visages au-delà de 50 personnes (tri serveur manquant) ; la pile des pièces se feuillette mais ne décide pas ; cases « vus en 24 h » et « retraits » remplacées par des alertes ambre (compteurs serveur manquants) ; boutons sans icône ; coins de 24 ; tuile bloquée en rouge sombre ; au téléphone, case « Outils » au lieu des raccourcis | PE-C6 |
+| C11 | **En-tête du bureau** : panneau léger des messages avec réponse rapide ; recherche qui trouve les personnes | Non faits (la cloche est faite, #696) | PE-C7 |
+| C12 | **Trois pages (Accueil, Personnes, Messages) et le reste dans « Plus »** | « Plus » n'existe pas | PE-C8 |
+| C13 | **Gestes** : retour par glissement, glisser une ligne pour agir, glisser pour répondre | Pas faits | PE-D10 |
+| C14 | **Éclair coloré** à l'écran | Causes trouvées, éclair non corrigé | PE-P2 |
+| C15 | **Fluidité mesurée** sur les trois appareils du directeur | Pas faite | PE-P1, P3, P4 |
+| C16 | Accueil du candidat fidèle à la maquette | Fusionné (#662), fidélité jamais confirmée par le directeur ; que garde l'onglet « Académie » ? | PE-B4, B5 |
+| C17 | Messagerie : supprimer un message, profil dans la conversation, « annoncer à ces N personnes », aperçu de lien et de PDF ; épingler ; pièce toujours affichée pareil | Pas faits | PE-D2, D5, D6, D7, C5, C3 |
+| C18 | Interface de l'enseignant (vague E) | Rien de construit ; c'est le seul chantier que le directeur a gardé « sans ordre, ne rien lancer » | PE-E1, E2 |
+
+**Chantiers programmés plus tôt, eux aussi pas finis** (détail : `INVENTAIRE-NON-PRODUCTION-2026-11-27.md`) :
+- **Lumières des accueils** (lancé le 10/11, `A-FAIRE-LUMIERE-ACCUEILS.md`) : seul le vert de la salle ouverte sur l'accueil de la
+  famille est livré (#428). Les autres couleurs des ronds de profil, « Rejoindre ma classe », le tour doré de fin de sourate,
+  l'Aujourd'hui de l'enseignant, l'accueil de la direction, la carte de la prochaine séance avec compte à rebours et les
+  illustrations des états vides ne sont pas trouvés dans `main` (vérification par le journal git seulement).
+- **Programme pédagogique**, priorité n° 1 de `VISION-ECOLE` : lots 4, 5 B et 8 partiels, lots 9 à 14 rien, lot 7 non conforme à
+  sa maquette ; suspendu par « arrête tout » le 15/11 (`REPRISE-PROGRAMME-PEDAGOGIQUE.md`).
+- **Langues** (`A-FAIRE-LANGUES.md`) : en attente d'ordre depuis le 07/11.
+- **Règles d'argent**, phase 2 (suppression encadrée, arrêt temporaire) : `A-HARMONISER-REGLES-ARGENT-ET-ARRET.md`.
 
 ## 3. Livré, jamais prouvé par le directeur (à prouver, pas à recoder)
 
@@ -71,10 +108,15 @@ carte des gestes de la direction (8 lots, 17/11).
    - agent B : M2 (vérifier en production, corriger), puis N12 et N13 ;
    - agent C : N4, N5 puis N3, après N2 ;
    - agent D : M3, références montrées d'abord, puis code ; N6 (coordonnées bancaires) en parallèle si le directeur choisit.
+2 bis. **Chantiers du §2 bis, dès qu'un agent se libère, dans cet ordre** : C1 et C2 (chargement et mise à jour avec Praxis) avec
+   C3 et C9 (un seul Praxis) ; C4 et C5 (icônes : le paquet Lottie demande l'accord du directeur pour `pubspec.yaml`) ; C10
+   (tableau de bord) ; C6, C7, C8 (mouvement) ; C11 à C13 ; C14, C15. Une PR par chantier, comparée à la maquette côte à côte, à
+   1280 et 1440, avant d'être montrée au directeur.
 3. **Preuves** : une feuille de recette courte pour le §3, un passage par parcours (famille, candidat, direction), faite
    par le directeur sur la production ; chaque défaut devient une ligne du §1.
 4. **Le 29/11 au soir** : contrôle des lettres de prospection, puis N7.
-5. **Sur ordre seulement** : N8 (Praxis), N9 (maquettes et parcours), M4 (liste des familles).
+5. **Sur ordre seulement** : N8 (Praxis qui agit seul), C18 (interface de l'enseignant), M4 (liste des familles), programme
+   pédagogique, langues.
 
 ## 6. Pourquoi les endroits précédents « n'ont pas marché » (constaté le 27/11)
 
