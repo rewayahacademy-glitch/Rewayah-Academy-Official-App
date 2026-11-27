@@ -90,6 +90,7 @@ import 'core/capacites/capacite_indisponible.dart';
 import 'core/capacites/classes_foyer_supabase.dart';
 import 'core/capacites/coordonnees_versement_supabase.dart';
 import 'core/capacites/courriels_supabase.dart';
+import 'core/capacites/dette_famille_supabase.dart';
 import 'core/capacites/enseignants_classe_supabase.dart';
 import 'core/capacites/identite_titulaire_supabase.dart';
 import 'core/capacites/langues_communication_supabase.dart';
@@ -107,6 +108,7 @@ import 'core/capacites/port_avis.dart';
 import 'core/capacites/port_classes_foyer.dart';
 import 'core/capacites/port_coordonnees_versement.dart';
 import 'core/capacites/port_courriels.dart';
+import 'core/capacites/port_dette_famille.dart';
 import 'core/capacites/port_enseignants_classe.dart';
 import 'core/capacites/port_identite_titulaire.dart';
 import 'core/capacites/port_langues_communication.dart';
@@ -803,6 +805,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portMesFinancesProvider.overrideWithValue(
     MesFinancesSupabase(Supabase.instance.client),
+  ),
+  // PAIEMENT-FAMILLE-ACCES (D7, migration 20261203100000) : la dette de la
+  // famille, lue par `ma_dette_famille()`.
+  portDetteFamilleProvider.overrideWithValue(
+    DetteFamilleSupabase(Supabase.instance.client),
   ),
   portPaiementsFoyerProvider.overrideWithValue(
     PaiementsFoyerSupabase(Supabase.instance.client),

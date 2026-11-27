@@ -31,7 +31,16 @@ enum MotifRefusObservation {
   seanceNonActive('seance_non_active'),
 
   /// La salle n'est pas ouverte a cette heure.
-  horsFenetre('hors_fenetre');
+  horsFenetre('hors_fenetre'),
+
+  /// PAIEMENT-FAMILLE-ACCES (D6, 23/11/2026) : l'appelant a SA propre place
+  /// d'eleve dans cette seance ; il y entre avec son profil d'eleve, jamais
+  /// comme observateur.
+  placeEleve('place_eleve'),
+
+  /// PAIEMENT-FAMILLE-ACCES (D6) : aucun enfant de la seance n'a un acces
+  /// paye, ou la place de l'appelant est suspendue pour paiement.
+  accesSuspendu('acces_suspendu');
 
   const MotifRefusObservation(this.valeurSql);
 

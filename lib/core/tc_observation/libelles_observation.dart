@@ -15,6 +15,8 @@ String libelleRefusObservation(MotifRefusObservation motif) => switch (motif) {
   MotifRefusObservation.seanceNonActive =>
     t.tc.observation.refus.seanceNonActive,
   MotifRefusObservation.horsFenetre => t.tc.observation.refus.horsFenetre,
+  MotifRefusObservation.placeEleve => t.tc.observation.refus.placeEleve,
+  MotifRefusObservation.accesSuspendu => t.tc.observation.refus.accesSuspendu,
 };
 
 /// Le message qui correspond a une fin de visite.
@@ -106,6 +108,14 @@ String visitesRestantesLisible({required int restantes, required int max}) {
     MotifIndisponibilite.lienAbsent => (
       titre: d.lienAbsentTitre,
       phrase: d.lienAbsent,
+    ),
+    MotifIndisponibilite.placeEleve => (
+      titre: d.placeEleveTitre,
+      phrase: d.placeEleve,
+    ),
+    MotifIndisponibilite.accesSuspendu => (
+      titre: d.accesSuspenduTitre,
+      phrase: d.accesSuspendu,
     ),
     MotifIndisponibilite.enfantAbsent => (
       titre: d.enfantAbsentTitre,

@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../observabilite/journal_dev.dart';
+import 'appareil_salle.dart';
 import 'diagnostic_transport.dart';
+import 'libelle_appareil.dart';
+import 'second_appareil.dart';
 import 'video_session_provider.dart';
 
 /// ENTREE-ROBUSTE (directeur, 12/11/2026, retours sur la salle, point 11 :
@@ -38,6 +41,18 @@ enum MotifRefusSalle {
 
   /// Le reseau ou le backend n'a pas repondu.
   reseau,
+
+  /// SALLE-SECOND-APPAREIL (23/11/2026) : le meme compte est deja dans la
+  /// classe sur un autre appareil, et celui-ci a refuse l'entree.
+  passageRefuse,
+
+  /// SALLE-SECOND-APPAREIL : l'autre appareil, vivant, n'a pas repondu a
+  /// temps. Se reessaye.
+  passageSansReponse,
+
+  /// SALLE-SECOND-APPAREIL : la personne a renonce a entrer depuis cet
+  /// appareil.
+  passageAnnule,
 }
 
 /// FN-025 : pourquoi la salle est fermee, quand le serveur le dit.
@@ -241,28 +256,125 @@ abstract interface class VerificationSalle {
   Future<int?> verifierSalle(AccesSalle acces);
 }
 
+/// L'appel de la fonction `create-room-token` (injecte pour les tests).
+typedef AppelJeton = Future<FunctionResponse> Function(
+  Map<String, dynamic> corps,
+);
+
+/// SALLE-SECOND-APPAREIL : combien de temps le second appareil attend avant de
+/// relire l'etat de sa demande.
+const Duration pasAttentePassage = Duration(seconds: 2);
+
+/// SALLE-SECOND-APPAREIL : au bout de ce temps sans lecture possible, la
+/// connexion est tenue pour perdue (la demande reste posee cote serveur).
+const Duration patienceHorsLignePassage = Duration(seconds: 20);
+
+/// SALLE-SECOND-APPAREIL : garde-fou du client. Le serveur tranche a 45 s ;
+/// au-dela, une attente qui ne finit pas est dite « sans reponse ».
+const Duration attenteMaxPassage = Duration(seconds: 60);
+
 /// L'implementation reelle.
 class ServiceVideoSupabase
     implements ServiceVideo, RetablissementPublication, VerificationSalle {
   /// Cree le service.
-  const ServiceVideoSupabase(this._client);
+  ServiceVideoSupabase(
+    this._client, {
+    this._port,
+    this._pilote,
+    this._appel,
+    String Function()? appareil,
+    String Function()? libelle,
+    this.pas = pasAttentePassage,
+  }) : _appareil = appareil ?? identifiantAppareilSalle,
+       _libelle = libelle ?? libelleAppareilCourant;
 
   final SupabaseClient _client;
+  final PortSecondAppareil? _port;
+  final PilotePassage? _pilote;
+  final AppelJeton? _appel;
+  final String Function() _appareil;
+  final String Function() _libelle;
+
+  /// Le pas de la relecture de la demande (reglable pour les tests).
+  final Duration pas;
+
+  Future<FunctionResponse> _demanderJeton(Map<String, dynamic> corps) =>
+      (_appel ?? _appelReel)(corps);
+
+  Future<FunctionResponse> _appelReel(Map<String, dynamic> corps) =>
+      _client.functions.invoke('create-room-token', body: corps);
 
   @override
   Future<AccesSalle> acces(String seanceId, {String? eleveId}) async {
+    String? demandeId;
+    try {
+      while (true) {
+        final Object attendu = await _essai(seanceId, eleveId, demandeId);
+        if (attendu is AccesSalle) {
+          return attendu;
+        }
+        // Un autre appareil du meme profil est dans la salle.
+        final _PassageDemande p = attendu as _PassageDemande;
+        demandeId = p.demandeId;
+        if (p.decision == 'refuse') {
+          throw const EchecSalle(MotifRefusSalle.passageRefuse);
+        }
+        if (p.decision == 'sans_reponse') {
+          throw const EchecSalle(MotifRefusSalle.passageSansReponse);
+        }
+        final EtatPassage etat = await _attendre(demandeId, p.libelleAutre);
+        switch (etat) {
+          case EtatPassage.refuse:
+            throw const EchecSalle(MotifRefusSalle.passageRefuse);
+          case EtatPassage.sansReponse:
+            throw const EchecSalle(MotifRefusSalle.passageSansReponse);
+          case EtatPassage.annule:
+            throw const EchecSalle(MotifRefusSalle.passageAnnule);
+          case EtatPassage.accepte || EtatPassage.libre:
+            // Le jeton se redemande avec la meme demande : le serveur la
+            // reverifie (demandeur, appareil, profil, seance).
+            continue;
+          case EtatPassage.enAttente || EtatPassage.inconnu:
+            throw const EchecSalle(MotifRefusSalle.passageSansReponse);
+        }
+      }
+    } finally {
+      final PilotePassage? pilote = _pilote;
+      if (pilote != null && pilote.phase != PhasePassage.ancienSilencieux) {
+        pilote.effacer();
+      }
+    }
+  }
+
+  /// Un essai de jeton : l'acces, ou une demande a attendre.
+  Future<Object> _essai(
+    String seanceId,
+    String? eleveId,
+    String? demandeId,
+  ) async {
     final FunctionResponse reponse;
     try {
-      reponse = await _client.functions
-          .invoke(
-            'create-room-token',
-            body: <String, dynamic>{
-              'session_id': seanceId,
-              'eleve_id': ?eleveId,
-            },
-          )
-          .timeout(delaiJetonSalle);
+      reponse = await _demanderJeton(<String, dynamic>{
+        'session_id': seanceId,
+        'eleve_id': ?eleveId,
+        'appareil_id': _appareil(),
+        'appareil_libelle': _libelle(),
+        'demande_id': ?demandeId,
+      }).timeout(delaiJetonSalle);
     } on FunctionException catch (e) {
+      // SALLE-SECOND-APPAREIL : 409, un autre appareil tient la place.
+      final Object? details = e.details;
+      if (e.status == 409 && details is Map && details['passage'] is String) {
+        return _PassageDemande(
+          decision: details['passage'] as String,
+          demandeId: details['demande_id'] is String
+              ? details['demande_id'] as String
+              : demandeId,
+          libelleAutre: details['appareil_libelle'] is String
+              ? details['appareil_libelle'] as String
+              : '',
+        );
+      }
       final MotifRefusSalle motif = _motifDe(e.status, e.details);
       // ENTREE-ROBUSTE : un refus est une reponse normale du serveur, rien a
       // superviser ; une panne qui repond (5xx), si.
@@ -287,8 +399,66 @@ class ServiceVideoSupabase
     if (corps is! Map<String, dynamic>) {
       throw const EchecSalle(MotifRefusSalle.reseau);
     }
+    if (corps['note_passage'] == 'ancien_silencieux') {
+      // L'autre appareil ne repondait plus : le dire apres l'entree.
+      _pilote?.publier(
+        const PassageSalle(phase: PhasePassage.ancienSilencieux),
+      );
+    }
     return AccesSalle.depuisJson(corps)
         .pourLaDemande(seanceId: seanceId, eleveId: eleveId);
+  }
+
+  /// Attend la decision du premier appareil, en le disant a l'ecran. Une
+  /// coupure de connexion ne fait pas perdre la demande : elle se dit, puis
+  /// l'attente reprend ; trop longue, elle devient un echec de reseau.
+  Future<EtatPassage> _attendre(String? demandeId, String libelleAutre) async {
+    final PortSecondAppareil? port = _port;
+    if (demandeId == null || port == null) {
+      return EtatPassage.sansReponse;
+    }
+    _pilote?.commencer();
+    PassageSalle dit(PhasePassage phase) =>
+        PassageSalle(phase: phase, libelleAutre: libelleAutre);
+    _pilote?.publier(dit(PhasePassage.attente));
+    final Stopwatch depuis = Stopwatch()..start();
+    DateTime? coupeDepuis;
+    while (true) {
+      if (_pilote?.annulationDemandee ?? false) {
+        try {
+          await port.annuler(demandeId);
+        } on Object catch (e) {
+          journalDev('annulation du passage impossible : $e');
+        }
+        return EtatPassage.annule;
+      }
+      try {
+        final EtatPassage etat = await port.etat(demandeId);
+        coupeDepuis = null;
+        _pilote?.publier(dit(PhasePassage.attente));
+        if (etat != EtatPassage.enAttente && etat != EtatPassage.inconnu) {
+          return etat;
+        }
+      } on PostgrestException catch (e) {
+        // Une demande refusee par la base n'est pas une coupure.
+        if (e.code == '42501') {
+          throw const EchecSalle(MotifRefusSalle.acces);
+        }
+        coupeDepuis ??= DateTime.now();
+        _pilote?.publier(dit(PhasePassage.horsLigne));
+      } on Object {
+        coupeDepuis ??= DateTime.now();
+        _pilote?.publier(dit(PhasePassage.horsLigne));
+      }
+      if (coupeDepuis != null &&
+          DateTime.now().difference(coupeDepuis) > patienceHorsLignePassage) {
+        throw const EchecSalle(MotifRefusSalle.reseau);
+      }
+      if (depuis.elapsed > attenteMaxPassage) {
+        return EtatPassage.sansReponse;
+      }
+      await Future<void>.delayed(pas);
+    }
   }
 
   @override
@@ -386,7 +556,25 @@ int? resteAvantEcheance(Object? corps) {
   return reste is int && reste >= 0 ? reste : null;
 }
 
+/// Ce que le serveur repond quand un autre appareil du meme profil tient la
+/// place : attendre sa decision (ou la lire, deja prise).
+class _PassageDemande {
+  const _PassageDemande({
+    required this.decision,
+    required this.demandeId,
+    required this.libelleAutre,
+  });
+
+  final String decision;
+  final String? demandeId;
+  final String libelleAutre;
+}
+
 /// Le service video employe par l'application.
 final Provider<ServiceVideo> serviceVideoProvider = Provider<ServiceVideo>(
-  (Ref ref) => ServiceVideoSupabase(Supabase.instance.client),
+  (Ref ref) => ServiceVideoSupabase(
+    Supabase.instance.client,
+    port: ref.read(portSecondAppareilProvider),
+    pilote: ref.read(passageSalleProvider.notifier),
+  ),
 );

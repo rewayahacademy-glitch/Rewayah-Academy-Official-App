@@ -40,6 +40,13 @@ enum MotifIndisponibilite {
   /// Aucun enfant du foyer n'est lie a cette seance.
   lienAbsent,
 
+  /// PAIEMENT-FAMILLE-ACCES (D6) : l'appelant a sa propre place d'eleve dans
+  /// cette seance ; il y entre avec son profil d'eleve.
+  placeEleve,
+
+  /// PAIEMENT-FAMILLE-ACCES (D6) : aucun enfant accompagne n'a un acces paye.
+  accesSuspendu,
+
   /// **Reserve** : produit seulement quand le serveur saura le dire
   /// (DB-OBS-05). Jamais deduit d'une presence lue cote client.
   enfantAbsent,
@@ -228,6 +235,8 @@ MotifIndisponibilite motifDepuisRefus(MotifRefusObservation? refus) =>
         MotifIndisponibilite.visitesEpuisees,
       MotifRefusObservation.tempsEpuise => MotifIndisponibilite.tempsEpuise,
       MotifRefusObservation.lienTuteurAbsent => MotifIndisponibilite.lienAbsent,
+      MotifRefusObservation.placeEleve => MotifIndisponibilite.placeEleve,
+      MotifRefusObservation.accesSuspendu => MotifIndisponibilite.accesSuspendu,
       MotifRefusObservation.seanceNonActive ||
       MotifRefusObservation.horsFenetre => MotifIndisponibilite.horsFenetre,
       null => MotifIndisponibilite.capaciteAbsente,

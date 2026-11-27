@@ -318,6 +318,28 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "passage": {
+      "compris": "Compris",
+      "titre": "Un autre appareil veut entrer",
+      "demande": "Quelqu'un essaie d'entrer dans la classe avec votre compte sur un autre appareil ({appareil}). Laisser passer\u00a0?",
+      "demandeSansNom": "Quelqu'un essaie d'entrer dans la classe avec votre compte sur un autre appareil. Laisser passer\u00a0?",
+      "accepter": "Accepter",
+      "refuser": "Refuser",
+      "echecReponse": "Votre réponse n'a pas pu être envoyée. Réessayez dans un instant.",
+      "attenteTitre": "Votre compte est déjà dans la classe",
+      "attente": "Votre compte est déjà dans la classe sur un autre appareil. Nous lui demandons de confirmer…",
+      "surAppareil": "Appareil déjà connecté\u00a0: {appareil}",
+      "horsLigne": "Votre demande reste posée\u00a0: nous reprenons dès que cet appareil retrouve Rewayah.",
+      "ancienSilencieux": "L'autre appareil ne répondait plus\u00a0: vous continuez ici",
+      "cede": "Vous continuez sur l'autre appareil",
+      "cedeDetail": "Cet appareil a laissé la place à l'autre. Vous pouvez revenir dans la classe quand vous le voulez\u00a0: l'autre appareil sera prévenu.",
+      "refuse": "L'entrée a été refusée depuis l'appareil déjà connecté.",
+      "refuseDetail": "Votre compte reste dans la classe sur l'autre appareil. Si c'est bien vous, acceptez la demande depuis cet appareil, puis réessayez.",
+      "sansReponse": "Pas de réponse de l'autre appareil",
+      "sansReponseDetail": "Il est peut-être occupé. Vous pouvez réessayer.",
+      "annule": "Entrée annulée",
+      "annuleDetail": "Vous n'êtes pas entré dans la classe depuis cet appareil. Vous pouvez réessayer."
+    },
     "sonBloque": "Le son est coupé par le navigateur",
     "activerSon": "Activer le son",
     "vignette": {
@@ -2037,6 +2059,18 @@
     "aucunDetail": "Ajoutez d'abord un profil élève depuis le Foyer."
   },
   "foyer": {
+    "dette": {
+      "titre": "Dette de la famille\u00a0: {montant}",
+      "ligne": "{montant}\u00a0: {motif}, le {date}.",
+      "blocage": "Tant qu'elle n'est pas réglée, vous ne pouvez ni ajouter de profil élève, ni demander une nouvelle classe, ni payer d'avance. Les cours déjà payés ne sont pas touchés. Contactez la direction pour la régler.",
+      "motifs": {
+        "fraisContestation": "frais d'une contestation bancaire perdue",
+        "autre": "dette de la famille"
+      },
+      "sansDonnees": "La dette de votre famille n'a pas pu être chargée",
+      "indisponibleTitre": "La dette de la famille n'a pas pu être lue",
+      "achatBloque": "Achat bloqué\u00a0: une dette de la famille reste à régler (elle est détaillée dans le Foyer). Tant qu'elle n'est pas réglée, vous ne pouvez ni ajouter de profil élève, ni demander une nouvelle classe, ni payer d'avance. Contactez la direction."
+    },
     "titre": "Foyer",
     "ajouterProfil": "Ajouter un profil élève",
     "sousTitre": "Les profils élèves de votre foyer",
@@ -10506,6 +10540,8 @@
       "minutesSecondes": "{minutes} min {secondes} s",
       "secondes": "{secondes} s",
       "motif": {
+        "placeEleve": "Vous avez votre propre place dans cette séance\u00a0: rejoignez-la avec votre profil d'élève, pas en observation.",
+        "accesSuspendu": "L'observation est fermée\u00a0: aucun élève que vous accompagnez n'a un accès payé à cette séance. Rechargez depuis le Foyer, ou contactez la direction.",
         "visitesEpuisees": "Vous avez utilisé vos visites pour cette séance.",
         "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",
         "seanceNonCommencee": "L'observation ouvre quand la séance commence.",
@@ -12099,6 +12135,10 @@
         "aucuneRestante": "Aucune visite restante pour cette séance"
       },
       "disponibilite": {
+        "placeEleveTitre": "Votre place d'élève",
+        "placeEleve": "Vous avez votre propre place dans cette séance\u00a0: rejoignez-la avec votre profil d'élève, pas en observation.",
+        "accesSuspenduTitre": "Accès suspendu pour paiement",
+        "accesSuspendu": "L'observation est fermée\u00a0: aucun élève que vous accompagnez n'a un accès payé à cette séance. Rechargez depuis le Foyer, ou contactez la direction.",
         "visitesEpuiseesTitre": "Aucune visite restante pour cette séance",
         "visitesEpuisees": "Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.",
         "tempsEpuiseTitre": "Temps d'observation écoulé",
@@ -12148,6 +12188,8 @@
         "minutesSecondes": "{m} min {s} s"
       },
       "refus": {
+        "placeEleve": "Vous avez votre propre place dans cette séance\u00a0: rejoignez-la avec votre profil d'élève, pas en observation.",
+        "accesSuspendu": "L'accès à cette séance est suspendu pour paiement\u00a0: aucun élève que vous accompagnez n'a un accès payé. Rechargez depuis le Foyer, ou contactez la direction.",
         "politiqueDesactivee": "L'observation est désactivée pour cette classe.",
         "quotaVisites": "Vous avez déjà utilisé vos visites pour cette séance.",
         "tempsEpuise": "Votre temps d'observation est épuisé pour cette séance.",

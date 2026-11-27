@@ -132,7 +132,22 @@ enum CauseImpasse {
   /// FERMETURE-SALLE (11/11/2026, D-018) : la seance est finie et le serveur
   /// a ferme la salle pour tous. Ne se reessaie pas : la base refuse tout
   /// jeton. Distinct de [retire] (l'enseignant a fait sortir quelqu'un).
-  seanceTerminee;
+  seanceTerminee,
+
+  /// SALLE-SECOND-APPAREIL (23/11/2026) : cet appareil a accepte de ceder la
+  /// place a un autre appareil du meme compte. Sortie propre, dite ; « Reessayer »
+  /// redemande la permission de l'autre appareil.
+  cedeAutreAppareil,
+
+  /// SALLE-SECOND-APPAREIL : l'autre appareil, deja dans la classe, a refuse
+  /// l'entree depuis celui-ci.
+  passageRefuse,
+
+  /// SALLE-SECOND-APPAREIL : l'autre appareil n'a pas repondu a temps.
+  passageSansReponse,
+
+  /// SALLE-SECOND-APPAREIL : la personne a renonce a entrer depuis cet appareil.
+  passageAnnule;
 
   /// Traduit le refus du backend en ce que l'usager peut comprendre.
   static CauseImpasse depuis(MotifRefusSalle motif) => switch (motif) {
@@ -140,6 +155,9 @@ enum CauseImpasse {
     MotifRefusSalle.fournisseurIndisponible => CauseImpasse.configuration,
     MotifRefusSalle.acces => CauseImpasse.acces,
     MotifRefusSalle.reseau => CauseImpasse.reseau,
+    MotifRefusSalle.passageRefuse => CauseImpasse.passageRefuse,
+    MotifRefusSalle.passageSansReponse => CauseImpasse.passageSansReponse,
+    MotifRefusSalle.passageAnnule => CauseImpasse.passageAnnule,
   };
 
   /// Vrai quand reessayer a un sens. Un refus d'acces n'en a pas : l'heure
@@ -149,7 +167,11 @@ enum CauseImpasse {
       this == reseau ||
       this == connexionPerdue ||
       this == retire ||
-      this == ouverteAilleurs;
+      this == ouverteAilleurs ||
+      this == cedeAutreAppareil ||
+      this == passageRefuse ||
+      this == passageSansReponse ||
+      this == passageAnnule;
 }
 
 /// Ou en est l'entree en salle.

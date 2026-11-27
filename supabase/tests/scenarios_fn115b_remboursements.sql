@@ -316,27 +316,31 @@ SELECT pg_temp.vrai(pg_temp.evt('evt_l2', 'charge.dispute.created', 'pi_fb_5', c
 SELECT pg_temp.vrai(pg_temp.evt('evt_l2c', 'charge.dispute.closed', 'pi_fb_5', current_setting('test.m5')::bigint,
   'du_fb_2', 'lost', 1500) = 'litige_perdu',
   '6 : contestation perdue, frais de 15 USD');
-SELECT pg_temp.vrai(pg_temp.solde('e5') = -1500 AND pg_temp.suspendu('e5') AND (pg_temp.fac('e5')).statut = 'a_financer'
-  AND (SELECT statut = 'perdu' AND frais_mineur = 1500 FROM public.litiges_paiement WHERE id = 'du_fb_2'),
-  '6 : les frais vont au solde du plus ancien beneficiaire ; le mois reste a payer, l''acces suspendu');
+-- PAIEMENT-FAMILLE-ACCES (D7, 23/11/2026) : les frais vont a la FAMILLE, plus au solde du rang 1. La
+-- suspension qui reste vient de l'ouverture de la contestation (l'argent du mois est repris), pas des frais.
+SELECT pg_temp.vrai(pg_temp.solde('e5') = 0 AND pg_temp.suspendu('e5') AND (pg_temp.fac('e5')).statut = 'a_financer'
+  AND (SELECT statut = 'perdu' AND frais_mineur = 1500 FROM public.litiges_paiement WHERE id = 'du_fb_2')
+  AND (SELECT count(*) = 1 AND sum(montant_mineur) = 1500 FROM public.dettes_famille
+        WHERE household_id = pg_temp.id('f3') AND reglee_le IS NULL),
+  '6 : les frais deviennent une dette de la famille, le solde de e5 n''est pas touche');
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.notifications WHERE evenement = 'litige_clos'
                              AND params ->> 'issue' = 'perdu' AND (params ->> 'frais_mineur')::bigint = 1500),
   '6 : la famille lit l''issue et les frais');
--- Les frais se payent : la page propose le mois ET la dette, et ce paiement
--- rouvre l'acces (avant le 02/11, seul le mois etait propose : l'acces restait
--- suspendu apres paiement).
+-- Le mois se paye : la page propose le mois seul (la dette de famille n'est plus sur le solde de e5),
+-- et ce paiement rouvre l'acces ; la dette de famille reste ouverte et bloque les nouveaux achats.
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui(pg_temp.id('e5'), 'guardian', pg_temp.id('f3'));
 SELECT set_config('test.du5', (SELECT (x -> 'montantSuggere' ->> 'mineur')
   FROM jsonb_array_elements(public.recharge_beneficiaires()) x WHERE x ->> 'id' = pg_temp.id('e5')::text), true);
 RESET ROLE;
-SELECT pg_temp.vrai(current_setting('test.du5')::bigint = current_setting('test.m5')::bigint + 1500,
-  '6 : le montant suggere couvre le mois et les 15 USD de frais');
+SELECT pg_temp.vrai(current_setting('test.du5')::bigint = current_setting('test.m5')::bigint,
+  '6 : le montant suggere est le mois, sans les 15 USD de frais');
 SELECT pg_temp.payer('e5', 'f3', jsonb_build_array(
   jsonb_build_object('profilId', pg_temp.id('e5'), 'mineur', current_setting('test.du5')::bigint, 'devise', 'USD')),
   '00a006', 'pi_fb_6');
-SELECT pg_temp.vrai(NOT pg_temp.suspendu('e5') AND (pg_temp.fac('e5')).statut = 'financee' AND pg_temp.solde('e5') = 0,
-  '6 : payer le montant suggere finance le mois, solde la dette et rouvre l''acces');
+SELECT pg_temp.vrai(NOT pg_temp.suspendu('e5') AND (pg_temp.fac('e5')).statut = 'financee' AND pg_temp.solde('e5') = 0
+  AND private.dette_famille_ouverte(pg_temp.id('f3')) = 1500,
+  '6 : payer le mois le finance et rouvre l''acces ; la dette de famille reste ouverte');
 
 -- ------------------------------------------------------------------
 -- 7. Paiement inconnu ; droits
