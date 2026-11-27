@@ -34,6 +34,14 @@ class PaiementPrecedentOuvert implements Exception {
   const PaiementPrecedentOuvert();
 }
 
+/// La dette ou les mois ont change entre la verification et le paiement
+/// (une facture est tombee, le mois a change) : le serveur refuse AVANT le
+/// prestataire. Rien n'est paye ; la famille verifie de nouveau.
+class MontantChange implements Exception {
+  /// Cree l'erreur.
+  const MontantChange();
+}
+
 /// Ce qu'il faut pour monter le formulaire de Stripe d'une commande.
 class FormulairePaiement {
   /// Cree le formulaire.

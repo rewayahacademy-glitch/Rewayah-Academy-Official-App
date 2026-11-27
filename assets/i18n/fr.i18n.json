@@ -12431,6 +12431,79 @@
         "trimestriel": "{montant} pour 3 mois, payés d'avance",
         "annuel": "{montant} pour 12 mois, payés d'avance"
       },
+      "montantChangeTitre": "Le montant a changé",
+      "montantChangePhrase": "Une facture ou un mois a changé depuis votre vérification. Rien n'a été payé. Vérifiez à nouveau avant de payer.",
+      "montantChangeAction": "Vérifier à nouveau",
+      "explication": {
+        "libelleDette": "{montant}\u00a0: le mois dû",
+        "libelleMois(plural, param=n)": {
+          "one": "{montant} pour {n}\u00a0mois d'avance",
+          "other": "{montant} pour {n}\u00a0mois d'avance"
+        },
+        "libelleDetteEtMois(plural, param=n)": {
+          "one": "{montant}\u00a0: le mois dû et {n}\u00a0mois d'avance",
+          "other": "{montant}\u00a0: le mois dû et {n}\u00a0mois d'avance"
+        },
+        "libelleUnMois": "{montant} pour un mois",
+        "synthese": {
+          "detteSeule": "Vous payez {montant} pour le mois dû ({mois}).",
+          "detteEtAvance(plural, param=n)": {
+            "one": "Vous payez d'abord {dette} ({moisDus}), puis {n}\u00a0mois d'avance ({moisCouverts})\u00a0: {montant} en tout.",
+            "other": "Vous payez d'abord {dette} ({moisDus}), puis {n}\u00a0mois d'avance ({moisCouverts})\u00a0: {montant} en tout."
+          },
+          "avanceSeule(plural, param=n)": {
+            "one": "Vous payez {n}\u00a0mois d'avance ({moisCouverts})\u00a0: {montant}.",
+            "other": "Vous payez {n}\u00a0mois d'avance ({moisCouverts})\u00a0: {montant}."
+          },
+          "moisSansDate": "Vous payez un mois, {montant}. Il sera compté dès le début de vos cours.",
+          "aucunCreneau": "Aucun paiement n'est possible pour le moment. Choisissez d'abord un créneau\u00a0: vous pourrez payer ensuite.",
+          "avantPremierMois": "Avant le début des cours, un seul mois peut être payé."
+        },
+        "mois": {
+          "separateur": ", ",
+          "et": "{liste} et {dernier}",
+          "plage": "de {debut} à {fin}"
+        },
+        "ligne": {
+          "prix(plural, param=n)": {
+            "one": "Prix du mois",
+            "other": "Prix de {n}\u00a0mois"
+          },
+          "remiseFamille": "Remise de famille, {rang}ᵉ inscrit ({taux})",
+          "remisePrepaiement": "Remise de paiement d'avance ({taux})",
+          "plafond": "Remises limitées à {taux} du prix",
+          "arrondi": "Arrondi au dollar",
+          "bourse": "Bourse",
+          "prixSpecial": "Prix spécial",
+          "accesOffert": "Accès offert",
+          "total": "Total à payer"
+        },
+        "nonAppliquee": {
+          "premierInscrit": "Pas de remise de famille\u00a0: premier inscrit.",
+          "familleSpecial": "Pas de remise de famille\u00a0: un prix spécial ne se cumule pas avec une remise.",
+          "familleOffert": "Pas de remise de famille\u00a0: un accès offert ne se cumule pas avec une remise.",
+          "familleBourse": "Pas de remise de famille\u00a0: une bourse ne se cumule pas avec une remise.",
+          "prepaiementMoinsDeTrois": "Pas de remise de paiement d'avance en dessous de 3\u00a0mois.",
+          "prepaiementSpecial": "Pas de remise de paiement d'avance\u00a0: un prix spécial ne se cumule pas avec une remise.",
+          "prepaiementOffert": "Pas de remise de paiement d'avance\u00a0: un accès offert ne se cumule pas avec une remise.",
+          "prepaiementBourse": "Pas de remise de paiement d'avance\u00a0: une bourse ne se cumule pas avec une remise.",
+          "plafondAtteint": "Plafond atteint\u00a0: les remises sont limitées à {taux} du prix ({montant} de remise en moins)."
+        },
+        "dette": {
+          "titre": "À régler d'abord",
+          "moisApercu": "{mois}, pas encore facturé",
+          "prorata(plural, param=restantes)": {
+            "one": "Début le {date}\u00a0: {restantes}\u00a0séance sur {total} ce mois-ci",
+            "other": "Début le {date}\u00a0: {restantes}\u00a0séances sur {total} ce mois-ci"
+          },
+          "solde": "Solde du profil",
+          "factureTarif": "Prix du mois",
+          "factureRemiseRang": "Remise de famille, {rang}ᵉ inscrit",
+          "factureProrata": "Au prorata des séances du mois",
+          "facturePrepaiement": "Part du paiement d'avance"
+        },
+        "moisCouverts": "Mois couverts"
+      },
       "revenirPaiements": "Revenir aux paiements du foyer",
       "phraseUnique": "Cochez le profil, puis choisissez le montant.",
       "profils": "Profils à recharger",

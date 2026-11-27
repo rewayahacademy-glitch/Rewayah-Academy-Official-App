@@ -183,8 +183,8 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.wallet_entries e JOIN public.pa
                       WHERE e.reference_type = 'credit' AND e.confirme_par_prestataire_le IS NOT NULL) = 3,
   'saisie : trois credits comptes, chacun relie a sa saisie');
 SELECT pg_temp.vrai((SELECT rang_familial FROM public.factures_mensuelles
-                      WHERE profile_id = 'fc000000-0000-4000-8000-0000000000e1') = 2,
-  'saisie : Yasmine facturee au rang 2 du foyer');
+                      WHERE profile_id = 'fc000000-0000-4000-8000-0000000000e1') = 1,
+  'saisie : Yasmine facturee au rang 1 du foyer (ordre d''inscription, PAIEMENT-FAMILLE-PRIX : Bilal, inscrit apres elle, a le rang 2)');
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.audit_logs WHERE action = 'paiement_saisi'),
   'saisie : inscrite au journal');
 

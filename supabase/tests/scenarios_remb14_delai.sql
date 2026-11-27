@@ -169,11 +169,6 @@ INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at)
 SELECT x.g::uuid, pg_temp.id(x.e), pg_temp.mois() - interval '20 days'
   FROM (VALUES ('fd000000-0000-4000-8000-000000000c01','e1'), ('fd000000-0000-4000-8000-000000000c01','e2'),
                ('fd000000-0000-4000-8000-000000000c03','e4'), ('fd000000-0000-4000-8000-000000000c03','e5')) AS x(g, e);
--- e1 a 50 USD d'avance : les remboursements partiels le laissent positif.
-INSERT INTO public.wallets(id, household_id, currency) VALUES
- ('fd000000-0000-4000-8000-000000000901', pg_temp.id('f1'), 'USD');
-INSERT INTO public.wallet_entries(wallet_id, amount_minor, currency, reference_type, beneficiaire_id, confirme_par_prestataire_le)
-VALUES ('fd000000-0000-4000-8000-000000000901', 5000, 'USD', 'credit', pg_temp.id('e1'), now());
 
 -- Une commande payee : recapitulatif, commande, session, evenement Stripe.
 CREATE FUNCTION pg_temp.payer(p_titulaire text, p_foyer text, p_lignes jsonb, p_cle text, p_pi text)
@@ -260,6 +255,11 @@ RESET ROLE;
 SELECT set_config('test.c1', pg_temp.payer('d1', 'f1', jsonb_build_array(
   jsonb_build_object('profilId', pg_temp.id('e1'), 'mineur', current_setting('test.m1')::bigint, 'devise', 'USD')),
   '00d001', 'pi_fd_1')::text, true);
+-- PAIEMENT-FAMILLE-PRIX (23/11/2026) : le serveur propose d'abord la dette du mois ; les 50 USD d'avance de e1
+-- (les remboursements partiels le laissent positif) sont poses apres ce paiement.
+INSERT INTO public.wallet_entries(wallet_id, amount_minor, currency, reference_type, beneficiaire_id, confirme_par_prestataire_le)
+SELECT w.id, 5000, 'USD', 'credit', pg_temp.id('e1'), now()
+  FROM public.wallets w WHERE w.household_id = pg_temp.id('f1');
 SELECT set_config('test.paye1', (SELECT montant_mineur FROM public.commandes_recharge_allocations
    WHERE commande_id = current_setting('test.c1')::uuid AND profile_id = pg_temp.id('e1'))::text, true);
 
@@ -310,10 +310,10 @@ SELECT pg_temp.vrai(pg_temp.propose(current_setting('test.c1')::uuid, 'e1') ->> 
 -- ------------------------------------------------------------------
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui(pg_temp.id('d1'), 'guardian', pg_temp.id('f1'));
-SELECT set_config('test.t1', (SELECT ((f ->> 'montant')::jsonb ->> 'mineur')
+SELECT set_config('test.t1', (SELECT (o -> 'montant' ->> 'mineur')
    FROM jsonb_array_elements(public.recharge_beneficiaires()) AS x,
-        jsonb_array_elements(x -> 'formules') AS f
-  WHERE x ->> 'id' = pg_temp.id('e1')::text AND f ->> 'formule' = 'trimestriel'), true);
+        jsonb_array_elements(x -> 'options') AS o
+  WHERE x ->> 'id' = pg_temp.id('e1')::text AND (o ->> 'nbMois')::int = 3), true);
 RESET ROLE;
 SELECT pg_temp.vrai(nullif(current_setting('test.t1'), '') IS NOT NULL,
   '5 : le trimestre est propose a e1, son mois regle');

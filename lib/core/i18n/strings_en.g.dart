@@ -10266,6 +10266,10 @@ class _Traductions$adulte$recharge$en extends Traductions$adulte$recharge$fr {
 	@override String get paiementIndisponibleTitre => 'Payment not available yet';
 	@override String get paiementIndisponiblePhrase => 'No payment was made. Online payment is not yet open in the app.';
 	@override late final _Traductions$adulte$recharge$formules$en formules = _Traductions$adulte$recharge$formules$en._(_root);
+	@override String get montantChangeTitre => 'The amount has changed';
+	@override String get montantChangePhrase => 'An invoice or a month changed since you checked. Nothing was paid. Check again before paying.';
+	@override String get montantChangeAction => 'Check again';
+	@override late final _Traductions$adulte$recharge$explication$en explication = _Traductions$adulte$recharge$explication$en._(_root);
 	@override String get revenirPaiements => 'Back to the household payments';
 	@override String get phraseUnique => 'Tick the profile, then choose the amount.';
 	@override String get profils => 'Profiles to top up';
@@ -21085,6 +21089,31 @@ class _Traductions$adulte$recharge$formules$en extends Traductions$adulte$rechar
 	@override String annuel({required Object montant}) => '${montant} for 12 months, paid in advance';
 }
 
+// Path: adulte.recharge.explication
+class _Traductions$adulte$recharge$explication$en extends Traductions$adulte$recharge$explication$fr {
+	_Traductions$adulte$recharge$explication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String libelleDette({required Object montant}) => '${montant}: the month due';
+	@override String libelleMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${montant} for ${n} month paid ahead',
+		other: '${montant} for ${n} months paid ahead',
+	);
+	@override String libelleDetteEtMois({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${montant}: the month due and ${n} month ahead',
+		other: '${montant}: the month due and ${n} months ahead',
+	);
+	@override String libelleUnMois({required Object montant}) => '${montant} for one month';
+	@override late final _Traductions$adulte$recharge$explication$synthese$en synthese = _Traductions$adulte$recharge$explication$synthese$en._(_root);
+	@override late final _Traductions$adulte$recharge$explication$mois$en mois = _Traductions$adulte$recharge$explication$mois$en._(_root);
+	@override late final _Traductions$adulte$recharge$explication$ligne$en ligne = _Traductions$adulte$recharge$explication$ligne$en._(_root);
+	@override late final _Traductions$adulte$recharge$explication$nonAppliquee$en nonAppliquee = _Traductions$adulte$recharge$explication$nonAppliquee$en._(_root);
+	@override late final _Traductions$adulte$recharge$explication$dette$en dette = _Traductions$adulte$recharge$explication$dette$en._(_root);
+	@override String get moisCouverts => 'Months covered';
+}
+
 // Path: adulte.recharge.resultat
 class _Traductions$adulte$recharge$resultat$en extends Traductions$adulte$recharge$resultat$fr {
 	_Traductions$adulte$recharge$resultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -28064,6 +28093,98 @@ class _Traductions$tc$parcours$signalement$categorieValeur$en extends Traduction
 	@override String get changement => 'Change';
 	@override String get securiteEnfant => 'A child\'s safety';
 	@override String get autre => 'Other';
+}
+
+// Path: adulte.recharge.explication.synthese
+class _Traductions$adulte$recharge$explication$synthese$en extends Traductions$adulte$recharge$explication$synthese$fr {
+	_Traductions$adulte$recharge$explication$synthese$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String detteSeule({required Object montant, required Object mois}) => 'You pay ${montant} for the month due (${mois}).';
+	@override String detteEtAvance({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'You first pay ${dette} (${moisDus}), then ${n} month ahead (${moisCouverts}): ${montant} in total.',
+		other: 'You first pay ${dette} (${moisDus}), then ${n} months ahead (${moisCouverts}): ${montant} in total.',
+	);
+	@override String avanceSeule({required num n, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'You pay ${n} month ahead (${moisCouverts}): ${montant}.',
+		other: 'You pay ${n} months ahead (${moisCouverts}): ${montant}.',
+	);
+	@override String moisSansDate({required Object montant}) => 'You pay one month, ${montant}. It counts from the start of your classes.';
+	@override String get aucunCreneau => 'No payment is possible yet. Choose a time slot first, then you can pay.';
+	@override String get avantPremierMois => 'Before classes start, only one month can be paid.';
+}
+
+// Path: adulte.recharge.explication.mois
+class _Traductions$adulte$recharge$explication$mois$en extends Traductions$adulte$recharge$explication$mois$fr {
+	_Traductions$adulte$recharge$explication$mois$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get separateur => ', ';
+	@override String et({required Object liste, required Object dernier}) => '${liste} and ${dernier}';
+	@override String plage({required Object debut, required Object fin}) => '${debut} to ${fin}';
+}
+
+// Path: adulte.recharge.explication.ligne
+class _Traductions$adulte$recharge$explication$ligne$en extends Traductions$adulte$recharge$explication$ligne$fr {
+	_Traductions$adulte$recharge$explication$ligne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String prix({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Price for the month',
+		other: 'Price for ${n} months',
+	);
+	@override String remiseFamille({required Object rang, required Object taux}) => 'Family discount, member no. ${rang} (${taux})';
+	@override String remisePrepaiement({required Object taux}) => 'Discount for paying ahead (${taux})';
+	@override String plafond({required Object taux}) => 'Discounts capped at ${taux} of the price';
+	@override String get arrondi => 'Rounded to the dollar';
+	@override String get bourse => 'Scholarship';
+	@override String get prixSpecial => 'Special price';
+	@override String get accesOffert => 'Free access';
+	@override String get total => 'Total to pay';
+}
+
+// Path: adulte.recharge.explication.nonAppliquee
+class _Traductions$adulte$recharge$explication$nonAppliquee$en extends Traductions$adulte$recharge$explication$nonAppliquee$fr {
+	_Traductions$adulte$recharge$explication$nonAppliquee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get premierInscrit => 'No family discount: first enrolled.';
+	@override String get familleSpecial => 'No family discount: a special price cannot be combined with a discount.';
+	@override String get familleOffert => 'No family discount: free access cannot be combined with a discount.';
+	@override String get familleBourse => 'No family discount: a scholarship cannot be combined with a discount.';
+	@override String get prepaiementMoinsDeTrois => 'No discount for paying ahead under 3 months.';
+	@override String get prepaiementSpecial => 'No discount for paying ahead: a special price cannot be combined with a discount.';
+	@override String get prepaiementOffert => 'No discount for paying ahead: free access cannot be combined with a discount.';
+	@override String get prepaiementBourse => 'No discount for paying ahead: a scholarship cannot be combined with a discount.';
+	@override String plafondAtteint({required Object taux, required Object montant}) => 'Cap reached: discounts are limited to ${taux} of the price (${montant} less discount).';
+}
+
+// Path: adulte.recharge.explication.dette
+class _Traductions$adulte$recharge$explication$dette$en extends Traductions$adulte$recharge$explication$dette$fr {
+	_Traductions$adulte$recharge$explication$dette$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'To settle first';
+	@override String moisApercu({required Object mois}) => '${mois}, not yet invoiced';
+	@override String prorata({required num restantes, required Object date, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(restantes,
+		one: 'Start on ${date}: ${restantes} session out of ${total} this month',
+		other: 'Start on ${date}: ${restantes} sessions out of ${total} this month',
+	);
+	@override String get solde => 'Profile balance';
+	@override String get factureTarif => 'Price for the month';
+	@override String factureRemiseRang({required Object rang}) => 'Family discount, member no. ${rang}';
+	@override String get factureProrata => 'In proportion to the month\'s sessions';
+	@override String get facturePrepaiement => 'Share of the payment made ahead';
 }
 
 // Path: adulte.recharge.source.motifs
@@ -40582,6 +40703,49 @@ extension on TraductionsEn {
 			'adulte.recharge.paiementIndisponiblePhrase' => 'No payment was made. Online payment is not yet open in the app.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} for 3 months, paid in advance',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} for 12 months, paid in advance',
+			'adulte.recharge.montantChangeTitre' => 'The amount has changed',
+			'adulte.recharge.montantChangePhrase' => 'An invoice or a month changed since you checked. Nothing was paid. Check again before paying.',
+			'adulte.recharge.montantChangeAction' => 'Check again',
+			'adulte.recharge.explication.libelleDette' => ({required Object montant}) => '${montant}: the month due',
+			'adulte.recharge.explication.libelleMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${montant} for ${n} month paid ahead', other: '${montant} for ${n} months paid ahead', ), 
+			'adulte.recharge.explication.libelleDetteEtMois' => ({required num n, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${montant}: the month due and ${n} month ahead', other: '${montant}: the month due and ${n} months ahead', ), 
+			'adulte.recharge.explication.libelleUnMois' => ({required Object montant}) => '${montant} for one month',
+			'adulte.recharge.explication.synthese.detteSeule' => ({required Object montant, required Object mois}) => 'You pay ${montant} for the month due (${mois}).',
+			'adulte.recharge.explication.synthese.detteEtAvance' => ({required num n, required Object dette, required Object moisDus, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You first pay ${dette} (${moisDus}), then ${n} month ahead (${moisCouverts}): ${montant} in total.', other: 'You first pay ${dette} (${moisDus}), then ${n} months ahead (${moisCouverts}): ${montant} in total.', ), 
+			'adulte.recharge.explication.synthese.avanceSeule' => ({required num n, required Object moisCouverts, required Object montant}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You pay ${n} month ahead (${moisCouverts}): ${montant}.', other: 'You pay ${n} months ahead (${moisCouverts}): ${montant}.', ), 
+			'adulte.recharge.explication.synthese.moisSansDate' => ({required Object montant}) => 'You pay one month, ${montant}. It counts from the start of your classes.',
+			'adulte.recharge.explication.synthese.aucunCreneau' => 'No payment is possible yet. Choose a time slot first, then you can pay.',
+			'adulte.recharge.explication.synthese.avantPremierMois' => 'Before classes start, only one month can be paid.',
+			'adulte.recharge.explication.mois.separateur' => ', ',
+			'adulte.recharge.explication.mois.et' => ({required Object liste, required Object dernier}) => '${liste} and ${dernier}',
+			'adulte.recharge.explication.mois.plage' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
+			'adulte.recharge.explication.ligne.prix' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Price for the month', other: 'Price for ${n} months', ), 
+			'adulte.recharge.explication.ligne.remiseFamille' => ({required Object rang, required Object taux}) => 'Family discount, member no. ${rang} (${taux})',
+			'adulte.recharge.explication.ligne.remisePrepaiement' => ({required Object taux}) => 'Discount for paying ahead (${taux})',
+			'adulte.recharge.explication.ligne.plafond' => ({required Object taux}) => 'Discounts capped at ${taux} of the price',
+			'adulte.recharge.explication.ligne.arrondi' => 'Rounded to the dollar',
+			'adulte.recharge.explication.ligne.bourse' => 'Scholarship',
+			'adulte.recharge.explication.ligne.prixSpecial' => 'Special price',
+			'adulte.recharge.explication.ligne.accesOffert' => 'Free access',
+			'adulte.recharge.explication.ligne.total' => 'Total to pay',
+			'adulte.recharge.explication.nonAppliquee.premierInscrit' => 'No family discount: first enrolled.',
+			'adulte.recharge.explication.nonAppliquee.familleSpecial' => 'No family discount: a special price cannot be combined with a discount.',
+			'adulte.recharge.explication.nonAppliquee.familleOffert' => 'No family discount: free access cannot be combined with a discount.',
+			'adulte.recharge.explication.nonAppliquee.familleBourse' => 'No family discount: a scholarship cannot be combined with a discount.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementMoinsDeTrois' => 'No discount for paying ahead under 3 months.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementSpecial' => 'No discount for paying ahead: a special price cannot be combined with a discount.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementOffert' => 'No discount for paying ahead: free access cannot be combined with a discount.',
+			'adulte.recharge.explication.nonAppliquee.prepaiementBourse' => 'No discount for paying ahead: a scholarship cannot be combined with a discount.',
+			'adulte.recharge.explication.nonAppliquee.plafondAtteint' => ({required Object taux, required Object montant}) => 'Cap reached: discounts are limited to ${taux} of the price (${montant} less discount).',
+			'adulte.recharge.explication.dette.titre' => 'To settle first',
+			'adulte.recharge.explication.dette.moisApercu' => ({required Object mois}) => '${mois}, not yet invoiced',
+			'adulte.recharge.explication.dette.prorata' => ({required num restantes, required Object date, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(restantes, one: 'Start on ${date}: ${restantes} session out of ${total} this month', other: 'Start on ${date}: ${restantes} sessions out of ${total} this month', ), 
+			'adulte.recharge.explication.dette.solde' => 'Profile balance',
+			'adulte.recharge.explication.dette.factureTarif' => 'Price for the month',
+			'adulte.recharge.explication.dette.factureRemiseRang' => ({required Object rang}) => 'Family discount, member no. ${rang}',
+			'adulte.recharge.explication.dette.factureProrata' => 'In proportion to the month\'s sessions',
+			'adulte.recharge.explication.dette.facturePrepaiement' => 'Share of the payment made ahead',
+			'adulte.recharge.explication.moisCouverts' => 'Months covered',
 			'adulte.recharge.revenirPaiements' => 'Back to the household payments',
 			'adulte.recharge.phraseUnique' => 'Tick the profile, then choose the amount.',
 			'adulte.recharge.profils' => 'Profiles to top up',
@@ -40674,6 +40838,8 @@ extension on TraductionsEn {
 			'adulte.famille.aProposForfait' => 'About the family plan',
 			'adulte.famille.aProposForfaitPhrase' => 'The family plan includes an account holder, an adult spouse, and the children or teenagers under the account holder\'s responsibility. Each adult keeps their own account.',
 			'adulte.famille.profilNonCreeTitre' => 'Demo: no profile was created',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.profilNonCreePhrase' => 'In the demo, nothing is sent. My family stays as it was.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'In the demo, nothing is sent. Your student space stays as it was.',
 			'adulte.famille.monProfilIndisponibleTitre' => 'Not available yet',
@@ -40717,8 +40883,6 @@ extension on TraductionsEn {
 			'adulte.invitation.courrielInvalide' => 'Check the email address: it should look like name@example.com.',
 			'adulte.invitation.verifier' => 'Continue',
 			'adulte.invitation.verifierTitre' => 'Check and send',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.verifierPhrase' => 'Read this information again. The invitation will go to this address.',
 			'adulte.invitation.nonRenseigne' => 'Not provided',
 			'adulte.invitation.modifier' => 'Edit',
@@ -41188,6 +41352,8 @@ extension on TraductionsEn {
 			'alertes.traitement.messageManque' => 'Write the message for the family before passing it on.',
 			'alertes.traitement.cibleTuteur' => 'the student\'s guardian',
 			'alertes.traitement.cibleAdulte' => 'the student',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.pasEncoreAffiche' => 'No family screen shows this message yet.',
 			'alertes.traitement.motif' => 'Reason for closing',
 			'alertes.traitement.motifRequisAide' => 'Required for this report. Read by the management only.',
@@ -41231,8 +41397,6 @@ extension on TraductionsEn {
 			'argent.transparence.postes.applicationHebergement' => 'Application and hosting',
 			'argent.transparence.postes.emails' => 'Emails',
 			'argent.transparence.postes.stockage' => 'File storage',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.postes.comptabilite' => 'Accounting',
 			'argent.transparence.postes.developpement' => 'Application development',
 			'argent.transparence.postes.administration' => 'Academy administration',
@@ -41702,6 +41866,8 @@ extension on TraductionsEn {
 			'com.communaute.toutes' => 'All',
 			'com.communaute.videTitre' => 'No post',
 			'com.communaute.rechercheVideTitre' => 'No result',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.rechercheVide' => 'No post matches your search. Try another word.',
 			'com.communaute.videToutes' => 'No post yet.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Open the post ${titre}',
@@ -41745,8 +41911,6 @@ extension on TraductionsEn {
 			'com.communaute.reponses.signaler' => 'Report the reply',
 			'com.communaute.reponses.signalee' => 'You reported this reply.',
 			'com.communaute.signalement.politique.publicite' => 'Advertising is not allowed in the Teachers community.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.signalement.politique.sollicitation' => 'Commercial solicitation is not allowed in this space.',
 			'com.communaute.signalement.motifManquant' => 'Choose a reason to send the report.',
 			'com.communaute.composer.nouvelle' => 'New post',
@@ -42216,6 +42380,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.moderation.regles.pasVente' => 'No sale of products or services',
 			'com.annonces.administration.moderation.regles.pasSollicitation' => 'No commercial solicitation',
 			'com.annonces.administration.moderation.regles.pasDonnees' => 'No personal data of a student or a family',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.lienAdministration' => 'Communications administration (management)',
 			'com.annonces.demoPublication.lienPublier' => 'Publish an announcement for a class (teacher)',
 			'com.annonces.demoPublication.toutes' => 'The whole academy',
@@ -42259,8 +42425,6 @@ extension on TraductionsEn {
 			'com.annonces.demo.roles.enseignant' => 'Teacher',
 			'com.annonces.demo.roles.adulte' => 'Adult student',
 			'com.annonces.demo.roles.admin' => 'Management',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.roles.controleur' => 'Reviewer',
 			'com.annonces.demo.classeNour' => 'An-Nour class',
 			'com.annonces.demo.classeFajr' => 'Al-Fajr class',
@@ -42730,6 +42894,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.transfert.executePhrase' => 'The log recorded it. The balances shown are read again.',
 			'comptable.tresorerie.transfert.reference' => ({required Object reference}) => 'Reference: ${reference}',
 			'comptable.tresorerie.transfert.validationTitre' => 'Validation requested',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.validationPhrase' => 'Another person must decide. The origin vault stays unchanged until then.',
 			'comptable.tresorerie.transfert.refusTitre' => 'Movement refused by the source',
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Reason: ${raison}. Nothing was moved.',
@@ -42773,8 +42939,6 @@ extension on TraductionsEn {
 			'comptable.encaissements.fraisSource' => 'Fees and exchange supplied by the provider, never recalculated here.',
 			'comptable.encaissements.reference' => 'Reference',
 			'comptable.encaissements.prestataire' => 'Provider',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.moyen' => 'Payment method',
 			'comptable.encaissements.foyer' => 'Household',
 			'comptable.encaissements.date' => 'Date',
@@ -43244,6 +43408,8 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.montantManuelDetail' => 'A payment\'s amount is always that of the obligation.',
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'Changing the prices',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'The pricing policy stays with the management.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendreTitre' => 'Suspend all delegations',
 			'comptable.direction.delegationPanneau.suspendreDetail' => 'The Accountant can no longer carry out anything alone, immediately: each operation goes back through the management.',
 			'comptable.direction.delegationPanneau.suspendreAction' => 'Suspend all delegations',
@@ -43287,8 +43453,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · goes out on ${date}',
 			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Cancel',
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Cancel ${beneficiaire}\'s outflow',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Cancel this outflow?',
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => '${beneficiaire}\'s outflow will not go out. The cancellation is written in the log.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Cancel the outflow',
@@ -43758,6 +43922,8 @@ extension on TraductionsEn {
 			'avis.admin.refuser.consequence' => 'The review will not be published. The reason is kept.',
 			'avis.admin.refuser.action' => 'Refuse the review',
 			'avis.admin.refuser.rester' => 'Change nothing',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retirer.titre' => ({required Object deNom}) => 'Remove ${deNom}\'s review',
 			'avis.admin.retirer.intro' => 'Choose the reason for removal.',
 			'avis.admin.retirer.consequence' => 'The review will disappear from the site at the site\'s next update. The reason is kept.',
@@ -43801,8 +43967,6 @@ extension on TraductionsEn {
 			'avis.admin.liens.etat.ouvert' => 'Open',
 			'avis.admin.liens.etat.ferme' => 'Closed',
 			'avis.admin.liens.etat.expire' => 'Expired',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.etat.plein' => 'Full',
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Reviews received: ${recus} of ${max}',
 			'avis.admin.liens.fin' => ({required Object date}) => 'Ends on ${date}',
@@ -44272,6 +44436,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Rows ${liste}',
 			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'and ${n} row already saved', other: 'and ${n} rows already saved', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'Choose the row to keep, or say these are different people.',
 			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'See the choices for this case',
 			'candidatsFlux.importFormulaires.doublons.fermer' => 'Close the choices for this case',
@@ -44315,8 +44481,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.apercu.aideMarques' => '"Email to obtain": no valid email, the person cannot be invited. "Country code to confirm": the phone has no recognized country code. "Ignored": empty or repeated row.',
 			'candidatsFlux.importFormulaires.issue.nouvelle' => 'New',
 			'candidatsFlux.importFormulaires.issue.corrigee' => 'Corrected',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.issue.dejaConnue' => 'Already known',
 			'candidatsFlux.importFormulaires.issue.ignoree' => 'Ignored',
 			'candidatsFlux.importFormulaires.issue.aCorriger' => 'To correct',
@@ -44786,6 +44950,8 @@ extension on TraductionsEn {
 			'suiviAttente.enseignant.origine' => 'Country of origin',
 			'suiviAttente.enseignant.residence' => 'Country of residence',
 			'suiviAttente.enseignant.mot' => 'Their introduction',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.enseignant.peutSePresenter' => 'Your teacher can introduce themselves to the families of the class with a message in Messages.',
 			'suiviAttente.vide.message' => 'You have not chosen a class yet.',
 			'suiviAttente.vide.invitation' => 'Choose a class: the academy then follows you step by step.',
@@ -44829,8 +44995,6 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.aucune' => 'No family in this class can receive a message right now.',
 			'suiviAttente.mePresenter.echec' => 'The message is not confirmed for some families: it may not have reached them. Try again: those who received it do not receive it twice.',
 			'suiviAttente.mePresenter.chargement' => 'Loading the families of the class',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.mePresenter.erreur' => 'The families of the class could not be loaded. Try again in a moment.',
 			'suiviAttente.mePresenter.vide' => 'Write a message before sending it.',
 			'journalSorties.texte.titre' => 'Leaving the app during class',
@@ -45300,6 +45464,8 @@ extension on TraductionsEn {
 			'onboarding.langues.ps' => 'Pashto',
 			'onboarding.langues.fa' => 'Persian',
 			'onboarding.langues.tr' => 'Turkish',
+			_ => null,
+		} ?? switch (path) {
 			'onboarding.langues.id' => 'Indonesian',
 			'onboarding.langues.uz' => 'Uzbek',
 			'onboarding.langues.pt' => 'Português (Portuguese)',
@@ -45343,8 +45509,6 @@ extension on TraductionsEn {
 			'onboarding.recap.niveaux.aide' => 'Recognises the letters',
 			'onboarding.recap.niveaux.lente' => 'Reads slowly',
 			'onboarding.recap.niveaux.courante' => 'Already reads the Quran',
-			_ => null,
-		} ?? switch (path) {
 			'onboarding.recap.niveaux.memo' => 'Has memorised a part',
 			'onboarding.recap.quantites.quelques' => 'a few surahs',
 			'onboarding.recap.quantites.unACinq' => '1 to 5 juz',
